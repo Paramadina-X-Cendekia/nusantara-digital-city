@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+use Inertia\Inertia;
+use App\Http\Controllers\CityController;
+
+Route::get('/', [CityController::class, 'index'])->name('home');

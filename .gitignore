@@ -22,3 +22,6 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Ignore Firebase service accounts and generic JSON secrets in storage
+/storage/*.json
