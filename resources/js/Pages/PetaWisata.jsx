@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/Navbar';
@@ -15,30 +15,117 @@ const stagger = {
 
 const CATEGORIES = [
     { id: 'semua', label: 'Semua', icon: 'apps' },
-    { id: 'alam', label: 'Alam', icon: 'landscape' },
-    { id: 'pantai', label: 'Pantai', icon: 'beach_access' },
-    { id: 'kota', label: 'Kota', icon: 'location_city' },
-    { id: 'gunung', label: 'Gunung', icon: 'terrain' },
+    { id: 'alam', label: 'Alam', icon: 'landscape', color: '#22c55e' },
+    { id: 'pantai', label: 'Pantai', icon: 'beach_access', color: '#3b82f6' },
+    { id: 'kota', label: 'Kota', icon: 'location_city', color: '#f59e0b' },
+    { id: 'gunung', label: 'Gunung', icon: 'terrain', color: '#ef4444' },
 ];
+
+const CAT_COLORS = { alam: '#22c55e', pantai: '#3b82f6', kota: '#f59e0b', gunung: '#ef4444' };
 
 const DESTINATIONS = [
-    { id: 1, name: 'Danau Toba', location: 'Sumatera Utara', category: 'alam', desc: 'Danau vulkanik terbesar di dunia dengan Pulau Samosir di tengahnya. Permata alam Sumatera dengan budaya Batak yang kaya.', rating: '4.9', price: 'Rp 15.000', x: '20%', y: '40%', color: '#22c55e', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuABI-jZrAZvVvJvZH6KZBhH8ojB0S_qUfOa3DqgUaYGz6Z-8Av2l7SKksdPxULUMLQ2PPt0tedxQ5UzxZ8uxsWJ4309Ml6QTEqk05VJtG3GCPG67J_9zS8pvI_Z3Jj38w0A9AUBowVvCR6FCfJwoKcb6PZMC9L6sMLHqdxuAwf6sFjbO5p2T6chSgX_xOWisIGvJ9x-hwt82JPV2ErNwDb6h0_ZFsufnN14gPAo_fuMeESUTBYGy6djCPrWniloWLTPdf-xI3S_AdGa' },
-    { id: 2, name: 'Labuan Bajo', location: 'NTT', category: 'pantai', desc: 'Gerbang menuju Taman Nasional Komodo dengan pantai-pantai merah muda eksotis dan diving spot kelas dunia.', rating: '5.0', price: 'Rp 150.000', x: '52%', y: '82%', color: '#3b82f6', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDG4EFxcBpgXIgCaq7MmUNfwNpEWPDL3nUlyPfXBMnGRqQpwaJXYW_-W5esyNgXuX2khxDfJDRgLB9wEhAFBlw1VWzurRyB-2oRngkWiMZVKtRh1vrOkSVGzRQMcbBUwdmpAi60PJtaaQLMaWZ_ohe8gd0b3TpcOBrXBp3YOySdBthVFe_PJ3hwPdtfTJiyEk92nuyb3NVXUtIWMPx8nTnu7oSFGVMRDJkMX45F7-ynj3Uy6Q5NIRsdq1e7cI8hybqEnmVtKFdk_5TK' },
-    { id: 3, name: 'Ubud, Bali', location: 'Bali', category: 'kota', desc: 'Jantung seni dan budaya Bali dengan sawah terasering, galeri seni, dan pura-pura kuno di tengah hutan tropis.', rating: '4.8', price: 'Gratis', x: '47%', y: '78%', color: '#f59e0b', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuArUqDFHdGl6aYFb1l3aFc88-RwLg1EzHYhbsxTjneL2idpROpUoDwZg_JBBETD2rPOAn9OmiG-AqVjpzG_8jDgrX4uRPALNxXgS3kyQl1JOMjvkweDk0Cn7j_RZe5z2kCo4u6E4y-W81me4zYHnEC16lNv8Xu8PQfYb2YXoHIGuaXF3ehoaSU3XZnUoxBdnbd6qU_ppABtBIOiu6QG1Lu089rcRiL2sfL23Gkri_5TmJWIoK2HEnEP91o9kgg4Lu7JmS8NPoJn-1q-' },
-    { id: 4, name: 'Gunung Bromo', location: 'Jawa Timur', category: 'gunung', desc: 'Gunung berapi aktif yang menawarkan pemandangan matahari terbit paling spektakuler di Indonesia.', rating: '4.9', price: 'Rp 30.000', x: '45%', y: '72%', color: '#ef4444', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBMGTCFCaDtjpe7yrqfTzA8iN1OmWnIKYRRWrcVY8J7JO_wNsntxW3cVs8kldslW2HSs6RtUMhE2TBuie1gaJjNhoOYUpdaTccsxsZsLHXs318JTqzoKu5riZiYmMILa_dUx62dUp3sP53CtegYCDWM4Cwb4teEXBOXXqObHLQ9u8kmY9EJP5Ru_H_S_V6BmXHyytMsi6p43rpj4WHLHlsGcYDSpFRSCZp9pM0zhte-TExzwWO8Tgq5JKT-z9CGHMShYOKNg8mqhsZ5' },
-    { id: 5, name: 'Raja Ampat', location: 'Papua Barat', category: 'pantai', desc: 'Surga penyelam dengan keanekaragaman hayati laut tertinggi di planet Bumi. Spot snorkeling dan diving terbaik dunia.', rating: '5.0', price: 'Rp 500.000', x: '86%', y: '52%', color: '#3b82f6', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCOk7eFXM8Z7djeW87pg0CemNhUYyqvVOTbTru4odSwbuliignpFMApDGhfNKlW6kKyQlCbzJ3ohIoFaRnWWDgvQfazHGAkAjHoSKngL3-wQdr1HcITBwNXh6s5QVGFLqfPkQo7SDDW_mY-6RcScGnPl4Ewr-Vg_6va3QV-h4tnOTTygXWWbXsrbtnnmk6_AzN-1zBFS-khioMRQ3qfwSeVgNhYKSFkLW9kkjlvFAKSOrwFbzI-SYHp13KInW70cdrV_8nUtZOKZ2BQ' },
-    { id: 6, name: 'Gunung Rinjani', location: 'Lombok, NTB', category: 'gunung', desc: 'Gunung berapi tertinggi kedua di Indonesia dengan danau kawah Segara Anak yang memukau.', rating: '4.7', price: 'Rp 150.000', x: '49%', y: '80%', color: '#ef4444', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC0FVwiBcNLeL0Ect74iuTzIEMu4Ctu1txJ1hjjkUmcO2Lw2UXLQUbNWThHD10DWJvCcTR1n5fYVifSW04RoXkffrHqGsy2KS9Sy3yR4LsP_0QdIUz4km9YOjT2UKU8Sq7Uz37Udu6NYP6wD7F-OQYDl-6YjCnyGW-2vWUBPQWCdFFby1XTW-cd9aPvTftzfXyD3VuHgMoxnt-3ROirBkccx3b6jBCgSYb4aVZxeM92ma5_jqPpGTsXhlMBFtLbsT6pb5S0K_r4Y4Pz' },
-    { id: 7, name: 'Tanjung Puting', location: 'Kalimantan Tengah', category: 'alam', desc: 'Habitat orangutan terbesar di dunia. Susuri sungai dengan klotok dan saksikan satwa liar di habitat aslinya.', rating: '4.6', price: 'Rp 75.000', x: '45%', y: '55%', color: '#22c55e', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDDuSfqiJRkxODrddf-6RuvSwa01DTHoOUXdRKz2IR0jmKl3N8-UEPriuFB8PXZrIcLuDTsdqF1lYffYUP92PwhvcC8MnPKxJDMsS2QUtab1HMvnBSSy9AVXBCm8CYoTzRWfnPZd1Knj9tbbOnEKiMFndx9rZsXZzKufNUznJMvFwKnEAKzlawa4AljZQVO8K4EeS3i2pbCMSadufRenMCeah9onXIrmig6iiv3zhUVhq37UShohWH8StvAr58umrth1NQiUVOjaYhI' },
-    { id: 8, name: 'Banda Neira', location: 'Maluku', category: 'pantai', desc: 'Kepulauan rempah bersejarah dengan benteng kolonial, pantai jernih, dan snorkeling di laut Banda yang spektakuler.', rating: '4.8', price: 'Rp 25.000', x: '72%', y: '62%', color: '#3b82f6', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCp0a0cSr56zKwoiH0unY6uIn_kWisHe6JKm4pJQNVCtbW0n-2kYvRQApHX_tGWmeoyvXqzvHOmvhhSq80OAxY8BFCFEMAqViU3shvZgYEy_ekJQUGeKGjVfuAD3egeTOJI7lBBspycUFeDnp-_Tg7jVonhEK_EgNfwYUY2pUNBtGEMPqxffwYi4feIkc6B9uHQSMy5hF_1Q0PRFtLfI_e_koAa3TDqZHDzPmME0wSO3Kxsm4xzKW-p1_zH2hpp8FHZk0iGFlv-SqLh' },
-    { id: 9, name: 'Yogyakarta', location: 'DI Yogyakarta', category: 'kota', desc: 'Kota budaya dengan Keraton, Malioboro, kuliner gudeg, dan jarak tempuh singkat ke Borobudur & Prambanan.', rating: '4.8', price: 'Gratis', x: '42%', y: '74%', color: '#f59e0b', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA0jeSakdv6nP10Lx12LKRiQNerivDknx-BZKVNP1-dY2xZ2fhj-s73LMz8DjaQWwYKWxR6FXfwb65BUUHaDgGH1VJN4C2LxAvAUR7OkaoZfZiZ2SInN_5ES0WQdzC5HbausLNI5hpYB9c-QNJyUR4agdXx_73N26Dn_9XI2OW25qKf-gjjzh_584EFA0Vzxvyyx4gW8GUqIwhaAmp6_7LJyGlq6Rru6PMVX-sD4QsGgBZHIwI4aA220TEW_Br8d8CpApYUZvCbzxhz' },
-    { id: 10, name: 'Wakatobi', location: 'Sulawesi Tenggara', category: 'pantai', desc: 'Taman Nasional Laut dengan terumbu karang terluas di dunia. Surga bagi penyelam dan peneliti laut internasional.', rating: '4.9', price: 'Rp 200.000', x: '60%', y: '68%', color: '#3b82f6', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBM3X2wbsMSafomWICPVvP_WNw5zEjW3TBIMDHzByEl0abDkmrorgIc88jNL-v3v7JJF7upMacCUMz0vCkVGUDbGF3S339mQxZCR-wGIZwljTj3JCwK6G9i2OBw8ozhUSa6CQLYPJofJxaED0TmmvlmipRBI2Uh1P7Kp7l334tcqT0Azc3pd432k3TnmZqbNPrCUTXBPRlKmxpK3DIr2ciCYZIxest4-CrAjbI2mc056Rw23DXj_xBzswZPBtz62Q2bCxI-BQ84lKf6' },
+    { id: 1, name: 'Danau Toba', location: 'Sumatera Utara', category: 'alam', desc: 'Danau vulkanik terbesar di dunia dengan Pulau Samosir di tengahnya.', rating: '4.9', price: 'Rp 15.000', lat: 2.6845, lng: 98.8588, img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuABI-jZrAZvVvJvZH6KZBhH8ojB0S_qUfOa3DqgUaYGz6Z-8Av2l7SKksdPxULUMLQ2PPt0tedxQ5UzxZ8uxsWJ4309Ml6QTEqk05VJtG3GCPG67J_9zS8pvI_Z3Jj38w0A9AUBowVvCR6FCfJwoKcb6PZMC9L6sMLHqdxuAwf6sFjbO5p2T6chSgX_xOWisIGvJ9x-hwt82JPV2ErNwDb6h0_ZFsufnN14gPAo_fuMeESUTBYGy6djCPrWniloWLTPdf-xI3S_AdGa' },
+    { id: 2, name: 'Labuan Bajo', location: 'NTT', category: 'pantai', desc: 'Gerbang menuju Taman Nasional Komodo dengan pantai merah muda eksotis.', rating: '5.0', price: 'Rp 150.000', lat: -8.4539, lng: 119.8892, img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDG4EFxcBpgXIgCaq7MmUNfwNpEWPDL3nUlyPfXBMnGRqQpwaJXYW_-W5esyNgXuX2khxDfJDRgLB9wEhAFBlw1VWzurRyB-2oRngkWiMZVKtRh1vrOkSVGzRQMcbBUwdmpAi60PJtaaQLMaWZ_ohe8gd0b3TpcOBrXBp3YOySdBthVFe_PJ3hwPdtfTJiyEk92nuyb3NVXUtIWMPx8nTnu7oSFGVMRDJkMX45F7-ynj3Uy6Q5NIRsdq1e7cI8hybqEnmVtKFdk_5TK' },
+    { id: 3, name: 'Ubud, Bali', location: 'Bali', category: 'kota', desc: 'Jantung seni dan budaya Bali dengan sawah terasering dan pura-pura kuno.', rating: '4.8', price: 'Gratis', lat: -8.5069, lng: 115.2624, img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuArUqDFHdGl6aYFb1l3aFc88-RwLg1EzHYhbsxTjneL2idpROpUoDwZg_JBBETD2rPOAn9OmiG-AqVjpzG_8jDgrX4uRPALNxXgS3kyQl1JOMjvkweDk0Cn7j_RZe5z2kCo4u6E4y-W81me4zYHnEC16lNv8Xu8PQfYb2YXoHIGuaXF3ehoaSU3XZnUoxBdnbd6qU_ppABtBIOiu6QG1Lu089rcRiL2sfL23Gkri_5TmJWIoK2HEnEP91o9kgg4Lu7JmS8NPoJn-1q-' },
+    { id: 4, name: 'Gunung Bromo', location: 'Jawa Timur', category: 'gunung', desc: 'Gunung berapi aktif dengan pemandangan matahari terbit paling spektakuler.', rating: '4.9', price: 'Rp 30.000', lat: -7.9425, lng: 112.953, img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBMGTCFCaDtjpe7yrqfTzA8iN1OmWnIKYRRWrcVY8J7JO_wNsntxW3cVs8kldslW2HSs6RtUMhE2TBuie1gaJjNhoOYUpdaTccsxsZsLHXs318JTqzoKu5riZiYmMILa_dUx62dUp3sP53CtegYCDWM4Cwb4teEXBOXXqObHLQ9u8kmY9EJP5Ru_H_S_V6BmXHyytMsi6p43rpj4WHLHlsGcYDSpFRSCZp9pM0zhte-TExzwWO8Tgq5JKT-z9CGHMShYOKNg8mqhsZ5' },
+    { id: 5, name: 'Raja Ampat', location: 'Papua Barat', category: 'pantai', desc: 'Surga penyelam dengan keanekaragaman hayati laut tertinggi di planet Bumi.', rating: '5.0', price: 'Rp 500.000', lat: -0.2344, lng: 130.5165, img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCOk7eFXM8Z7djeW87pg0CemNhUYyqvVOTbTru4odSwbuliignpFMApDGhfNKlW6kKyQlCbzJ3ohIoFaRnWWDgvQfazHGAkAjHoSKngL3-wQdr1HcITBwNXh6s5QVGFLqfPkQo7SDDW_mY-6RcScGnPl4Ewr-Vg_6va3QV-h4tnOTTygXWWbXsrbtnnmk6_AzN-1zBFS-khioMRQ3qfwSeVgNhYKSFkLW9kkjlvFAKSOrwFbzI-SYHp13KInW70cdrV_8nUtZOKZ2BQ' },
+    { id: 6, name: 'Gunung Rinjani', location: 'Lombok, NTB', category: 'gunung', desc: 'Gunung berapi tertinggi kedua di Indonesia dengan danau kawah Segara Anak.', rating: '4.7', price: 'Rp 150.000', lat: -8.4112, lng: 116.457, img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC0FVwiBcNLeL0Ect74iuTzIEMu4Ctu1txJ1hjjkUmcO2Lw2UXLQUbNWThHD10DWJvCcTR1n5fYVifSW04RoXkffrHqGsy2KS9Sy3yR4LsP_0QdIUz4km9YOjT2UKU8Sq7Uz37Udu6NYP6wD7F-OQYDl-6YjCnyGW-2vWUBPQWCdFFby1XTW-cd9aPvTftzfXyD3VuHgMoxnt-3ROirBkccx3b6jBCgSYb4aVZxeM92ma5_jqPpGTsXhlMBFtLbsT6pb5S0K_r4Y4Pz' },
+    { id: 7, name: 'Tanjung Puting', location: 'Kalimantan Tengah', category: 'alam', desc: 'Habitat orangutan terbesar di dunia. Susuri sungai dengan klotok.', rating: '4.6', price: 'Rp 75.000', lat: -2.8167, lng: 111.75, img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDDuSfqiJRkxODrddf-6RuvSwa01DTHoOUXdRKz2IR0jmKl3N8-UEPriuFB8PXZrIcLuDTsdqF1lYffYUP92PwhvcC8MnPKxJDMsS2QUtab1HMvnBSSy9AVXBCm8CYoTzRWfnPZd1Knj9tbbOnEKiMFndx9rZsXZzKufNUznJMvFwKnEAKzlawa4AljZQVO8K4EeS3i2pbCMSadufRenMCeah9onXIrmig6iiv3zhUVhq37UShohWH8StvAr58umrth1NQiUVOjaYhI' },
+    { id: 8, name: 'Banda Neira', location: 'Maluku', category: 'pantai', desc: 'Kepulauan rempah bersejarah dengan benteng kolonial dan laut jernih.', rating: '4.8', price: 'Rp 25.000', lat: -4.525, lng: 129.8953, img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCp0a0cSr56zKwoiH0unY6uIn_kWisHe6JKm4pJQNVCtbW0n-2kYvRQApHX_tGWmeoyvXqzvHOmvhhSq80OAxY8BFCFEMAqViU3shvZgYEy_ekJQUGeKGjVfuAD3egeTOJI7lBBspycUFeDnp-_Tg7jVonhEK_EgNfwYUY2pUNBtGEMPqxffwYi4feIkc6B9uHQSMy5hF_1Q0PRFtLfI_e_koAa3TDqZHDzPmME0wSO3Kxsm4xzKW-p1_zH2hpp8FHZk0iGFlv-SqLh' },
+    { id: 9, name: 'Yogyakarta', location: 'DI Yogyakarta', category: 'kota', desc: 'Kota budaya dengan Keraton, Malioboro, kuliner gudeg legendaris.', rating: '4.8', price: 'Gratis', lat: -7.7956, lng: 110.3695, img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA0jeSakdv6nP10Lx12LKRiQNerivDknx-BZKVNP1-dY2xZ2fhj-s73LMz8DjaQWwYKWxR6FXfwb65BUUHaDgGH1VJN4C2LxAvAUR7OkaoZfZiZ2SInN_5ES0WQdzC5HbausLNI5hpYB9c-QNJyUR4agdXx_73N26Dn_9XI2OW25qKf-gjjzh_584EFA0Vzxvyyx4gW8GUqIwhaAmp6_7LJyGlq6Rru6PMVX-sD4QsGgBZHIwI4aA220TEW_Br8d8CpApYUZvCbzxhz' },
+    { id: 10, name: 'Wakatobi', location: 'Sulawesi Tenggara', category: 'pantai', desc: 'Taman Nasional Laut dengan terumbu karang terluas di dunia.', rating: '4.9', price: 'Rp 200.000', lat: -5.25, lng: 123.6, img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBM3X2wbsMSafomWICPVvP_WNw5zEjW3TBIMDHzByEl0abDkmrorgIc88jNL-v3v7JJF7upMacCUMz0vCkVGUDbGF3S339mQxZCR-wGIZwljTj3JCwK6G9i2OBw8ozhUSa6CQLYPJofJxaED0TmmvlmipRBI2Uh1P7Kp7l334tcqT0Azc3pd432k3TnmZqbNPrCUTXBPRlKmxpK3DIr2ciCYZIxest4-CrAjbI2mc056Rw23DXj_xBzswZPBtz62Q2bCxI-BQ84lKf6' },
 ];
 
-const CATEGORY_COLORS = { alam: '#22c55e', pantai: '#3b82f6', kota: '#f59e0b', gunung: '#ef4444' };
+/* Leaflet Map - client-side only */
+function LeafletMap({ destinations, activeSite, setActiveSite }) {
+    const [MapComponents, setMapComponents] = useState(null);
+
+    useEffect(() => {
+        Promise.all([
+            import('leaflet'),
+            import('react-leaflet'),
+        ]).then(([L, RL]) => {
+            delete L.default.Icon.Default.prototype._getIconUrl;
+            L.default.Icon.Default.mergeOptions({
+                iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+                iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+                shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+            });
+            setMapComponents({ L: L.default, ...RL });
+        });
+    }, []);
+
+    if (!MapComponents) {
+        return (
+            <div className="w-full h-[500px] bg-slate-900 rounded-2xl flex items-center justify-center">
+                <div className="text-center">
+                    <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                    <p className="text-slate-400 text-sm font-medium">Memuat peta wisata...</p>
+                </div>
+            </div>
+        );
+    }
+
+    const { MapContainer, TileLayer, Marker, Popup } = MapComponents;
+
+    const makeIcon = (color, isActive) => {
+        return MapComponents.L.divIcon({
+            className: 'custom-marker',
+            html: `<div style="
+                width: ${isActive ? '20px' : '14px'};
+                height: ${isActive ? '20px' : '14px'};
+                background: ${color};
+                border: 3px solid ${isActive ? '#fff' : color + '80'};
+                border-radius: 50%;
+                box-shadow: 0 0 ${isActive ? '20px' : '10px'} ${color}80, 0 0 40px ${color}30;
+                transition: all 0.3s ease;
+            "></div>`,
+            iconSize: [isActive ? 20 : 14, isActive ? 20 : 14],
+            iconAnchor: [isActive ? 10 : 7, isActive ? 10 : 7],
+        });
+    };
+
+    return (
+        <MapContainer
+            center={[-2.5, 118]}
+            zoom={5}
+            scrollWheelZoom={true}
+            className="w-full h-[500px] rounded-2xl z-0"
+            style={{ background: '#0f172a' }}
+        >
+            <TileLayer
+                attribution='&copy; <a href="https://carto.com/">CARTO</a>'
+                url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+            />
+            {destinations.map((d) => (
+                <Marker
+                    key={d.id}
+                    position={[d.lat, d.lng]}
+                    icon={makeIcon(CAT_COLORS[d.category], activeSite === d.id)}
+                    eventHandlers={{
+                        click: () => setActiveSite(activeSite === d.id ? null : d.id),
+                    }}
+                >
+                    <Popup className="custom-popup">
+                        <div style={{ minWidth: '220px' }}>
+                            <img src={d.img} alt={d.name} style={{ width: '100%', height: '120px', objectFit: 'cover', borderRadius: '8px', marginBottom: '8px' }} />
+                            <h3 style={{ margin: '0 0 4px', fontWeight: 800, fontSize: '14px' }}>{d.name}</h3>
+                            <p style={{ margin: '0 0 4px', color: '#368ce2', fontSize: '11px', fontWeight: 600 }}>{d.location}</p>
+                            <p style={{ margin: '0 0 8px', color: '#64748b', fontSize: '11px', lineHeight: 1.5 }}>{d.desc}</p>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <span style={{ fontWeight: 800, fontSize: '14px', color: '#0f172a' }}>{d.price}</span>
+                                <span style={{ color: '#f59e0b', fontWeight: 700, fontSize: '12px' }}>★ {d.rating}</span>
+                            </div>
+                        </div>
+                    </Popup>
+                </Marker>
+            ))}
+        </MapContainer>
+    );
+}
 
 export default function PetaWisata() {
     const [activeSite, setActiveSite] = useState(null);
-    const [hoveredSite, setHoveredSite] = useState(null);
     const [activeFilter, setActiveFilter] = useState('semua');
 
     const selected = DESTINATIONS.find((s) => s.id === activeSite);
@@ -47,6 +134,14 @@ export default function PetaWisata() {
     return (
         <div className="relative flex min-h-screen flex-col overflow-x-hidden bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-300 transition-colors duration-300 antialiased">
             <Head title="Peta Wisata | Nusantara Digital City" />
+            <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+            <style>{`
+                .custom-marker { background: none !important; border: none !important; }
+                .leaflet-popup-content-wrapper { border-radius: 12px !important; padding: 0 !important; overflow: hidden; }
+                .leaflet-popup-content { margin: 12px !important; }
+                .leaflet-popup-tip { background: #fff !important; }
+                .leaflet-container { font-family: 'Inter', sans-serif !important; }
+            `}</style>
             <Navbar />
 
             <main className="flex-grow">
@@ -68,7 +163,7 @@ export default function PetaWisata() {
                     </motion.div>
                 </section>
 
-                {/* ── Category Filter ── */}
+                {/* ── Filter ── */}
                 <section className="container mx-auto px-4 lg:px-10 pb-6">
                     <div className="flex flex-wrap gap-3 justify-center">
                         {CATEGORIES.map((cat) => (
@@ -89,11 +184,11 @@ export default function PetaWisata() {
                     </div>
                 </section>
 
-                {/* ── Interactive Map ── */}
+                {/* ── Leaflet Map ── */}
                 <section className="container mx-auto px-4 lg:px-10 py-6">
-                    <motion.div initial={{ opacity: 0, scale: 0.96 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="relative bg-slate-900 rounded-3xl overflow-hidden shadow-2xl border border-slate-800">
-                        {/* Header Bar */}
-                        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-900/80 backdrop-blur-md">
+                    <motion.div initial={{ opacity: 0, scale: 0.96 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="bg-slate-900 rounded-3xl overflow-hidden shadow-2xl border border-slate-800">
+                        {/* Header */}
+                        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800">
                             <div className="flex items-center gap-3">
                                 <div className="size-3 bg-green-500 rounded-full animate-pulse"></div>
                                 <span className="text-sm font-bold text-slate-300">Peta Wisata — Live Tracking</span>
@@ -106,79 +201,12 @@ export default function PetaWisata() {
                                 <span className="flex items-center gap-1"><span className="material-symbols-outlined text-primary text-sm">satellite_alt</span> {filtered.length} destinasi</span>
                             </div>
                         </div>
-
                         {/* Map */}
-                        <div className="relative w-full" style={{ paddingBottom: '50%' }}>
-                            {/* Grid */}
-                            <div className="absolute inset-0">
-                                <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 39px, #368ce2 39px, #368ce2 40px), repeating-linear-gradient(90deg, transparent, transparent 39px, #368ce2 39px, #368ce2 40px)' }}></div>
-                                <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_50%_60%,_rgba(54,140,226,0.08),transparent)]"></div>
-                            </div>
-
-                            {/* Corner labels */}
-                            <div className="absolute top-4 left-6 text-[10px] text-slate-600 font-mono uppercase tracking-widest">Sabang • 95.3° E</div>
-                            <div className="absolute top-4 right-6 text-[10px] text-slate-600 font-mono uppercase tracking-widest text-right">Merauke • 141.0° E</div>
-                            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-[10px] text-slate-700 font-mono uppercase tracking-widest">Nusantara Tourism Map v2.0</div>
-
-                            {/* Animated arcs */}
-                            <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 1000 500" fill="none">
-                                <motion.path d="M 200 200 Q 330 130 450 360" stroke="#368ce2" strokeWidth="0.5" strokeDasharray="4 4" opacity="0.15" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 3, delay: 0.5 }} />
-                                <motion.path d="M 450 360 Q 490 320 520 400" stroke="#368ce2" strokeWidth="0.5" strokeDasharray="4 4" opacity="0.15" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 3, delay: 1 }} />
-                                <motion.path d="M 520 400 Q 600 350 600 340" stroke="#368ce2" strokeWidth="0.5" strokeDasharray="4 4" opacity="0.15" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 3, delay: 1.5 }} />
-                                <motion.path d="M 600 340 Q 750 250 860 260" stroke="#368ce2" strokeWidth="0.5" strokeDasharray="4 4" opacity="0.15" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 3, delay: 2 }} />
-                                <motion.path d="M 450 275 Q 500 250 470 390" stroke="#368ce2" strokeWidth="0.5" strokeDasharray="4 4" opacity="0.15" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 3, delay: 2.5 }} />
-                            </svg>
-
-                            {/* Markers */}
-                            <AnimatePresence>
-                                {filtered.map((site, i) => (
-                                    <motion.button
-                                        key={site.id}
-                                        initial={{ scale: 0, opacity: 0 }}
-                                        animate={{ scale: 1, opacity: 1 }}
-                                        exit={{ scale: 0, opacity: 0 }}
-                                        transition={{ delay: 0.15 + i * 0.08, type: 'spring', stiffness: 250 }}
-                                        onClick={() => setActiveSite(activeSite === site.id ? null : site.id)}
-                                        onMouseEnter={() => setHoveredSite(site.id)}
-                                        onMouseLeave={() => setHoveredSite(null)}
-                                        className="absolute z-10 -translate-x-1/2 -translate-y-1/2 group"
-                                        style={{ left: site.x, top: site.y }}
-                                    >
-                                        {/* Pulse */}
-                                        <span className="absolute inset-0 rounded-full animate-ping" style={{ backgroundColor: `${site.color}33`, animationDuration: '2.5s' }}></span>
-                                        {/* Outer glow */}
-                                        <span className={`absolute -inset-3 rounded-full transition-all duration-300 ${activeSite === site.id ? 'scale-100 opacity-100' : 'scale-0 opacity-0 group-hover:scale-100 group-hover:opacity-100'}`} style={{ backgroundColor: `${site.color}20` }}></span>
-                                        {/* Dot */}
-                                        <span className={`relative block size-4 rounded-full border-2 transition-all duration-300 shadow-lg ${activeSite === site.id ? 'scale-[1.3]' : 'group-hover:scale-110'}`} style={{ backgroundColor: site.color, borderColor: activeSite === site.id ? '#fff' : `${site.color}80`, boxShadow: `0 0 12px ${site.color}50` }}></span>
-
-                                        {/* Tooltip */}
-                                        <AnimatePresence>
-                                            {(hoveredSite === site.id || activeSite === site.id) && (
-                                                <motion.div
-                                                    initial={{ opacity: 0, y: 8, scale: 0.9 }}
-                                                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                                                    exit={{ opacity: 0, y: 8, scale: 0.9 }}
-                                                    className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 whitespace-nowrap bg-slate-800/95 backdrop-blur-md text-white text-[11px] font-bold px-3 py-2 rounded-lg shadow-xl border border-slate-700 pointer-events-none"
-                                                >
-                                                    <div className="flex items-center gap-2">
-                                                        <span className="size-2 rounded-full" style={{ backgroundColor: site.color }}></span>
-                                                        {site.name}
-                                                        <span className="text-yellow-500 flex items-center gap-0.5 text-[10px]">★ {site.rating}</span>
-                                                    </div>
-                                                    <div className="text-[9px] text-slate-400 mt-0.5">{site.location} · {site.price}</div>
-                                                    <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800/95"></div>
-                                                </motion.div>
-                                            )}
-                                        </AnimatePresence>
-                                    </motion.button>
-                                ))}
-                            </AnimatePresence>
-                        </div>
-
+                        <LeafletMap destinations={filtered} activeSite={activeSite} setActiveSite={setActiveSite} />
                         {/* Footer */}
-                        <div className="px-6 py-3 border-t border-slate-800 flex flex-wrap items-center gap-4 text-[10px] text-slate-500 font-mono uppercase tracking-wider">
+                        <div className="px-6 py-3 border-t border-slate-800 flex items-center gap-4 text-[10px] text-slate-500 font-mono uppercase tracking-wider">
                             <span className="flex items-center gap-1.5"><span className="size-2 bg-primary rounded-full"></span> Klik marker untuk detail</span>
-                            <span className="ml-auto hidden md:inline text-slate-600">Koordinat: 6.2° S, 106.8° E — 2.5° S, 140.7° E</span>
+                            <span className="ml-auto hidden md:inline text-slate-600">Powered by Leaflet & OpenStreetMap</span>
                         </div>
                     </motion.div>
                 </section>
@@ -202,7 +230,7 @@ export default function PetaWisata() {
                                             <span className="material-symbols-outlined text-yellow-500 text-sm">star</span>
                                             <span className="text-sm font-bold text-white">{selected.rating}</span>
                                         </div>
-                                        <div className="absolute top-4 right-4 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-white" style={{ backgroundColor: `${selected.color}dd` }}>
+                                        <div className="absolute top-4 right-4 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-white" style={{ backgroundColor: `${CAT_COLORS[selected.category]}dd` }}>
                                             {selected.category}
                                         </div>
                                     </div>
@@ -245,7 +273,7 @@ export default function PetaWisata() {
                                 key={d.id}
                                 variants={fadeIn}
                                 whileHover={{ y: -6 }}
-                                onClick={() => { setActiveSite(d.id); window.scrollTo({ top: 300, behavior: 'smooth' }); }}
+                                onClick={() => { setActiveSite(d.id); window.scrollTo({ top: 500, behavior: 'smooth' }); }}
                                 className={`text-left rounded-2xl border overflow-hidden transition-all group ${
                                     activeSite === d.id
                                         ? 'border-primary shadow-lg shadow-primary/10'
@@ -257,7 +285,7 @@ export default function PetaWisata() {
                                     <div className="absolute top-2 right-2 bg-slate-900/70 backdrop-blur-sm px-1.5 py-0.5 rounded text-[9px] font-bold text-white flex items-center gap-0.5">
                                         <span className="text-yellow-500">★</span> {d.rating}
                                     </div>
-                                    <div className="absolute bottom-2 left-2 size-2 rounded-full" style={{ backgroundColor: d.color }}></div>
+                                    <div className="absolute bottom-2 left-2 size-2 rounded-full" style={{ backgroundColor: CAT_COLORS[d.category] }}></div>
                                 </div>
                                 <div className="p-3">
                                     <h4 className={`font-bold text-sm truncate transition-colors ${activeSite === d.id ? 'text-primary' : 'text-slate-900 dark:text-slate-100 group-hover:text-primary'}`}>{d.name}</h4>
@@ -271,7 +299,7 @@ export default function PetaWisata() {
                     </motion.div>
                 </section>
 
-                {/* ── Back CTA ── */}
+                {/* ── Back ── */}
                 <section className="container mx-auto px-4 lg:px-10 pb-16 text-center">
                     <Link href="/wisata">
                         <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="px-8 py-4 bg-primary text-white rounded-xl font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-colors inline-flex items-center gap-2">
