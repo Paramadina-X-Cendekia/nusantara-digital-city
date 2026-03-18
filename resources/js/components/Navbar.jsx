@@ -9,7 +9,7 @@ export default function Navbar() {
         { label: 'Beranda', href: '/' },
         { label: 'Budaya', href: '/budaya' },
         { label: 'Wisata', href: '/wisata' },
-        { label: 'Kontak', href: '/kontak' },
+        { label: 'FAQ', href: '/faq' },
     ];
 
     return (
