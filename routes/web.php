@@ -41,3 +41,7 @@ Route::get('/kontribusi-seni', function () {
 Route::get('/peta-warisan', function () {
     return Inertia::render('PetaWarisan');
 })->name('peta-warisan');
+
+Route::get('/peta-wisata', function () {
+    return Inertia::render('PetaWisata');
+})->name('peta-wisata');

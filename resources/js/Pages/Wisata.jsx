@@ -270,10 +270,12 @@ export default function Wisata() {
                                         Jembatan digital yang memudahkan wisatawan domestik dan mancanegara menemukan rute terbaik. Dapatkan rekomendasi destinasi berbasis AI yang sesuai dengan preferensi petualangan Anda.
                                     </p>
                                     <div className="flex flex-wrap gap-4">
-                                        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="bg-primary text-white px-8 py-4 rounded-xl font-bold flex items-center justify-center gap-3 shadow-xl shadow-primary/30 transition-transform">
-                                            <span className="material-symbols-outlined">map</span>
-                                            Buka Peta Wisata
-                                        </motion.button>
+                                        <Link href="/peta-wisata">
+                                            <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="bg-primary text-white px-8 py-4 rounded-xl font-bold flex items-center justify-center gap-3 shadow-xl shadow-primary/30 transition-transform">
+                                                <span className="material-symbols-outlined">map</span>
+                                                Buka Peta Wisata
+                                            </motion.button>
+                                        </Link>
                                         <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-8 py-4 rounded-xl font-bold hover:bg-white/20 transition-all">
                                             Unduh Panduan PDF
                                         </motion.button>
