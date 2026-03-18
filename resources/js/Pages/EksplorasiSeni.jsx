@@ -22,12 +22,12 @@ const CATEGORIES = [
 ];
 
 const ARTWORKS = [
-    { id: 1, title: 'Batik Parang Rusak', category: 'batik', origin: 'Yogyakarta', desc: 'Motif tertua yang melambangkan kekuatan dan keteguhan hati para kesatria Jawa.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDDuSfqiJRkxODrddf-6RuvSwa01DTHoOUXdRKz2IR0jmKl3N8-UEPriuFB8PXZrIcLuDTsdqF1lYffYUP92PwhvcC8MnPKxJDMsS2QUtab1HMvnBSSy9AVXBCm8CYoTzRWfnPZd1Knj9tbbOnEKiMFndx9rZsXZzKufNUznJMvFwKnEAKzlawa4AljZQVO8K4EeS3i2pbCMSadufRenMCeah9onXIrmig6iiv3zhUVhq37UShohWH8StvAr58umrth1NQiUVOjaYhI', status: 'UNESCO' },
-    { id: 2, title: 'Gamelan Jawa', category: 'gamelan', origin: 'Jawa Tengah', desc: 'Ansambel musik tradisional yang menghasilkan harmoni magis dari perpaduan instrumen perunggu.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC0FVwiBcNLeL0Ect74iuTzIEMu4Ctu1txJ1hjjkUmcO2Lw2UXLQUbNWThHD10DWJvCcTR1n5fYVifSW04RoXkffrHqGsy2KS9Sy3yR4LsP_0QdIUz4km9YOjT2UKU8Sq7Uz37Udu6NYP6wD7F-OQYDl-6YjCnyGW-2vWUBPQWCdFFby1XTW-cd9aPvTftzfXyD3VuHgMoxnt-3ROirBkccx3b6jBCgSYb4aVZxeM92ma5_jqPpGTsXhlMBFtLbsT6pb5S0K_r4Y4Pz', status: 'UNESCO' },
-    { id: 3, title: 'Tari Kecak', category: 'tari', origin: 'Bali', desc: 'Pertunjukan tari sakral dengan iringan vokal ratusan penari yang menggambarkan kisah epik Ramayana.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBMGTCFCaDtjpe7yrqfTzA8iN1OmWnIKYRRWrcVY8J7JO_wNsntxW3cVs8kldslW2HSs6RtUMhE2TBuie1gaJjNhoOYUpdaTccsxsZsLHXs318JTqzoKu5riZiYmMILa_dUx62dUp3sP53CtegYCDWM4Cwb4teEXBOXXqObHLQ9u8kmY9EJP5Ru_H_S_V6BmXHyytMsi6p43rpj4WHLHlsGcYDSpFRSCZp9pM0zhte-TExzwWO8Tgq5JKT-z9CGHMShYOKNg8mqhsZ5', status: 'Warisan Nasional' },
-    { id: 4, title: 'Batik Mega Mendung', category: 'batik', origin: 'Cirebon', desc: 'Motif awan bergelombang yang menggambarkan kesabaran dan ketenangan menghadapi badai kehidupan.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAmVGjpiFKZjpI9BwjsM25QvGWbekbZZ0uAitz_OxH8eFMPXgLtyuvuBHw4YeSgiMDqAAoSO4-cHz7qPYCnx1ngM48nlYWaDIT337z0MQSivXiihgtXu53w-7wna96oRGl_XdwKbO6yFtw5lCpSqcf3X51Ume3CV_uoc-w0FJhmHiJiztUe0SmD5RYqFLgvj5USl_s0V4vzULjTzl1TvoPZEiY0YMpkCqb_UGiBxMnKt_zqiM0KNJMGL9l6YfqINBvgZ_8HVhnYLt37', status: 'UNESCO' },
-    { id: 5, title: 'Tari Saman', category: 'tari', origin: 'Aceh', desc: 'Tarian seribu tangan yang menampilkan sinkronisasi sempurna gerakan harmonis para penari.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA0jeSakdv6nP10Lx12LKRiQNerivDknx-BZKVNP1-dY2xZ2fhj-s73LMz8DjaQWwYKWxR6FXfwb65BUUHaDgGH1VJN4C2LxAvAUR7OkaoZfZiZ2SInN_5ES0WQdzC5HbausLNI5hpYB9c-QNJyUR4agdXx_73N26Dn_9XI2OW25qKf-gjjzh_584EFA0Vzxvyyx4gW8GUqIwhaAmp6_7LJyGlq6Rru6PMVX-sD4QsGgBZHIwI4aA220TEW_Br8d8CpApYUZvCbzxhz', status: 'UNESCO' },
-    { id: 6, title: 'Ukiran Jepara', category: 'ukir', origin: 'Jawa Tengah', desc: 'Seni ukir kayu berusia ratusan tahun yang menjadi kebanggaan pengrajin dan diekspor ke mancanegara.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCp0a0cSr56zKwoiH0unY6uIn_kWisHe6JKm4pJQNVCtbW0n-2kYvRQApHX_tGWmeoyvXqzvHOmvhhSq80OAxY8BFCFEMAqViU3shvZgYEy_ekJQUGeKGjVfuAD3egeTOJI7lBBspycUFeDnp-_Tg7jVonhEK_EgNfwYUY2pUNBtGEMPqxffwYi4feIkc6B9uHQSMy5hF_1Q0PRFtLfI_e_koAa3TDqZHDzPmME0wSO3Kxsm4xzKW-p1_zH2hpp8FHZk0iGFlv-SqLh', status: 'Warisan Nasional' },
+    { id: 1, slug: 'batik-parang-rusak', title: 'Batik Parang Rusak', category: 'batik', origin: 'Yogyakarta', desc: 'Motif tertua yang melambangkan kekuatan dan keteguhan hati para kesatria Jawa.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDDuSfqiJRkxODrddf-6RuvSwa01DTHoOUXdRKz2IR0jmKl3N8-UEPriuFB8PXZrIcLuDTsdqF1lYffYUP92PwhvcC8MnPKxJDMsS2QUtab1HMvnBSSy9AVXBCm8CYoTzRWfnPZd1Knj9tbbOnEKiMFndx9rZsXZzKufNUznJMvFwKnEAKzlawa4AljZQVO8K4EeS3i2pbCMSadufRenMCeah9onXIrmig6iiv3zhUVhq37UShohWH8StvAr58umrth1NQiUVOjaYhI', status: 'UNESCO' },
+    { id: 2, slug: 'gamelan-jawa', title: 'Gamelan Jawa', category: 'gamelan', origin: 'Jawa Tengah', desc: 'Ansambel musik tradisional yang menghasilkan harmoni magis dari perpaduan instrumen perunggu.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC0FVwiBcNLeL0Ect74iuTzIEMu4Ctu1txJ1hjjkUmcO2Lw2UXLQUbNWThHD10DWJvCcTR1n5fYVifSW04RoXkffrHqGsy2KS9Sy3yR4LsP_0QdIUz4km9YOjT2UKU8Sq7Uz37Udu6NYP6wD7F-OQYDl-6YjCnyGW-2vWUBPQWCdFFby1XTW-cd9aPvTftzfXyD3VuHgMoxnt-3ROirBkccx3b6jBCgSYb4aVZxeM92ma5_jqPpGTsXhlMBFtLbsT6pb5S0K_r4Y4Pz', status: 'UNESCO' },
+    { id: 3, slug: 'tari-kecak', title: 'Tari Kecak', category: 'tari', origin: 'Bali', desc: 'Pertunjukan tari sakral dengan iringan vokal ratusan penari yang menggambarkan kisah epik Ramayana.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBMGTCFCaDtjpe7yrqfTzA8iN1OmWnIKYRRWrcVY8J7JO_wNsntxW3cVs8kldslW2HSs6RtUMhE2TBuie1gaJjNhoOYUpdaTccsxsZsLHXs318JTqzoKu5riZiYmMILa_dUx62dUp3sP53CtegYCDWM4Cwb4teEXBOXXqObHLQ9u8kmY9EJP5Ru_H_S_V6BmXHyytMsi6p43rpj4WHLHlsGcYDSpFRSCZp9pM0zhte-TExzwWO8Tgq5JKT-z9CGHMShYOKNg8mqhsZ5', status: 'Warisan Nasional' },
+    { id: 4, slug: 'batik-mega-mendung', title: 'Batik Mega Mendung', category: 'batik', origin: 'Cirebon', desc: 'Motif awan bergelombang yang menggambarkan kesabaran dan ketenangan menghadapi badai kehidupan.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAmVGjpiFKZjpI9BwjsM25QvGWbekbZZ0uAitz_OxH8eFMPXgLtyuvuBHw4YeSgiMDqAAoSO4-cHz7qPYCnx1ngM48nlYWaDIT337z0MQSivXiihgtXu53w-7wna96oRGl_XdwKbO6yFtw5lCpSqcf3X51Ume3CV_uoc-w0FJhmHiJiztUe0SmD5RYqFLgvj5USl_s0V4vzULjTzl1TvoPZEiY0YMpkCqb_UGiBxMnKt_zqiM0KNJMGL9l6YfqINBvgZ_8HVhnYLt37', status: 'UNESCO' },
+    { id: 5, slug: 'tari-saman', title: 'Tari Saman', category: 'tari', origin: 'Aceh', desc: 'Tarian seribu tangan yang menampilkan sinkronisasi sempurna gerakan harmonis para penari.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA0jeSakdv6nP10Lx12LKRiQNerivDknx-BZKVNP1-dY2xZ2fhj-s73LMz8DjaQWwYKWxR6FXfwb65BUUHaDgGH1VJN4C2LxAvAUR7OkaoZfZiZ2SInN_5ES0WQdzC5HbausLNI5hpYB9c-QNJyUR4agdXx_73N26Dn_9XI2OW25qKf-gjjzh_584EFA0Vzxvyyx4gW8GUqIwhaAmp6_7LJyGlq6Rru6PMVX-sD4QsGgBZHIwI4aA220TEW_Br8d8CpApYUZvCbzxhz', status: 'UNESCO' },
+    { id: 6, slug: 'ukiran-jepara', title: 'Ukiran Jepara', category: 'ukir', origin: 'Jawa Tengah', desc: 'Seni ukir kayu berusia ratusan tahun yang menjadi kebanggaan pengrajin dan diekspor ke mancanegara.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCp0a0cSr56zKwoiH0unY6uIn_kWisHe6JKm4pJQNVCtbW0n-2kYvRQApHX_tGWmeoyvXqzvHOmvhhSq80OAxY8BFCFEMAqViU3shvZgYEy_ekJQUGeKGjVfuAD3egeTOJI7lBBspycUFeDnp-_Tg7jVonhEK_EgNfwYUY2pUNBtGEMPqxffwYi4feIkc6B9uHQSMy5hF_1Q0PRFtLfI_e_koAa3TDqZHDzPmME0wSO3Kxsm4xzKW-p1_zH2hpp8FHZk0iGFlv-SqLh', status: 'Warisan Nasional' },
 ];
 
 const FEATURES = [
@@ -113,32 +113,33 @@ export default function EksplorasiSeni() {
                             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
                         >
                             {filtered.map((art) => (
-                                <motion.div
-                                    key={art.id}
-                                    variants={fadeIn}
-                                    whileHover={{ y: -8 }}
-                                    className="group bg-white dark:bg-surface-dark rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all border border-slate-200 dark:border-slate-800"
-                                >
-                                    <div className="h-56 overflow-hidden relative">
-                                        <img className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={art.title} src={art.img} />
-                                        <div className="absolute top-4 left-4 bg-primary/90 backdrop-blur-md text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
-                                            {art.status}
+                                <Link key={art.id} href={`/eksplorasi-seni/${art.slug}`}>
+                                    <motion.div
+                                        variants={fadeIn}
+                                        whileHover={{ y: -8 }}
+                                        className="group bg-white dark:bg-surface-dark rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all border border-slate-200 dark:border-slate-800 cursor-pointer h-full"
+                                    >
+                                        <div className="h-56 overflow-hidden relative">
+                                            <img className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={art.title} src={art.img} />
+                                            <div className="absolute top-4 left-4 bg-primary/90 backdrop-blur-md text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                                                {art.status}
+                                            </div>
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
+                                                <span className="text-white text-sm font-bold flex items-center gap-1">
+                                                    <span className="material-symbols-outlined text-lg">visibility</span> Lihat Detail
+                                                </span>
+                                            </div>
                                         </div>
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
-                                            <span className="text-white text-sm font-bold flex items-center gap-1">
-                                                <span className="material-symbols-outlined text-lg">visibility</span> Lihat Detail
-                                            </span>
+                                        <div className="p-6">
+                                            <div className="flex items-center gap-2 text-primary text-xs font-bold mb-2">
+                                                <span className="material-symbols-outlined text-base">location_on</span>
+                                                {art.origin}
+                                            </div>
+                                            <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-2 group-hover:text-primary transition-colors">{art.title}</h3>
+                                            <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed line-clamp-2">{art.desc}</p>
                                         </div>
-                                    </div>
-                                    <div className="p-6">
-                                        <div className="flex items-center gap-2 text-primary text-xs font-bold mb-2">
-                                            <span className="material-symbols-outlined text-base">location_on</span>
-                                            {art.origin}
-                                        </div>
-                                        <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-2 group-hover:text-primary transition-colors">{art.title}</h3>
-                                        <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed line-clamp-2">{art.desc}</p>
-                                    </div>
-                                </motion.div>
+                                    </motion.div>
+                                </Link>
                             ))}
                         </motion.div>
                     </AnimatePresence>

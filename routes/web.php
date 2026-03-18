@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 
 use Inertia\Inertia;
 use App\Http\Controllers\CityController;
+use App\Http\Controllers\SeniController;
 
 Route::get('/', [CityController::class, 'index'])->name('home');
 Route::get('/budaya', function () {
@@ -25,6 +26,8 @@ Route::get('/daftarkan-kota', function () {
 Route::get('/eksplorasi-seni', function () {
     return Inertia::render('EksplorasiSeni');
 })->name('eksplorasi-seni');
+
+Route::get('/eksplorasi-seni/{slug}', [SeniController::class, 'show'])->name('detail-seni');
 
 Route::get('/eksplorasi-kuliner', function () {
     return Inertia::render('EksplorasiKuliner');
