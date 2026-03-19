@@ -12,7 +12,7 @@ export default function Navbar() {
         { label: 'Beranda', href: '/' },
         { label: 'Budaya', href: '/budaya' },
         { label: 'Wisata', href: '/wisata' },
-        { label: 'FAQ', href: '/faq' },
+        { label: 'Kontak', href: '/kontak' },
     ];
 
     const [theme, setTheme] = useState(() => {

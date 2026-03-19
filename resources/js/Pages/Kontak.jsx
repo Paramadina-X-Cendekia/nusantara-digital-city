@@ -13,7 +13,7 @@ const stagger = {
     visible: { opacity: 1, transition: { staggerChildren: 0.15 } }
 };
 
-export default function Faq() {
+export default function Kontak() {
     const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
 
     const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
@@ -27,7 +27,7 @@ export default function Faq() {
 
     return (
         <div className="relative flex min-h-screen flex-col overflow-x-hidden bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-300 transition-colors duration-300 antialiased">
-            <Head title="FAQ | Nusantara Digital City" />
+            <Head title="Kontak | Nusantara Digital City" />
             <Navbar />
 
             <main className="flex-grow">
@@ -41,13 +41,13 @@ export default function Faq() {
                         className="container mx-auto px-4 lg:px-10 text-center"
                     >
                         <motion.div variants={fadeIn} className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider mb-6">
-                            FAQ
+                            KONTAK
                         </motion.div>
                         <motion.h1 variants={fadeIn} className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-6 text-slate-900 dark:text-slate-100">
-                            Pertanyaan yang <span className="text-primary">Sering Diajukan</span>
+                            Hubungi <span className="text-primary">Kami</span>
                         </motion.h1>
                         <motion.p variants={fadeIn} className="max-w-3xl mx-auto text-slate-600 dark:text-slate-400 text-lg md:text-xl leading-relaxed">
-                            halaman atau dokumen berisi kumpulan pertanyaan umum beserta jawaban terkait produk, layanan, atau topik tertentu
+                            Punya pertanyaan, saran, atau ingin berkolaborasi? Tim kami siap mendengarkan aspirasi Anda untuk membangun Nusantara Digital City.
                         </motion.p>
                     </motion.div>
                 </section>
