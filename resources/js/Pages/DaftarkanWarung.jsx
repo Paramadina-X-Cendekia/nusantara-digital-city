@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -13,22 +13,29 @@ const stagger = {
     visible: { opacity: 1, transition: { staggerChildren: 0.12 } }
 };
 
-export default function DaftarkanWarung() {
-    const [form, setForm] = useState({
-        shopName: '', ownerName: '', email: '', phone: '',
-        address: '', city: '', menuCount: '',
-        arMenu: true, traceability: true,
+export default function DaftarkanWarung({ cities = [] }) {
+    const { data, setData, post, processing, reset } = useForm({
+        shopName: '',
+        ownerName: '',
+        email: '',
+        phone: '',
+        address: '',
+        city: '',
+        menuCount: '',
+        digitalMenu: true,
+        businessProfile: true,
     });
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
-        setForm({ ...form, [name]: type === 'checkbox' ? checked : value });
+        setData(name, type === 'checkbox' ? checked : value);
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        // In a real scenario, this would POST to a controller
         alert('Terima kasih! Pendaftaran warung Anda telah kami terima. Tim kami akan segera menghubungi Anda.');
-        setForm({ shopName: '', ownerName: '', email: '', phone: '', address: '', city: '', menuCount: '', arMenu: true, traceability: true });
+        reset();
     };
 
     return (
@@ -51,7 +58,7 @@ export default function DaftarkanWarung() {
                             Daftarkan <span className="text-primary">Warung Anda</span>
                         </motion.h1>
                         <motion.p variants={fadeIn} className="max-w-xl mx-auto text-slate-600 dark:text-slate-400 text-lg leading-relaxed">
-                            Integrasikan Menu AR dan Traceability ke warung Anda agar pelanggan mendapatkan pengalaman kuliner digital terbaik.
+                            Digitalisasikan warung Anda dengan fitur Menu Digital (QR) dan Profil Bisnis Terpadu untuk menjangkau lebih banyak pelanggan di ekosistem Nusantara.
                         </motion.p>
                     </motion.div>
                 </section>
@@ -68,7 +75,7 @@ export default function DaftarkanWarung() {
                                 </div>
                                 <div>
                                     <h2 className="text-xl font-bold">Formulir Pendaftaran Mitra Kuliner</h2>
-                                    <p className="text-white/70 text-sm">Lengkapi data warung Anda untuk mengaktifkan fitur Menu AR &amp; Traceability.</p>
+                                    <p className="text-white/70 text-sm">Lengkapi data warung Anda untuk mengaktifkan fitur Menu Digital &amp; Profil Bisnis.</p>
                                 </div>
                             </div>
                         </div>
@@ -84,20 +91,25 @@ export default function DaftarkanWarung() {
                                 <div className="grid sm:grid-cols-2 gap-5">
                                     <div className="space-y-1.5">
                                         <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Nama Warung *</label>
-                                        <input name="shopName" value={form.shopName} onChange={handleChange} required className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-400" placeholder="Contoh: Warung Bu Darmi" />
+                                        <input name="shopName" value={data.shopName} onChange={handleChange} required className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-400" placeholder="Contoh: Warung Bu Darmi" />
                                     </div>
                                     <div className="space-y-1.5">
-                                        <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Kota *</label>
-                                        <input name="city" value={form.city} onChange={handleChange} required className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-400" placeholder="Contoh: Yogyakarta" />
+                                        <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Kota Terverifikasi *</label>
+                                        <select name="city" value={data.city} onChange={handleChange} required className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-900 dark:text-slate-100 italic">
+                                            <option value="">-- Pilih Kota dari Jaringan --</option>
+                                            {cities.map(city => (
+                                                <option key={city.id} value={city.name}>{city.name}</option>
+                                            ))}
+                                        </select>
                                     </div>
                                 </div>
                                 <div className="space-y-1.5">
                                     <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Alamat Lengkap *</label>
-                                    <input name="address" value={form.address} onChange={handleChange} required className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-400" placeholder="Jl. Malioboro No. 10" />
+                                    <input name="address" value={data.address} onChange={handleChange} required className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-400" placeholder="Jl. Malioboro No. 10" />
                                 </div>
                                 <div className="space-y-1.5">
                                     <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Jumlah Menu</label>
-                                    <input name="menuCount" value={form.menuCount} onChange={handleChange} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-400" placeholder="Contoh: 15" type="number" />
+                                    <input name="menuCount" value={data.menuCount} onChange={handleChange} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-400" placeholder="Contoh: 15" type="number" />
                                 </div>
                             </div>
 
@@ -109,16 +121,16 @@ export default function DaftarkanWarung() {
                                 </div>
                                 <div className="space-y-1.5">
                                     <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Nama Pemilik *</label>
-                                    <input name="ownerName" value={form.ownerName} onChange={handleChange} required className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-400" placeholder="Nama lengkap pemilik" />
+                                    <input name="ownerName" value={data.ownerName} onChange={handleChange} required className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-400" placeholder="Nama lengkap pemilik" />
                                 </div>
                                 <div className="grid sm:grid-cols-2 gap-5">
                                     <div className="space-y-1.5">
                                         <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Email *</label>
-                                        <input name="email" value={form.email} onChange={handleChange} required type="email" className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-400" placeholder="email@contoh.com" />
+                                        <input name="email" value={data.email} onChange={handleChange} required type="email" className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-400" placeholder="email@contoh.com" />
                                     </div>
                                     <div className="space-y-1.5">
                                         <label className="text-sm font-medium text-slate-700 dark:text-slate-300">No. Telepon *</label>
-                                        <input name="phone" value={form.phone} onChange={handleChange} required type="tel" className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-400" placeholder="+62 812 3456 7890" />
+                                        <input name="phone" value={data.phone} onChange={handleChange} required type="tel" className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-400" placeholder="+62 812 3456 7890" />
                                     </div>
                                 </div>
                             </div>
@@ -130,24 +142,24 @@ export default function DaftarkanWarung() {
                                     <h3 className="font-bold text-slate-900 dark:text-slate-100">Fitur yang Diinginkan</h3>
                                 </div>
                                 <div className="grid sm:grid-cols-2 gap-4">
-                                    <label className={`flex items-center gap-4 p-4 rounded-xl border cursor-pointer transition-all ${form.arMenu ? 'border-primary bg-primary/5 dark:bg-primary/10' : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900'}`}>
-                                        <input type="checkbox" name="arMenu" checked={form.arMenu} onChange={handleChange} className="sr-only" />
-                                        <div className={`size-10 rounded-lg flex items-center justify-center shrink-0 transition-colors ${form.arMenu ? 'bg-primary text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-500'}`}>
-                                            <span className="material-symbols-outlined text-xl">view_in_ar</span>
+                                    <label className={`flex items-center gap-4 p-4 rounded-xl border cursor-pointer transition-all ${data.digitalMenu ? 'border-primary bg-primary/5 dark:bg-primary/10' : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900'}`}>
+                                        <input type="checkbox" name="digitalMenu" checked={data.digitalMenu} onChange={handleChange} className="sr-only" />
+                                        <div className={`size-10 rounded-lg flex items-center justify-center shrink-0 transition-colors ${data.digitalMenu ? 'bg-primary text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-500'}`}>
+                                            <span className="material-symbols-outlined text-xl">qr_code_2</span>
                                         </div>
                                         <div>
-                                            <p className="font-bold text-sm text-slate-900 dark:text-slate-100">Menu AR</p>
-                                            <p className="text-xs text-slate-500">Visualisasi 3D hidangan</p>
+                                            <p className="font-bold text-sm text-slate-900 dark:text-slate-100">Menu Digital (QR)</p>
+                                            <p className="text-xs text-slate-500">Menu dapat diakses via QR Code</p>
                                         </div>
                                     </label>
-                                    <label className={`flex items-center gap-4 p-4 rounded-xl border cursor-pointer transition-all ${form.traceability ? 'border-primary bg-primary/5 dark:bg-primary/10' : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900'}`}>
-                                        <input type="checkbox" name="traceability" checked={form.traceability} onChange={handleChange} className="sr-only" />
-                                        <div className={`size-10 rounded-lg flex items-center justify-center shrink-0 transition-colors ${form.traceability ? 'bg-primary text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-500'}`}>
-                                            <span className="material-symbols-outlined text-xl">qr_code_scanner</span>
+                                    <label className={`flex items-center gap-4 p-4 rounded-xl border cursor-pointer transition-all ${data.businessProfile ? 'border-primary bg-primary/5 dark:bg-primary/10' : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900'}`}>
+                                        <input type="checkbox" name="businessProfile" checked={data.businessProfile} onChange={handleChange} className="sr-only" />
+                                        <div className={`size-10 rounded-lg flex items-center justify-center shrink-0 transition-colors ${data.businessProfile ? 'bg-primary text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-500'}`}>
+                                            <span className="material-symbols-outlined text-xl">verified_user</span>
                                         </div>
                                         <div>
-                                            <p className="font-bold text-sm text-slate-900 dark:text-slate-100">Traceability</p>
-                                            <p className="text-xs text-slate-500">Lacak asal bahan via QR</p>
+                                            <p className="font-bold text-sm text-slate-900 dark:text-slate-100">Profil Bisnis Terpadu</p>
+                                            <p className="text-xs text-slate-500">Halaman khusus promosi warung</p>
                                         </div>
                                     </label>
                                 </div>
@@ -159,10 +171,11 @@ export default function DaftarkanWarung() {
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
                                     type="submit"
-                                    className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-2 group shadow-lg shadow-primary/20"
+                                    disabled={processing}
+                                    className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-2 group shadow-lg shadow-primary/20 disabled:opacity-50"
                                 >
                                     <span className="material-symbols-outlined">send</span>
-                                    Kirim Pendaftaran
+                                    {processing ? 'Mengirim...' : 'Kirim Pendaftaran'}
                                     <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
                                 </motion.button>
                                 <div className="text-center">

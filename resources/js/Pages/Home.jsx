@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
-export default function Home() {
+export default function Home({ cities = [] }) {
     const fadeIn = {
         hidden: { opacity: 0, y: 20 },
         visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
@@ -42,10 +42,10 @@ export default function Home() {
                                 className="relative z-10 max-w-3xl space-y-6"
                             >
                                 <motion.h1 variants={fadeIn} className="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-tight tracking-tight drop-shadow-md">
-                                    Setiap Kota <span className="text-primary">Punya Cerita</span>
+                                    Nusantara <span className="text-primary">Digital City</span>
                                 </motion.h1>
                                 <motion.p variants={fadeIn} className="text-base md:text-xl text-slate-200 font-medium leading-relaxed drop-shadow-md">
-                                    Mendigitalisasi kearifan lokal dan potensi setiap sudut Nusantara. Menghubungkan sejarah masa lalu dengan teknologi masa depan untuk dunia yang lebih inklusif.
+                                    Portal informasi, panduan wisata, dan media branding kota masa depan. Mendigitalisasi potensi daerah untuk menghubungkan kearifan lokal dengan dunia.
                                 </motion.p>
                                 <motion.div variants={fadeIn} className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
                                     <motion.button
@@ -80,7 +80,7 @@ export default function Home() {
                         >
                             <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900 dark:text-slate-100">Empat Pilar Digitalisasi</h2>
                             <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl">
-                                Nusantara Digital City hadir sebagai platform kreatif dan informatif untuk mengakselerasi potensi daerah melalui empat peran utama.
+                                Nusantara Digital City hadir sebagai ekosistem untuk menjaga kelestarian budaya dan mendorong kemajuan ekonomi lokal melalui empat pilar utama.
                             </p>
                         </motion.div>
 
@@ -92,10 +92,10 @@ export default function Home() {
                             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
                         >
                             {[
-                                { icon: 'corporate_fare', title: 'Portal Informasi Kota', desc: 'Pusat data terpadu mengenai profil, kebijakan, dan perkembangan terkini setiap kota di Indonesia.' },
-                                { icon: 'explore', title: 'Panduan Wisata Digital', desc: 'Eksplorasi destinasi tersembunyi dengan panduan interaktif berbasis teknologi untuk pengalaman wisata terbaik.' },
-                                { icon: 'campaign', title: 'Media Branding Kota', desc: 'Memperkuat identitas dan citra positif daerah di mata nasional maupun internasional melalui konten kreatif.' },
-                                { icon: 'school', title: 'Sarana Edukasi & Promosi', desc: 'Platform belajar mengenai inovasi perkotaan dan wadah promosi produk unggulan UMKM daerah.' },
+                                { icon: 'history_edu', title: 'Portal Informasi', desc: 'Arsip digital untuk sejarah, budaya, dan potensi daerah agar mudah diakses siapa saja.' },
+                                { icon: 'map', title: 'Panduan Wisata', desc: 'Navigasi digital untuk mengeksplorasi destinasi dan kuliner lokal secara mendalam.' },
+                                { icon: 'storefront', title: 'Media Branding', desc: 'Membangun identitas digital kota yang profesional dan berdaya saing di kancah global.' },
+                                { icon: 'hub', title: 'Edukasi & Promosi', desc: 'Sarana promosi kekayaan daerah bagi turis lokal maupun mancanegara.' },
                             ].map((role) => (
                                 <motion.div key={role.title} variants={fadeIn} whileHover={{ y: -8 }} className="group p-8 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-surface-dark transition-all shadow-sm hover:shadow-xl dark:hover:border-primary/50 cursor-pointer">
                                     <div className="size-14 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-6 transition-transform group-hover:scale-110 group-hover:bg-primary group-hover:text-white">
@@ -154,7 +154,52 @@ export default function Home() {
                     </div>
                 </section>
 
-                {/* CTA Section */}
+                {/* Approved Cities Section */}
+                {cities.length > 0 && (
+                    <section className="py-20 px-4 bg-slate-50 dark:bg-slate-900/50">
+                        <div className="container mx-auto max-w-6xl">
+                            <motion.div
+                                initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeIn}
+                                className="text-center mb-16 space-y-4"
+                            >
+                                <h2 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-slate-100 italic">Jaringan <span className="text-primary">Kota Nusantara</span></h2>
+                                <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto font-medium">
+                                    Selamat datang kepada kota-kota yang baru saja bergabung dalam ekosistem digital kami.
+                                </p>
+                            </motion.div>
+
+                            <motion.div
+                                initial="hidden" whileInView="visible" viewport={{ once: true }} variants={staggerContainer}
+                                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+                            >
+                                {cities.map((city) => (
+                                    <motion.div
+                                        key={city.id}
+                                        variants={fadeIn}
+                                        whileHover={{ y: -10 }}
+                                        className="bg-white dark:bg-surface-dark p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-xl transition-all group"
+                                    >
+                                        <div className="flex items-center justify-between mb-6">
+                                            <div className="size-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors duration-500">
+                                                <span className="material-symbols-outlined text-2xl">location_city</span>
+                                            </div>
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Terverifikasi</span>
+                                        </div>
+                                        <h3 className="text-xl font-black mb-1 group-hover:text-primary transition-colors">{city.name}</h3>
+                                        <p className="text-primary text-xs font-bold mb-4 uppercase tracking-tighter">{city.province}</p>
+                                        <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed line-clamp-3">
+                                            {city.description}
+                                        </p>
+                                        <div className="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-400">
+                                            <span>Populasi: {city.population || '-'}</span>
+                                            <Link href="#" className="font-bold text-primary hover:underline">Lihat Detail</Link>
+                                        </div>
+                                    </motion.div>
+                                ))}
+                            </motion.div>
+                        </div>
+                    </section>
+                )}
                 <section className="py-20 px-4">
                     <div className="container mx-auto max-w-4xl text-center">
                         <motion.div

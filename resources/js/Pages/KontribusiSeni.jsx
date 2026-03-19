@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -21,18 +21,32 @@ const CATEGORIES = [
     { value: 'lainnya', label: 'Lainnya', icon: 'more_horiz' },
 ];
 
-export default function KontribusiSeni() {
-    const [form, setForm] = useState({
-        artName: '', category: 'batik', origin: '', province: '',
-        description: '', contributorName: '', email: '', phone: '',
+export default function KontribusiSeni({ cities = [] }) {
+    const { data, setData, post, processing, reset } = useForm({
+        artName: '',
+        category: 'batik',
+        origin: '',
+        province: '',
+        description: '',
+        contributorName: '',
+        email: '',
+        phone: '',
     });
 
-    const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+    const handleCityChange = (e) => {
+        const city = cities.find(c => c.name === e.target.value);
+        setData({
+            ...data,
+            origin: e.target.value,
+            province: city ? city.province : ''
+        });
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        // In a real scenario, this would POST to a controller
         alert('Terima kasih! Kontribusi karya seni Anda telah kami terima dan akan segera ditinjau oleh tim kurasi.');
-        setForm({ artName: '', category: 'batik', origin: '', province: '', description: '', contributorName: '', email: '', phone: '' });
+        reset();
     };
 
     return (
@@ -88,11 +102,11 @@ export default function KontribusiSeni() {
                                 <div className="grid sm:grid-cols-2 gap-5">
                                     <div className="space-y-1.5">
                                         <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Nama Karya Seni *</label>
-                                        <input name="artName" value={form.artName} onChange={handleChange} required className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-400" placeholder="Contoh: Batik Parang Rusak" />
+                                        <input value={data.artName} onChange={e => setData('artName', e.target.value)} required className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-400" placeholder="Contoh: Batik Parang Rusak" />
                                     </div>
                                     <div className="space-y-1.5">
                                         <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Kategori *</label>
-                                        <select name="category" value={form.category} onChange={handleChange} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-900 dark:text-slate-100">
+                                        <select value={data.category} onChange={e => setData('category', e.target.value)} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-900 dark:text-slate-100">
                                             {CATEGORIES.map((c) => (
                                                 <option key={c.value} value={c.value}>{c.label}</option>
                                             ))}
@@ -101,17 +115,22 @@ export default function KontribusiSeni() {
                                 </div>
                                 <div className="grid sm:grid-cols-2 gap-5">
                                     <div className="space-y-1.5">
-                                        <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Daerah Asal *</label>
-                                        <input name="origin" value={form.origin} onChange={handleChange} required className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-400" placeholder="Contoh: Yogyakarta" />
+                                        <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Pilih Kota Terverifikasi *</label>
+                                        <select value={data.origin} onChange={handleCityChange} required className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-900 dark:text-slate-100 italic">
+                                            <option value="">-- Pilih Kota dari Jaringan --</option>
+                                            {cities.map(city => (
+                                                <option key={city.id} value={city.name}>{city.name}</option>
+                                            ))}
+                                        </select>
                                     </div>
                                     <div className="space-y-1.5">
-                                        <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Provinsi *</label>
-                                        <input name="province" value={form.province} onChange={handleChange} required className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-400" placeholder="Contoh: DI Yogyakarta" />
+                                        <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Provinsi (Otomatis)</label>
+                                        <input value={data.province} readOnly className="w-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-800 rounded-lg p-3 text-sm outline-none text-slate-500 dark:text-slate-400 cursor-not-allowed" placeholder="Akan terisi otomatis" />
                                     </div>
                                 </div>
                                 <div className="space-y-1.5">
                                     <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Deskripsi Karya *</label>
-                                    <textarea name="description" value={form.description} onChange={handleChange} required className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-400 resize-none" rows="4" placeholder="Ceritakan sejarah, makna filosofis, dan keunikan karya seni ini..."></textarea>
+                                    <textarea value={data.description} onChange={e => setData('description', e.target.value)} required className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-400 resize-none" rows="4" placeholder="Ceritakan sejarah, makna filosofis, dan keunikan karya seni ini..."></textarea>
                                 </div>
                             </div>
 
@@ -123,16 +142,16 @@ export default function KontribusiSeni() {
                                 </div>
                                 <div className="space-y-1.5">
                                     <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Nama Lengkap *</label>
-                                    <input name="contributorName" value={form.contributorName} onChange={handleChange} required className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-400" placeholder="Nama kontributor" />
+                                    <input value={data.contributorName} onChange={e => setData('contributorName', e.target.value)} required className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-400" placeholder="Nama kontributor" />
                                 </div>
                                 <div className="grid sm:grid-cols-2 gap-5">
                                     <div className="space-y-1.5">
                                         <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Email *</label>
-                                        <input name="email" value={form.email} onChange={handleChange} required type="email" className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-400" placeholder="email@contoh.com" />
+                                        <input value={data.email} onChange={e => setData('email', e.target.value)} required type="email" className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-400" placeholder="email@contoh.com" />
                                     </div>
                                     <div className="space-y-1.5">
                                         <label className="text-sm font-medium text-slate-700 dark:text-slate-300">No. Telepon *</label>
-                                        <input name="phone" value={form.phone} onChange={handleChange} required type="tel" className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-400" placeholder="+62 812 3456 7890" />
+                                        <input value={data.phone} onChange={e => setData('phone', e.target.value)} required type="tel" className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-400" placeholder="+62 812 3456 7890" />
                                     </div>
                                 </div>
                             </div>
@@ -143,10 +162,11 @@ export default function KontribusiSeni() {
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
                                     type="submit"
-                                    className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-2 group shadow-lg shadow-primary/20"
+                                    disabled={processing}
+                                    className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-2 group shadow-lg shadow-primary/20 disabled:opacity-50"
                                 >
                                     <span className="material-symbols-outlined">send</span>
-                                    Kirim Kontribusi
+                                    {processing ? 'Mengirim...' : 'Kirim Kontribusi'}
                                     <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
                                 </motion.button>
                                 <div className="text-center">

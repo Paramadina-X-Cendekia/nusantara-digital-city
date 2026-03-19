@@ -39,6 +39,11 @@ class SeniController extends Controller
                     'Diakui UNESCO tahun 2009',
                     'Membutuhkan waktu 2-3 minggu per lembar',
                 ],
+                'hotspots' => [
+                    ['x' => 45, 'y' => 45, 'title' => 'Motif Huruf S', 'desc' => 'Melambangkan kesinambungan hidup dan keteguhan hati yang tak pernah putus.'],
+                    ['x' => 60, 'y' => 30, 'title' => 'Garis Mlinjon', 'desc' => 'Simbol kesatriaan dan kewaspadaan dalam setiap langkah tindakan.'],
+                    ['x' => 35, 'y' => 65, 'title' => 'Sudut Lereng 45°', 'desc' => 'Mencerminkan kerendahan hati dan keselarasan dengan alam semesta.'],
+                ],
             ],
             'gamelan-jawa' => [
                 'slug' => 'gamelan-jawa',
@@ -66,6 +71,11 @@ class SeniController extends Controller
                     'Diakui UNESCO sebagai warisan budaya dunia',
                     'Terdiri dari 10-20 instrumen',
                 ],
+                'hotspots' => [
+                    ['x' => 50, 'y' => 20, 'title' => 'Gong Ageng', 'desc' => 'Instrumen paling sakral yang melambangkan titik akhir siklus dan kesempurnaan.'],
+                    ['x' => 35, 'y' => 55, 'title' => 'Wilahan Saron', 'desc' => 'Simbol emosi manusia yang perlu diselaraskan dalam harmoni orkestra.'],
+                    ['x' => 65, 'y' => 55, 'title' => 'Pencon Bonang', 'desc' => 'Mencerminkan pemikiran yang terarah dan kepemimpinan yang bijaksana.'],
+                ],
             ],
             'tari-kecak' => [
                 'slug' => 'tari-kecak',
@@ -75,10 +85,15 @@ class SeniController extends Controller
                 'status' => 'Warisan Nasional',
                 'desc' => 'Pertunjukan tari sakral dengan iringan vokal ratusan penari yang menggambarkan kisah epik Ramayana.',
                 'longDesc' => 'Tari Kecak adalah pertunjukan seni tari khas Bali yang diiringi oleh paduan suara pria yang menyerukan "cak" secara berulang-ulang. Tarian ini menggambarkan cerita Ramayana ketika Rama dibantu oleh pasukan kera pimpinan Hanuman untuk melawan Rahwana. Tari Kecak pertama kali dikembangkan pada tahun 1930-an oleh Wayan Limbak bekerja sama dengan pelukis Jerman Walter Spies. Pertunjukan ini biasanya dibawakan oleh sekitar 50-150 penari pria yang duduk melingkar.',
-                'img' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuBMGTCFCaDtjpe7yrqfTzA8iN1OmWnIKYRRWrcVY8J7JO_wNsntxW3cVs8kldslW2HSs6RtUMhE2TBuie1gaJjNhoOYUpdaTccsxsZsLHXs318JTqzoKu5riZiYmMILa_dUx62dUp3sP53CtegYCDWM4Cwb4teEXBOXXqObHLQ9u8kmY9EJP5Ru_H_S_V6BmXHyytMsi6p43rpj4WHLHlsGcYDSpFRSCZp9pM0zhte-TExzwWO8Tgq5JKT-z9CGHMShYOKNg8mqhsZ5',
+                'img' => '/images/seni/tari-kecak.jpg',
                 'gallery' => [
-                    ['url' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuBMGTCFCaDtjpe7yrqfTzA8iN1OmWnIKYRRWrcVY8J7JO_wNsntxW3cVs8kldslW2HSs6RtUMhE2TBuie1gaJjNhoOYUpdaTccsxsZsLHXs318JTqzoKu5riZiYmMILa_dUx62dUp3sP53CtegYCDWM4Cwb4teEXBOXXqObHLQ9u8kmY9EJP5Ru_H_S_V6BmXHyytMsi6p43rpj4WHLHlsGcYDSpFRSCZp9pM0zhte-TExzwWO8Tgq5JKT-z9CGHMShYOKNg8mqhsZ5', 'caption' => 'Pertunjukan Tari Kecak saat sunset'],
-                    ['url' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuDDuSfqiJRkxODrddf-6RuvSwa01DTHoOUXdRKz2IR0jmKl3N8-UEPriuFB8PXZrIcLuDTsdqF1lYffYUP92PwhvcC8MnPKxJDMsS2QUtab1HMvnBSSy9AVXBCm8CYoTzRWfnPZd1Knj9tbbOnEKiMFndx9rZsXZzKufNUznJMvFwKnEAKzlawa4AljZQVO8K4EeS3i2pbCMSadufRenMCeah9onXIrmig6iiv3zhUVhq37UShohWH8StvAr58umrth1NQiUVOjaYhI', 'caption' => 'Formasi lingkaran penari'],
+                    ['url' => '/images/seni/tari-kecak.jpg', 'caption' => 'Pertunjukan Tari Kecak Legendaris']
+                ],
+                'hotspots' => [
+                    ['x' => 50, 'y' => 65, 'title' => 'Energi Kolektif', 'desc' => 'Lingkaran ratusan penari pria melambangkan persatuan dan energi spiritual yang membangkitkan suasana ritmis.'],
+                    ['x' => 45, 'y' => 25, 'title' => 'Gestur Ritual', 'desc' => 'Tangan terangkat serentak melambangkan doa dan penyerahan diri dalam ritual sakral Sanghyang.'],
+                    ['x' => 25, 'y' => 85, 'title' => 'Kain Poleng', 'desc' => 'Motif kotak hitam-putih melambangkan Rwa Bhineda, keyakinan Bali tentang keseimbangan antara baik dan buruk.'],
+                    ['x' => 50, 'y' => 35, 'title' => 'Tokoh Utama', 'desc' => 'Pemeran dalam kisah epik Ramayana yang mengajarkan tentang keberanian melawan kejahatan.'],
                 ],
                 'hasAudio' => false,
                 'videoUrl' => 'https://www.youtube.com/embed/dQw4w9WgXcQ',
@@ -100,10 +115,14 @@ class SeniController extends Controller
                 'status' => 'UNESCO',
                 'desc' => 'Motif awan bergelombang yang menggambarkan kesabaran dan ketenangan menghadapi badai kehidupan.',
                 'longDesc' => 'Batik Mega Mendung merupakan motif khas daerah Cirebon yang terinspirasi dari bentuk awan mendung. Motif ini memiliki gradasi warna biru yang khas, mencerminkan pengaruh budaya Tiongkok yang kuat di pesisir Cirebon. Setiap lapisan warna pada Mega Mendung memiliki makna filosofis: lapisan terluar melambangkan duniawi, sedangkan lapisan terdalam melambangkan kedekatan dengan Sang Pencipta. Motif ini mengajarkan tentang kesabaran, karena seperti awan mendung yang pasti berlalu, begitu juga masalah dalam kehidupan.',
-                'img' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuAmVGjpiFKZjpI9BwjsM25QvGWbekbZZ0uAitz_OxH8eFMPXgLtyuvuBHw4YeSgiMDqAAoSO4-cHz7qPYCnx1ngM48nlYWaDIT337z0MQSivXiihgtXu53w-7wna96oRGl_XdwKbO6yFtw5lCpSqcf3X51Ume3CV_uoc-w0FJhmHiJiztUe0SmD5RYqFLgvj5USl_s0V4vzULjTzl1TvoPZEiY0YMpkCqb_UGiBxMnKt_zqiM0KNJMGL9l6YfqINBvgZ_8HVhnYLt37',
+                'img' => '/images/batik/mega-mendung.png',
                 'gallery' => [
-                    ['url' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuAmVGjpiFKZjpI9BwjsM25QvGWbekbZZ0uAitz_OxH8eFMPXgLtyuvuBHw4YeSgiMDqAAoSO4-cHz7qPYCnx1ngM48nlYWaDIT337z0MQSivXiihgtXu53w-7wna96oRGl_XdwKbO6yFtw5lCpSqcf3X51Ume3CV_uoc-w0FJhmHiJiztUe0SmD5RYqFLgvj5USl_s0V4vzULjTzl1TvoPZEiY0YMpkCqb_UGiBxMnKt_zqiM0KNJMGL9l6YfqINBvgZ_8HVhnYLt37', 'caption' => 'Motif Mega Mendung klasik'],
-                    ['url' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuC0FVwiBcNLeL0Ect74iuTzIEMu4Ctu1txJ1hjjkUmcO2Lw2UXLQUbNWThHD10DWJvCcTR1n5fYVifSW04RoXkffrHqGsy2KS9Sy3yR4LsP_0QdIUz4km9YOjT2UKU8Sq7Uz37Udu6NYP6wD7F-OQYDl-6YjCnyGW-2vWUBPQWCdFFby1XTW-cd9aPvTftzfXyD3VuHgMoxnt-3ROirBkccx3b6jBCgSYb4aVZxeM92ma5_jqPpGTsXhlMBFtLbsT6pb5S0K_r4Y4Pz', 'caption' => 'Gradasi warna biru Mega Mendung'],
+                    ['url' => '/images/batik/mega-mendung.png', 'caption' => 'Motif Mega Mendung Cirebon (Digitalized)'],
+                ],
+                'hotspots' => [
+                    ['x' => 52, 'y' => 35, 'title' => 'Formasi Awan (Mega)', 'desc' => 'Melambangkan dunia atas yang luas dan transenden, sebagai sumber kehidupan dan rahmat.'],
+                    ['x' => 68, 'y' => 58, 'title' => 'Tujuh Gradasi Biru', 'desc' => 'Mewakili tujuh lapisan langit, melambangkan kedalaman kesabaran manusia yang tak bertepi.'],
+                    ['x' => 35, 'y' => 52, 'title' => 'Garis Lengkung Mengalir', 'desc' => 'Mencerminkan ketegasan dalam kelembutan, perpaduan kearifan lokal dan pengaruh budaya pesisir.'],
                 ],
                 'hasAudio' => false,
                 'videoUrl' => 'https://www.youtube.com/embed/dQw4w9WgXcQ',
@@ -125,10 +144,14 @@ class SeniController extends Controller
                 'status' => 'UNESCO',
                 'desc' => 'Tarian seribu tangan yang menampilkan sinkronisasi sempurna gerakan harmonis para penari.',
                 'longDesc' => 'Tari Saman adalah tarian tradisional suku Gayo dari Aceh yang dikenal sebagai "Tarian Seribu Tangan" karena gerakan tangan yang sangat cepat dan sinkron. Tarian ini dibawakan oleh belasan hingga puluhan penari yang duduk berbaris, dengan gerakan tubuh, tepukan tangan, dan nyanyian yang menyatu secara harmonis. UNESCO mengakui Tari Saman sebagai Warisan Budaya Takbenda Kemanusiaan pada tahun 2011. Tari ini awalnya merupakan media dakwah yang diperkenalkan oleh Syekh Saman pada abad ke-14.',
-                'img' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuA0jeSakdv6nP10Lx12LKRiQNerivDknx-BZKVNP1-dY2xZ2fhj-s73LMz8DjaQWwYKWxR6FXfwb65BUUHaDgGH1VJN4C2LxAvAUR7OkaoZfZiZ2SInN_5ES0WQdzC5HbausLNI5hpYB9c-QNJyUR4agdXx_73N26Dn_9XI2OW25qKf-gjjzh_584EFA0Vzxvyyx4gW8GUqIwhaAmp6_7LJyGlq6Rru6PMVX-sD4QsGgBZHIwI4aA220TEW_Br8d8CpApYUZvCbzxhz',
+                'img' => '/images/seni/tari-saman.jpg',
                 'gallery' => [
-                    ['url' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuA0jeSakdv6nP10Lx12LKRiQNerivDknx-BZKVNP1-dY2xZ2fhj-s73LMz8DjaQWwYKWxR6FXfwb65BUUHaDgGH1VJN4C2LxAvAUR7OkaoZfZiZ2SInN_5ES0WQdzC5HbausLNI5hpYB9c-QNJyUR4agdXx_73N26Dn_9XI2OW25qKf-gjjzh_584EFA0Vzxvyyx4gW8GUqIwhaAmp6_7LJyGlq6Rru6PMVX-sD4QsGgBZHIwI4aA220TEW_Br8d8CpApYUZvCbzxhz', 'caption' => 'Formasi Tari Saman'],
-                    ['url' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuBMGTCFCaDtjpe7yrqfTzA8iN1OmWnIKYRRWrcVY8J7JO_wNsntxW3cVs8kldslW2HSs6RtUMhE2TBuie1gaJjNhoOYUpdaTccsxsZsLHXs318JTqzoKu5riZiYmMILa_dUx62dUp3sP53CtegYCDWM4Cwb4teEXBOXXqObHLQ9u8kmY9EJP5Ru_H_S_V6BmXHyytMsi6p43rpj4WHLHlsGcYDSpFRSCZp9pM0zhte-TExzwWO8Tgq5JKT-z9CGHMShYOKNg8mqhsZ5', 'caption' => 'Gerakan sinkronisasi penari'],
+                    ['url' => '/images/seni/tari-saman.jpg', 'caption' => 'Kecepatan dan Sinkronisasi Tari Saman']
+                ],
+                'hotspots' => [
+                    ['x' => 65, 'y' => 45, 'title' => 'Tangan Terbuka', 'desc' => 'Simbol keterbukaan hati dan keridhaan dalam memanjatkan zikir serta doa kepada Tuhan.'],
+                    ['x' => 45, 'y' => 30, 'title' => 'Motif Kerawang Gayo', 'desc' => 'Identitas budaya dataran tinggi Aceh yang melambangkan kekayaan spiritual suku Gayo.'],
+                    ['x' => 25, 'y' => 65, 'title' => 'Sinkronisasi Baris', 'desc' => 'Melambangkan persaudaraan (ukhuwah) dan kedisiplinan yang menjadi fondasi masyarakat.'],
                 ],
                 'hasAudio' => false,
                 'videoUrl' => 'https://www.youtube.com/embed/dQw4w9WgXcQ',
@@ -141,6 +164,11 @@ class SeniController extends Controller
                     'Dijuluki "Tarian Seribu Tangan"',
                     'Dibawakan oleh penari berjumlah ganjil',
                 ],
+                'hotspots' => [
+                    ['x' => 45, 'y' => 25, 'title' => 'Gerakan Guncang', 'desc' => 'Refleksi dari zikir dan rasa syukur mendalam kepada Sang Pencipta.'],
+                    ['x' => 50, 'y' => 55, 'title' => 'Tepukan Dada', 'desc' => 'Simbol keberanian, disiplin, dan semangat gotong royong yang tinggi.'],
+                    ['x' => 20, 'y' => 55, 'title' => 'Formasi Banjar', 'desc' => 'Menunjukkan nilai persaudaraan (ukhuwah) yang sangat erat antar penari.'],
+                ],
             ],
             'ukiran-jepara' => [
                 'slug' => 'ukiran-jepara',
@@ -150,10 +178,14 @@ class SeniController extends Controller
                 'status' => 'Warisan Nasional',
                 'desc' => 'Seni ukir kayu berusia ratusan tahun yang menjadi kebanggaan pengrajin dan diekspor ke mancanegara.',
                 'longDesc' => 'Ukiran Jepara merupakan seni ukir kayu yang berasal dari Kabupaten Jepara, Jawa Tengah. Seni ini telah berkembang sejak abad ke-16 dan menjadi identitas kota Jepara sebagai "Kota Ukir". Motif ukiran Jepara dikenal dengan kehalusannya yang khas, menggunakan kayu jati sebagai bahan utama. Tokoh paling berpengaruh dalam sejarah ukiran Jepara adalah R.A. Kartini yang turut mempromosikan kerajinan ini ke pasar internasional. Ukiran Jepara mencakup berbagai motif mulai dari flora, fauna, hingga motif geometris.',
-                'img' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuCp0a0cSr56zKwoiH0unY6uIn_kWisHe6JKm4pJQNVCtbW0n-2kYvRQApHX_tGWmeoyvXqzvHOmvhhSq80OAxY8BFCFEMAqViU3shvZgYEy_ekJQUGeKGjVfuAD3egeTOJI7lBBspycUFeDnp-_Tg7jVonhEK_EgNfwYUY2pUNBtGEMPqxffwYi4feIkc6B9uHQSMy5hF_1Q0PRFtLfI_e_koAa3TDqZHDzPmME0wSO3Kxsm4xzKW-p1_zH2hpp8FHZk0iGFlv-SqLh',
+                'img' => '/images/ukiran/ukiran-jepara.jpg',
                 'gallery' => [
-                    ['url' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuCp0a0cSr56zKwoiH0unY6uIn_kWisHe6JKm4pJQNVCtbW0n-2kYvRQApHX_tGWmeoyvXqzvHOmvhhSq80OAxY8BFCFEMAqViU3shvZgYEy_ekJQUGeKGjVfuAD3egeTOJI7lBBspycUFeDnp-_Tg7jVonhEK_EgNfwYUY2pUNBtGEMPqxffwYi4feIkc6B9uHQSMy5hF_1Q0PRFtLfI_e_koAa3TDqZHDzPmME0wSO3Kxsm4xzKW-p1_zH2hpp8FHZk0iGFlv-SqLh', 'caption' => 'Ukiran motif flora Jepara'],
-                    ['url' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuAmVGjpiFKZjpI9BwjsM25QvGWbekbZZ0uAitz_OxH8eFMPXgLtyuvuBHw4YeSgiMDqAAoSO4-cHz7qPYCnx1ngM48nlYWaDIT337z0MQSivXiihgtXu53w-7wna96oRGl_XdwKbO6yFtw5lCpSqcf3X51Ume3CV_uoc-w0FJhmHiJiztUe0SmD5RYqFLgvj5USl_s0V4vzULjTzl1TvoPZEiY0YMpkCqb_UGiBxMnKt_zqiM0KNJMGL9l6YfqINBvgZ_8HVhnYLt37', 'caption' => 'Pengrajin sedang mengukir'],
+                    ['url' => '/images/ukiran/ukiran-jepara.jpg', 'caption' => 'Kehalusan Detail Ukiran Jepara']
+                ],
+                'hotspots' => [
+                    ['x' => 50, 'y' => 65, 'title' => 'Pusat Motif (Vase)', 'desc' => 'Simbol sumber kehidupan dan kemakmuran dalam filosofi masyarakat Jawa.'],
+                    ['x' => 25, 'y' => 45, 'title' => 'Lung-lungan (Sulur)', 'desc' => 'Motif daun yang menjalin melambangkan pertumbuhan harmonis dan persatuan.'],
+                    ['x' => 75, 'y' => 35, 'title' => 'Kedalaman Ukiran', 'desc' => 'Menunjukkan kemahiran teknis pengrajin dalam menciptakan dimensi pada media kayu.'],
                 ],
                 'hasAudio' => false,
                 'videoUrl' => 'https://www.youtube.com/embed/dQw4w9WgXcQ',
@@ -165,6 +197,11 @@ class SeniController extends Controller
                     'R.A. Kartini turut mempromosikan ke dunia',
                     'Menggunakan kayu jati pilihan',
                     'Diekspor ke berbagai negara',
+                ],
+                'hotspots' => [
+                    ['x' => 55, 'y' => 45, 'title' => 'Lung-lungan (Sulur)', 'desc' => 'Melambangkan pertumbuhan yang fleksibel dan kemampuan adaptasi.'],
+                    ['x' => 40, 'y' => 30, 'title' => 'Motif Ulir', 'desc' => 'Simbol keberlanjutan warisan budaya dari generasi ke generasi.'],
+                    ['x' => 50, 'y' => 65, 'title' => 'Teknik Pahat Dalam', 'desc' => 'Menunjukkan ketelitian dan keseriusan dalam menciptakan mahakarya.'],
                 ],
             ],
         ];
@@ -205,5 +242,36 @@ class SeniController extends Controller
         return Inertia::render('DetailSeni', [
             'art' => $art,
         ]);
+    }
+
+    /**
+     * Show contribution form with verified cities.
+     */
+    public function kontribusi()
+    {
+        try {
+            $database = $this->getFirebaseDatabase();
+            $reference = $database->getReference('cities');
+            $snapshot = $reference->getSnapshot();
+            
+            $cities = [];
+            if ($snapshot->hasChildren()) {
+                foreach ($snapshot->getValue() as $key => $value) {
+                    $cities[] = [
+                        'id' => $key,
+                        'name' => $value['name'] ?? 'Unknown',
+                        'province' => $value['province'] ?? '-'
+                    ];
+                }
+            }
+            
+            return Inertia::render('KontribusiSeni', [
+                'cities' => $cities
+            ]);
+        } catch (\Exception $e) {
+            return Inertia::render('KontribusiSeni', [
+                'cities' => []
+            ]);
+        }
     }
 }

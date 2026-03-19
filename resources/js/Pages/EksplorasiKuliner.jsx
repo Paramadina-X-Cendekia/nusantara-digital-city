@@ -14,14 +14,14 @@ const stagger = {
 };
 
 const TABS = [
-    { id: 'ar', label: 'Menu AR', icon: 'view_in_ar' },
-    { id: 'trace', label: 'Traceability', icon: 'qr_code_scanner' },
+    { id: 'menu', label: 'Menu Digital (QR)', icon: 'qr_code_2' },
+    { id: 'story', label: 'Cerita Bahan Lokal', icon: 'history_edu' },
 ];
 
-const AR_DISHES = [
-    { id: 1, name: 'Rendang Padang', origin: 'Sumatera Barat', desc: 'Visualisasi 3D rendang asli dengan detail tekstur santan dan rempah. Putar, zoom, dan lihat dari segala sisi sebelum Anda memesan.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCAv_ltKBeh7xx7xlev2-yXctsKVKFGGhCEFOga2B4xdOAx8Vm7TeDtLJSaLUEyZlHfq2qvwEM7tivFGTHR3c3yKJ2kIOsqdNurIdOP6Hp8CrOqnRTkF0Li4Luj1RAkWiM7Dq1jXQb035bh71T_w5ozHCPtlWYpy_kZI3K4YRyM5zlnMvaxjotFFrZyMpFKiQGK_IMN12il5LH6gf9kTUYeN233QEYkfIIaVKepUOEI9nG9wpXxXNh9g3yQ8FeL5I7Lfp2YeAGTGRx3', status: 'AR Ready' },
-    { id: 2, name: 'Sate Madura', origin: 'Jawa Timur', desc: 'Lihat model 3D tusukan sate dengan bumbu kacang khas Madura langsung di meja Anda melalui kamera smartphone.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAU-vWNOQzD80OgXv38CD0s5NF26JbK4pSh9Jg7AT8vMNvozSNs9gNS51DGbBsLrrmWfcX2U9Gepf2eA4PfDDeVg65oJKCLwBSaVu9HQ9KFoFLJhpumlmWsd_NVPhEvDMCC7nwpHk96tyo4HdR-J1RqgbANkD0OYQ1cuofxJpj8Ieas9CJnU1rd5eRbHkoX6DwFSSe2xR7PaZae-aewjdz6Bdq1blyfmzniyCujBm-VWXPjNlXTIBM0jISVRpJtTOUbCaUFknlW9Atj', status: 'AR Ready' },
-    { id: 3, name: 'Gudeg Jogja', origin: 'Yogyakarta', desc: 'Tampilan 3D gudeg lengkap dengan opor ayam dan sambal krecek. Rasakan porsi asli sebelum memesan.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDG4EFxcBpgXIgCaq7MmUNfwNpEWPDL3nUlyPfXBMnGRqQpwaJXYW_-W5esyNgXuX2khxDfJDRgLB9wEhAFBlw1VWzurRyB-2oRngkWiMZVKtRh1vrOkSVGzRQMcbBUwdmpAi60PJtaaQLMaWZ_ohe8gd0b3TpcOBrXBp3YOySdBthVFe_PJ3hwPdtfTJiyEk92nuyb3NVXUtIWMPx8nTnu7oSFGVMRDJkMX45F7-ynj3Uy6Q5NIRsdq1e7cI8hybqEnmVtKFdk_5TK', status: 'AR Ready' },
+const MENU_DISHES = [
+    { id: 1, name: 'Rendang Padang', origin: 'Sumatera Barat', desc: 'Akses menu lengkap dengan detail komposisi rempah dan sejarah di balik masakan terlezat dunia ini langsung dari perangkat Anda.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCAv_ltKBeh7xx7xlev2-yXctsKVKFGGhCEFOga2B4xdOAx8Vm7TeDtLJSaLUEyZlHfq2qvwEM7tivFGTHR3c3yKJ2kIOsqdNurIdOP6Hp8CrOqnRTkF0Li4Luj1RAkWiM7Dq1jXQb035bh71T_w5ozHCPtlWYpy_kZI3K4YRyM5zlnMvaxjotFFrZyMpFKiQGK_IMN12il5LH6gf9kTUYeN233QEYkfIIaVKepUOEI9nG9wpXxXNh9g3yQ8FeL5I7Lfp2YeAGTGRx3', status: 'Digital Menu' },
+    { id: 2, name: 'Sate Madura', origin: 'Jawa Timur', desc: 'Eksplorasi varian sate dan bumbu kacang legendaris melalui daftar menu digital yang informatif dan higienis.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAU-vWNOQzD80OgXv38CD0s5NF26JbK4pSh9Jg7AT8vMNvozSNs9gNS51DGbBsLrrmWfcX2U9Gepf2eA4PfDDeVg65oJKCLwBSaVu9HQ9KFoFLJhpumlmWsd_NVPhEvDMCC7nwpHk96tyo4HdR-J1RqgbANkD0OYQ1cuofxJpj8Ieas9CJnU1rd5eRbHkoX6DwFSSe2xR7PaZae-aewjdz6Bdq1blyfmzniyCujBm-VWXPjNlXTIBM0jISVRpJtTOUbCaUFknlW9Atj', status: 'Digital Menu' },
+    { id: 3, name: 'Gudeg Jogja', origin: 'Yogyakarta', desc: 'Lihat profil lengkap hidangan istimewa Yogyakarta, lengkap dengan anjuran penyajian dan sejarah keraton.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDG4EFxcBpgXIgCaq7MmUNfwNpEWPDL3nUlyPfXBMnGRqQpwaJXYW_-W5esyNgXuX2khxDfJDRgLB9wEhAFBlw1VWzurRyB-2oRngkWiMZVKtRh1vrOkSVGzRQMcbBUwdmpAi60PJtaaQLMaWZ_ohe8gd0b3TpcOBrXBp3YOySdBthVFe_PJ3hwPdtfTJiyEk92nuyb3NVXUtIWMPx8nTnu7oSFGVMRDJkMX45F7-ynj3Uy6Q5NIRsdq1e7cI8hybqEnmVtKFdk_5TK', status: 'Digital Menu' },
 ];
 
 const TRACE_ITEMS = [
@@ -31,7 +31,7 @@ const TRACE_ITEMS = [
 ];
 
 export default function EksplorasiKuliner() {
-    const [activeTab, setActiveTab] = useState('ar');
+    const [activeTab, setActiveTab] = useState('menu');
 
     return (
         <div className="relative flex min-h-screen flex-col overflow-x-hidden bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-300 transition-colors duration-300 antialiased">
@@ -53,7 +53,7 @@ export default function EksplorasiKuliner() {
                             Cita Rasa <span className="text-primary">Nusantara</span>
                         </motion.h1>
                         <motion.p variants={fadeIn} className="max-w-2xl mx-auto text-slate-600 dark:text-slate-400 text-lg leading-relaxed">
-                            Menikmati resep warisan leluhur dengan sentuhan transparansi digital. Lihat visualisasi 3D hidangan melalui AR dan lacak asal-usul bahan lokal segar langsung dari petani.
+                            Menikmati resep warisan leluhur dengan sentuhan transparansi digital. Akses menu melalui QR code dan temukan cerita di balik bahan lokal segar langsung dari para petani nusantara.
                         </motion.p>
                     </motion.div>
                 </section>
@@ -65,20 +65,20 @@ export default function EksplorasiKuliner() {
                             <div className="absolute top-0 right-0 w-40 h-40 bg-primary/5 rounded-full blur-3xl -mr-16 -mt-16"></div>
                             <div className="relative z-10">
                                 <div className="size-14 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-5 group-hover:bg-primary group-hover:text-white transition-colors">
-                                    <span className="material-symbols-outlined text-3xl">view_in_ar</span>
+                                    <span className="material-symbols-outlined text-3xl">qr_code_2</span>
                                 </div>
-                                <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2">Menu AR</h3>
-                                <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">Lihat visualisasi 3D hidangan sebelum memesan. Arahkan kamera ke meja Anda dan saksikan model makanan muncul dalam ukuran asli, lengkap dengan detail tekstur dan warna.</p>
+                                <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2">Menu Digital (QR)</h3>
+                                <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">Akses daftar menu secara higienis dan praktis melalui pemindaian QR code. Dapatkan informasi lengkap mengenai komposisi, harga, dan profil warung kuliner pilihan Anda.</p>
                             </div>
                         </motion.div>
                         <motion.div variants={fadeIn} whileHover={{ y: -6 }} className="relative p-8 rounded-2xl border border-primary/20 bg-white dark:bg-surface-dark shadow-sm hover:shadow-xl transition-all overflow-hidden group">
                             <div className="absolute top-0 right-0 w-40 h-40 bg-primary/5 rounded-full blur-3xl -mr-16 -mt-16"></div>
                             <div className="relative z-10">
                                 <div className="size-14 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-5 group-hover:bg-primary group-hover:text-white transition-colors">
-                                    <span className="material-symbols-outlined text-3xl">qr_code_scanner</span>
+                                    <span className="material-symbols-outlined text-3xl">history_edu</span>
                                 </div>
-                                <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2">Traceability</h3>
-                                <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">Pindai QR code untuk mengetahui asal-usul bahan lokal segar. Ketahui siapa petaninya, kapan dipanen, dan berapa jarak dari sumber ke meja Anda.</p>
+                                <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2">Cerita Bahan Lokal</h3>
+                                <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">Temukan kisah di balik setiap bahan masakan. Ketahui asal-usul bahan lokal, profil petani yang menanamnya, dan bagaimana bahan tersebut berkontribusi pada ekonomi daerah.</p>
                             </div>
                         </motion.div>
                     </motion.div>
@@ -105,14 +105,14 @@ export default function EksplorasiKuliner() {
                     </div>
 
                     <AnimatePresence mode="wait">
-                        {activeTab === 'ar' && (
-                            <motion.div key="ar" initial="hidden" animate="visible" exit="hidden" variants={stagger}>
+                        {activeTab === 'menu' && (
+                            <motion.div key="menu" initial="hidden" animate="visible" exit="hidden" variants={stagger}>
                                 <motion.div variants={fadeIn} className="text-center mb-10">
-                                    <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">Pratinjau Hidangan 3D</h2>
-                                    <p className="text-slate-500 dark:text-slate-400">Arahkan kamera ke meja Anda dan lihat hidangan nusantara dalam tampilan augmented reality.</p>
+                                    <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">Daftar Menu Digital</h2>
+                                    <p className="text-slate-500 dark:text-slate-400">Pilih hidangan nusantara untuk melihat informasi detail dan kisah kulturalnya.</p>
                                 </motion.div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                                    {AR_DISHES.map((dish) => (
+                                    {MENU_DISHES.map((dish) => (
                                         <motion.div
                                             key={dish.id}
                                             variants={fadeIn}
@@ -122,13 +122,13 @@ export default function EksplorasiKuliner() {
                                             <div className="h-56 overflow-hidden relative">
                                                 <img className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={dish.name} src={dish.img} />
                                                 <div className="absolute top-4 left-4 bg-primary/90 backdrop-blur-md text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
-                                                    <span className="material-symbols-outlined text-xs">view_in_ar</span> {dish.status}
+                                                    <span className="material-symbols-outlined text-xs">qr_code_2</span> {dish.status}
                                                 </div>
-                                                {/* AR overlay on hover */}
+                                                {/* Digital overlay on hover */}
                                                 <div className="absolute inset-0 bg-primary/20 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center">
                                                     <div className="bg-white/90 dark:bg-slate-900/90 px-6 py-4 rounded-xl text-center shadow-xl">
-                                                        <span className="material-symbols-outlined text-primary text-4xl mb-1">view_in_ar</span>
-                                                        <p className="text-sm font-bold text-slate-900 dark:text-slate-100">Lihat dalam AR</p>
+                                                        <span className="material-symbols-outlined text-primary text-4xl mb-1">menu_book</span>
+                                                        <p className="text-sm font-bold text-slate-900 dark:text-slate-100">Buka Menu</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -146,11 +146,11 @@ export default function EksplorasiKuliner() {
                             </motion.div>
                         )}
 
-                        {activeTab === 'trace' && (
-                            <motion.div key="trace" initial="hidden" animate="visible" exit="hidden" variants={stagger}>
+                        {activeTab === 'story' && (
+                            <motion.div key="story" initial="hidden" animate="visible" exit="hidden" variants={stagger}>
                                 <motion.div variants={fadeIn} className="text-center mb-10">
-                                    <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">Lacak Asal Bahan</h2>
-                                    <p className="text-slate-500 dark:text-slate-400">Pindai QR code pada kemasan untuk mengetahui perjalanan bahan dari petani ke meja Anda.</p>
+                                    <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">Kisah di Balik Setiap Suapan</h2>
+                                    <p className="text-slate-500 dark:text-slate-400">Menelusuri perjalanan bahan pangan lokal dari kebun petani hingga ke meja makan Anda.</p>
                                 </motion.div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                                     {TRACE_ITEMS.map((item) => (
@@ -216,9 +216,9 @@ export default function EksplorasiKuliner() {
                     </motion.div>
                     <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger} className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {[
-                            { step: '1', icon: 'qr_code_scanner', title: 'Pindai QR / Buka Menu', desc: 'Pindai QR code pada meja atau kemasan, atau buka menu digital di smartphone Anda.' },
-                            { step: '2', icon: 'view_in_ar', title: 'Lihat dalam AR', desc: 'Arahkan kamera ke meja dan lihat model 3D hidangan dalam ukuran asli.' },
-                            { step: '3', icon: 'verified', title: 'Pesan dengan Yakin', desc: 'Ketahui bahan, asal-usul, dan porsi sebelum memesan. Bayar secara nirsentuh.' },
+                            { step: '1', icon: 'qr_code_2', title: 'Pindai QR Menu', desc: 'Pindai QR code pada meja atau gerai warung untuk membuka menu digital di smartphone Anda.' },
+                            { step: '2', icon: 'history_edu', title: 'Baca Cerita Bahan', desc: 'Sambil memesan, pelajari asal-usul bahan dan kisah para petani di balik hidangan Anda.' },
+                            { step: '3', icon: 'verified', title: 'Dukungan UMKM', desc: 'Setiap suapan yang Anda nikmati turut berkontribusi pada kemandirian ekonomi pelaku usaha lokal.' },
                         ].map((item) => (
                             <motion.div key={item.step} variants={fadeIn} whileHover={{ y: -6 }} className="relative p-8 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-surface-dark shadow-sm hover:shadow-xl transition-all text-center group">
                                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 size-8 rounded-full bg-primary text-white text-sm font-black flex items-center justify-center shadow-lg shadow-primary/30">{item.step}</div>
@@ -249,7 +249,7 @@ export default function EksplorasiKuliner() {
                                 <span className="material-symbols-outlined text-5xl text-white/90">restaurant_menu</span>
                                 <h2 className="text-3xl md:text-4xl font-black drop-shadow-md">Daftarkan Warung Anda</h2>
                                 <p className="text-lg text-white/90 max-w-xl mx-auto font-medium leading-relaxed">
-                                    Punya warung legendaris? Integrasikan menu AR dan traceability bahan ke gerai Anda agar pelanggan mendapatkan pengalaman kuliner digital terbaik.
+                                    Punya warung legendaris? Digitalisasikan menu Anda dan bagikan kisah bahan lokal gerai Anda agar pelanggan mendapatkan pengalaman kuliner terbaik.
                                 </p>
                                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
                                     <Link href="/daftarkan-warung">

@@ -7,30 +7,55 @@ import * as THREE from 'three';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
-// Auto 3D Viewer for Batik (Turns 2D image into 3D cloth)
+// Auto 3D Viewer for Batik (Turns 2D image into 3D T-Shirt)
 function BatikCloth({ imgUrl }) {
     const meshRef = useRef();
     const texture = useTexture(imgUrl);
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
+    texture.repeat.set(0.5, 0.5);
 
-    // Optional: Animate the cloth slightly
+    // Create T-Shirt Shape
+    const shirtShape = new THREE.Shape();
+    shirtShape.moveTo(-1.5, 2.5);
+    shirtShape.lineTo(1.5, 2.5);
+    shirtShape.lineTo(2.5, 2);
+    shirtShape.lineTo(4, 0.5);
+    shirtShape.lineTo(3, -1);
+    shirtShape.lineTo(2, 0);
+    shirtShape.lineTo(2, -3);
+    shirtShape.lineTo(-2, -3);
+    shirtShape.lineTo(-2, 0);
+    shirtShape.lineTo(-3, -1);
+    shirtShape.lineTo(-4, 0.5);
+    shirtShape.lineTo(-2.5, 2);
+    shirtShape.closePath();
+
+    const extrudeSettings = {
+        steps: 1,
+        depth: 0.4,
+        bevelEnabled: true,
+        bevelThickness: 0.1,
+        bevelSize: 0.1,
+        bevelOffset: 0,
+        bevelSegments: 3
+    };
+
     useFrame(({ clock }) => {
         if (meshRef.current) {
-            meshRef.current.rotation.y = Math.sin(clock.getElapsedTime() * 0.2) * 0.1;
+            meshRef.current.rotation.y = Math.sin(clock.getElapsedTime() * 0.5) * 0.2;
         }
     });
 
     return (
         <mesh ref={meshRef} position={[0, 0, 0]}>
-            {/* CylinderGeometry gives it a rolled cloth/mannequin wrap look */}
-            <cylinderGeometry args={[2, 2, 6, 64, 1, true]} />
+            <extrudeGeometry args={[shirtShape, extrudeSettings]} />
             <meshStandardMaterial
                 map={texture}
-                bumpMap={texture} // Fake bump mapping using the image itself
-                bumpScale={0.02}
-                side={THREE.DoubleSide}
-                roughness={0.8}
+                bumpMap={texture}
+                bumpScale={0.01}
+                roughness={0.7}
+                metalness={0.1}
             />
         </mesh>
     );
@@ -49,7 +74,7 @@ function Auto3DViewer({ imgUrl }) {
                 <OrbitControls enableZoom={true} enablePan={false} autoRotate autoRotateSpeed={1.5} />
             </Canvas>
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-slate-900/60 backdrop-blur-md px-4 py-2 rounded-full text-white text-xs font-medium flex items-center gap-2 pointer-events-none">
-                <span className="material-symbols-outlined text-[16px]">360</span> Drag to inspect 3D Cloth
+                <span className="material-symbols-outlined text-[16px]">360</span> Geser untuk melihat detail Baju Batik
             </div>
         </div>
     );
@@ -65,9 +90,9 @@ const stagger = {
 };
 
 const TAB_MAP = [
-    { id: 'galeri', label: 'Galeri Digital', icon: 'brush' },
+    { id: 'galeri', label: 'Eksplorasi Makna', icon: 'auto_stories' },
     { id: 'audio', label: 'Audio Spasial', icon: 'music_note' },
-    { id: 'ar', label: 'Augmented Reality', icon: 'view_in_ar' },
+    { id: 'ar', label: 'Eksplorasi 3D & AR', icon: 'view_in_ar' },
     { id: 'video', label: 'Video Dokumenter', icon: 'video_library' },
 ];
 
@@ -158,58 +183,78 @@ export default function DetailSeni({ art }) {
                     </div>
 
                     <AnimatePresence mode="wait">
-                        {/* ── Galeri Digital ── */}
+                        {/* ── Eksplorasi Makna (Interactive Hotspots) ── */}
                         {activeTab === 'galeri' && (
-                            <motion.div key="galeri" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.4 }}>
-                                <div className="bg-white dark:bg-surface-dark rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-lg">
-                                    <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
-                                        <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                                            <span className="material-symbols-outlined text-primary">brush</span>
-                                            Galeri Digital Interaktif — {art.title}
-                                        </h3>
-                                        <span className="text-[10px] text-slate-500 font-mono">{galleryIdx + 1} / {(art.gallery || []).length}</span>
-                                    </div>
-                                    {art.gallery && art.gallery.length > 0 ? (
-                                        <>
-                                            <div className="relative h-64 md:h-96 overflow-hidden bg-slate-100 dark:bg-slate-900">
-                                                <AnimatePresence mode="wait">
-                                                    <motion.img
-                                                        key={galleryIdx}
-                                                        initial={{ opacity: 0, scale: 1.05 }}
-                                                        animate={{ opacity: 1, scale: 1 }}
-                                                        exit={{ opacity: 0, scale: 0.95 }}
-                                                        transition={{ duration: 0.5 }}
-                                                        className="w-full h-full object-cover"
-                                                        src={art.gallery[galleryIdx].url}
-                                                        alt={art.gallery[galleryIdx].caption}
-                                                    />
-                                                </AnimatePresence>
-                                                {/* Navigation arrows */}
-                                                <button onClick={() => setGalleryIdx((p) => (p > 0 ? p - 1 : art.gallery.length - 1))} className="absolute left-3 top-1/2 -translate-y-1/2 size-10 bg-slate-900/60 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-primary transition-colors">
-                                                    <span className="material-symbols-outlined">chevron_left</span>
-                                                </button>
-                                                <button onClick={() => setGalleryIdx((p) => (p < art.gallery.length - 1 ? p + 1 : 0))} className="absolute right-3 top-1/2 -translate-y-1/2 size-10 bg-slate-900/60 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-primary transition-colors">
-                                                    <span className="material-symbols-outlined">chevron_right</span>
-                                                </button>
-                                            </div>
-                                            <div className="p-4">
-                                                <p className="text-sm text-slate-600 dark:text-slate-400 text-center">{art.gallery[galleryIdx].caption}</p>
-                                                {/* Thumbnails */}
-                                                <div className="flex gap-2 justify-center mt-4">
-                                                    {art.gallery.map((g, i) => (
-                                                        <button key={i} onClick={() => setGalleryIdx(i)} className={`size-14 rounded-lg overflow-hidden border-2 transition-all ${galleryIdx === i ? 'border-primary scale-105' : 'border-slate-200 dark:border-slate-700 opacity-60 hover:opacity-100'}`}>
-                                                            <img className="w-full h-full object-cover" src={g.url} alt={g.caption} />
-                                                        </button>
-                                                    ))}
+                            <motion.div key="galeri" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.98 }} transition={{ duration: 0.4 }}>
+                                <div className="bg-white dark:bg-surface-dark rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xl lg:grid lg:grid-cols-12 min-h-[500px]">
+                                    {/* Left: Interactive Image */}
+                                    <div className="relative lg:col-span-7 bg-slate-100 dark:bg-slate-900 overflow-hidden group h-[400px] lg:h-[600px]">
+                                        <img className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src={art.img} alt={art.title} />
+                                        <div className="absolute inset-0 bg-black/10"></div>
+                                        
+                                        {(art.hotspots || []).map((hs, i) => (
+                                            <div 
+                                                key={i}
+                                                className="absolute z-20 group/hs cursor-pointer group"
+                                                style={{ left: `${hs.x}%`, top: `${hs.y}%` }}
+                                            >
+                                                {/* Pulse Animation */}
+                                                <div className="absolute inset-0 size-8 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/40 animate-ping"></div>
+                                                <div className="relative size-8 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary border-4 border-white dark:border-slate-800 shadow-xl flex items-center justify-center text-white transition-transform hover:scale-125">
+                                                    <span className="material-symbols-outlined text-sm font-bold">priority_high</span>
+                                                </div>
+
+                                                {/* Tooltip Content */}
+                                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 w-64 p-4 bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-100 dark:border-slate-700 opacity-0 group-hover/hs:opacity-100 pointer-events-none transition-all duration-300 translate-y-2 group-hover/hs:translate-y-0 z-30">
+                                                    <h4 className="font-black text-slate-900 dark:text-white text-sm mb-1">{hs.title}</h4>
+                                                    <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed font-medium">{hs.desc}</p>
+                                                    <div className="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-white dark:border-t-slate-800"></div>
                                                 </div>
                                             </div>
-                                        </>
-                                    ) : (
-                                        <div className="p-16 text-center text-slate-500">
-                                            <span className="material-symbols-outlined text-5xl mb-4 block">image_not_supported</span>
-                                            Galeri belum tersedia
+                                        ))}
+
+                                        <div className="absolute bottom-6 left-6 text-white z-10">
+                                            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="flex items-center gap-2 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full text-[10px] font-bold tracking-widest uppercase">
+                                                <span className="material-symbols-outlined text-sm text-primary">explore</span>
+                                                Interactive Philosophy Map
+                                            </motion.div>
                                         </div>
-                                    )}
+                                    </div>
+
+                                    {/* Right: Legend/Details */}
+                                    <div className="w-full lg:col-span-5 p-8 border-t lg:border-t-0 lg:border-l border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30 overflow-y-auto lg:h-[600px]">
+                                        <div className="mb-8">
+                                            <h3 className="text-xl font-black text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+                                                <span className="material-symbols-outlined text-primary">auto_stories</span>
+                                                Eksplorasi Makna
+                                            </h3>
+                                            <p className="text-sm text-slate-600 dark:text-slate-400">Sentuh atau arahkan kursor pada ikon untuk mengungkap filosofi mendalam di balik motif ini.</p>
+                                        </div>
+
+                                        <div className="space-y-6">
+                                            {(art.hotspots || []).map((hs, i) => (
+                                                <div key={i} className="flex gap-4 group/item">
+                                                    <div className="size-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0 font-black text-sm group-hover/item:bg-primary group-hover/item:text-white transition-colors">
+                                                        {i + 1}
+                                                    </div>
+                                                    <div>
+                                                        <h4 className="font-bold text-slate-900 dark:text-white text-sm mb-1">{hs.title}</h4>
+                                                        <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">{hs.desc}</p>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+
+                                        <div className="mt-12 p-5 rounded-2xl bg-primary/5 border border-primary/10">
+                                            <div className="flex items-center gap-3 text-primary mb-3">
+                                                <span className="material-symbols-outlined font-bold">lightbulb</span>
+                                                <span className="text-xs font-black tracking-wider uppercase">Fakta Budaya</span>
+                                            </div>
+                                            <p className="text-[11px] text-slate-600 dark:text-slate-400 italic leading-relaxed">
+                                                "Seni Nusantara bukan sekadar hiasan, melainkan prasasti doa dan harapan yang tersemat dalam setiap goresannya."
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
                             </motion.div>
                         )}
@@ -311,10 +356,10 @@ export default function DetailSeni({ art }) {
                                             <div>
                                                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider mb-4">
                                                     <span className="material-symbols-outlined text-sm">view_in_ar</span>
-                                                    Augmented Reality
+                                                    Immersive Experience (Opsional)
                                                 </div>
-                                                <h3 className="text-2xl font-black text-slate-900 dark:text-slate-100 mb-4">Lihat {art.title} dalam 3D</h3>
-                                                <p className="text-slate-600 dark:text-slate-400 leading-relaxed mb-6">{art.arDesc || 'Putar, zoom, dan lihat model 3D dari segala sudut. Tekan tombol AR untuk melihat di dunia nyata.'}</p>
+                                                <h3 className="text-2xl font-black text-slate-900 dark:text-slate-100 mb-4">Visualisasi 3D Masa Depan</h3>
+                                                <p className="text-slate-600 dark:text-slate-400 leading-relaxed mb-6">{art.arDesc || 'Teknologi ini memungkinkan Anda melihat objek dari segala sudut. Ini adalah contoh branding digital yang bisa dikembangkan untuk promosi daerah.'}</p>
                                                 <div className="space-y-3">
                                                     {[
                                                         { icon: 'touch_app', text: 'Drag untuk memutar model 3D' },
@@ -329,21 +374,6 @@ export default function DetailSeni({ art }) {
                                                         </motion.div>
                                                     ))}
                                                 </div>
-                                            </div>
-                                            <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-5">
-                                                <h4 className="text-sm font-bold text-amber-800 dark:text-amber-300 flex items-center gap-2 mb-3">
-                                                    <span className="material-symbols-outlined text-base">info</span>
-                                                    Tentang Model 3D
-                                                </h4>
-                                                <p className="text-xs text-amber-700 dark:text-amber-400 leading-relaxed mb-3">
-                                                    Model 3D saat ini menggunakan placeholder. Untuk mengganti dengan asset seni tradisional asli:
-                                                </p>
-                                                <ul className="text-xs text-amber-700 dark:text-amber-400 space-y-1.5">
-                                                    <li className="flex items-start gap-2"><span className="font-bold">1.</span> Buat model 3D di Blender / Sketchfab</li>
-                                                    <li className="flex items-start gap-2"><span className="font-bold">2.</span> Export ke format <code className="bg-amber-100 dark:bg-amber-800 px-1 rounded">.glb</code></li>
-                                                    <li className="flex items-start gap-2"><span className="font-bold">3.</span> Upload ke Firebase Storage</li>
-                                                    <li className="flex items-start gap-2"><span className="font-bold">4.</span> Update <code className="bg-amber-100 dark:bg-amber-800 px-1 rounded">modelUrl</code> di database</li>
-                                                </ul>
                                             </div>
                                         </div>
                                     </div>

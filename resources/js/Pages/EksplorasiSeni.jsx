@@ -24,16 +24,16 @@ const CATEGORIES = [
 const ARTWORKS = [
     { id: 1, slug: 'batik-parang-rusak', title: 'Batik Parang Rusak', category: 'batik', origin: 'Yogyakarta', desc: 'Motif tertua yang melambangkan kekuatan dan keteguhan hati para kesatria Jawa.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDDuSfqiJRkxODrddf-6RuvSwa01DTHoOUXdRKz2IR0jmKl3N8-UEPriuFB8PXZrIcLuDTsdqF1lYffYUP92PwhvcC8MnPKxJDMsS2QUtab1HMvnBSSy9AVXBCm8CYoTzRWfnPZd1Knj9tbbOnEKiMFndx9rZsXZzKufNUznJMvFwKnEAKzlawa4AljZQVO8K4EeS3i2pbCMSadufRenMCeah9onXIrmig6iiv3zhUVhq37UShohWH8StvAr58umrth1NQiUVOjaYhI', status: 'UNESCO' },
     { id: 2, slug: 'gamelan-jawa', title: 'Gamelan Jawa', category: 'gamelan', origin: 'Jawa Tengah', desc: 'Ansambel musik tradisional yang menghasilkan harmoni magis dari perpaduan instrumen perunggu.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC0FVwiBcNLeL0Ect74iuTzIEMu4Ctu1txJ1hjjkUmcO2Lw2UXLQUbNWThHD10DWJvCcTR1n5fYVifSW04RoXkffrHqGsy2KS9Sy3yR4LsP_0QdIUz4km9YOjT2UKU8Sq7Uz37Udu6NYP6wD7F-OQYDl-6YjCnyGW-2vWUBPQWCdFFby1XTW-cd9aPvTftzfXyD3VuHgMoxnt-3ROirBkccx3b6jBCgSYb4aVZxeM92ma5_jqPpGTsXhlMBFtLbsT6pb5S0K_r4Y4Pz', status: 'UNESCO' },
-    { id: 3, slug: 'tari-kecak', title: 'Tari Kecak', category: 'tari', origin: 'Bali', desc: 'Pertunjukan tari sakral dengan iringan vokal ratusan penari yang menggambarkan kisah epik Ramayana.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBMGTCFCaDtjpe7yrqfTzA8iN1OmWnIKYRRWrcVY8J7JO_wNsntxW3cVs8kldslW2HSs6RtUMhE2TBuie1gaJjNhoOYUpdaTccsxsZsLHXs318JTqzoKu5riZiYmMILa_dUx62dUp3sP53CtegYCDWM4Cwb4teEXBOXXqObHLQ9u8kmY9EJP5Ru_H_S_V6BmXHyytMsi6p43rpj4WHLHlsGcYDSpFRSCZp9pM0zhte-TExzwWO8Tgq5JKT-z9CGHMShYOKNg8mqhsZ5', status: 'Warisan Nasional' },
-    { id: 4, slug: 'batik-mega-mendung', title: 'Batik Mega Mendung', category: 'batik', origin: 'Cirebon', desc: 'Motif awan bergelombang yang menggambarkan kesabaran dan ketenangan menghadapi badai kehidupan.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAmVGjpiFKZjpI9BwjsM25QvGWbekbZZ0uAitz_OxH8eFMPXgLtyuvuBHw4YeSgiMDqAAoSO4-cHz7qPYCnx1ngM48nlYWaDIT337z0MQSivXiihgtXu53w-7wna96oRGl_XdwKbO6yFtw5lCpSqcf3X51Ume3CV_uoc-w0FJhmHiJiztUe0SmD5RYqFLgvj5USl_s0V4vzULjTzl1TvoPZEiY0YMpkCqb_UGiBxMnKt_zqiM0KNJMGL9l6YfqINBvgZ_8HVhnYLt37', status: 'UNESCO' },
-    { id: 5, slug: 'tari-saman', title: 'Tari Saman', category: 'tari', origin: 'Aceh', desc: 'Tarian seribu tangan yang menampilkan sinkronisasi sempurna gerakan harmonis para penari.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA0jeSakdv6nP10Lx12LKRiQNerivDknx-BZKVNP1-dY2xZ2fhj-s73LMz8DjaQWwYKWxR6FXfwb65BUUHaDgGH1VJN4C2LxAvAUR7OkaoZfZiZ2SInN_5ES0WQdzC5HbausLNI5hpYB9c-QNJyUR4agdXx_73N26Dn_9XI2OW25qKf-gjjzh_584EFA0Vzxvyyx4gW8GUqIwhaAmp6_7LJyGlq6Rru6PMVX-sD4QsGgBZHIwI4aA220TEW_Br8d8CpApYUZvCbzxhz', status: 'UNESCO' },
-    { id: 6, slug: 'ukiran-jepara', title: 'Ukiran Jepara', category: 'ukir', origin: 'Jawa Tengah', desc: 'Seni ukir kayu berusia ratusan tahun yang menjadi kebanggaan pengrajin dan diekspor ke mancanegara.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCp0a0cSr56zKwoiH0unY6uIn_kWisHe6JKm4pJQNVCtbW0n-2kYvRQApHX_tGWmeoyvXqzvHOmvhhSq80OAxY8BFCFEMAqViU3shvZgYEy_ekJQUGeKGjVfuAD3egeTOJI7lBBspycUFeDnp-_Tg7jVonhEK_EgNfwYUY2pUNBtGEMPqxffwYi4feIkc6B9uHQSMy5hF_1Q0PRFtLfI_e_koAa3TDqZHDzPmME0wSO3Kxsm4xzKW-p1_zH2hpp8FHZk0iGFlv-SqLh', status: 'Warisan Nasional' },
+    { id: 3, slug: 'tari-kecak', title: 'Tari Kecak', category: 'tari', origin: 'Bali', desc: 'Pertunjukan tari sakral dengan iringan vokal ratusan penari yang menggambarkan kisah epik Ramayana.', img: '/images/seni/tari-kecak.jpg', status: 'Warisan Nasional' },
+    { id: 4, slug: 'batik-mega-mendung', title: 'Batik Mega Mendung', category: 'batik', origin: 'Cirebon', desc: 'Motif awan bergelombang yang menggambarkan kesabaran dan ketenangan menghadapi badai kehidupan.', img: '/images/batik/mega-mendung.png', status: 'UNESCO' },
+    { id: 5, slug: 'tari-saman', title: 'Tari Saman', category: 'tari', origin: 'Aceh', desc: 'Tarian seribu tangan yang menampilkan sinkronisasi sempurna gerakan harmonis para penari.', img: '/images/seni/tari-saman.jpg', status: 'UNESCO' },
+    { id: 6, slug: 'ukiran-jepara', title: 'Ukiran Jepara', category: 'ukir', origin: 'Jawa Tengah', desc: 'Seni ukir kayu berusia ratusan tahun yang menjadi kebanggaan pengrajin dan diekspor ke mancanegara.', img: '/images/ukiran/ukiran-jepara.jpg', status: 'Warisan Nasional' },
 ];
 
 const FEATURES = [
-    { icon: 'brush', title: 'Galeri Digital Interaktif', desc: 'Jelajahi karya seni tradisional melalui tampilan 360° beresolusi tinggi.' },
+    { icon: 'auto_stories', title: 'Eksplorasi Makna & Filosofi', desc: 'Ungkap rahasia dan pesan mendalam di balik setiap motif melalui peta interaktif.' },
     { icon: 'music_note', title: 'Audio Spasial Gamelan', desc: 'Rasakan sensasi berada di tengah orkestra Gamelan melalui teknologi audio 360 derajat.' },
-    { icon: 'view_in_ar', title: 'Augmented Reality', desc: 'Pindai motif batik untuk melihat sejarah dan makna filosofis di baliknya.' },
+    { icon: 'view_in_ar', title: 'Eksplorasi 3D & AR', desc: 'Pindai motif batik untuk melihat sejarah dan makna filosofis di baliknya.' },
     { icon: 'video_library', title: 'Video Dokumenter', desc: 'Saksikan proses pembuatan seni tradisional dari pengrajin asli Nusantara.' },
 ];
 
@@ -93,11 +93,10 @@ export default function EksplorasiSeni() {
                                 key={cat.id}
                                 whileTap={{ scale: 0.95 }}
                                 onClick={() => setActiveCategory(cat.id)}
-                                className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ${
-                                    activeCategory === cat.id
-                                        ? 'bg-primary text-white shadow-lg shadow-primary/30'
-                                        : 'bg-white dark:bg-surface-dark text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:border-primary/50 hover:text-primary'
-                                }`}
+                                className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ${activeCategory === cat.id
+                                    ? 'bg-primary text-white shadow-lg shadow-primary/30'
+                                    : 'bg-white dark:bg-surface-dark text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:border-primary/50 hover:text-primary'
+                                    }`}
                             >
                                 <span className="material-symbols-outlined text-xl">{cat.icon}</span>
                                 {cat.label}

@@ -166,8 +166,8 @@ export default function Budaya() {
                                         <img alt="Indonesian batik" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDuSfqiJRkxODrddf-6RuvSwa01DTHoOUXdRKz2IR0jmKl3N8-UEPriuFB8PXZrIcLuDTsdqF1lYffYUP92PwhvcC8MnPKxJDMsS2QUtab1HMvnBSSy9AVXBCm8CYoTzRWfnPZd1Knj9tbbOnEKiMFndx9rZsXZzKufNUznJMvFwKnEAKzlawa4AljZQVO8K4EeS3i2pbCMSadufRenMCeah9onXIrmig6iiv3zhUVhq37UShohWH8StvAr58umrth1NQiUVOjaYhI" />
                                     </motion.div>
                                     <div className="bg-primary/10 backdrop-blur-md p-6 rounded-2xl border border-primary/20">
-                                        <h4 className="font-bold text-primary mb-1">Motif Interaktif</h4>
-                                        <p className="text-xs text-slate-600 dark:text-slate-400">Pindai kain batik untuk melihat sejarah motif melalui AR.</p>
+                                        <h4 className="font-bold text-primary mb-1">Edukasi Motif</h4>
+                                        <p className="text-xs text-slate-600 dark:text-slate-400">Pelajari filosofi dan sejarah di balik setiap motif batik nusantara.</p>
                                     </div>
                                 </div>
                                 <div className="space-y-4 pt-12">
@@ -175,8 +175,8 @@ export default function Budaya() {
                                         <img alt="Gamelan" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC0FVwiBcNLeL0Ect74iuTzIEMu4Ctu1txJ1hjjkUmcO2Lw2UXLQUbNWThHD10DWJvCcTR1n5fYVifSW04RoXkffrHqGsy2KS9Sy3yR4LsP_0QdIUz4km9YOjT2UKU8Sq7Uz37Udu6NYP6wD7F-OQYDl-6YjCnyGW-2vWUBPQWCdFFby1XTW-cd9aPvTftzfXyD3VuHgMoxnt-3ROirBkccx3b6jBCgSYb4aVZxeM92ma5_jqPpGTsXhlMBFtLbsT6pb5S0K_r4Y4Pz" />
                                     </motion.div>
                                     <div className="bg-primary/10 backdrop-blur-md p-6 rounded-2xl border border-primary/20">
-                                        <h4 className="font-bold text-primary mb-1">Simfoni Digital</h4>
-                                        <p className="text-xs text-slate-600 dark:text-slate-400">Mainkan alat musik tradisional melalui synthesizer digital.</p>
+                                        <h4 className="font-bold text-primary mb-1">Harmoni Nusantara</h4>
+                                        <p className="text-xs text-slate-600 dark:text-slate-400">Mempelajari teknik permainan instrumen tradisional secara digital.</p>
                                     </div>
                                 </div>
                             </div>
@@ -234,49 +234,59 @@ export default function Budaya() {
                                 <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100">Cerita Rakyat &amp; Legenda Digital</h2>
                                 <p className="text-slate-500 dark:text-slate-400">Narasi lisan yang kini diabadikan melalui medium storytelling interaktif.</p>
                             </div>
-                            <motion.a whileHover={{ x: 5 }} className="text-primary font-bold flex items-center gap-2 cursor-pointer hover:underline">
-                                Lihat Semua Kisah <span className="material-symbols-outlined text-sm">open_in_new</span>
-                            </motion.a>
+                            <Link href="/kisah-rakyat">
+                                <motion.div whileHover={{ x: 5 }} className="text-primary font-bold flex items-center gap-2 cursor-pointer hover:underline">
+                                    Lihat Semua Kisah <span className="material-symbols-outlined text-sm">open_in_new</span>
+                                </motion.div>
+                            </Link>
                         </motion.div>
 
                         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger} className="grid grid-cols-1 md:grid-cols-4 gap-6 auto-rows-[280px] md:auto-rows-[1fr]" style={{ gridTemplateRows: 'repeat(2, minmax(280px, 1fr))' }}>
                             {/* Large Featured Card */}
-                            <motion.div variants={fadeIn} whileHover={{ y: -6 }} className="md:col-span-2 md:row-span-2 relative group overflow-hidden rounded-2xl cursor-pointer">
-                                <img alt="Mist covering a tropical mountain peak" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuABI-jZrAZvVvJvZH6KZBhH8ojB0S_qUfOa3DqgUaYGz6Z-8Av2l7SKksdPxULUMLQ2PPt0tedxQ5UzxZ8uxsWJ4309Ml6QTEqk05VJtG3GCPG67J_9zS8pvI_Z3Jj38w0A9AUBowVvCR6FCfJwoKcb6PZMC9L6sMLHqdxuAwf6sFjbO5p2T6chSgX_xOWisIGvJ9x-hwt82JPV2ErNwDb6h0_ZFsufnN14gPAo_fuMeESUTBYGy6djCPrWniloWLTPdf-xI3S_AdGa" />
-                                <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/20 to-transparent flex flex-col justify-end p-8">
-                                    <span className="bg-primary/20 backdrop-blur-md border border-primary/30 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase w-fit mb-4 tracking-widest">Storytelling Imersif</span>
-                                    <h3 className="text-white text-2xl md:text-3xl font-black mb-3">Asal Usul Danau Toba</h3>
-                                    <p className="text-slate-200 text-sm max-w-sm">Jelajahi kisah pengkhianatan janji melalui visualisasi digital yang menghidupkan legenda vulkanik ini.</p>
-                                    <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="mt-6 w-fit bg-white/10 backdrop-blur-md border border-white/20 text-white px-6 py-2 rounded-lg font-bold text-sm hover:bg-white/20 transition-all">
-                                        Baca Sekarang
-                                    </motion.button>
-                                </div>
-                            </motion.div>
+                            <Link href="/kisah-rakyat/danau-toba" className="md:col-span-2 md:row-span-2">
+                                <motion.div variants={fadeIn} whileHover={{ y: -6 }} className="h-full relative group overflow-hidden rounded-2xl cursor-pointer">
+                                    <img alt="Mist covering a tropical mountain peak" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuABI-jZrAZvVvJvZH6KZBhH8ojB0S_qUfOa3DqgUaYGz6Z-8Av2l7SKksdPxULUMLQ2PPt0tedxQ5UzxZ8uxsWJ4309Ml6QTEqk05VJtG3GCPG67J_9zS8pvI_Z3Jj38w0A9AUBowVvCR6FCfJwoKcb6PZMC9L6sMLHqdxuAwf6sFjbO5p2T6chSgX_xOWisIGvJ9x-hwt82JPV2ErNwDb6h0_ZFsufnN14gPAo_fuMeESUTBYGy6djCPrWniloWLTPdf-xI3S_AdGa" />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/20 to-transparent flex flex-col justify-end p-8">
+                                        <span className="bg-primary/20 backdrop-blur-md border border-primary/30 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase w-fit mb-4 tracking-widest">Storytelling Imersif</span>
+                                        <h3 className="text-white text-2xl md:text-3xl font-black mb-3">Asal Usul Danau Toba</h3>
+                                        <p className="text-slate-200 text-sm max-w-sm">Jelajahi kisah pengkhianatan janji melalui visualisasi digital yang menghidupkan legenda vulkanik ini.</p>
+                                        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="mt-6 w-fit bg-primary text-white px-6 py-2 rounded-lg font-bold text-sm hover:bg-primary/90 transition-all shadow-lg shadow-primary/20">
+                                            Baca Sekarang
+                                        </motion.button>
+                                    </div>
+                                </motion.div>
+                            </Link>
 
                             {/* Small Card: Kisah Barong */}
-                            <motion.div variants={fadeIn} whileHover={{ y: -6 }} className="relative group overflow-hidden rounded-2xl cursor-pointer">
-                                <img alt="Traditional Balinese mask" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3HL3jSj75ITMMUH81MR8HteSGSLXB5OK2Vw2pYzIX1_RdJJdx6mTPv1qP6BodRZvz0UY0IAUNCNlDNDWMlX0Qvpb1hRFPzBRdGlvd2BSseIrepsKh7sZSYe3o1vkCrEK_c782wpr9mGFVkYKtewXjaXflZngRAN5Y1c1X6reZgDguvHaKYQJTv7JKez143UtAoWTjbsdNbl45q0Ii1V6nyOSHxnts744TRJGshKmwNYiNeokkN8crPAlkXwgQjPC24SuRu7_ByPGc" />
-                                <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent flex flex-col justify-end p-6">
-                                    <h3 className="text-white font-bold text-lg">Kisah Barong</h3>
-                                </div>
-                            </motion.div>
+                            <Link href="/kisah-rakyat/kisah-barong" className="h-full">
+                                <motion.div variants={fadeIn} whileHover={{ y: -6 }} className="h-full relative group overflow-hidden rounded-2xl cursor-pointer">
+                                    <img alt="Traditional Balinese mask" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3HL3jSj75ITMMUH81MR8HteSGSLXB5OK2Vw2pYzIX1_RdJJdx6mTPv1qP6BodRZvz0UY0IAUNCNlDNDWMlX0Qvpb1hRFPzBRdGlvd2BSseIrepsKh7sZSYe3o1vkCrEK_c782wpr9mGFVkYKtewXjaXflZngRAN5Y1c1X6reZgDguvHaKYQJTv7JKez143UtAoWTjbsdNbl45q0Ii1V6nyOSHxnts744TRJGshKmwNYiNeokkN8crPAlkXwgQjPC24SuRu7_ByPGc" />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent flex flex-col justify-end p-6">
+                                        <h3 className="text-white font-bold text-lg">Kisah Barong</h3>
+                                    </div>
+                                </motion.div>
+                            </Link>
 
                             {/* Small Card: Lutung Kasarung */}
-                            <motion.div variants={fadeIn} whileHover={{ y: -6 }} className="relative group overflow-hidden rounded-2xl cursor-pointer">
-                                <img alt="Tropical islands" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOk7eFXM8Z7djeW87pg0CemNhUYyqvVOTbTru4odSwbuliignpFMApDGhfNKlW6kKyQlCbzJ3ohIoFaRnWWDgvQfazHGAkAjHoSKngL3-wQdr1HcITBwNXh6s5QVGFLqfPkQo7SDDW_mY-6RcScGnPl4Ewr-Vg_6va3QV-h4tnOTTygXWWbXsrbtnnmk6_AzN-1zBFS-khioMRQ3qfwSeVgNhYKSFkLW9kkjlvFAKSOrwFbzI-SYHp13KInW70cdrV_8nUtZOKZ2BQ" />
-                                <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent flex flex-col justify-end p-6">
-                                    <h3 className="text-white font-bold text-lg">Lutung Kasarung</h3>
-                                </div>
-                            </motion.div>
+                            <Link href="/kisah-rakyat/lutung-kasarung" className="h-full">
+                                <motion.div variants={fadeIn} whileHover={{ y: -6 }} className="h-full relative group overflow-hidden rounded-2xl cursor-pointer">
+                                    <img alt="Tropical islands" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOk7eFXM8Z7djeW87pg0CemNhUYyqvVOTbTru4odSwbuliignpFMApDGhfNKlW6kKyQlCbzJ3ohIoFaRnWWDgvQfazHGAkAjHoSKngL3-wQdr1HcITBwNXh6s5QVGFLqfPkQo7SDDW_mY-6RcScGnPl4Ewr-Vg_6va3QV-h4tnOTTygXWWbXsrbtnnmk6_AzN-1zBFS-khioMRQ3qfwSeVgNhYKSFkLW9kkjlvFAKSOrwFbzI-SYHp13KInW70cdrV_8nUtZOKZ2BQ" />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent flex flex-col justify-end p-6">
+                                        <h3 className="text-white font-bold text-lg">Lutung Kasarung</h3>
+                                    </div>
+                                </motion.div>
+                            </Link>
 
                             {/* Wide Card: Nyi Roro Kidul */}
-                            <motion.div variants={fadeIn} whileHover={{ y: -6 }} className="md:col-span-2 relative group overflow-hidden rounded-2xl cursor-pointer">
-                                <img alt="Ocean waves" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbqTGE02a-JEPl7uSbsvhYFGR9iJMoP63A1YFf_OykvI8Lxqk8rAkvf2gE-rGLI_zJbCnMJ4Qqz1ugTSO4gVn2IpIeks3k-FlN4O7penKnQXpXJvzj80g8DfHM5lz8nIJuE4lTWAURjignyWb2naYrGxzpdEdkD6hSgNVhByYEUGGraKPt4xPK3QQkcLdVWPTm0hF8lcvDSaDuws_2tM0XLZFLzKM7dShu7gPPVJcUQ_ksn8-7wM9O5p-fFlyGc39uZesDGZInGSX7" />
-                                <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent flex flex-col justify-end p-8">
-                                    <h3 className="text-white text-xl font-bold">Legenda Nyi Roro Kidul</h3>
-                                    <p className="text-slate-300 text-sm mt-2">Misteri penguasa laut selatan dalam perspektif digital art.</p>
-                                </div>
-                            </motion.div>
+                            <Link href="/kisah-rakyat/nyi-roro-kidul" className="md:col-span-2">
+                                <motion.div variants={fadeIn} whileHover={{ y: -6 }} className="h-full relative group overflow-hidden rounded-2xl cursor-pointer">
+                                    <img alt="Ocean waves" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbqTGE02a-JEPl7uSbsvhYFGR9iJMoP63A1YFf_OykvI8Lxqk8rAkvf2gE-rGLI_zJbCnMJ4Qqz1ugTSO4gVn2IpIeks3k-FlN4O7penKnQXpXJvzj80g8DfHM5lz8nIJuE4lTWAURjignyWb2naYrGxzpdEdkD6hSgNVhByYEUGGraKPt4xPK3QQkcLdVWPTm0hF8lcvDSaDuws_2tM0XLZFLzKM7dShu7gPPVJcUQ_ksn8-7wM9O5p-fFlyGc39uZesDGZInGSX7" />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent flex flex-col justify-end p-8">
+                                        <h3 className="text-white text-xl font-bold">Legenda Nyi Roro Kidul</h3>
+                                        <p className="text-slate-300 text-sm mt-2">Misteri penguasa laut selatan dalam perspektif digital art.</p>
+                                    </div>
+                                </motion.div>
+                            </Link>
                         </motion.div>
                     </section>
 

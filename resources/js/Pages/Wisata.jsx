@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import Navbar from '../components/Navbar';
@@ -16,38 +16,86 @@ const stagger = {
 const TABS = [
     { id: 'destinasi', label: 'Destinasi Populer', icon: 'landscape' },
     { id: 'kuliner', label: 'Kuliner Tradisional', icon: 'restaurant' },
-    { id: 'tur', label: 'Tur Interaktif', icon: 'map' },
+    { id: 'tur', label: 'Panduan Digital', icon: 'map' },
 ];
 
-const DESTINATIONS = [
+const BASE_DESTINATIONS = [
     {
-        name: 'Tebing Maritim Biru',
-        location: 'PESISIR BARAT',
-        desc: 'Pemandangan samudera lepas dari tebing ikonik yang telah dilengkapi infrastruktur digital.',
-        price: 'Rp 25.000',
-        rating: '4.9',
-        img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDG4EFxcBpgXIgCaq7MmUNfwNpEWPDL3nUlyPfXBMnGRqQpwaJXYW_-W5esyNgXuX2khxDfJDRgLB9wEhAFBlw1VWzurRyB-2oRngkWiMZVKtRh1vrOkSVGzRQMcbBUwdmpAi60PJtaaQLMaWZ_ohe8gd0b3TpcOBrXBp3YOySdBthVFe_PJ3hwPdtfTJiyEk92nuyb3NVXUtIWMPx8nTnu7oSFGVMRDJkMX45F7-ynj3Uy6Q5NIRsdq1e7cI8hybqEnmVtKFdk_5TK',
+        id: 'toba',
+        name: 'Danau Toba',
+        query: 'Danau Toba, Sumatera Utara',
+        location: 'SUMATERA UTARA',
+        desc: 'Danau vulkanik terbesar di dunia dengan Pulau Samosir di tengahnya yang eksotis.',
+        defaultOpen: 'Buka 24 Jam',
+        defaultRating: '4.9',
+        defaultImg: 'https://lh3.googleusercontent.com/aida-public/AB6AXuABI-jZrAZvVvJvZH6KZBhH8ojB0S_qUfOa3DqgUaYGz6Z-8Av2l7SKksdPxULUMLQ2PPt0tedxQ5UzxZ8uxsWJ4309Ml6QTEqk05VJtG3GCPG67J_9zS8pvI_Z3Jj38w0A9AUBowVvCR6FCfJwoKcb6PZMC9L6sMLHqdxuAwf6sFjbO5p2T6chSgX_xOWisIGvJ9x-hwt82JPV2ErNwDb6h0_ZFsufnN14gPAo_fuMeESUTBYGy6djCPrWniloWLTPdf-xI3S_AdGa',
     },
     {
-        name: 'Resort Terapung Nusantara',
-        location: 'KEPULAUAN DIGITAL',
-        desc: 'Pengalaman menginap mewah di atas air dengan fasilitas IoT canggih untuk kenyamanan maksimal.',
-        price: 'Rp 2.500.000',
-        rating: '5.0',
-        img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBM3X2wbsMSafomWICPVvP_WNw5zEjW3TBIMDHzByEl0abDkmrorgIc88jNL-v3v7JJF7upMacCUMz0vCkVGUDbGF3S339mQxZCR-wGIZwljTj3JCwK6G9i2OBw8ozhUSa6CQLYPJofJxaED0TmmvlmipRBI2Uh1P7Kp7l334tcqT0Azc3pd432k3TnmZqbNPrCUTXBPRlKmxpK3DIr2ciCYZIxest4-CrAjbI2mc056Rw23DXj_xBzswZPBtz62Q2bCxI-BQ84lKf6',
+        id: 'bajo',
+        name: 'Labuan Bajo',
+        query: 'Labuan Bajo, Taman Nasional Komodo',
+        location: 'NTT',
+        desc: 'Gerbang menuju Taman Nasional Komodo dengan pantai merah muda dan bukit ikonik.',
+        defaultOpen: 'Buka 24 Jam',
+        defaultRating: '5.0',
+        defaultImg: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDG4EFxcBpgXIgCaq7MmUNfwNpEWPDL3nUlyPfXBMnGRqQpwaJXYW_-W5esyNgXuX2khxDfJDRgLB9wEhAFBlw1VWzurRyB-2oRngkWiMZVKtRh1vrOkSVGzRQMcbBUwdmpAi60PJtaaQLMaWZ_ohe8gd0b3TpcOBrXBp3YOySdBthVFe_PJ3hwPdtfTJiyEk92nuyb3NVXUtIWMPx8nTnu7oSFGVMRDJkMX45F7-ynj3Uy6Q5NIRsdq1e7cI8hybqEnmVtKFdk_5TK',
     },
     {
-        name: 'Taman Digital Harmoni',
-        location: 'PUSAT KOTA',
-        desc: 'Ruang terbuka hijau di tengah kota yang mengintegrasikan alam dengan hotspot WiFi kecepatan tinggi.',
-        price: 'Gratis',
-        rating: '4.7',
-        img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuArUqDFHdGl6aYFb1l3aFc88-RwLg1EzHYhbsxTjneL2idpROpUoDwZg_JBBETD2rPOAn9OmiG-AqVjpzG_8jDgrX4uRPALNxXgS3kyQl1JOMjvkweDk0Cn7j_RZe5z2kCo4u6E4y-W81me4zYHnEC16lNv8Xu8PQfYb2YXoHIGuaXF3ehoaSU3XZnUoxBdnbd6qU_ppABtBIOiu6QG1Lu089rcRiL2sfL23Gkri_5TmJWIoK2HEnEP91o9kgg4Lu7JmS8NPoJn-1q-',
+        id: 'borobudur',
+        name: 'Candi Borobudur',
+        query: 'Candi Borobudur, Jawa Tengah',
+        location: 'JAWA TENGAH',
+        desc: 'Monumen Buddha terbesar di dunia yang merupakan situs warisan dunia UNESCO.',
+        defaultOpen: '06.30 - 16.30',
+        defaultRating: '4.9',
+        defaultImg: 'https://lh3.googleusercontent.com/aida-public/AB6AXuArUqDFHdGl6aYFb1l3aFc88-RwLg1EzHYhbsxTjneL2idpROpUoDwZg_JBBETD2rPOAn9OmiG-AqVjpzG_8jDgrX4uRPALNxXgS3kyQl1JOMjvkweDk0Cn7j_RZe5z2kCo4u6E4y-W81me4zYHnEC16lNv8Xu8PQfYb2YXoHIGuaXF3ehoaSU3XZnUoxBdnbd6qU_ppABtBIOiu6QG1Lu089rcRiL2sfL23Gkri_5TmJWIoK2HEnEP91o9kgg4Lu7JmS8NPoJn-1q-',
     },
 ];
 
 export default function Wisata() {
     const [activeTab, setActiveTab] = useState('destinasi');
+    const [destinations, setDestinations] = useState(
+        BASE_DESTINATIONS.map(d => ({ ...d, rating: d.defaultRating, openHours: d.defaultOpen, img: d.defaultImg }))
+    );
+
+    useEffect(() => {
+        const fetchOSMData = async () => {
+            let updatedDestinations = [...destinations];
+            for (let i = 0; i < updatedDestinations.length; i++) {
+                const dest = updatedDestinations[i];
+                try {
+                    const searchParams = new URLSearchParams({
+                        q: dest.query, format: 'json', limit: 1, addressdetails: 1
+                    });
+                    const response = await fetch(`https://nominatim.openstreetmap.org/search?${searchParams}`, {
+                        method: 'GET',
+                        headers: { 'Accept-Language': 'id', 'User-Agent': 'NusantaraDigitalCity/1.0' }
+                    });
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data && data.length > 0) {
+                            const place = data[0];
+                            updatedDestinations[i] = {
+                                ...updatedDestinations[i],
+                                // Only update name if it seems like a real place, otherwise keep curated name
+                                dynamicName: place.name || (place.display_name ? place.display_name.split(',')[0] : dest.name),
+                                rating: dest.defaultRating,
+                                openHours: dest.defaultOpen,
+                                img: dest.defaultImg
+                            };
+                            setDestinations([...updatedDestinations]);
+                        }
+                    }
+                } catch (error) {
+                    console.error("OSM API error:", error);
+                }
+                if (i < updatedDestinations.length - 1) await new Promise(r => setTimeout(r, 1000));
+            }
+        };
+
+        fetchOSMData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     return (
         <div className="relative flex min-h-screen flex-col overflow-x-hidden bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-300 transition-colors duration-300 antialiased">
@@ -139,15 +187,15 @@ export default function Wisata() {
                                 <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">Destinasi Alam Unggulan</h2>
                                 <p className="text-slate-500 dark:text-slate-400">Dari puncak gunung hingga birunya pesisir nusantara.</p>
                             </div>
-                            <motion.a whileHover={{ x: 5 }} className="hidden md:flex items-center gap-2 text-primary font-bold cursor-pointer hover:underline">
+                            <Link href="/daftar-wisata" className="hidden md:flex items-center gap-2 text-primary font-bold cursor-pointer hover:underline">
                                 Lihat Semua <span className="material-symbols-outlined text-sm">arrow_forward</span>
-                            </motion.a>
+                            </Link>
                         </motion.div>
 
                         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {DESTINATIONS.map((dest) => (
+                            {destinations.map((dest) => (
                                 <motion.div
-                                    key={dest.name}
+                                    key={dest.id}
                                     variants={fadeIn}
                                     whileHover={{ y: -8 }}
                                     className="group bg-white dark:bg-surface-dark rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all border border-slate-200 dark:border-slate-800"
@@ -166,11 +214,11 @@ export default function Wisata() {
                                         </div>
                                         <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2 group-hover:text-primary transition-colors">{dest.name}</h3>
                                         <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-6">{dest.desc}</p>
-                                        <div className="flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-6">
-                                            <div>
-                                                <p className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Mulai Dari</p>
-                                                <p className="text-lg font-black text-slate-900 dark:text-white">{dest.price}</p>
-                                            </div>
+                                         <div className="flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-6">
+                                             <div>
+                                                 <p className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Jam Operasional</p>
+                                                 <p className="text-lg font-black text-slate-900 dark:text-white">{dest.openHours}</p>
+                                             </div>
                                             <motion.a whileHover={{ scale: 1.15 }} whileTap={{ scale: 0.9 }} className="size-11 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-all cursor-pointer">
                                                 <span className="material-symbols-outlined">arrow_forward</span>
                                             </motion.a>
@@ -194,8 +242,8 @@ export default function Wisata() {
                                         <img alt="Local Traditional Food" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAv_ltKBeh7xx7xlev2-yXctsKVKFGGhCEFOga2B4xdOAx8Vm7TeDtLJSaLUEyZlHfq2qvwEM7tivFGTHR3c3yKJ2kIOsqdNurIdOP6Hp8CrOqnRTkF0Li4Luj1RAkWiM7Dq1jXQb035bh71T_w5ozHCPtlWYpy_kZI3K4YRyM5zlnMvaxjotFFrZyMpFKiQGK_IMN12il5LH6gf9kTUYeN233QEYkfIIaVKepUOEI9nG9wpXxXNh9g3yQ8FeL5I7Lfp2YeAGTGRx3" />
                                     </motion.div>
                                     <div className="bg-primary/10 backdrop-blur-md p-6 rounded-2xl border border-primary/20">
-                                        <h4 className="font-bold text-primary mb-1">Menu AR</h4>
-                                        <p className="text-xs text-slate-600 dark:text-slate-400">Lihat visualisasi 3D hidangan sebelum memesan.</p>
+                                        <h4 className="font-bold text-primary mb-1">Menu Digital (QR)</h4>
+                                        <p className="text-xs text-slate-600 dark:text-slate-400">Akses daftar menu secara praktis melalui smartphone Anda.</p>
                                     </div>
                                 </div>
                                 <div className="space-y-4 pt-12">
@@ -203,8 +251,8 @@ export default function Wisata() {
                                         <img alt="Traditional Sate" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAU-vWNOQzD80OgXv38CD0s5NF26JbK4pSh9Jg7AT8vMNvozSNs9gNS51DGbBsLrrmWfcX2U9Gepf2eA4PfDDeVg65oJKCLwBSaVu9HQ9KFoFLJhpumlmWsd_NVPhEvDMCC7nwpHk96tyo4HdR-J1RqgbANkD0OYQ1cuofxJpj8Ieas9CJnU1rd5eRbHkoX6DwFSSe2xR7PaZae-aewjdz6Bdq1blyfmzniyCujBm-VWXPjNlXTIBM0jISVRpJtTOUbCaUFknlW9Atj" />
                                     </motion.div>
                                     <div className="bg-primary/10 backdrop-blur-md p-6 rounded-2xl border border-primary/20">
-                                        <h4 className="font-bold text-primary mb-1">Traceability</h4>
-                                        <p className="text-xs text-slate-600 dark:text-slate-400">Pindai QR untuk asal-usul bahan lokal segar.</p>
+                                        <h4 className="font-bold text-primary mb-1">Cerita Bahan Lokal</h4>
+                                        <p className="text-xs text-slate-600 dark:text-slate-400">Temukan kisah di balik bahan pangan lokal nusantara.</p>
                                     </div>
                                 </div>
                             </div>
@@ -265,9 +313,9 @@ export default function Wisata() {
                         <div className="bg-surface-dark rounded-3xl p-8 lg:p-12 border border-primary/20 overflow-hidden relative shadow-2xl">
                             <div className="flex flex-col lg:flex-row gap-12 items-center relative z-10">
                                 <div className="flex-1">
-                                    <h2 className="text-3xl font-black text-white mb-6">Peta Digital Traveler Nusantara</h2>
+                                    <h2 className="text-3xl font-black text-white mb-6">Panduan Wisata Nusantara</h2>
                                     <p className="text-slate-400 text-lg mb-8 leading-relaxed">
-                                        Jembatan digital yang memudahkan wisatawan domestik dan mancanegara menemukan rute terbaik. Dapatkan rekomendasi destinasi berbasis AI yang sesuai dengan preferensi petualangan Anda.
+                                        Jembatan informasi digital yang memudahkan wisatawan menemukan rute terbaik dan cerita unik di setiap sudut kota secara mandiri dan praktis.
                                     </p>
                                     <div className="flex flex-wrap gap-4">
                                         <Link href="/peta-wisata">
