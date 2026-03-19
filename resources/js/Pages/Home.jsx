@@ -254,7 +254,7 @@ export default function Home({ cities = [] }) {
                                     Jadikan kotamu bagian dari jaringan digital Nusantara. Bagikan cerita unik, budaya, dan potensi daerahmu kepada dunia.
                                 </p>
                                 <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-6">
-                                    <Link href="/daftarkan-kota">
+                                    <Link href="/kontribusi?type=kota">
                                         <motion.button
                                             whileHover={{ scale: 1.05 }}
                                             whileTap={{ scale: 0.95 }}

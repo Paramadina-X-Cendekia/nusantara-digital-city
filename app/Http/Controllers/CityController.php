@@ -67,7 +67,8 @@ class CityController extends Controller
     {
         try {
             $database = $this->getFirebaseDatabase();
-            $reference = $database->getReference('city_registrations');
+            // Fetch from the new unified node
+            $reference = $database->getReference('pending_contributions');
             $snapshot = $reference->getSnapshot();
             
             $registrations = [];
@@ -92,29 +93,52 @@ class CityController extends Controller
     {
         try {
             $database = $this->getFirebaseDatabase();
-            $regRef = $database->getReference('city_registrations/' . $id);
+            $regRef = $database->getReference('pending_contributions/' . $id);
             $regData = $regRef->getSnapshot()->getValue();
 
             if (!$regData) {
                 return back()->withErrors(['error' => 'Data tidak ditemukan.']);
             }
 
-            // Move to cities node
-            $database->getReference('cities')->push([
-                'name' => $regData['cityName'],
-                'province' => $regData['province'],
-                'description' => $regData['description'],
-                'population' => $regData['population'] ?? '-',
-                'category' => $regData['category'],
-                'website' => $regData['website'] ?? null,
-                'status' => 'approved',
-                'approved_at' => now()->toDateTimeString(),
-            ]);
+            $type = $regData['type'] ?? 'kota';
+
+            if ($type === 'kota') {
+                $database->getReference('cities')->push([
+                    'name' => $regData['cityName'],
+                    'province' => $regData['province'],
+                    'description' => $regData['description'],
+                    'population' => $regData['population'] ?? '-',
+                    'category' => $regData['category'],
+                    'website' => $regData['website'] ?? null,
+                    'status' => 'approved',
+                    'approved_at' => now()->toDateTimeString(),
+                ]);
+            } elseif ($type === 'budaya') {
+                $database->getReference('seni')->push([
+                    'title' => $regData['artName'],
+                    'category' => $regData['category'],
+                    'origin' => $regData['origin'],
+                    'province' => $regData['province'] ?? '-',
+                    'desc' => $regData['description'],
+                    'status' => 'approved',
+                    'approved_at' => now()->toDateTimeString(),
+                ]);
+            } elseif ($type === 'kuliner') {
+                $database->getReference('warungs')->push([
+                    'name' => $regData['shopName'],
+                    'city' => $regData['city'],
+                    'address' => $regData['address'],
+                    'digitalMenu' => $regData['digitalMenu'] ?? false,
+                    'businessProfile' => $regData['businessProfile'] ?? false,
+                    'status' => 'approved',
+                    'approved_at' => now()->toDateTimeString(),
+                ]);
+            }
 
             // Remove from registrations
             $regRef->remove();
 
-            return redirect()->route('admin.registrations')->with('success', 'Kota telah berhasil disetujui dan ditayangkan.');
+            return redirect()->route('admin.registrations')->with('success', 'Kontribusi telah berhasil disetujui dan ditayangkan.');
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Gagal menyetujui: ' . $e->getMessage()]);
         }
@@ -124,9 +148,9 @@ class CityController extends Controller
     {
         try {
             $database = $this->getFirebaseDatabase();
-            $database->getReference('city_registrations/' . $id)->remove();
+            $database->getReference('pending_contributions/' . $id)->remove();
 
-            return back()->with('success', 'Pendaftaran telah dihapus.');
+            return back()->with('success', 'Kontribusi telah dihapus.');
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Gagal menghapus: ' . $e->getMessage()]);
         }

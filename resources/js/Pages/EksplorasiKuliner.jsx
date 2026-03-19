@@ -252,7 +252,7 @@ export default function EksplorasiKuliner() {
                                     Punya warung legendaris? Digitalisasikan menu Anda dan bagikan kisah bahan lokal gerai Anda agar pelanggan mendapatkan pengalaman kuliner terbaik.
                                 </p>
                                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-                                    <Link href="/daftarkan-warung">
+                                    <Link href="/kontribusi?type=kuliner">
                                         <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="px-8 py-4 bg-white text-primary rounded-xl font-bold shadow-xl hover:bg-slate-50 transition-colors">
                                             Daftarkan Sekarang
                                         </motion.button>

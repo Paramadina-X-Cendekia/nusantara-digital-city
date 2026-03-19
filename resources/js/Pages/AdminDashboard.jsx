@@ -8,7 +8,7 @@ export default function AdminDashboard({ registrations, flash, error }) {
     const [processingId, setProcessingId] = useState(null);
 
     const handleApprove = (id) => {
-        if (!confirm('Apakah Anda yakin ingin menyetujui kota ini?')) return;
+        if (!confirm('Apakah Anda yakin ingin menyetujui kontribusi ini?')) return;
         setProcessingId(id);
         router.post(`/admin/registrations/${id}/approve`, {}, {
             onFinish: () => setProcessingId(null),
@@ -16,7 +16,7 @@ export default function AdminDashboard({ registrations, flash, error }) {
     };
 
     const handleDelete = (id) => {
-        if (!confirm('Apakah Anda yakin ingin menghapus pendaftaran ini?')) return;
+        if (!confirm('Apakah Anda yakin ingin menghapus kontribusi ini?')) return;
         setProcessingId(id);
         router.delete(`/admin/registrations/${id}`, {
             onFinish: () => setProcessingId(null),
@@ -81,18 +81,38 @@ export default function AdminDashboard({ registrations, flash, error }) {
                                     {/* Info Section */}
                                     <div className="p-8 flex-grow">
                                         <div className="flex flex-wrap items-center gap-2 mb-4">
-                                            <span className="px-2 py-0.5 rounded-md bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest border border-primary/20">
-                                                {reg.category}
+                                            <span className={`px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-widest border ${
+                                                reg.type === 'budaya' ? 'bg-orange-500/10 text-orange-500 border-orange-500/20' : 
+                                                reg.type === 'kuliner' ? 'bg-purple-500/10 text-purple-500 border-purple-500/20' : 
+                                                'bg-primary/10 text-primary border-primary/20'
+                                            }`}>
+                                                {reg.type === 'budaya' ? 'Seni & Budaya' : reg.type === 'kuliner' ? 'Wisata & Kuliner' : 'Kota / Daerah'}
                                             </span>
                                             <span className="text-slate-400 text-xs">•</span>
-                                            <span className="text-slate-500 text-xs font-medium">Populasi: {reg.population || '-'}</span>
+                                            <span className="text-slate-500 text-xs font-medium">
+                                                {reg.type === 'kota' ? `Populasi: ${reg.population || '-'}` : 
+                                                 reg.type === 'budaya' ? `Kategori: ${reg.category || '-'}` : 
+                                                 `Tipe: ${reg.category || 'Wisata/Kuliner'}`}
+                                            </span>
                                         </div>
-                                        <h3 className="text-2xl font-black mb-1">{reg.cityName}</h3>
-                                        <p className="text-primary font-bold text-sm mb-4">{reg.province}</p>
-                                        <p className="text-slate-600 dark:text-slate-400 text-sm line-clamp-2 mb-6">
-                                            {reg.description}
+
+                                        {/* Dynamic Title and Subtitle based on type */}
+                                        <h3 className="text-2xl font-black mb-1">
+                                            {reg.type === 'budaya' ? reg.artName : reg.type === 'kuliner' ? reg.shopName : reg.cityName}
+                                        </h3>
+                                        <p className={`font-bold text-sm mb-4 ${
+                                            reg.type === 'budaya' ? 'text-orange-500' : 
+                                            reg.type === 'kuliner' ? 'text-purple-500' : 
+                                            'text-primary'
+                                        }`}>
+                                            {reg.type === 'budaya' ? reg.origin : reg.type === 'kuliner' ? reg.city : reg.province}
                                         </p>
 
+                                        <p className="text-slate-600 dark:text-slate-400 text-sm line-clamp-2 mb-6">
+                                            {reg.type === 'kuliner' ? reg.address : reg.description}
+                                        </p>
+
+                                        {/* Metadata Grids */}
                                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-4 gap-x-8 pt-6 border-t border-slate-100 dark:border-slate-800">
                                             <div className="flex items-center gap-3">
                                                 <div className="size-8 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500">

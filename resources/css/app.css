@@ -24,3 +24,15 @@
     --radius-2xl: 1.5rem;
     --radius-full: 9999px;
 }
+
+@layer base {
+    body {
+        @apply transition-colors duration-300;
+    }
+
+    @media (max-width: 767px) {
+        body {
+            padding-bottom: calc(4rem + env(safe-area-inset-bottom));
+        }
+    }
+}

@@ -171,7 +171,7 @@ export default function EksplorasiSeni() {
                                     Punya karya seni tradisional yang ingin didigitalisasi? Kontribusikan warisan budaya daerah Anda ke dalam arsip digital Nusantara.
                                 </p>
                                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-                                    <Link href="/kontribusi-seni">
+                                    <Link href="/kontribusi?type=budaya">
                                         <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="px-8 py-4 bg-white text-primary rounded-xl font-bold shadow-xl hover:bg-slate-50 transition-colors">
                                             Kontribusi Karya Seni
                                         </motion.button>

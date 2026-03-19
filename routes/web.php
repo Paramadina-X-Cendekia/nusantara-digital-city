@@ -29,11 +29,12 @@ Route::get('/kontak', function () {
     return Inertia::render('Kontak');
 })->name('kontak');
 
-Route::get('/daftarkan-kota', function () {
-    return Inertia::render('DaftarkanKota');
-})->name('daftarkan-kota');
+Route::get('/kontribusi', [\App\Http\Controllers\ContributionController::class, 'index'])->name('kontribusi');
+Route::post('/kontribusi', [\App\Http\Controllers\ContributionController::class, 'store'])->name('kontribusi.store');
 
-Route::post('/daftarkan-kota', [\App\Http\Controllers\CityController::class, 'store'])->name('city.register');
+Route::get('/daftarkan-kota', function () {
+    return redirect()->route('kontribusi', ['type' => 'kota']);
+})->name('daftarkan-kota');
 
 // Admin Routes
 Route::middleware([\App\Http\Middleware\AdminAuth::class])->group(function () {
@@ -52,9 +53,13 @@ Route::get('/eksplorasi-kuliner', function () {
     return Inertia::render('EksplorasiKuliner');
 })->name('eksplorasi-kuliner');
 
-Route::get('/daftarkan-warung', [CityController::class, 'showDaftarkanWarung'])->name('daftarkan-warung');
+Route::get('/daftarkan-warung', function () {
+    return redirect()->route('kontribusi', ['type' => 'kuliner']);
+})->name('daftarkan-warung');
 
-Route::get('/kontribusi-seni', [SeniController::class, 'kontribusi'])->name('kontribusi-seni');
+Route::get('/kontribusi-seni', function () {
+    return redirect()->route('kontribusi', ['type' => 'budaya']);
+})->name('kontribusi-seni');
 
 Route::get('/peta-warisan', function () {
     return Inertia::render('PetaWarisan');
