@@ -1,9 +1,46 @@
+import { useRef, useEffect } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
+gsap.registerPlugin(ScrollTrigger);
+
 export default function Home({ cities = [] }) {
+    const sectionRef = useRef(null);
+    const triggerRef = useRef(null);
+
+    const PILARS = [
+        { icon: 'history_edu', title: 'Portal Informasi', desc: 'Arsip digital komprehensif yang mendokumentasikan sejarah, adat istiadat, dan warisan budaya Nusantara dalam format modern yang mudah diakses oleh generasi masa depan.' },
+        { icon: 'map', title: 'Panduan Wisata', desc: 'Navigasi cerdas berbasis geolokasi untuk mengeksplorasi destinasi tersembunyi, kuliner legendaris, dan rute wisata lokal secara mendalam dan personal.' },
+        { icon: 'storefront', title: 'Media Branding', desc: 'Platform strategis untuk membangun identitas digital kota yang kuat, profesional, dan berdaya saing global demi menarik investasi serta kunjungan wisata dunia.' },
+        { icon: 'hub', title: 'Edukasi & Promosi', desc: 'Ruang interaktif untuk mempromosikan kekayaan daerah melalui konten edukatif yang menghubungkan kearifan lokal dengan gaya hidup digital dunia.' },
+    ];
+
+    useEffect(() => {
+        const pin = gsap.fromTo(
+            sectionRef.current,
+            { x: 0 },
+            {
+                x: () => -(sectionRef.current.scrollWidth - window.innerWidth),
+                ease: "none",
+                scrollTrigger: {
+                    trigger: triggerRef.current,
+                    start: "top top",
+                    end: () => `+=${sectionRef.current.scrollWidth}`, // Dynamic duration
+                    scrub: 1,
+                    pin: true,
+                    anticipatePin: 1
+                }
+            }
+        );
+        return () => {
+            pin.kill();
+        };
+    }, []);
+
     const fadeIn = {
         hidden: { opacity: 0, y: 20 },
         visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
@@ -68,44 +105,43 @@ export default function Home({ cities = [] }) {
                     </div>
                 </section>
 
-                {/* Main Roles Section */}
-                <section className="py-16 px-4 bg-slate-50 dark:bg-slate-900/50">
-                    <div className="container mx-auto max-w-6xl">
-                        <motion.div
-                            initial="hidden"
-                            whileInView="visible"
-                            viewport={{ once: true, margin: "-100px" }}
-                            variants={fadeIn}
-                            className="mb-12 space-y-4 text-center md:text-left"
-                        >
-                            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900 dark:text-slate-100">Empat Pilar Digitalisasi</h2>
-                            <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl">
-                                Nusantara Digital City hadir sebagai ekosistem untuk menjaga kelestarian budaya dan mendorong kemajuan ekonomi lokal melalui empat pilar utama.
+                {/* Main Roles Section with Scroll-Triggered Horizontal Scroll */}
+                <section ref={triggerRef} className="overflow-hidden bg-white dark:bg-slate-950">
+                    <div ref={sectionRef} className="flex h-[90vh] items-center px-10 md:px-24 gap-16 md:gap-32 w-max">
+                        {/* Title Card */}
+                        <div className="flex flex-col justify-center space-y-6 min-w-[300px] md:min-w-[500px]">
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-widest w-fit">
+                                DIGITAL PILLARS
+                            </div>
+                            <h2 className="text-5xl md:text-8xl font-black tracking-tighter text-slate-900 dark:text-slate-100 uppercase leading-[0.85]">
+                                Empat <br /><span className="text-primary italic">Pilar</span> <br />Digital
+                            </h2>
+                            <p className="text-lg md:text-xl text-slate-500 dark:text-slate-400 max-w-sm font-medium leading-relaxed">
+                                Transformasi kearifan lokal melalui pondasi teknologi masa depan.
                             </p>
-                        </motion.div>
+                        </div>
 
-                        <motion.div
-                            initial="hidden"
-                            whileInView="visible"
-                            viewport={{ once: true, margin: "-100px" }}
-                            variants={staggerContainer}
-                            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
-                        >
-                            {[
-                                { icon: 'history_edu', title: 'Portal Informasi', desc: 'Arsip digital untuk sejarah, budaya, dan potensi daerah agar mudah diakses siapa saja.' },
-                                { icon: 'map', title: 'Panduan Wisata', desc: 'Navigasi digital untuk mengeksplorasi destinasi dan kuliner lokal secara mendalam.' },
-                                { icon: 'storefront', title: 'Media Branding', desc: 'Membangun identitas digital kota yang profesional dan berdaya saing di kancah global.' },
-                                { icon: 'hub', title: 'Edukasi & Promosi', desc: 'Sarana promosi kekayaan daerah bagi turis lokal maupun mancanegara.' },
-                            ].map((role) => (
-                                <motion.div key={role.title} variants={fadeIn} whileHover={{ y: -8 }} className="group p-8 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-surface-dark transition-all shadow-sm hover:shadow-xl dark:hover:border-primary/50 cursor-pointer">
-                                    <div className="size-14 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-6 transition-transform group-hover:scale-110 group-hover:bg-primary group-hover:text-white">
-                                        <span className="material-symbols-outlined text-3xl">{role.icon}</span>
+                        {/* Pilar Cards */}
+                        <div className="flex gap-8 md:gap-12 items-center pr-24">
+                            {PILARS.map((role, idx) => (
+                                <div key={idx} className="min-w-[320px] md:min-w-[420px] h-[450px] md:h-[500px] group relative p-10 rounded-[3rem] border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30 backdrop-blur-sm transition-all duration-500 hover:shadow-2xl hover:shadow-primary/5 hover:-translate-y-2 cursor-pointer flex flex-col justify-between overflow-hidden">
+                                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-3xl group-hover:bg-primary/10 transition-colors"></div>
+
+                                    <div>
+                                        <div className="size-20 md:size-[80px] rounded-3xl bg-white dark:bg-slate-800 text-primary flex items-center justify-center mb-10 shadow-xl shadow-primary/5 transition-all group-hover:scale-110 group-hover:bg-primary group-hover:text-white border border-slate-100 dark:border-slate-800">
+                                            <span className="material-symbols-outlined text-4xl md:text-6xl">{role.icon}</span>
+                                        </div>
+                                        <h3 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-slate-100 italic uppercase tracking-tighter leading-none mb-6">{role.title}</h3>
+                                        <p className="text-slate-500 dark:text-slate-400 text-lg md:text-xl leading-relaxed font-medium max-w-[300px] md:max-w-[400px]">{role.desc}</p>
                                     </div>
-                                    <h3 className="text-lg font-bold mb-3 text-slate-900 dark:text-slate-100">{role.title}</h3>
-                                    <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">{role.desc}</p>
-                                </motion.div>
+
+                                    <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+                                        <span>Pilar 0{idx + 1}</span>
+                                        <span className="material-symbols-outlined text-xl opacity-0 group-hover:opacity-100 transition-opacity">arrow_right_alt</span>
+                                    </div>
+                                </div>
                             ))}
-                        </motion.div>
+                        </div>
                     </div>
                 </section>
 

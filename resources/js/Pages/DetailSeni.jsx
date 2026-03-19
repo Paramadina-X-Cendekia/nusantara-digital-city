@@ -100,9 +100,10 @@ export default function DetailSeni({ art }) {
     const [activeTab, setActiveTab] = useState('galeri');
     const [galleryIdx, setGalleryIdx] = useState(0);
 
-    // Filter tabs: show Audio only for category gamelan
+    // Filter tabs based on asset capabilities
     const tabs = TAB_MAP.filter((t) => {
         if (t.id === 'audio' && !art.hasAudio) return false;
+        if (t.id === 'ar' && !art.hasAR) return false;
         return true;
     });
 

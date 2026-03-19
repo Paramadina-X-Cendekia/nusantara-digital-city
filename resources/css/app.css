@@ -15,7 +15,7 @@
     --color-surface-dark: #1e293b;
 
     /* Fonts */
-    --font-display: Inter, sans-serif;
+    --font-display: "Plus Jakarta Sans", sans-serif;
 
     /* Border Radius */
     --radius: 0.75rem;

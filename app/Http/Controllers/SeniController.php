@@ -31,6 +31,7 @@ class SeniController extends Controller
                 'hasAudio' => false,
                 'videoUrl' => 'https://www.youtube.com/embed/dQw4w9WgXcQ',
                 'videoTitle' => 'Dokumenter: Proses Pembuatan Batik Parang Rusak',
+                'hasAR' => true,
                 'arDesc' => 'Arahkan kamera ke motif batik Parang Rusak untuk melihat animasi 3D dan sejarah di balik setiap goresan canting.',
                 'modelUrl' => 'https://modelviewer.dev/shared-assets/models/Astronaut.glb',
                 'facts' => [
@@ -63,8 +64,7 @@ class SeniController extends Controller
                 'audioDesc' => 'Rasakan sensasi berada di tengah orkestra Gamelan melalui audio spasial 360°. Dengarkan harmoni dari setiap instrumen—saron, bonang, kenong, gong—dalam pengalaman imersif.',
                 'videoUrl' => 'https://www.youtube.com/embed/dQw4w9WgXcQ',
                 'videoTitle' => 'Dokumenter: Harmoni Abadi Gamelan Jawa',
-                'arDesc' => 'Arahkan kamera ke instrumen gamelan untuk melihat visualisasi 3D bagaimana setiap alat musik dimainkan.',
-                'modelUrl' => 'https://modelviewer.dev/shared-assets/models/RobotExpressive.glb',
+                'hasAR' => false,
                 'facts' => [
                     'Dikenal sejak abad ke-9 Masehi',
                     'Memiliki 2 laras: Slendro dan Pelog',
@@ -98,8 +98,7 @@ class SeniController extends Controller
                 'hasAudio' => false,
                 'videoUrl' => 'https://www.youtube.com/embed/dQw4w9WgXcQ',
                 'videoTitle' => 'Dokumenter: Tari Kecak di Tebing Uluwatu',
-                'arDesc' => 'Pindai poster Tari Kecak untuk melihat animasi 3D formasi penari dan kisah Ramayana.',
-                'modelUrl' => 'https://modelviewer.dev/shared-assets/models/Horse.glb',
+                'hasAR' => false,
                 'facts' => [
                     'Dikembangkan tahun 1930-an',
                     'Melibatkan 50-150 penari pria',
@@ -125,8 +124,9 @@ class SeniController extends Controller
                     ['x' => 35, 'y' => 52, 'title' => 'Garis Lengkung Mengalir', 'desc' => 'Mencerminkan ketegasan dalam kelembutan, perpaduan kearifan lokal dan pengaruh budaya pesisir.'],
                 ],
                 'hasAudio' => false,
-                'videoUrl' => 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+                'videoUrl' => 'https://www.youtube.com/embed/eHpBDLXJUGU?si=AsxZ4AwzUW5JYO81',
                 'videoTitle' => 'Dokumenter: Filosofi Mega Mendung Cirebon',
+                'hasAR' => true,
                 'arDesc' => 'Pindai kain Mega Mendung untuk melihat setiap lapisan warna dan makna filosofisnya dalam 3D.',
                 'modelUrl' => 'https://modelviewer.dev/shared-assets/models/Astronaut.glb',
                 'facts' => [
@@ -156,8 +156,7 @@ class SeniController extends Controller
                 'hasAudio' => false,
                 'videoUrl' => 'https://www.youtube.com/embed/dQw4w9WgXcQ',
                 'videoTitle' => 'Dokumenter: Tari Saman — Tarian Seribu Tangan',
-                'arDesc' => 'Arahkan kamera ke poster Tari Saman untuk melihat animasi 3D gerakan penari secara sinkron.',
-                'modelUrl' => 'https://modelviewer.dev/shared-assets/models/Horse.glb',
+                'hasAR' => false,
                 'facts' => [
                     'Diperkenalkan abad ke-14 oleh Syekh Saman',
                     'Diakui UNESCO tahun 2011',
@@ -190,8 +189,7 @@ class SeniController extends Controller
                 'hasAudio' => false,
                 'videoUrl' => 'https://www.youtube.com/embed/dQw4w9WgXcQ',
                 'videoTitle' => 'Dokumenter: Seni Ukir Jepara — Warisan Berabad-abad',
-                'arDesc' => 'Pindai produk ukiran Jepara untuk melihat proses pembuatannya secara 3D dari blok kayu hingga karya seni.',
-                'modelUrl' => 'https://modelviewer.dev/shared-assets/models/RobotExpressive.glb',
+                'hasAR' => false,
                 'facts' => [
                     'Berkembang sejak abad ke-16',
                     'R.A. Kartini turut mempromosikan ke dunia',
