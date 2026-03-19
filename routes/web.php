@@ -25,9 +25,9 @@ Route::get('/wisata', function () {
     return Inertia::render('Wisata');
 })->name('wisata');
 
-Route::get('/kontak', function () {
-    return Inertia::render('Kontak');
-})->name('kontak');
+Route::get('/faq', function () {
+    return Inertia::render('Faq');
+})->name('faq');
 
 Route::get('/daftarkan-kota', function () {
     return Inertia::render('DaftarkanKota');

@@ -2,7 +2,7 @@ export default function Footer() {
     return (
         <footer className="bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 pt-16 pb-8 px-4">
             <div className="container mx-auto max-w-6xl">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
                     <div className="col-span-1 md:col-span-1 space-y-6">
                         <div className="flex items-center gap-3">
                             <span className="material-symbols-outlined text-primary text-3xl">auto_awesome</span>
@@ -36,23 +36,6 @@ export default function Footer() {
                             <li><a className="hover:text-primary transition-colors hover:translate-x-1 inline-block transform" href="#">Pusat Bantuan</a></li>
                             <li><a className="hover:text-primary transition-colors hover:translate-x-1 inline-block transform" href="#">Kebijakan Privasi</a></li>
                             <li><a className="hover:text-primary transition-colors hover:translate-x-1 inline-block transform" href="#">Syarat &amp; Ketentuan</a></li>
-                        </ul>
-                    </div>
-                    <div className="space-y-6">
-                        <h3 className="font-bold text-slate-900 dark:text-white">Kontak</h3>
-                        <ul className="space-y-4 text-sm text-slate-600 dark:text-slate-400">
-                            <li className="flex items-start gap-3">
-                                <span className="material-symbols-outlined text-primary text-xl">location_on</span>
-                                <span>Jl. Merdeka Selatan No. 1, Jakarta Pusat, DKI Jakarta 10110</span>
-                            </li>
-                            <li className="flex items-start gap-3">
-                                <span className="material-symbols-outlined text-primary text-xl">phone</span>
-                                <span>(021) 1234-5678</span>
-                            </li>
-                            <li className="flex items-start gap-3">
-                                <span className="material-symbols-outlined text-primary text-xl">mail</span>
-                                <span>kontak@nusantaradigital.go.id</span>
-                            </li>
                         </ul>
                     </div>
                 </div>
