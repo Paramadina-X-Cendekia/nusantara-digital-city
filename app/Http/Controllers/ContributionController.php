@@ -6,8 +6,16 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Kreait\Laravel\Firebase\Facades\Firebase;
 
+use App\Services\GeminiService;
+
 class ContributionController extends Controller
 {
+    protected $gemini;
+
+    public function __construct(GeminiService $gemini)
+    {
+        $this->gemini = $gemini;
+    }
     /**
      * Show the unified contribution page.
      */
@@ -62,7 +70,7 @@ class ContributionController extends Controller
                 'province' => 'required|string|max:255',
                 'description' => 'required|string',
                 'category' => 'required|string',
-                'population' => 'nullable|string',
+                'maps_link' => 'nullable|string', // Replaced population
                 'website' => 'nullable|url',
             ];
         } elseif ($type === 'budaya') {
@@ -98,5 +106,23 @@ class ContributionController extends Controller
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Gagal mengirim kontribusi: ' . $e->getMessage()]);
         }
+    }
+
+    /**
+     * Generate description using AI.
+     */
+    public function generateDescription(Request $request)
+    {
+        $request->validate([
+            'type' => 'required|string',
+            'name' => 'required|string',
+        ]);
+
+        $description = $this->gemini->generateDescription(
+            $request->type,
+            $request->name
+        );
+
+        return response()->json(['description' => $description]);
     }
 }

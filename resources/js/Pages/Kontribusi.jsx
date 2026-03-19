@@ -23,6 +23,7 @@ const CATEGORIES = [
 export default function Kontribusi({ cities = [], initialType = 'kota' }) {
     const [selectedType, setSelectedType] = useState(initialType);
     const [showSuccess, setShowSuccess] = useState(false);
+    const [isGenerating, setIsGenerating] = useState(false);
 
     const { data, setData, post, processing, errors, reset, recentlySuccessful } = useForm({
         type: initialType,
@@ -34,7 +35,7 @@ export default function Kontribusi({ cities = [], initialType = 'kota' }) {
         cityName: '',
         province: '',
         category: 'kota',
-        population: '',
+        maps_link: '',
         website: '',
         description: '',
         // Budaya specific
@@ -70,6 +71,46 @@ export default function Kontribusi({ cities = [], initialType = 'kota' }) {
         });
     };
 
+    const handleGenerateAI = async () => {
+        const name = selectedType === 'kota' ? data.cityName : 
+                     selectedType === 'budaya' ? data.artName : 
+                     data.shopName;
+        
+        if (!name) {
+            alert('Mohon isi nama terlebih dahulu untuk menghasilkan deskripsi.');
+            return;
+        }
+
+        setIsGenerating(true);
+        try {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            
+            const response = await fetch('/kontribusi/generate-description', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                body: JSON.stringify({
+                    type: selectedType,
+                    name: name
+                })
+            });
+
+            const result = await response.json();
+            if (result.description) {
+                setData('description', result.description);
+            } else if (result.error) {
+                alert(result.error);
+            }
+        } catch (error) {
+            console.error('AI Generation failed:', error);
+            alert('Gagal menghubungi layanan AI. Pastikan koneksi internet Anda stabil.');
+        } finally {
+            setIsGenerating(false);
+        }
+    };
+
     const renderFormFields = () => {
         switch (selectedType) {
             case 'kota':
@@ -95,13 +136,33 @@ export default function Kontribusi({ cities = [], initialType = 'kota' }) {
                                 </select>
                             </div>
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">Populasi</label>
-                                <input value={data.population} onChange={e => setData('population', e.target.value)} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none focus:ring-2 focus:ring-primary transition-all" placeholder="Contoh: 2.500.000" />
+                                <label className="text-sm font-medium">Gmaps Link (Opsional)</label>
+                                <input value={data.maps_link} onChange={e => setData('maps_link', e.target.value)} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none focus:ring-2 focus:ring-primary transition-all" placeholder="https://maps.google.com/..." />
                             </div>
                         </div>
                         <div className="space-y-2">
-                            <label className="text-sm font-medium">Deskripsi Singkat *</label>
-                            <textarea value={data.description} onChange={e => setData('description', e.target.value)} required className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none focus:ring-2 focus:ring-primary resize-none" rows="4" placeholder="Ceritakan keunikan kota Anda..."></textarea>
+                            <div className="flex items-center justify-between">
+                                <label className="text-sm font-medium">Deskripsi Singkat *</label>
+                                <button 
+                                    type="button"
+                                    onClick={handleGenerateAI}
+                                    disabled={isGenerating}
+                                    className="flex items-center gap-1.5 text-xs font-bold text-primary hover:text-primary/80 transition-all disabled:opacity-50"
+                                >
+                                    <span className={`material-symbols-outlined text-sm ${isGenerating ? 'animate-spin' : ''}`}>
+                                        {isGenerating ? 'sync' : 'auto_awesome'}
+                                    </span>
+                                    {isGenerating ? 'Menghasilkan...' : 'Generate dengan AI'}
+                                </button>
+                            </div>
+                            <textarea 
+                                value={data.description} 
+                                onChange={e => setData('description', e.target.value)} 
+                                required 
+                                className={`w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none focus:ring-2 focus:ring-primary resize-none transition-all ${isGenerating ? 'animate-pulse opacity-50' : ''}`} 
+                                rows="4" 
+                                placeholder="Ceritakan keunikan kota Anda..."
+                            ></textarea>
                         </div>
                     </motion.div>
                 );
@@ -138,8 +199,28 @@ export default function Kontribusi({ cities = [], initialType = 'kota' }) {
                             </div>
                         </div>
                         <div className="space-y-2">
-                            <label className="text-sm font-medium">Sejarah / Deskripsi *</label>
-                            <textarea value={data.description} onChange={e => setData('description', e.target.value)} required className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none focus:ring-2 focus:ring-primary resize-none" rows="4" placeholder="Ceritakan sejarah dan filosofinya..."></textarea>
+                            <div className="flex items-center justify-between">
+                                <label className="text-sm font-medium">Sejarah / Deskripsi *</label>
+                                <button 
+                                    type="button"
+                                    onClick={handleGenerateAI}
+                                    disabled={isGenerating}
+                                    className="flex items-center gap-1.5 text-xs font-bold text-primary hover:text-primary/80 transition-all disabled:opacity-50"
+                                >
+                                    <span className={`material-symbols-outlined text-sm ${isGenerating ? 'animate-spin' : ''}`}>
+                                        {isGenerating ? 'sync' : 'auto_awesome'}
+                                    </span>
+                                    {isGenerating ? 'Menghasilkan...' : 'Generate dengan AI'}
+                                </button>
+                            </div>
+                            <textarea 
+                                value={data.description} 
+                                onChange={e => setData('description', e.target.value)} 
+                                required 
+                                className={`w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none focus:ring-2 focus:ring-primary resize-none transition-all ${isGenerating ? 'animate-pulse opacity-50' : ''}`} 
+                                rows="4" 
+                                placeholder="Ceritakan sejarah dan filosofinya..."
+                            ></textarea>
                         </div>
                     </motion.div>
                 );
@@ -163,16 +244,26 @@ export default function Kontribusi({ cities = [], initialType = 'kota' }) {
                             <label className="text-sm font-medium">Alamat Lengkap *</label>
                             <input value={data.address} onChange={e => setData('address', e.target.value)} required className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none focus:ring-2 focus:ring-primary transition-all" placeholder="Jl. Kebangsaan No. 45" />
                         </div>
-                        <div className="grid sm:grid-cols-2 gap-4">
-                            <label className={`flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition-all ${data.digitalMenu ? 'border-primary bg-primary/5' : 'border-slate-200'}`}>
-                                <input type="checkbox" checked={data.digitalMenu} onChange={e => setData('digitalMenu', e.target.checked)} className="sr-only" />
-                                <span className={`material-symbols-outlined ${data.digitalMenu ? 'text-primary' : 'text-slate-400'}`}>qr_code</span>
-                                <span className="text-sm font-medium">Menu Digital (QR)</span>
+                        <div className="grid grid-cols-1 gap-4">
+                            <label className={`flex flex-col gap-3 p-6 rounded-2xl border cursor-pointer transition-all ${data.digitalMenu ? 'border-primary bg-primary/5 shadow-lg shadow-primary/5' : 'border-slate-200 hover:border-primary/30'}`}>
+                                <div className="flex items-center gap-3">
+                                    <input type="checkbox" checked={data.digitalMenu} onChange={e => setData('digitalMenu', e.target.checked)} className="sr-only" />
+                                    <div className={`size-10 rounded-xl flex items-center justify-center transition-colors ${data.digitalMenu ? 'bg-primary text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}>
+                                        <span className="material-symbols-outlined">qr_code</span>
+                                    </div>
+                                    <span className="font-bold">Menu Digital (QR)</span>
+                                </div>
+                                <p className="text-xs text-slate-500 dark:text-slate-400 ml-13">Akses daftar menu secara higienis dan praktis melalui pemindaian QR code untuk wisatawan.</p>
                             </label>
-                            <label className={`flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition-all ${data.businessProfile ? 'border-primary bg-primary/5' : 'border-slate-200'}`}>
-                                <input type="checkbox" checked={data.businessProfile} onChange={e => setData('businessProfile', e.target.checked)} className="sr-only" />
-                                <span className={`material-symbols-outlined ${data.businessProfile ? 'text-primary' : 'text-slate-400'}`}>storefront</span>
-                                <span className="text-sm font-medium">Profil Bisnis Digital</span>
+                            <label className={`flex flex-col gap-3 p-6 rounded-2xl border cursor-pointer transition-all ${data.businessProfile ? 'border-primary bg-primary/5 shadow-lg shadow-primary/5' : 'border-slate-200 hover:border-primary/30'}`}>
+                                <div className="flex items-center gap-3">
+                                    <input type="checkbox" checked={data.businessProfile} onChange={e => setData('businessProfile', e.target.checked)} className="sr-only" />
+                                    <div className={`size-10 rounded-xl flex items-center justify-center transition-colors ${data.businessProfile ? 'bg-primary text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}>
+                                        <span className="material-symbols-outlined">history_edu</span>
+                                    </div>
+                                    <span className="font-bold">Profil Bisnis Digital (Storytelling)</span>
+                                </div>
+                                <p className="text-xs text-slate-500 dark:text-slate-400 ml-13">Tampilkan kisah di balik bahan masakan lokal, asal-usul, dan profil petani kepada pelanggan.</p>
                             </label>
                         </div>
                     </motion.div>

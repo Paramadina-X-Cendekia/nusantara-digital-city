@@ -90,7 +90,13 @@ export default function AdminDashboard({ registrations, flash, error }) {
                                             </span>
                                             <span className="text-slate-400 text-xs">•</span>
                                             <span className="text-slate-500 text-xs font-medium">
-                                                {reg.type === 'kota' ? `Populasi: ${reg.population || '-'}` : 
+                                                {reg.type === 'kota' ? (
+                                                    reg.maps_link ? (
+                                                        <a href={reg.maps_link} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline flex items-center gap-1">
+                                                            <span className="material-symbols-outlined text-xs">map</span> Lihat di Maps
+                                                        </a>
+                                                    ) : 'Tanpa Link Maps'
+                                                ) : 
                                                  reg.type === 'budaya' ? `Kategori: ${reg.category || '-'}` : 
                                                  `Tipe: ${reg.category || 'Wisata/Kuliner'}`}
                                             </span>

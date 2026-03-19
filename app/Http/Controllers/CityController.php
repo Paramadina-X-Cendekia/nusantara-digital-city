@@ -107,7 +107,7 @@ class CityController extends Controller
                     'name' => $regData['cityName'],
                     'province' => $regData['province'],
                     'description' => $regData['description'],
-                    'population' => $regData['population'] ?? '-',
+                    'maps_link' => $regData['maps_link'] ?? null,
                     'category' => $regData['category'],
                     'website' => $regData['website'] ?? null,
                     'status' => 'approved',

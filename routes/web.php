@@ -31,6 +31,7 @@ Route::get('/kontak', function () {
 
 Route::get('/kontribusi', [\App\Http\Controllers\ContributionController::class, 'index'])->name('kontribusi');
 Route::post('/kontribusi', [\App\Http\Controllers\ContributionController::class, 'store'])->name('kontribusi.store');
+Route::post('/kontribusi/generate-description', [\App\Http\Controllers\ContributionController::class, 'generateDescription'])->name('kontribusi.generate');
 
 Route::get('/daftarkan-kota', function () {
     return redirect()->route('kontribusi', ['type' => 'kota']);
