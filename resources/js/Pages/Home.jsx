@@ -1,6 +1,6 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Navbar from '../components/Navbar';
@@ -11,12 +11,56 @@ gsap.registerPlugin(ScrollTrigger);
 export default function Home({ cities = [] }) {
     const sectionRef = useRef(null);
     const triggerRef = useRef(null);
+    const [openFaq, setOpenFaq] = useState(null);
 
     const PILARS = [
         { icon: 'history_edu', title: 'Portal Informasi', desc: 'Arsip digital komprehensif yang mendokumentasikan sejarah, adat istiadat, dan warisan budaya Nusantara dalam format modern yang mudah diakses oleh generasi masa depan.' },
         { icon: 'map', title: 'Panduan Wisata', desc: 'Navigasi cerdas berbasis geolokasi untuk mengeksplorasi destinasi tersembunyi, kuliner legendaris, dan rute wisata lokal secara mendalam dan personal.' },
         { icon: 'storefront', title: 'Media Branding', desc: 'Platform strategis untuk membangun identitas digital kota yang kuat, profesional, dan berdaya saing global demi menarik investasi serta kunjungan wisata dunia.' },
         { icon: 'hub', title: 'Edukasi & Promosi', desc: 'Ruang interaktif untuk mempromosikan kekayaan daerah melalui konten edukatif yang menghubungkan kearifan lokal dengan gaya hidup digital dunia.' },
+    ];
+
+    const FAQ_ITEMS = [
+        {
+            q: "Apa itu Nusantara Digital City?",
+            a: "Nusantara Digital City adalah platform ekosistem digital terintegrasi yang dirancang untuk melestarikan warisan budaya, mempromosikan destinasi wisata, dan memberdayakan potensi lokal melalui teknologi modern."
+        },
+        {
+            q: "Siapa yang dapat menjadi kontributor?",
+            a: "Kami membuka pintu bagi siapa saja yang peduli pada pelestarian budaya—mulai dari akademisi, budayawan, pecinta kuliner, hingga masyarakat umum yang ingin membagikan cerita unik dari daerah mereka."
+        },
+        {
+            q: "Bagaimana cara mendaftarkan kota saya?",
+            a: "Sangat mudah! Anda hanya perlu menekan tombol \"Daftarkan Kota Anda\" di bagian bawah halaman ini dan mengisi formulir profil kota serta potensi yang ingin didigitalisasikan."
+        },
+        {
+            q: "Apakah ada biaya untuk bergabung?",
+            a: "Tidak ada biaya sama sekali. Inisiatif ini sepenuhnya nirlaba dan digerakkan oleh semangat kolaborasi untuk mendokumentasikan kekayaan bangsa demi masa depan digital yang lebih berbudaya."
+        },
+        {
+            q: "Bagaimana sistem verifikasi konten bekerja?",
+            a: "Setiap data dan cerita yang masuk akan melalui proses kurasi dan verifikasi oleh tim validator kami untuk memastikan akurasi sejarah, kualitas konten, dan kesesuaian dengan standar Nusantara Digital City."
+        },
+        {
+            q: "Teknologi apa yang mendukung platform ini?",
+            a: "Kami bangga menggunakan teknologi **Gemini AI** dari Google untuk membantu proses kurasi data budaya, pengenalan objek bersejarah secara cerdas, serta memberikan analisis mendalam tentang potensi pariwisata Nusantara."
+        },
+        {
+            q: "Bagaimana jika data yang saya masukkan salah?",
+            a: "Jangan khawatir! Anda dapat menyunting kontribusi Anda atau melaporkan revisi melalui dashboard kontributor setelah masuk ke akun Anda untuk memastikan informasi tetap akurat."
+        },
+        {
+            q: "Apakah saya bisa membagikan konten dari platform ini?",
+            a: "Tentu! Kami sangat mendorong Anda untuk membagikan kekayaan budaya Nusantara ke media sosial melalui fitur bagi yang tersedia untuk memperkuat identitas digital daerah kita."
+        },
+        {
+            q: "Apa format konten yang didukung untuk kontribusi?",
+            a: "Kami mendukung berbagai format mulai dari teks untuk artikel sejarah/kisah rakyat, foto berkualitas tinggi untuk galeri wisata, hingga data lokasi untuk pemetaan digital yang presisi."
+        },
+        {
+            q: "Bagaimana cara menghubungi tim dukungan?",
+            a: "Jika Anda menemui kendala teknis atau memiliki pertanyaan lebih lanjut, tim kami siap membantu melalui halaman 'Kontak' atau melalui email dukungan resmi kami."
+        }
     ];
 
     useEffect(() => {
@@ -236,6 +280,61 @@ export default function Home({ cities = [] }) {
                         </div>
                     </section>
                 )}
+
+                {/* FAQ Section */}
+                <section className="py-20 px-4 bg-white dark:bg-slate-950">
+                    <div className="container mx-auto max-w-4xl">
+                        <motion.div
+                            initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeIn}
+                            className="text-center mb-16 space-y-4"
+                        >
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-widest w-fit mx-auto">
+                                TANYA JAWAB
+                            </div>
+                            <h2 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-slate-100 italic">Pertanyaan <span className="text-primary">Sering Diajukan</span></h2>
+                            <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto font-medium">
+                                Cari tahu lebih lanjut tentang cara kerja ekosistem Nusantara Digital City.
+                            </p>
+                        </motion.div>
+
+                        <div className="space-y-4">
+                            {FAQ_ITEMS.map((item, index) => (
+                                <motion.div
+                                    key={index}
+                                    initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeIn}
+                                    className="overflow-hidden border border-slate-100 dark:border-slate-800 rounded-3xl bg-slate-50/50 dark:bg-slate-900/30 backdrop-blur-sm"
+                                >
+                                    <button
+                                        onClick={() => setOpenFaq(openFaq === index ? null : index)}
+                                        className="w-full flex items-center justify-between p-6 md:p-8 text-left transition-colors hover:bg-slate-100/50 dark:hover:bg-slate-800/50"
+                                    >
+                                        <span className={`text-lg md:text-xl font-bold transition-colors ${openFaq === index ? 'text-primary' : 'text-slate-900 dark:text-slate-100'}`}>
+                                            {item.q}
+                                        </span>
+                                        <span className={`material-symbols-outlined text-2xl transition-transform duration-300 ${openFaq === index ? 'rotate-180 text-primary' : 'text-slate-400'}`}>
+                                            expand_more
+                                        </span>
+                                    </button>
+                                    <AnimatePresence>
+                                        {openFaq === index && (
+                                            <motion.div
+                                                initial={{ height: 0, opacity: 0 }}
+                                                animate={{ height: 'auto', opacity: 1 }}
+                                                exit={{ height: 0, opacity: 0 }}
+                                                transition={{ duration: 0.3, ease: 'easeInOut' }}
+                                            >
+                                                <div className="px-6 md:px-8 pb-8 text-slate-600 dark:text-slate-400 font-medium leading-relaxed border-t border-slate-100 dark:border-slate-800 pt-6">
+                                                    {item.a}
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
                 <section className="py-20 px-4">
                     <div className="container mx-auto max-w-4xl text-center">
                         <motion.div

@@ -19,6 +19,13 @@ export default function Footer() {
                                 <span className="material-symbols-outlined text-xl">alternate_email</span>
                             </a>
                         </div>
+                        <div className="pt-2 flex items-center gap-2">
+                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Powered by</span>
+                            <div className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                                <span className="material-symbols-outlined text-[14px] text-primary">auto_awesome</span>
+                                <span className="text-[10px] font-bold text-slate-900 dark:text-white uppercase tracking-tighter">Gemini AI</span>
+                            </div>
+                        </div>
                     </div>
                     <div className="space-y-6">
                         <h3 className="font-bold text-slate-900 dark:text-white">Navigasi</h3>
