@@ -112,9 +112,11 @@ export default function Navbar() {
                                     >
                                         <div className="hidden sm:block text-right">
                                             <p className="text-xs font-black text-slate-900 dark:text-white leading-none">{auth.user.name}</p>
-                                            <p className="text-[10px] font-bold text-primary uppercase tracking-tighter">{auth.user.role}</p>
+                                            <p className="text-[10px] font-bold text-primary uppercase tracking-tighter">{auth.user.role === 'admin' ? 'Administrator' : 'Kontributor'}</p>
                                         </div>
-                                        <img src={auth.user.avatar} alt={auth.user.name} className="size-8 rounded-full border-2 border-primary shadow-sm" />
+                                        <div className="size-8 rounded-full bg-primary text-white flex items-center justify-center font-bold border-2 border-white dark:border-slate-700 shadow-sm">
+                                            {auth.user.name.charAt(0)}
+                                        </div>
                                     </motion.div>
                                 ) : (
                                     <Link href="/login">
@@ -143,12 +145,14 @@ export default function Navbar() {
                                             exit={{ opacity: 0, y: 10, scale: 0.95 }}
                                             className="absolute right-0 mt-3 w-48 bg-white dark:bg-surface-dark rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl py-2 z-50 overflow-hidden"
                                         >
-                                            {auth.user.role === 'admin' && (
-                                                <Link href="/admin/registrations" className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                                                    <span className="material-symbols-outlined text-xl">dashboard</span>
-                                                    Dashboard Admin
-                                                </Link>
-                                            )}
+                                            <Link href="/dashboard" className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                                                <span className="material-symbols-outlined text-xl">grid_view</span>
+                                                Dashboard
+                                            </Link>
+                                            <Link href="/kontribusi" className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                                                <span className="material-symbols-outlined text-xl">add_box</span>
+                                                Kontribusi Baru
+                                            </Link>
                                             <button 
                                                 onClick={handleLogout}
                                                 className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"

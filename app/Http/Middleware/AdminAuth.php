@@ -15,8 +15,8 @@ class AdminAuth
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!$request->session()->has('admin_logged_in')) {
-            return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu untuk mengakses dashboard admin.');
+        if (!auth()->check() || auth()->user()->role !== 'admin') {
+            return redirect()->route('login')->with('error', 'Silakan login sebagai admin untuk mengakses dashboard ini.');
         }
 
         return $next($request);

@@ -25,7 +25,12 @@ class GeminiService
         if ($type === 'kota') {
             $prompt = "Buatkan deskripsi singkat yang menarik dan inspiratif (sekitar 2-3 kalimat) untuk sebuah kota bernama '{$name}'. Fokus pada potensi digital, budaya, dan pariwisatanya.";
         } elseif ($type === 'budaya') {
-            $prompt = "Buatkan deskripsi singkat (2-3 kalimat) tentang warisan budaya '{$name}'. Jelaskan nilai sejarah dan keunikannya bagi Indonesia.";
+            $prompt = "Dapatkan informasi tentang warisan budaya '{$name}'. 
+            Berikan respon dalam format JSON murni (TANPA markdown code block, TANPA penjelasan lain) dengan kunci: 
+            - description: deskripsi singkat (2-3 kalimat) tentang sejarah dan keunikannya.
+            - era: keterangan waktu/zaman (contoh: 'Abad ke-9', 'Tahun 1888', atau 'Tradisional').
+            - lat: garis lintang (latitude) lokasi tersebut (jika berupa situs fisik, jika tidak 0).
+            - lng: garis bujur (longitude) lokasi tersebut (jika berupa situs fisik, jika tidak 0).";
         } elseif ($type === 'kuliner') {
             $prompt = "Buatkan deskripsi promosi singkat (2-3 kalimat) untuk usaha kuliner/wisata bernama '{$name}'. Buatlah terdengar lezat dan menarik bagi wisatawan.";
         }

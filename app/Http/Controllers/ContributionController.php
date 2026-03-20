@@ -6,7 +6,10 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Kreait\Laravel\Firebase\Facades\Firebase;
 
+use App\Models\Contribution;
 use App\Services\GeminiService;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 
 class ContributionController extends Controller
 {
@@ -58,9 +61,6 @@ class ContributionController extends Controller
         
         $commonRules = [
             'type' => 'required|string',
-            'contactName' => 'required|string|max:255',
-            'contactEmail' => 'required|email|max:255',
-            'contactPhone' => 'required|string|max:20',
         ];
 
         $specificRules = [];
@@ -76,10 +76,16 @@ class ContributionController extends Controller
         } elseif ($type === 'budaya') {
             $specificRules = [
                 'artName' => 'required|string|max:255',
-                'category' => 'required|string',
+                'artCategory' => 'required|string',
+                'artSubCategory' => 'nullable|string',
                 'origin' => 'required|string',
                 'province' => 'required|string',
+                'era' => 'nullable|string',
                 'description' => 'required|string',
+                'imageUrl' => 'nullable|url',
+                'imageFile' => 'required_without:imageUrl|image|max:5120',
+                'lat' => 'nullable|numeric',
+                'lng' => 'nullable|numeric',
             ];
         } elseif ($type === 'kuliner') {
             $specificRules = [
@@ -95,12 +101,21 @@ class ContributionController extends Controller
         $validated = $request->validate(array_merge($commonRules, $specificRules));
 
         try {
-            $database = $this->getFirebaseDatabase();
-            // Store all contributions in a single node for admin review
-            $database->getReference('pending_contributions')->push(array_merge($validated, [
+            $data = $validated;
+
+            // Handle Cloudinary Upload
+            if ($request->hasFile('imageFile')) {
+                $data['imageUrl'] = $this->uploadToCloudinary($request->file('imageFile'));
+                unset($data['imageFile']); // Clear the file object before saving to JSON
+            }
+
+            // Save to database
+            Contribution::create([
+                'type' => $type,
+                'data' => $data, // All specific fields are in data
                 'status' => 'pending',
-                'submitted_at' => now()->toDateTimeString(),
-            ]));
+                'user_id' => Auth::id(),
+            ]);
 
             return back()->with('success', 'Kontribusi Anda telah kami terima dan akan segera ditinjau oleh tim kurasi.');
         } catch (\Exception $e) {
@@ -118,11 +133,72 @@ class ContributionController extends Controller
             'name' => 'required|string',
         ]);
 
-        $description = $this->gemini->generateDescription(
+        $aiResponse = $this->gemini->generateDescription(
             $request->type,
             $request->name
         );
 
-        return response()->json(['description' => $description]);
+        if ($request->type === 'budaya') {
+            // Try to parse JSON from AI
+            $jsonStart = strpos($aiResponse, '{');
+            $jsonEnd = strrpos($aiResponse, '}');
+            
+            if ($jsonStart !== false && $jsonEnd !== false) {
+                $jsonStr = substr($aiResponse, $jsonStart, $jsonEnd - $jsonStart + 1);
+                $data = json_decode($jsonStr, true);
+                
+                if ($data && isset($data['description'])) {
+                    return response()->json([
+                        'description' => $data['description'],
+                        'era' => $data['era'] ?? '',
+                        'lat' => $data['lat'] ?? 0,
+                        'lng' => $data['lng'] ?? 0
+                    ]);
+                }
+            }
+        }
+
+        // If it's an error message from GeminiService
+        if (str_contains($aiResponse, 'Terjadi kesalahan') || str_contains($aiResponse, 'quota')) {
+            return response()->json(['error' => $aiResponse], 429);
+        }
+
+        return response()->json(['description' => $aiResponse]);
+    }
+
+    /**
+     * Upload file to Cloudinary.
+     */
+    private function uploadToCloudinary($file)
+    {
+        $cloudName = env('CLOUDINARY_CLOUD_NAME');
+        $apiKey = env('CLOUDINARY_API_KEY');
+        $apiSecret = env('CLOUDINARY_API_SECRET');
+        $timestamp = time();
+        
+        $params = [
+            'timestamp' => $timestamp,
+        ];
+        
+        ksort($params);
+        $signatureData = "";
+        foreach ($params as $key => $value) {
+            $signatureData .= "{$key}={$value}&";
+        }
+        $signatureData = rtrim($signatureData, '&') . $apiSecret;
+        $signature = sha1($signatureData);
+        
+        $response = Http::asMultipart()->post("https://api.cloudinary.com/v1_1/{$cloudName}/image/upload", [
+            'file' => fopen($file->getRealPath(), 'r'),
+            'api_key' => $apiKey,
+            'timestamp' => $timestamp,
+            'signature' => $signature,
+        ]);
+        
+        if ($response->successful()) {
+            return $response->json()['secure_url'];
+        }
+        
+        throw new \Exception('Cloudinary upload failed: ' . $response->body());
     }
 }

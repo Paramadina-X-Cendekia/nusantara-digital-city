@@ -27,10 +27,7 @@ export default function Kontribusi({ cities = [], initialType = 'kota' }) {
 
     const { data, setData, post, processing, errors, reset, recentlySuccessful } = useForm({
         type: initialType,
-        // Common fields
-        contactName: '',
-        contactEmail: '',
-        contactPhone: '',
+        // Common fields are now handled by auth
         // Kota specific
         cityName: '',
         province: '',
@@ -40,8 +37,14 @@ export default function Kontribusi({ cities = [], initialType = 'kota' }) {
         description: '',
         // Budaya specific
         artName: '',
-        artCategory: 'batik',
+        artCategory: 'seni', // sejarah, seni, cerita
+        artSubCategory: 'batik', // batik, gamelan, tari, ukir
         origin: '',
+        imageUrl: '',
+        imageFile: null,
+        era: '',
+        lat: '',
+        lng: '',
         // Kuliner specific
         shopName: '',
         city: '',
@@ -55,6 +58,7 @@ export default function Kontribusi({ cities = [], initialType = 'kota' }) {
         setData('type', selectedType);
     }, [selectedType]);
 
+    // Remove local persistence as it's now handled by account
     useEffect(() => {
         if (recentlySuccessful) {
             setShowSuccess(true);
@@ -99,7 +103,13 @@ export default function Kontribusi({ cities = [], initialType = 'kota' }) {
 
             const result = await response.json();
             if (result.description) {
-                setData('description', result.description);
+                setData(prev => ({
+                    ...prev,
+                    description: result.description,
+                    era: result.era || prev.era,
+                    lat: result.lat || prev.lat,
+                    lng: result.lng || prev.lng
+                }));
             } else if (result.error) {
                 alert(result.error);
             }
@@ -171,33 +181,106 @@ export default function Kontribusi({ cities = [], initialType = 'kota' }) {
                     <motion.div key="budaya" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6">
                         <div className="grid sm:grid-cols-2 gap-6">
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">Nama Karya Seni / Budaya *</label>
-                                <input value={data.artName} onChange={e => setData('artName', e.target.value)} required className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none focus:ring-2 focus:ring-primary transition-all" placeholder="Contoh: Tari Saman" />
+                                <label className="text-sm font-medium">Nama Karya / Situs / Cerita *</label>
+                                <input value={data.artName} onChange={e => setData('artName', e.target.value)} required className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none focus:ring-2 focus:ring-primary transition-all" placeholder="Contoh: Candi Borobudur / Tari Saman" />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">Kategori *</label>
+                                <label className="text-sm font-medium">Kategori Budaya *</label>
                                 <select value={data.artCategory} onChange={e => setData('artCategory', e.target.value)} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none focus:ring-2 focus:ring-primary">
+                                    <option value="seni">Seni Tradisional</option>
+                                    <option value="sejarah">Situs Bersejarah</option>
+                                    <option value="cerita">Cerita Rakyat</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        {data.artCategory === 'seni' && (
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium">Jenis Seni *</label>
+                                <select value={data.artSubCategory} onChange={e => setData('artSubCategory', e.target.value)} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none focus:ring-2 focus:ring-primary">
                                     <option value="batik">Batik</option>
+                                    <option value="gamelan">Gamelan</option>
                                     <option value="tari">Tari Tradisional</option>
-                                    <option value="musik">Alat Musik</option>
                                     <option value="ukir">Seni Ukir</option>
                                     <option value="lainnya">Lainnya</option>
                                 </select>
                             </div>
-                        </div>
-                        <div className="grid sm:grid-cols-2 gap-6">
+                        )}
+
+                        <div className="space-y-6">
                             <div className="space-y-2">
                                 <label className="text-sm font-medium">Asal Kota *</label>
-                                <select value={data.origin} onChange={e => setData('origin', e.target.value)} required className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none focus:ring-2 focus:ring-primary">
+                                <select 
+                                    value={data.origin} 
+                                    onChange={e => {
+                                        const cityName = e.target.value;
+                                        const city = cities.find(c => c.name === cityName);
+                                        setData(prev => ({
+                                            ...prev,
+                                            origin: cityName,
+                                            province: city ? city.province : prev.province
+                                        }));
+                                    }} 
+                                    required 
+                                    className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none focus:ring-2 focus:ring-primary"
+                                >
                                     <option value="">-- Pilih Kota --</option>
                                     {cities.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
                                 </select>
                             </div>
+
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">Provinsi</label>
-                                <input value={data.province} onChange={e => setData('province', e.target.value)} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none focus:ring-2 focus:ring-primary transition-all" placeholder="Provinsi asal" />
+                                <label className="text-sm font-medium">Era / Waktu (Kira-kira) *</label>
+                                <input value={data.era} onChange={e => setData('era', e.target.value)} required className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none focus:ring-2 focus:ring-primary transition-all" placeholder="Contoh: Abad ke-9 / Abad ke-17 / 1945" />
+                            </div>
+
+                            <div className="hidden">
+                                <input value={data.province} readOnly />
+                            </div>
+
+                            {data.origin && (
+                                <div className="space-y-2">
+                                    <div className="flex items-center gap-2 text-xs font-bold text-slate-500">
+                                        <span className="material-symbols-outlined text-sm">info</span>
+                                        Provinsi: <span className="text-primary">{data.province}</span>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        {data.artCategory === 'sejarah' && (
+                            <div className="grid sm:grid-cols-2 gap-6 p-6 bg-primary/5 rounded-2xl border border-primary/20">
+                                <div className="space-y-2">
+                                    <label className="text-sm font-bold text-primary">Latitude *</label>
+                                    <input value={data.lat} onChange={e => setData('lat', e.target.value)} required type="number" step="any" className="w-full bg-white dark:bg-slate-900 border border-primary/30 rounded-xl p-3 outline-none focus:ring-2 focus:ring-primary transition-all" placeholder="-7.6079" />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-sm font-bold text-primary">Longitude *</label>
+                                    <input value={data.lng} onChange={e => setData('lng', e.target.value)} required type="number" step="any" className="w-full bg-white dark:bg-slate-900 border border-primary/30 rounded-xl p-3 outline-none focus:ring-2 focus:ring-primary transition-all" placeholder="110.2038" />
+                                </div>
+                                <p className="col-span-2 text-[10px] text-slate-500 italic">Koordinat diperlukan agar situs ini bisa muncul di Peta Warisan Digital.</p>
+                            </div>
+                        )}
+
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">Unggah Gambar *</label>
+                            <div className="relative group/upload h-32 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800 hover:border-primary transition-all flex flex-col items-center justify-center bg-slate-50/50 dark:bg-slate-900/50">
+                                <input 
+                                    type="file" 
+                                    accept="image/*"
+                                    onChange={e => setData('imageFile', e.target.files[0])}
+                                    className="absolute inset-0 opacity-0 cursor-pointer z-10" 
+                                />
+                                <div className="text-center">
+                                    <span className="material-symbols-outlined text-3xl text-slate-400 group-hover/upload:text-primary transition-colors">add_photo_alternate</span>
+                                    <p className="text-xs font-bold text-slate-500 mt-2">
+                                        {data.imageFile ? data.imageFile.name : 'Klik atau seret gambar ke sini'}
+                                    </p>
+                                    <p className="text-[10px] text-slate-400 mt-1">PNG, JPG up to 5MB</p>
+                                </div>
                             </div>
                         </div>
+
                         <div className="space-y-2">
                             <div className="flex items-center justify-between">
                                 <label className="text-sm font-medium">Sejarah / Deskripsi *</label>
@@ -280,36 +363,50 @@ export default function Kontribusi({ cities = [], initialType = 'kota' }) {
 
             <main className="container mx-auto px-4 py-12 lg:py-20">
                 <motion.div initial="hidden" animate="visible" variants={stagger} className="max-w-5xl mx-auto space-y-12">
-                    {/* Header */}
-                    <div className="text-center space-y-4">
-                        <motion.div variants={fadeIn} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-widest">
-                            <span className="material-symbols-outlined text-sm">auto_awesome</span>
+                    {/* Header - More Compact */}
+                    <div className="text-center space-y-3">
+                        <motion.div variants={fadeIn} className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold uppercase tracking-widest">
+                            <span className="material-symbols-outlined text-xs">auto_awesome</span>
                             Satu Pintu Kontribusi
                         </motion.div>
-                        <motion.h1 variants={fadeIn} className="text-4xl md:text-6xl font-black tracking-tight">
+                        <motion.h1 variants={fadeIn} className="text-3xl md:text-5xl font-black tracking-tight">
                             Kontribusi <span className="text-primary text-gradient">Nusantara</span>
                         </motion.h1>
-                        <motion.p variants={fadeIn} className="max-w-2xl mx-auto text-slate-600 dark:text-slate-400 text-lg">
-                            Pilih kategori kontribusi Anda dan bantu kami mendigitalisasikan kekayaan nusantara untuk dunia.
-                        </motion.p>
                     </div>
 
-                    {/* Category Selector */}
-                    <motion.div variants={fadeIn} className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {/* Step indicator */}
+                    <motion.div variants={fadeIn} className="flex items-center justify-center gap-4">
+                        <div className={`flex items-center gap-2 px-4 py-2 rounded-full border-2 transition-all ${selectedType ? 'border-primary/20 bg-primary/5 text-primary/60' : 'border-primary bg-primary text-white shadow-lg shadow-primary/20'}`}>
+                            <span className="size-6 rounded-full bg-current/10 flex items-center justify-center text-xs font-bold">1</span>
+                            <span className="text-sm font-bold">Pilih Kategori</span>
+                        </div>
+                        <div className="w-8 h-0.5 bg-slate-200 dark:bg-slate-800" />
+                        <div className={`flex items-center gap-2 px-4 py-2 rounded-full border-2 transition-all ${selectedType ? 'border-primary bg-primary text-white shadow-lg shadow-primary/20' : 'border-slate-200 dark:border-slate-800 text-slate-400'}`}>
+                            <span className="size-6 rounded-full bg-current/10 flex items-center justify-center text-xs font-bold">2</span>
+                            <span className="text-sm font-bold">Isi Detail</span>
+                        </div>
+                    </motion.div>
+
+                    {/* Category Selector - Compact Cards */}
+                    <motion.div variants={fadeIn} className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         {CATEGORIES.map(cat => (
                             <button
                                 key={cat.id}
                                 onClick={() => setSelectedType(cat.id)}
-                                className={`relative p-8 rounded-3xl border-2 text-left transition-all group overflow-hidden ${selectedType === cat.id ? 'border-primary bg-white dark:bg-surface-dark shadow-xl shadow-primary/10' : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-surface-dark/50 hover:border-primary/40'}`}
+                                className={`relative p-6 rounded-3xl border-2 text-left transition-all group overflow-hidden ${selectedType === cat.id ? 'border-primary bg-white dark:bg-surface-dark shadow-xl shadow-primary/10' : 'border-slate-100 dark:border-slate-800/50 bg-slate-50/50 dark:bg-surface-dark/30 hover:border-primary/40'}`}
                             >
-                                <div className={`size-14 rounded-2xl flex items-center justify-center mb-6 transition-all ${selectedType === cat.id ? 'bg-primary text-white scale-110' : 'bg-slate-200 dark:bg-slate-800 text-slate-500 group-hover:bg-primary/20 group-hover:text-primary'}`}>
-                                    <span className="material-symbols-outlined text-3xl">{cat.icon}</span>
+                                <div className="flex items-center gap-4">
+                                    <div className={`size-12 rounded-2xl flex items-center justify-center transition-all ${selectedType === cat.id ? 'bg-primary text-white' : 'bg-slate-200/50 dark:bg-slate-800 text-slate-500 group-hover:bg-primary/10 group-hover:text-primary'}`}>
+                                        <span className="material-symbols-outlined text-2xl">{cat.icon}</span>
+                                    </div>
+                                    <div>
+                                        <h3 className="font-bold text-slate-900 dark:text-white">{cat.title}</h3>
+                                        <p className="text-[10px] text-slate-500 dark:text-slate-400 line-clamp-1">Klik untuk memilih</p>
+                                    </div>
                                 </div>
-                                <h3 className="text-xl font-bold mb-2">{cat.title}</h3>
-                                <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{cat.desc}</p>
                                 {selectedType === cat.id && (
-                                    <motion.div layoutId="active-indicator" className="absolute top-4 right-4 text-primary">
-                                        <span className="material-symbols-outlined font-bold">check_circle</span>
+                                    <motion.div layoutId="active-indicator" className="absolute top-3 right-3 text-primary">
+                                        <span className="material-symbols-outlined text-lg font-bold">check_circle</span>
                                     </motion.div>
                                 )}
                             </button>
@@ -325,30 +422,7 @@ export default function Kontribusi({ cities = [], initialType = 'kota' }) {
                                     {renderFormFields()}
                                 </AnimatePresence>
                                 
-                                {/* Unified Contact Section */}
-                                <div className="mt-12 pt-10 border-t border-slate-100 dark:border-slate-800 space-y-8">
-                                    <div className="flex items-center gap-3">
-                                        <div className="size-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center text-xl font-black">
-                                            <span className="material-symbols-outlined">person</span>
-                                        </div>
-                                        <h3 className="text-xl font-black italic">Informasi Narahubung</h3>
-                                    </div>
-
-                                    <div className="grid sm:grid-cols-3 gap-6">
-                                        <div className="space-y-2">
-                                            <label className="text-sm font-medium">Nama Lengkap *</label>
-                                            <input value={data.contactName} onChange={e => setData('contactName', e.target.value)} required className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none focus:ring-2 focus:ring-primary" placeholder="Nama Anda" />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label className="text-sm font-medium">Alamat Email *</label>
-                                            <input type="email" value={data.contactEmail} onChange={e => setData('contactEmail', e.target.value)} required className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none focus:ring-2 focus:ring-primary" placeholder="email@contoh.id" />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label className="text-sm font-medium">No. Telepon (WA) *</label>
-                                            <input type="tel" value={data.contactPhone} onChange={e => setData('contactPhone', e.target.value)} required className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none focus:ring-2 focus:ring-primary" placeholder="0812xxxx" />
-                                        </div>
-                                    </div>
-                                </div>
+                                 {/* Unified Contact Section - Removed as it is now auto-filled */}
 
                                 {/* Submit Section */}
                                 <div className="mt-12">

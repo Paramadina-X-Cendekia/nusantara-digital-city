@@ -7,16 +7,38 @@ use App\Http\Controllers\CityController;
 use App\Http\Controllers\SeniController;
 use App\Http\Controllers\KisahController;
 
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\DashboardController;
 
 Route::get('/', [CityController::class, 'index'])->name('home');
-Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'login'])->name('login.post');
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::get('/budaya', function () {
-    return Inertia::render('Budaya');
-})->name('budaya');
+// Guest Routes
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [LoginController::class, 'create'])->name('login');
+    Route::post('/login', [LoginController::class, 'store']);
+    Route::get('/register', [RegisterController::class, 'create'])->name('register');
+    Route::post('/register', [RegisterController::class, 'store']);
+});
+
+// Auth Routes
+Route::middleware('auth')->group(function () {
+    Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    
+    // Auth-only contribution routes
+    Route::get('/kontribusi', [\App\Http\Controllers\ContributionController::class, 'index'])->name('kontribusi');
+    Route::post('/kontribusi', [\App\Http\Controllers\ContributionController::class, 'store'])->name('kontribusi.store');
+    Route::post('/kontribusi/generate-description', [\App\Http\Controllers\ContributionController::class, 'generateDescription'])->name('kontribusi.generate');
+
+    // Admin-only moderation routes
+    Route::middleware([\App\Http\Middleware\AdminAuth::class])->group(function () {
+        Route::post('/admin/contributions/{id}/approve', [\App\Http\Controllers\ModerationController::class, 'approve'])->name('admin.contributions.approve');
+        Route::post('/admin/contributions/{id}/reject', [\App\Http\Controllers\ModerationController::class, 'reject'])->name('admin.contributions.reject');
+    });
+});
+
+Route::get('/budaya', [\App\Http\Controllers\PublicBudayaController::class, 'index'])->name('budaya');
 
 Route::get('/kisah-rakyat', [KisahController::class, 'index'])->name('kisah-rakyat');
 Route::get('/kisah-rakyat/{slug}', [KisahController::class, 'show'])->name('detail-kisah');
@@ -29,9 +51,7 @@ Route::get('/kontak', function () {
     return Inertia::render('Kontak');
 })->name('kontak');
 
-Route::get('/kontribusi', [\App\Http\Controllers\ContributionController::class, 'index'])->name('kontribusi');
-Route::post('/kontribusi', [\App\Http\Controllers\ContributionController::class, 'store'])->name('kontribusi.store');
-Route::post('/kontribusi/generate-description', [\App\Http\Controllers\ContributionController::class, 'generateDescription'])->name('kontribusi.generate');
+// Public viewing routes (Keep accessible)
 
 Route::get('/daftarkan-kota', function () {
     return redirect()->route('kontribusi', ['type' => 'kota']);
@@ -62,9 +82,7 @@ Route::get('/kontribusi-seni', function () {
     return redirect()->route('kontribusi', ['type' => 'budaya']);
 })->name('kontribusi-seni');
 
-Route::get('/peta-warisan', function () {
-    return Inertia::render('PetaWarisan');
-})->name('peta-warisan');
+Route::get('/peta-warisan', [\App\Http\Controllers\PublicBudayaController::class, 'peta'])->name('peta-warisan');
 
 Route::get('/peta-wisata', function () {
     return Inertia::render('PetaWisata');
