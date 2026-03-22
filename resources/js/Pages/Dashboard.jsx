@@ -26,8 +26,8 @@ export default function Dashboard({ auth, contributions = [], stats = { total: 0
                     {/* Welcome Header */}
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                         <div className="space-y-2">
-                            <h1 className="text-4xl font-black italic tracking-tight">Halo, {auth.user.name}!</h1>
-                            <p className="text-slate-500 dark:text-slate-400">Selamat datang kembali di pusat kontribusi digital Anda.</p>
+                            <h1 className="text-4xl font-black italic tracking-tight">{t('dashboard.welcome_back').split(' ')[0]}, {auth.user.name}!</h1>
+                            <p className="text-slate-500 dark:text-slate-400">{t('dashboard.welcome_desc')}</p>
                         </div>
                         <div className="flex flex-wrap gap-2">
                             {badges.map(b => <Badge key={b} type={b} />)}
@@ -37,9 +37,9 @@ export default function Dashboard({ auth, contributions = [], stats = { total: 0
                     {/* Stats Grid */}
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                         {[
-                            { label: 'Total Kontribusi', value: stats.total, icon: 'analytics', color: 'bg-blue-500' },
-                            { label: 'Telah Disetujui', value: stats.approved, icon: 'check_circle', color: 'bg-emerald-500' },
-                            { label: 'Poin Kontribusi', value: stats.approved * 10, icon: 'stars', color: 'bg-orange-500' },
+                            { label: t('dashboard.total_contributions'), value: stats.total, icon: 'analytics', color: 'bg-blue-500' },
+                            { label: t('dashboard.approved_contributions'), value: stats.approved, icon: 'check_circle', color: 'bg-emerald-500' },
+                            { label: t('dashboard.contribution_points'), value: stats.approved * 10, icon: 'stars', color: 'bg-orange-500' },
                         ].map((s, i) => (
                             <motion.div 
                                 initial={{ opacity: 0, y: 20 }}
@@ -64,13 +64,13 @@ export default function Dashboard({ auth, contributions = [], stats = { total: 0
                     {/* Content Section */}
                     <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden">
                         <div className="px-8 py-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                            <h3 className="text-xl font-black italic">Riwayat Kontribusi</h3>
+                            <h3 className="text-xl font-black italic">{t('dashboard.history_title')}</h3>
                             <Link 
                                 href="/kontribusi"
                                 className="flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary text-xs font-bold rounded-full hover:bg-primary transition-all hover:text-white"
                             >
                                 <span className="material-symbols-outlined text-sm">add</span>
-                                Kontribusi Baru
+                                {t('nav.new_contribution')}
                             </Link>
                         </div>
 
@@ -79,10 +79,10 @@ export default function Dashboard({ auth, contributions = [], stats = { total: 0
                                 <table className="w-full">
                                     <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-widest">
                                         <tr>
-                                            <th className="px-8 py-4 text-left">Tipe</th>
-                                            <th className="px-8 py-4 text-left">Nama</th>
-                                            <th className="px-8 py-4 text-left">Status</th>
-                                            <th className="px-8 py-4 text-left">Tanggal</th>
+                                            <th className="px-8 py-4 text-left">{t('dashboard.table_type')}</th>
+                                            <th className="px-8 py-4 text-left">{t('dashboard.table_name')}</th>
+                                            <th className="px-8 py-4 text-left">{t('dashboard.table_status')}</th>
+                                            <th className="px-8 py-4 text-left">{t('dashboard.table_date')}</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -110,8 +110,8 @@ export default function Dashboard({ auth, contributions = [], stats = { total: 0
                                         <span className="material-symbols-outlined text-4xl">folder_off</span>
                                     </div>
                                     <div>
-                                        <p className="font-bold">Belum ada kontribusi</p>
-                                        <p className="text-sm text-slate-500">Ayo mulai kontribusi pertama Anda sekarang!</p>
+                                        <p className="font-bold">{t('dashboard.no_contributions')}</p>
+                                        <p className="text-sm text-slate-500">{t('dashboard.start_contributing')}</p>
                                     </div>
                                 </div>
                             )}

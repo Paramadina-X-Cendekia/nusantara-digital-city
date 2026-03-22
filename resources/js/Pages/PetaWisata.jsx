@@ -3,6 +3,7 @@ import { Head, Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { useLanguage } from '../lib/LanguageContext';
 
 const fadeIn = {
     hidden: { opacity: 0, y: 30 },
@@ -13,32 +14,19 @@ const stagger = {
     visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
 };
 
-const CATEGORIES = [
-    { id: 'semua', label: 'Semua', icon: 'apps' },
-    { id: 'alam', label: 'Alam', icon: 'landscape', color: '#22c55e' },
-    { id: 'pantai', label: 'Pantai', icon: 'beach_access', color: '#3b82f6' },
-    { id: 'kota', label: 'Kota', icon: 'location_city', color: '#f59e0b' },
-    { id: 'gunung', label: 'Gunung', icon: 'terrain', color: '#ef4444' },
+const CATEGORIES = (t) => [
+    { id: 'semua', label: t('wisata.tab_popular'), icon: 'apps' },
+    { id: 'alam', label: t('wisata.nature'), icon: 'landscape', color: '#22c55e' },
+    { id: 'pantai', label: t('wisata.beach'), icon: 'beach_access', color: '#3b82f6' },
+    { id: 'kota', label: t('wisata.city'), icon: 'location_city', color: '#f59e0b' },
+    { id: 'gunung', label: t('wisata.mountain'), icon: 'terrain', color: '#ef4444' },
 ];
 
 const CAT_COLORS = { alam: '#22c55e', pantai: '#3b82f6', kota: '#f59e0b', gunung: '#ef4444' };
 
-// Base destinations data
-const BASE_DESTINATIONS = [
-    { id: 1, name: 'Danau Toba', query: 'Danau Toba, Sumatera Utara', location: 'Sumatera Utara', category: 'alam', desc: 'Danau vulkanik terbesar di dunia dengan Pulau Samosir di tengahnya.', defaultRating: '4.9', defaultOpen: 'Buka 24 Jam', lat: 2.6845, lng: 98.8588, defaultImg: 'https://lh3.googleusercontent.com/aida-public/AB6AXuABI-jZrAZvVvJvZH6KZBhH8ojB0S_qUfOa3DqgUaYGz6Z-8Av2l7SKksdPxULUMLQ2PPt0tedxQ5UzxZ8uxsWJ4309Ml6QTEqk05VJtG3GCPG67J_9zS8pvI_Z3Jj38w0A9AUBowVvCR6FCfJwoKcb6PZMC9L6sMLHqdxuAwf6sFjbO5p2T6chSgX_xOWisIGvJ9x-hwt82JPV2ErNwDb6h0_ZFsufnN14gPAo_fuMeESUTBYGy6djCPrWniloWLTPdf-xI3S_AdGa' },
-    { id: 2, name: 'Labuan Bajo', query: 'Labuan Bajo, Taman Nasional Komodo', location: 'NTT', category: 'pantai', desc: 'Gerbang menuju Taman Nasional Komodo dengan pantai merah muda eksotis.', defaultRating: '5.0', defaultOpen: 'Buka 24 Jam', lat: -8.4539, lng: 119.8892, defaultImg: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDG4EFxcBpgXIgCaq7MmUNfwNpEWPDL3nUlyPfXBMnGRqQpwaJXYW_-W5esyNgXuX2khxDfJDRgLB9wEhAFBlw1VWzurRyB-2oRngkWiMZVKtRh1vrOkSVGzRQMcbBUwdmpAi60PJtaaQLMaWZ_ohe8gd0b3TpcOBrXBp3YOySdBthVFe_PJ3hwPdtfTJiyEk92nuyb3NVXUtIWMPx8nTnu7oSFGVMRDJkMX45F7-ynj3Uy6Q5NIRsdq1e7cI8hybqEnmVtKFdk_5TK' },
-    { id: 3, name: 'Ubud, Bali', query: 'Ubud, Bali', location: 'Bali', category: 'kota', desc: 'Jantung seni dan budaya Bali dengan sawah terasering dan pura-pura kuno.', defaultRating: '4.8', defaultOpen: 'Buka 24 Jam', lat: -8.5069, lng: 115.2624, defaultImg: 'https://lh3.googleusercontent.com/aida-public/AB6AXuArUqDFHdGl6aYFb1l3aFc88-RwLg1EzHYhbsxTjneL2idpROpUoDwZg_JBBETD2rPOAn9OmiG-AqVjpzG_8jDgrX4uRPALNxXgS3kyQl1JOMjvkweDk0Cn7j_RZe5z2kCo4u6E4y-W81me4zYHnEC16lNv8Xu8PQfYb2YXoHIGuaXF3ehoaSU3XZnUoxBdnbd6qU_ppABtBIOiu6QG1Lu089rcRiL2sfL23Gkri_5TmJWIoK2HEnEP91o9kgg4Lu7JmS8NPoJn-1q-' },
-    { id: 4, name: 'Gunung Bromo', query: 'Gunung Bromo, Jawa Timur', location: 'Jawa Timur', category: 'gunung', desc: 'Gunung berapi aktif dengan pemandangan matahari terbit paling spektakuler.', defaultRating: '4.9', defaultOpen: 'Buka 24 Jam', lat: -7.9425, lng: 112.953, defaultImg: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBMGTCFCaDtjpe7yrqfTzA8iN1OmWnIKYRRWrcVY8J7JO_wNsntxW3cVs8kldslW2HSs6RtUMhE2TBuie1gaJjNhoOYUpdaTccsxsZsLHXs318JTqzoKu5riZiYmMILa_dUx62dUp3sP53CtegYCDWM4Cwb4teEXBOXXqObHLQ9u8kmY9EJP5Ru_H_S_V6BmXHyytMsi6p43rpj4WHLHlsGcYDSpFRSCZp9pM0zhte-TExzwWO8Tgq5JKT-z9CGHMShYOKNg8mqhsZ5' },
-    { id: 5, name: 'Raja Ampat', query: 'Kepulauan Raja Ampat', location: 'Papua Barat', category: 'pantai', desc: 'Surga penyelam dengan keanekaragaman hayati laut tertinggi di planet Bumi.', defaultRating: '5.0', defaultOpen: 'Buka 24 Jam', lat: -0.2344, lng: 130.5165, defaultImg: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCOk7eFXM8Z7djeW87pg0CemNhUYyqvVOTbTru4odSwbuliignpFMApDGhfNKlW6kKyQlCbzJ3ohIoFaRnWWDgvQfazHGAkAjHoSKngL3-wQdr1HcITBwNXh6s5QVGFLqfPkQo7SDDW_mY-6RcScGnPl4Ewr-Vg_6va3QV-h4tnOTTygXWWbXsrbtnnmk6_AzN-1zBFS-khioMRQ3qfwSeVgNhYKSFkLW9kkjlvFAKSOrwFbzI-SYHp13KInW70cdrV_8nUtZOKZ2BQ' },
-    { id: 6, name: 'Gunung Rinjani', query: 'Gunung Rinjani, Lombok', location: 'Lombok, NTB', category: 'gunung', desc: 'Gunung berapi tertinggi kedua di Indonesia dengan danau kawah Segara Anak.', defaultRating: '4.7', defaultOpen: 'Buka 24 Jam', lat: -8.4112, lng: 116.457, defaultImg: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC0FVwiBcNLeL0Ect74iuTzIEMu4Ctu1txJ1hjjkUmcO2Lw2UXLQUbNWThHD10DWJvCcTR1n5fYVifSW04RoXkffrHqGsy2KS9Sy3yR4LsP_0QdIUz4km9YOjT2UKU8Sq7Uz37Udu6NYP6wD7F-OQYDl-6YjCnyGW-2vWUBPQWCdFFby1XTW-cd9aPvTftzfXyD3VuHgMoxnt-3ROirBkccx3b6jBCgSYb4aVZxeM92ma5_jqPpGTsXhlMBFtLbsT6pb5S0K_r4Y4Pz' },
-    { id: 7, name: 'Tanjung Puting', query: 'Taman Nasional Tanjung Puting', location: 'Kalimantan Tengah', category: 'alam', desc: 'Habitat orangutan terbesar di dunia. Susuri sungai dengan klotok.', defaultRating: '4.6', defaultOpen: '08.00 - 16.00', lat: -2.8167, lng: 111.75, defaultImg: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDDuSfqiJRkxODrddf-6RuvSwa01DTHoOUXdRKz2IR0jmKl3N8-UEPriuFB8PXZrIcLuDTsdqF1lYffYUP92PwhvcC8MnPKxJDMsS2QUtab1HMvnBSSy9AVXBCm8CYoTzRWfnPZd1Knj9tbbOnEKiMFndx9rZsXZzKufNUznJMvFwKnEAKzlawa4AljZQVO8K4EeS3i2pbCMSadufRenMCeah9onXIrmig6iiv3zhUVhq37UShohWH8StvAr58umrth1NQiUVOjaYhI' },
-    { id: 8, name: 'Banda Neira', query: 'Banda Neira, Maluku', location: 'Maluku', category: 'pantai', desc: 'Kepulauan rempah bersejarah dengan benteng kolonial dan laut jernih.', defaultRating: '4.8', defaultOpen: 'Buka 24 Jam', lat: -4.525, lng: 129.8953, defaultImg: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCp0a0cSr56zKwoiH0unY6uIn_kWisHe6JKm4pJQNVCtbW0n-2kYvRQApHX_tGWmeoyvXqzvHOmvhhSq80OAxY8BFCFEMAqViU3shvZgYEy_ekJQUGeKGjVfuAD3egeTOJI7lBBspycUFeDnp-_Tg7jVonhEK_EgNfwYUY2pUNBtGEMPqxffwYi4feIkc6B9uHQSMy5hF_1Q0PRFtLfI_e_koAa3TDqZHDzPmME0wSO3Kxsm4xzKW-p1_zH2hpp8FHZk0iGFlv-SqLh' },
-    { id: 9, name: 'Yogyakarta', query: 'Keraton Yogyakarta', location: 'DI Yogyakarta', category: 'kota', desc: 'Kota budaya dengan Keraton, Malioboro, kuliner gudeg legendaris.', defaultRating: '4.8', defaultOpen: '08.00 - 14.00', lat: -7.7956, lng: 110.3695, defaultImg: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA0jeSakdv6nP10Lx12LKRiQNerivDknx-BZKVNP1-dY2xZ2fhj-s73LMz8DjaQWwYKWxR6FXfwb65BUUHaDgGH1VJN4C2LxAvAUR7OkaoZfZiZ2SInN_5ES0WQdzC5HbausLNI5hpYB9c-QNJyUR4agdXx_73N26Dn_9XI2OW25qKf-gjjzh_584EFA0Vzxvyyx4gW8GUqIwhaAmp6_7LJyGlq6Rru6PMVX-sD4QsGgBZHIwI4aA220TEW_Br8d8CpApYUZvCbzxhz' },
-    { id: 10, name: 'Wakatobi', query: 'Taman Nasional Wakatobi', location: 'Sulawesi Tenggara', category: 'pantai', desc: 'Taman Nasional Laut dengan terumbu karang terluas di dunia.', defaultRating: '4.9', defaultOpen: 'Buka 24 Jam', lat: -5.25, lng: 123.6, defaultImg: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBM3X2wbsMSafomWICPVvP_WNw5zEjW3TBIMDHzByEl0abDkmrorgIc88jNL-v3v7JJF7upMacCUMz0vCkVGUDbGF3S339mQxZCR-wGIZwljTj3JCwK6G9i2OBw8ozhUSa6CQLYPJofJxaED0TmmvlmipRBI2Uh1P7Kp7l334tcqT0Azc3pd432k3TnmZqbNPrCUTXBPRlKmxpK3DIr2ciCYZIxest4-CrAjbI2mc056Rw23DXj_xBzswZPBtz62Q2bCxI-BQ84lKf6' },
-];
 
 /* Leaflet Map - client-side only */
-function LeafletMap({ destinations, activeSite, setActiveSite }) {
+function LeafletMap({ destinations, activeSite, setActiveSite, t }) {
     const [MapComponents, setMapComponents] = useState(null);
 
     useEffect(() => {
@@ -61,7 +49,7 @@ function LeafletMap({ destinations, activeSite, setActiveSite }) {
             <div className="w-full h-[500px] bg-slate-900 rounded-2xl flex items-center justify-center">
                 <div className="text-center">
                     <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                    <p className="text-slate-400 text-sm font-medium">Memuat peta wisata...</p>
+                    <p className="text-slate-400 text-sm font-medium">{t('peta_wisata.loading')}</p>
                 </div>
             </div>
         );
@@ -126,9 +114,23 @@ function LeafletMap({ destinations, activeSite, setActiveSite }) {
 }
 
 export default function PetaWisata() {
+    const { t } = useLanguage();
     const [activeSite, setActiveSite] = useState(null);
     const [activeFilter, setActiveFilter] = useState('semua');
     
+    // Base destinations data
+    const BASE_DESTINATIONS = [
+        { id: 1, name: 'Danau Toba', query: 'Danau Toba, Sumatera Utara', location: 'Sumatera Utara', category: 'alam', desc: t('wisata.dest1_desc'), defaultRating: '4.9', defaultOpen: t('wisata.open_24h'), lat: 2.6845, lng: 98.8588, defaultImg: 'https://lh3.googleusercontent.com/aida-public/AB6AXuABI-jZrAZvVvJvZH6KZBhH8ojB0S_qUfOa3DqgUaYGz6Z-8Av2l7SKksdPxULUMLQ2PPt0tedxQ5UzxZ8uxsWJ4309Ml6QTEqk05VJtG3GCPG67J_9zS8pvI_Z3Jj38w0A9AUBowVvCR6FCfJwoKcb6PZMC9L6sMLHqdxuAwf6sFjbO5p2T6chSgX_xOWisIGvJ9x-hwt82JPV2ErNwDb6h0_ZFsufnN14gPAo_fuMeESUTBYGy6djCPrWniloWLTPdf-xI3S_AdGa' },
+        { id: 2, name: 'Labuan Bajo', query: 'Labuan Bajo, Taman Nasional Komodo', location: 'NTT', category: 'pantai', desc: t('wisata.dest2_desc'), defaultRating: '5.0', defaultOpen: t('wisata.open_24h'), lat: -8.4539, lng: 119.8892, defaultImg: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDG4EFxcBpgXIgCaq7MmUNfwNpEWPDL3nUlyPfXBMnGRqQpwaJXYW_-W5esyNgXuX2khxDfJDRgLB9wEhAFBlw1VWzurRyB-2oRngkWiMZVKtRh1vrOkSVGzRQMcbBUwdmpAi60PJtaaQLMaWZ_ohe8gd0b3TpcOBrXBp3YOySdBthVFe_PJ3hwPdtfTJiyEk92nuyb3NVXUtIWMPx8nTnu7oSFGVMRDJkMX45F7-ynj3Uy6Q5NIRsdq1e7cI8hybqEnmVtKFdk_5TK' },
+        { id: 3, name: 'Ubud, Bali', query: 'Ubud, Bali', location: 'Bali', category: 'kota', desc: t('wisata.dest3_desc'), defaultRating: '4.8', defaultOpen: t('wisata.open_24h'), lat: -8.5069, lng: 115.2624, defaultImg: 'https://lh3.googleusercontent.com/aida-public/AB6AXuArUqDFHdGl6aYFb1l3aFc88-RwLg1EzHYhbsxTjneL2idpROpUoDwZg_JBBETD2rPOAn9OmiG-AqVjpzG_8jDgrX4uRPALNxXgS3kyQl1JOMjvkweDk0Cn7j_RZe5z2kCo4u6E4y-W81me4zYHnEC16lNv8Xu8PQfYb2YXoHIGuaXF3ehoaSU3XZnUoxBdnbd6qU_ppABtBIOiu6QG1Lu089rcRiL2sfL23Gkri_5TmJWIoK2HEnEP91o9kgg4Lu7JmS8NPoJn-1q-' },
+        { id: 4, name: 'Gunung Bromo', query: 'Gunung Bromo, Jawa Timur', location: 'Jawa Timur', category: 'gunung', desc: t('wisata.dest4_desc'), defaultRating: '4.9', defaultOpen: t('wisata.open_24h'), lat: -7.9425, lng: 112.953, defaultImg: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBMGTCFCaDtjpe7yrqfTzA8iN1OmWnIKYRRWrcVY8J7JO_wNsntxW3cVs8kldslW2HSs6RtUMhE2TBuie1gaJjNhoOYUpdaTccsxsZsLHXs318JTqzoKu5riZiYmMILa_dUx62dUp3sP53CtegYCDWM4Cwb4teEXBOXXqObHLQ9u8kmY9EJP5Ru_H_S_V6BmXHyytMsi6p43rpj4WHLHlsGcYDSpFRSCZp9pM0zhte-TExzwWO3Tgq5JKT-z9CGHMShYOKNg8mqhsZ5' },
+        { id: 5, name: 'Raja Ampat', query: 'Kepulauan Raja Ampat', location: 'Papua Barat', category: 'pantai', desc: t('wisata.dest5_desc'), defaultRating: '5.0', defaultOpen: t('wisata.open_24h'), lat: -0.2344, lng: 130.5165, defaultImg: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCOk7eFXM8Z7djeW87pg0CemNhUYyqvVOTbTru4odSwbuliignpFMApDGhfNKlW6kKyQlCbzJ3ohIoFaRnWWDgvGfazHGAkAjHoSKngL3-wQdr1HcITBwNXh6s5QVGFLqfPkQo7SDDW_mY-6RcScGnPl4Ewr-Vg_6va3QV-h4tnOTTygXWWbXsrbtnnmk6_AzN-1zBFS-khioMRQ3qfwSeVgNhYKSFkLW9kkjlvFAKSOrwFbzI-SYHp13KInW70cdrV_8nUtZOKZ2BQ' },
+        { id: 6, name: 'Gunung Rinjani', query: 'Gunung Rinjani, Lombok', location: 'Lombok, NTB', category: 'gunung', desc: t('wisata.dest6_desc'), defaultRating: '4.7', defaultOpen: t('wisata.open_24h'), lat: -8.4112, lng: 116.457, defaultImg: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC0FVwiBcNLeL0Ect74iuTzIEMu4Ctu1txJ1hjjkUmcO2Lw2UXLQUbNWThHD10DWJvCcTR1n5fYVifSW04RoXkffrHqGsy2KS9Sy3yR4LsP_0QdIUz4km9YOjT2UKU8Sq7Uz37Udu6NYP6wD7F-OQYDl-6YjCnyGW-2vWUBPQWCdFFby1XTW-cd9aPvTftzfXyD3VuHgMoxnt-3ROirBkccx3b6jBCgSYb4aVZxeM92ma5_jqPpGTsXhlMBFtLbsT6pb5S0K_r4Y4Pz' },
+        { id: 7, name: 'Tanjung Puting', query: 'Taman Nasional Tanjung Puting', location: 'Kalimantan Tengah', category: 'alam', desc: t('wisata.dest7_desc'), defaultRating: '4.6', defaultOpen: '08.00 - 16.00', lat: -2.8167, lng: 111.75, defaultImg: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDDuSfqiJRkxODrddf-6RuvSwa01DTHoOUXdRKz2IR0jmKl3N8-UEPriuFB8PXZrIcLuDTsdqF1lYffYUP92PwhvcC8MnPKxJDMsS2QUtab1HMvnBSSy9AVXBCm8CYoTzRWfnPZd1Knj9tbbOnEKiMFndx9rZsXZzKufNUznJMvFwKnEAKzlawa4AljZQVO8K4EeS3i2pbCMSadufRenMCeah9onXIrmig6iiv3zhUVhq37UShohWH8StvAr58umrth1NQiUVOjaYhI' },
+        { id: 8, name: 'Banda Neira', query: 'Banda Neira, Maluku', location: 'Maluku', category: 'pantai', desc: t('wisata.dest8_desc'), defaultRating: '4.8', defaultOpen: t('wisata.open_24h'), lat: -4.525, lng: 129.8953, defaultImg: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCp0a0cSr56zKwoiH0unY6uIn_kWisHe6JKm4pJQNVCtbW0n-2kYvRQApHX_tGWmeoyvXqzvHOmvhhSq80OAxY8BFCFEMAqViU3shvZgYEy_ekJQUGeKGjVfuAD3egeTOJI7lBBspycUFeDnp-_Tg7jVonhEK_EgNfwYUY2pUNBtGEMPqxffwYi4feIkc6B9uHQSMy5hF_1Q0PRFtLfI_e_koAa3TDqZHDzPmME0wSO3Kxsm4xzKW-p1_zH2hpp8FHZk0iGFlv-SqLh' },
+        { id: 10, name: 'Wakatobi', query: 'Taman Nasional Wakatobi', location: 'Sulawesi Tenggara', category: 'pantai', desc: t('wisata.dest10_desc'), defaultRating: '4.9', defaultOpen: t('wisata.open_24h'), lat: -5.25, lng: 123.6, defaultImg: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBM3X2wbsMSafomWICPVvP_WNw5zEjW3TBIMDHzByEl0abDkmrorgIc88jNL-v3v7JJF7upMacCUMz0vCkVGUDbGF3S339mQxZCR-wGIZwljTj3JCwK6G9i2OBw8ozhUSa6CQLYPJofJxaED0TmmvlmipRBI2Uh1P7Kp7l334tcqT0Azc3pd432k3TnmZqbNPrCUTXBPRlKmxpK3DIr2ciCYZIxest4-CrAjbI2mc056Rw23DXj_xBzswZPBtz62Q2bCxI-BQ84lKf6' },
+    ];
+
     // Dynamic data from Google Maps API
     const [destinations, setDestinations] = useState(
         BASE_DESTINATIONS.map(d => ({ ...d, rating: d.defaultRating, openHours: d.defaultOpen, img: d.defaultImg }))
@@ -198,7 +200,7 @@ export default function PetaWisata() {
 
     return (
         <div className="relative flex min-h-screen flex-col overflow-x-hidden bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-300 transition-colors duration-300 antialiased">
-            <Head title="Peta Wisata | Nusantara Digital City" />
+            <Head title={`Peta Wisata | Nusantara Digital City`} />
             <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
             <style>{`
                 .custom-marker { background: none !important; border: none !important; }
@@ -217,13 +219,13 @@ export default function PetaWisata() {
                     <motion.div initial="hidden" animate="visible" variants={stagger} className="container mx-auto px-4 lg:px-10 text-center">
                         <motion.div variants={fadeIn} className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider mb-6">
                             <span className="material-symbols-outlined text-sm">travel_explore</span>
-                            Peta Traveler
+                            {t('wisata.hero_badge')}
                         </motion.div>
                         <motion.h1 variants={fadeIn} className="text-4xl md:text-6xl font-black tracking-tight mb-4 text-slate-900 dark:text-slate-100">
-                            Peta Wisata <span className="text-primary">Nusantara</span>
+                            {t('peta_wisata.title')} <span className="text-primary">{t('peta_wisata.subtitle')}</span>
                         </motion.h1>
                         <motion.p variants={fadeIn} className="max-w-2xl mx-auto text-slate-600 dark:text-slate-400 text-lg leading-relaxed">
-                            Temukan destinasi impian dari Sabang sampai Merauke. Klik penanda pada peta untuk melihat detail, harga, dan rating setiap destinasi.
+                            {t('wisata.hero_desc')}
                         </motion.p>
                     </motion.div>
                 </section>
@@ -231,7 +233,7 @@ export default function PetaWisata() {
                 {/* ── Filter ── */}
                 <section className="container mx-auto px-4 lg:px-10 pb-6">
                     <div className="flex flex-wrap gap-3 justify-center">
-                        {CATEGORIES.map((cat) => (
+                        {CATEGORIES(t).map((cat) => (
                             <motion.button
                                 key={cat.id}
                                 whileTap={{ scale: 0.95 }}
@@ -256,21 +258,21 @@ export default function PetaWisata() {
                         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800">
                             <div className="flex items-center gap-3">
                                 <div className="size-3 bg-green-500 rounded-full animate-pulse"></div>
-                                <span className="text-sm font-bold text-slate-300">Peta Wisata — Live Tracking</span>
+                                <span className="text-sm font-bold text-slate-300">{t('wisata.realtime_tracking')}</span>
                             </div>
                             <div className="flex items-center gap-4 text-xs text-slate-500 font-mono">
-                                <span className="hidden md:flex items-center gap-1"><span className="size-2 rounded-full bg-green-500"></span> Alam</span>
-                                <span className="hidden md:flex items-center gap-1"><span className="size-2 rounded-full bg-blue-500"></span> Pantai</span>
-                                <span className="hidden md:flex items-center gap-1"><span className="size-2 rounded-full bg-amber-500"></span> Kota</span>
-                                <span className="hidden md:flex items-center gap-1"><span className="size-2 rounded-full bg-red-500"></span> Gunung</span>
-                                <span className="flex items-center gap-1"><span className="material-symbols-outlined text-primary text-sm">satellite_alt</span> {filtered.length} destinasi</span>
+                                <span className="hidden md:flex items-center gap-1"><span className="size-2 rounded-full bg-green-500"></span> {t('wisata.nature')}</span>
+                                <span className="hidden md:flex items-center gap-1"><span className="size-2 rounded-full bg-blue-500"></span> {t('wisata.beach')}</span>
+                                <span className="hidden md:flex items-center gap-1"><span className="size-2 rounded-full bg-amber-500"></span> {t('wisata.city')}</span>
+                                <span className="hidden md:flex items-center gap-1"><span className="size-2 rounded-full bg-red-500"></span> {t('wisata.mountain')}</span>
+                                <span className="flex items-center gap-1"><span className="material-symbols-outlined text-primary text-sm">satellite_alt</span> {filtered.length} {t('peta_warisan.active_points')}</span>
                             </div>
                         </div>
                         {/* Map */}
-                        <LeafletMap destinations={filtered} activeSite={activeSite} setActiveSite={setActiveSite} />
+                        <LeafletMap destinations={filtered} activeSite={activeSite} setActiveSite={setActiveSite} t={t} />
                         {/* Footer */}
                         <div className="px-6 py-3 border-t border-slate-800 flex items-center gap-4 text-[10px] text-slate-500 font-mono uppercase tracking-wider">
-                            <span className="flex items-center gap-1.5"><span className="size-2 bg-primary rounded-full"></span> Klik marker untuk detail</span>
+                            <span className="flex items-center gap-1.5"><span className="size-2 bg-primary rounded-full"></span> {t('peta_warisan.click_marker')}</span>
                             <span className="ml-auto hidden md:inline text-slate-600">Powered by Leaflet & OpenStreetMap</span>
                         </div>
                     </motion.div>
@@ -308,16 +310,16 @@ export default function PetaWisata() {
                                         <p className="text-slate-600 dark:text-slate-400 leading-relaxed mb-6">{selected.desc}</p>
                                          <div className="flex flex-wrap items-center gap-4 mb-6">
                                              <div className="bg-slate-100 dark:bg-slate-800 px-4 py-2 rounded-lg">
-                                                 <p className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Jam Operasional</p>
+                                                 <p className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">{t('wisata.operating_hours')}</p>
                                                  <p className="text-lg font-black text-slate-900 dark:text-white">{selected.openHours}</p>
                                              </div>
                                             <div className="bg-slate-100 dark:bg-slate-800 px-4 py-2 rounded-lg">
-                                                <p className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Rating</p>
+                                                <p className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">{t('wisata.rating')}</p>
                                                 <p className="text-lg font-black text-yellow-500 flex items-center gap-1">★ {selected.rating}</p>
                                             </div>
                                         </div>
                                         <button onClick={() => setActiveSite(null)} className="self-start text-sm text-slate-500 hover:text-primary transition-colors inline-flex items-center gap-1 font-medium">
-                                            <span className="material-symbols-outlined text-sm">close</span> Tutup Panel
+                                            <span className="material-symbols-outlined text-sm">close</span> {t('peta_warisan.close_panel')}
                                         </button>
                                     </div>
                                 </div>
@@ -330,11 +332,11 @@ export default function PetaWisata() {
                 <section className="container mx-auto px-4 lg:px-10 py-10">
                     <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeIn} className="mb-8 flex justify-between items-end">
                         <div>
-                            <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2">Daftar Destinasi</h2>
-                            <p className="text-slate-500 dark:text-slate-400 text-sm">Klik kartu untuk melihat lokasi di peta.</p>
+                            <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2">{t('peta_warisan.site_list')}</h2>
+                            <p className="text-slate-500 dark:text-slate-400 text-sm">{t('peta_warisan.site_list_desc')}</p>
                         </div>
                         <Link href="/daftar-wisata" className="text-primary font-bold text-sm hover:underline flex items-center gap-1">
-                            Lihat Semua <span className="material-symbols-outlined text-xs">arrow_forward</span>
+                            {t('wisata.view_all')} <span className="material-symbols-outlined text-xs">arrow_forward</span>
                         </Link>
                     </motion.div>
                     <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
@@ -373,7 +375,7 @@ export default function PetaWisata() {
                 <section className="container mx-auto px-4 lg:px-10 pb-16 text-center">
                     <Link href="/wisata">
                         <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="px-8 py-4 bg-primary text-white rounded-xl font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-colors inline-flex items-center gap-2">
-                            <span className="material-symbols-outlined">arrow_back</span> Kembali ke Wisata
+                            <span className="material-symbols-outlined">arrow_back</span> {t('peta_wisata.back_to_tourism')}
                         </motion.button>
                     </Link>
                 </section>

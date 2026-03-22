@@ -5,62 +5,34 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { useLanguage } from '@/lib/LanguageContext';
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Home({ cities = [] }) {
+    const { t } = useLanguage();
     const sectionRef = useRef(null);
     const triggerRef = useRef(null);
     const [openFaq, setOpenFaq] = useState(null);
 
     const PILARS = [
-        { icon: 'history_edu', title: 'Portal Informasi', desc: 'Arsip digital komprehensif yang mendokumentasikan sejarah, adat istiadat, dan warisan budaya Nusantara dalam format modern yang mudah diakses oleh generasi masa depan.' },
-        { icon: 'map', title: 'Panduan Wisata', desc: 'Navigasi cerdas berbasis geolokasi untuk mengeksplorasi destinasi tersembunyi, kuliner legendaris, dan rute wisata lokal secara mendalam dan personal.' },
-        { icon: 'storefront', title: 'Media Branding', desc: 'Platform strategis untuk membangun identitas digital kota yang kuat, profesional, dan berdaya saing global demi menarik investasi serta kunjungan wisata dunia.' },
-        { icon: 'hub', title: 'Edukasi & Promosi', desc: 'Ruang interaktif untuk mempromosikan kekayaan daerah melalui konten edukatif yang menghubungkan kearifan lokal dengan gaya hidup digital dunia.' },
+        { icon: 'history_edu', title: t('home.pillar1_title'), desc: t('home.pillar1_desc') },
+        { icon: 'map', title: t('home.pillar2_title'), desc: t('home.pillar2_desc') },
+        { icon: 'storefront', title: t('home.pillar3_title'), desc: t('home.pillar3_desc') },
+        { icon: 'hub', title: t('home.pillar4_title'), desc: t('home.pillar4_desc') },
     ];
 
     const FAQ_ITEMS = [
-        {
-            q: "Apa itu Nusantara Digital City?",
-            a: "Nusantara Digital City adalah platform ekosistem digital terintegrasi yang dirancang untuk melestarikan warisan budaya, mempromosikan destinasi wisata, dan memberdayakan potensi lokal melalui teknologi modern."
-        },
-        {
-            q: "Siapa yang dapat menjadi kontributor?",
-            a: "Kami membuka pintu bagi siapa saja yang peduli pada pelestarian budaya—mulai dari akademisi, budayawan, pecinta kuliner, hingga masyarakat umum yang ingin membagikan cerita unik dari daerah mereka."
-        },
-        {
-            q: "Bagaimana cara mendaftarkan kota saya?",
-            a: "Sangat mudah! Anda hanya perlu menekan tombol \"Daftarkan Kota Anda\" di bagian bawah halaman ini dan mengisi formulir profil kota serta potensi yang ingin didigitalisasikan."
-        },
-        {
-            q: "Apakah ada biaya untuk bergabung?",
-            a: "Tidak ada biaya sama sekali. Inisiatif ini sepenuhnya nirlaba dan digerakkan oleh semangat kolaborasi untuk mendokumentasikan kekayaan bangsa demi masa depan digital yang lebih berbudaya."
-        },
-        {
-            q: "Bagaimana sistem verifikasi konten bekerja?",
-            a: "Setiap data dan cerita yang masuk akan melalui proses kurasi dan verifikasi oleh tim validator kami untuk memastikan akurasi sejarah, kualitas konten, dan kesesuaian dengan standar Nusantara Digital City."
-        },
-        {
-            q: "Teknologi apa yang mendukung platform ini?",
-            a: "Kami bangga menggunakan teknologi **Gemini AI** dari Google untuk membantu proses kurasi data budaya, pengenalan objek bersejarah secara cerdas, serta memberikan analisis mendalam tentang potensi pariwisata Nusantara."
-        },
-        {
-            q: "Bagaimana jika data yang saya masukkan salah?",
-            a: "Jangan khawatir! Anda dapat menyunting kontribusi Anda atau melaporkan revisi melalui dashboard kontributor setelah masuk ke akun Anda untuk memastikan informasi tetap akurat."
-        },
-        {
-            q: "Apakah saya bisa membagikan konten dari platform ini?",
-            a: "Tentu! Kami sangat mendorong Anda untuk membagikan kekayaan budaya Nusantara ke media sosial melalui fitur bagi yang tersedia untuk memperkuat identitas digital daerah kita."
-        },
-        {
-            q: "Apa format konten yang didukung untuk kontribusi?",
-            a: "Kami mendukung berbagai format mulai dari teks untuk artikel sejarah/kisah rakyat, foto berkualitas tinggi untuk galeri wisata, hingga data lokasi untuk pemetaan digital yang presisi."
-        },
-        {
-            q: "Bagaimana cara menghubungi tim dukungan?",
-            a: "Jika Anda menemui kendala teknis atau memiliki pertanyaan lebih lanjut, tim kami siap membantu melalui halaman 'Kontak' atau melalui email dukungan resmi kami."
-        }
+        { q: t('home.faq1_q'), a: t('home.faq1_a') },
+        { q: t('home.faq2_q'), a: t('home.faq2_a') },
+        { q: t('home.faq3_q'), a: t('home.faq3_a') },
+        { q: t('home.faq4_q'), a: t('home.faq4_a') },
+        { q: t('home.faq5_q'), a: t('home.faq5_a') },
+        { q: t('home.faq6_q'), a: t('home.faq6_a') },
+        { q: t('home.faq7_q'), a: t('home.faq7_a') },
+        { q: t('home.faq8_q'), a: t('home.faq8_a') },
+        { q: t('home.faq9_q'), a: t('home.faq9_a') },
+        { q: t('home.faq10_q'), a: t('home.faq10_a') },
     ];
 
     useEffect(() => {
@@ -100,7 +72,7 @@ export default function Home({ cities = [] }) {
 
     return (
         <div className="relative flex min-h-screen flex-col overflow-x-hidden bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-300 transition-colors duration-300">
-            <Head title="Beranda | Nusantara Digital City" />
+            <Head title={t('nav.home') + " | Nusantara Digital City"} />
             <Navbar />
 
             <main className="flex-grow">
@@ -122,11 +94,11 @@ export default function Home({ cities = [] }) {
                                 variants={staggerContainer}
                                 className="relative z-10 max-w-3xl space-y-6"
                             >
-                                <motion.h1 variants={fadeIn} className="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-tight tracking-tight drop-shadow-md">
-                                    Nusantara <span className="text-primary">Digital City</span>
+                                <motion.h1 variants={fadeIn} className="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-tight tracking-tight drop-shadow-mdBase">
+                                    {t('home.hero_title')} <span className="text-primary italic">{t('home.digital_city')}</span>
                                 </motion.h1>
                                 <motion.p variants={fadeIn} className="text-base md:text-xl text-slate-200 font-medium leading-relaxed drop-shadow-md">
-                                    Portal informasi, panduan wisata, dan media branding kota masa depan. Mendigitalisasi potensi daerah untuk menghubungkan kearifan lokal dengan dunia.
+                                    {t('home.hero_subtitle')}
                                 </motion.p>
                                 <motion.div variants={fadeIn} className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
                                     <motion.button
@@ -134,14 +106,14 @@ export default function Home({ cities = [] }) {
                                         whileTap={{ scale: 0.95 }}
                                         className="rounded-lg h-12 px-8 bg-primary text-white text-base font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-colors"
                                     >
-                                        Jelajahi Kota
+                                        {t('home.cta_explore')}
                                     </motion.button>
                                     <motion.button
                                         whileHover={{ scale: 1.05, backgroundColor: "rgba(255, 255, 255, 0.2)" }}
                                         whileTap={{ scale: 0.95 }}
                                         className="rounded-lg h-12 px-8 bg-white/10 backdrop-blur-md text-white border border-white/20 text-base font-bold hover:bg-white/20 transition-colors"
                                     >
-                                        Pelajari Program
+                                        {t('home.cta_learn')}
                                     </motion.button>
                                 </motion.div>
                             </motion.div>
@@ -155,13 +127,13 @@ export default function Home({ cities = [] }) {
                         {/* Title Card */}
                         <div className="flex flex-col justify-center space-y-6 min-w-[300px] md:min-w-[500px]">
                             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-widest w-fit">
-                                DIGITAL PILLARS
+                                {t('home.pillar_subtitle')} {t('home.pillars')}
                             </div>
                             <h2 className="text-5xl md:text-8xl font-black tracking-tighter text-slate-900 dark:text-slate-100 uppercase leading-[0.85]">
-                                Empat <br /><span className="text-primary italic">Pilar</span> <br />Digital
+                                {t('home.pillar_title')} <br /><span className="text-primary italic">{t('home.pillar_subtitle')}</span> <br />{t('home.pillars')}
                             </h2>
                             <p className="text-lg md:text-xl text-slate-500 dark:text-slate-400 max-w-sm font-medium leading-relaxed">
-                                Transformasi kearifan lokal melalui pondasi teknologi masa depan.
+                                {t('home.pillar_desc')}
                             </p>
                         </div>
 
@@ -180,7 +152,7 @@ export default function Home({ cities = [] }) {
                                     </div>
 
                                     <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
-                                        <span>Pilar 0{idx + 1}</span>
+                                        <span>Pillar 0{idx + 1}</span>
                                         <span className="material-symbols-outlined text-xl opacity-0 group-hover:opacity-100 transition-opacity">arrow_right_alt</span>
                                     </div>
                                 </div>
@@ -189,97 +161,168 @@ export default function Home({ cities = [] }) {
                     </div>
                 </section>
 
-                {/* Potensi & Audience Section */}
-                <section className="py-20 px-4">
+                {/* How It Works Section */}
+                <section className="py-24 px-4 bg-slate-50 dark:bg-slate-900/20 overflow-hidden">
                     <div className="container mx-auto max-w-6xl">
-                        <motion.div
-                            initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={fadeIn}
-                            className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4"
-                        >
-                            <div className="space-y-4">
-                                <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-primary">Jembatan Informasi Nusantara</h2>
-                                <p className="text-lg text-slate-600 dark:text-slate-400 max-w-xl">
-                                    Menyajikan data yang mudah diakses bagi wisatawan domestik, mancanegara, hingga generasi penerus bangsa.
-                                </p>
+                        <div className="flex flex-col md:flex-row items-center justify-between mb-20 gap-10">
+                            <div className="max-w-xl">
+                                <motion.div
+                                    initial={{ opacity: 0, x: -20 }}
+                                    whileInView={{ opacity: 1, x: 0 }}
+                                    viewport={{ once: true }}
+                                    className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-widest mb-4"
+                                >
+                                    Step by Step
+                                </motion.div>
+                                <h2 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-slate-100 italic leading-tight">
+                                    {t('home.how_title')} <span className="text-primary">{t('home.how_subtitle')}</span>
+                                </h2>
                             </div>
-                            <motion.a
-                                whileHover={{ x: 5 }}
-                                className="text-primary font-bold flex items-center gap-2 hover:underline cursor-pointer"
-                            >
-                                Jelajahi Semua Wilayah <span className="material-symbols-outlined">arrow_forward</span>
-                            </motion.a>
-                        </motion.div>
+                            <p className="text-lg text-slate-500 dark:text-slate-400 max-w-sm font-medium">
+                                {t('home.how_desc')}
+                            </p>
+                        </div>
 
-                        <motion.div
-                            initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={staggerContainer}
-                            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
-                        >
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
+                            {/* Animated Progress Line (Mobile Hidden) */}
+                            <div className="absolute top-1/2 left-0 w-full h-0.5 bg-slate-200 dark:bg-slate-800 -translate-y-1/2 hidden md:block">
+                                <motion.div 
+                                    initial={{ width: 0 }}
+                                    whileInView={{ width: '100%' }}
+                                    viewport={{ once: true }}
+                                    transition={{ duration: 1.5, ease: "easeInOut" }}
+                                    className="h-full bg-primary shadow-[0_0_15px_rgba(var(--primary-rgb),0.5)]"
+                                />
+                            </div>
+
                             {[
-                                { title: 'Wisatawan Lokal', desc: 'Menemukan destinasi baru di tanah air dengan informasi rute dan budaya yang mendalam.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCrBui3DYtyJcqoH83OFoOu0qUtaXAg68xRd7kT2Sfxkh5cF9jkIUBphlf2MedcEoZk-u4VV5PkwskYOc8PudqFi5RO9dv670zPOZF1kzk0oESyC4Sy5eYwPRmvNw43NDpnBHTY7-iIdERMt0A_jFOrmYxTrWEx8QwqEjAn8WTj-5-o9xdjWmUZUFe24VG7chE7FwXO9HFWy6Tit8ZCXDHD6bNIpG0hdzmm7prnicEsD8p3MM32N3-HnPHlVJVBgugrjSsQOK9QqFze' },
-                                { title: 'Turis Mancanegara', desc: 'Mempelajari kekayaan tradisi Nusantara melalui konten digital multibahasa yang edukatif.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAhDLdNojKWuqVDUdRkriX5qMJfP2ZdeGcA7JAx47g_G4JrppkYA2NsfNOt4mED21orsCt0tejsDfxSjeRB0STWQtfDaGQItNrrRS8djPZq1uGCkECuTgp4kLvXVNmpA5Z5O6iFR6to-6Xqo5dlrBDesFnte5ROW_ii3oT445jHOjHqJQN9BQKMkuoX_CUZv-V-ttBXxJSReVYZ2q5b3Ayz0ewYz2WerfUpGN9sOhjdZAnkH42jPAwRRwjdUGvm3QjiRoPpaA9HPX2E' },
-                                { title: 'Generasi Masa Depan', desc: 'Menjaga kelestarian sejarah melalui arsip digital yang dapat diakses kapan saja dan di mana saja.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDBXUdjXyhf74doQFU6YJNg3NUG7nuW15JCbZs7tG__y3SRjufZHHfwqLL-K--sgivHQobT4M0AH3C_AJjm5E0potgNZaoLB4O7fknmGrxH_b97T_hNrDo79GewFZJ5Vi0drTqo0kMeRS26YVuvdPahUQT1Ps-KD2N1nbGnSjVmDpSFaliDu7P4mjsrhck7NKY-UUXBll2NSyFvYOoM9va468jEPPuNDvRyJefEYnpECKTQOZDlmVuHPNf3XQKLD4DT6fs1KYt9iD_0' },
-                            ].map((item) => (
-                                <motion.div key={item.title} variants={fadeIn} className="flex flex-col gap-4 group cursor-pointer">
-                                    <div className="relative aspect-video rounded-xl overflow-hidden shadow-lg">
-                                        <img className="object-cover w-full h-full transition-transform duration-700 ease-out group-hover:scale-110" alt={item.title} src={item.img} />
-                                        <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500"></div>
-                                    </div>
-                                    <div>
-                                        <h4 className="text-xl font-bold text-slate-900 dark:text-slate-100 group-hover:text-primary transition-colors">{item.title}</h4>
-                                        <p className="text-slate-600 dark:text-slate-400 text-sm mt-2 leading-relaxed">{item.desc}</p>
+                                { title: t('home.step1_title'), desc: t('home.step1_desc'), icon: 'explore' },
+                                { title: t('home.step2_title'), desc: t('home.step2_desc'), icon: 'person_add' },
+                                { title: t('home.step3_title'), desc: t('home.step3_desc'), icon: 'verified' },
+                                { title: t('home.step4_title'), desc: t('home.step4_desc'), icon: 'public' },
+                            ].map((step, idx) => (
+                                <motion.div
+                                    key={idx}
+                                    initial={{ opacity: 0, y: 30 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ delay: idx * 0.2 }}
+                                    className="relative z-10 group"
+                                >
+                                    <div className="bg-white dark:bg-slate-800 p-8 rounded-[2rem] border border-slate-100 dark:border-slate-700 shadow-xl shadow-slate-200/50 dark:shadow-none hover:shadow-2xl hover:shadow-primary/10 transition-all duration-500 hover:-translate-y-2">
+                                        <div className="size-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-all duration-500">
+                                            <span className="material-symbols-outlined text-3xl">{step.icon}</span>
+                                        </div>
+                                        <div className="text-[10px] font-black text-primary mb-2 uppercase tracking-widest">Langkah 0{idx + 1}</div>
+                                        <h3 className="text-2xl font-black text-slate-900 dark:text-slate-100 mb-4 italic uppercase">{step.title}</h3>
+                                        <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed font-medium">
+                                            {step.desc}
+                                        </p>
                                     </div>
                                 </motion.div>
                             ))}
-                        </motion.div>
+                        </div>
                     </div>
                 </section>
 
-                {/* Approved Cities Section */}
-                {cities.length > 0 && (
-                    <section className="py-20 px-4 bg-slate-50 dark:bg-slate-900/50">
-                        <div className="container mx-auto max-w-6xl">
+                {/* Why Choose Us Section */}
+                <section className="py-24 px-4 relative overflow-hidden bg-white dark:bg-slate-950">
+                    <div className="container mx-auto max-w-6xl relative z-10">
+                        <div className="text-center mb-20 space-y-4">
                             <motion.div
-                                initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeIn}
-                                className="text-center mb-16 space-y-4"
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-widest"
                             >
-                                <h2 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-slate-100 italic">Jaringan <span className="text-primary">Kota Nusantara</span></h2>
-                                <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto font-medium">
-                                    Selamat datang kepada kota-kota yang baru saja bergabung dalam ekosistem digital kami.
-                                </p>
+                                Core Values
                             </motion.div>
-
-                            <motion.div
-                                initial="hidden" whileInView="visible" viewport={{ once: true }} variants={staggerContainer}
-                                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-                            >
-                                {cities.map((city) => (
-                                    <motion.div
-                                        key={city.id}
-                                        variants={fadeIn}
-                                        whileHover={{ y: -10 }}
-                                        className="bg-white dark:bg-surface-dark p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-xl transition-all group"
-                                    >
-                                        <div className="flex items-center justify-between mb-6">
-                                            <div className="size-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors duration-500">
-                                                <span className="material-symbols-outlined text-2xl">location_city</span>
-                                            </div>
-                                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Terverifikasi</span>
-                                        </div>
-                                        <h3 className="text-xl font-black mb-1 group-hover:text-primary transition-colors">{city.name}</h3>
-                                        <p className="text-primary text-xs font-bold mb-4 uppercase tracking-tighter">{city.province}</p>
-                                        <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed line-clamp-3">
-                                            {city.description}
-                                        </p>
-                                        <div className="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-400">
-                                            <span>Populasi: {city.population || '-'}</span>
-                                            <Link href="#" className="font-bold text-primary hover:underline">Lihat Detail</Link>
-                                        </div>
-                                    </motion.div>
-                                ))}
-                            </motion.div>
+                            <h2 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-slate-100 italic">
+                                {t('home.why_title')} <span className="text-primary">{t('home.why_subtitle')}</span>
+                            </h2>
+                            <p className="text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto font-medium">
+                                {t('home.why_desc')}
+                            </p>
                         </div>
-                    </section>
-                )}
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                            {[
+                                { title: t('home.why1_title'), desc: t('home.why1_desc'), icon: 'bolt', color: 'bg-blue-500' },
+                                { title: t('home.why2_title'), desc: t('home.why2_desc'), icon: 'auto_stories', color: 'bg-emerald-500' },
+                                { title: t('home.why3_title'), desc: t('home.why3_desc'), icon: 'public', color: 'bg-amber-500' },
+                                { title: t('home.why4_title'), desc: t('home.why4_desc'), icon: 'groups', color: 'bg-purple-500' },
+                            ].map((item, idx) => (
+                                <motion.div
+                                    key={idx}
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    whileInView={{ opacity: 1, scale: 1 }}
+                                    viewport={{ once: true }}
+                                    transition={{ delay: idx * 0.1 }}
+                                    className="p-8 rounded-[2.5rem] bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 hover:shadow-2xl hover:shadow-primary/10 transition-all duration-500 group"
+                                >
+                                    <div className={`size-14 rounded-2xl ${item.color} text-white flex items-center justify-center mb-6 shadow-lg rotate-3 group-hover:rotate-0 transition-transform duration-500`}>
+                                        <span className="material-symbols-outlined text-2xl">{item.icon}</span>
+                                    </div>
+                                    <h3 className="text-xl font-black text-slate-900 dark:text-slate-100 mb-4 uppercase italic tracking-tight">{item.title}</h3>
+                                    <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed font-medium">
+                                        {item.desc}
+                                    </p>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
+                {/* Powerful Features Section (GSAP Focused) */}
+                <section className="py-24 px-4 bg-slate-900 text-white overflow-hidden relative">
+                    <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[120px] -translate-x-1/2 -translate-y-1/2"></div>
+                    <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-[120px] translate-x-1/2 translate-y-1/2"></div>
+                    
+                    <div className="container mx-auto max-w-6xl relative z-10">
+                        <div className="flex flex-col lg:flex-row items-end justify-between mb-20 gap-8">
+                            <div className="space-y-4">
+                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-white text-xs font-bold uppercase tracking-widest">
+                                    Cutting Edge
+                                </div>
+                                <h2 className="text-4xl md:text-7xl font-black italic leading-none uppercase">
+                                    {t('home.feat_title')} <br />
+                                    <span className="text-primary">{t('home.feat_subtitle')}</span>
+                                </h2>
+                            </div>
+                            <p className="text-xl text-slate-400 max-w-md font-medium lg:text-right border-l-2 lg:border-l-0 lg:border-r-2 border-primary pl-6 lg:pl-0 lg:pr-6 py-2">
+                                {t('home.feat_desc')}
+                            </p>
+                        </div>
+
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                            {[
+                                { title: t('home.feat1_title'), desc: t('home.feat1_desc'), icon: 'view_in_ar' },
+                                { title: t('home.feat2_title'), desc: t('home.feat2_desc'), icon: 'folder_open' },
+                                { title: t('home.feat3_title'), desc: t('home.feat3_desc'), icon: 'near_me' },
+                                { title: t('home.feat4_title'), desc: t('home.feat4_desc'), icon: 'rocket_launch' },
+                            ].map((feat, idx) => (
+                                <motion.div
+                                    key={idx}
+                                    initial={{ opacity: 0, x: idx % 2 === 0 ? -50 : 50 }}
+                                    whileInView={{ opacity: 1, x: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ duration: 0.8, ease: "easeOut" }}
+                                    className="flex gap-6 p-8 rounded-[2rem] bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
+                                >
+                                    <div className="size-16 shrink-0 rounded-2xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
+                                        <span className="material-symbols-outlined text-3xl">{feat.icon}</span>
+                                    </div>
+                                    <div>
+                                        <h3 className="text-2xl font-black mb-3 italic uppercase text-primary">{feat.title}</h3>
+                                        <p className="text-slate-400 font-medium leading-relaxed">
+                                            {feat.desc}
+                                        </p>
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
 
                 {/* FAQ Section */}
                 <section className="py-20 px-4 bg-white dark:bg-slate-950">
@@ -289,29 +332,29 @@ export default function Home({ cities = [] }) {
                             className="text-center mb-16 space-y-4"
                         >
                             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-widest w-fit mx-auto">
-                                TANYA JAWAB
+                                Q & A
                             </div>
-                            <h2 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-slate-100 italic">Pertanyaan <span className="text-primary">Sering Diajukan</span></h2>
+                            <h2 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-slate-100 italic">{t('home.faq_title')} <span className="text-primary">{t('home.faq_subtitle')}</span></h2>
                             <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto font-medium">
-                                Cari tahu lebih lanjut tentang cara kerja ekosistem Nusantara Digital City.
+                                {t('home.faq_desc')}
                             </p>
                         </motion.div>
-
                         <div className="space-y-4">
-                            {FAQ_ITEMS.map((item, index) => (
+                            {FAQ_ITEMS.map((faq, index) => (
                                 <motion.div
                                     key={index}
-                                    initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeIn}
-                                    className="overflow-hidden border border-slate-100 dark:border-slate-800 rounded-3xl bg-slate-50/50 dark:bg-slate-900/30 backdrop-blur-sm"
+                                    initial={{ opacity: 0, y: 10 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ delay: index * 0.1 }}
+                                    className="border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden bg-slate-50/50 dark:bg-slate-900/30"
                                 >
                                     <button
                                         onClick={() => setOpenFaq(openFaq === index ? null : index)}
-                                        className="w-full flex items-center justify-between p-6 md:p-8 text-left transition-colors hover:bg-slate-100/50 dark:hover:bg-slate-800/50"
+                                        className="w-full px-6 py-5 text-left flex items-center justify-between gap-4 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                                     >
-                                        <span className={`text-lg md:text-xl font-bold transition-colors ${openFaq === index ? 'text-primary' : 'text-slate-900 dark:text-slate-100'}`}>
-                                            {item.q}
-                                        </span>
-                                        <span className={`material-symbols-outlined text-2xl transition-transform duration-300 ${openFaq === index ? 'rotate-180 text-primary' : 'text-slate-400'}`}>
+                                        <span className="font-bold text-lg text-slate-900 dark:text-slate-100 italic uppercase tracking-tight">{faq.q}</span>
+                                        <span className={`material-symbols-outlined text-primary transition-transform duration-300 ${openFaq === index ? 'rotate-180' : ''}`}>
                                             expand_more
                                         </span>
                                     </button>
@@ -321,10 +364,10 @@ export default function Home({ cities = [] }) {
                                                 initial={{ height: 0, opacity: 0 }}
                                                 animate={{ height: 'auto', opacity: 1 }}
                                                 exit={{ height: 0, opacity: 0 }}
-                                                transition={{ duration: 0.3, ease: 'easeInOut' }}
+                                                transition={{ duration: 0.3 }}
                                             >
-                                                <div className="px-6 md:px-8 pb-8 text-slate-600 dark:text-slate-400 font-medium leading-relaxed border-t border-slate-100 dark:border-slate-800 pt-6">
-                                                    {item.a}
+                                                <div className="px-6 pb-6 text-slate-600 dark:text-slate-400 font-medium leading-relaxed border-t border-slate-100 dark:border-slate-800 pt-4">
+                                                    {faq.a}
                                                 </div>
                                             </motion.div>
                                         )}
@@ -348,9 +391,9 @@ export default function Home({ cities = [] }) {
                             <div className="absolute bottom-0 left-0 w-80 h-80 bg-black/10 rounded-full blur-3xl -ml-40 -mb-40"></div>
 
                             <div className="relative z-10 space-y-8">
-                                <h2 className="text-4xl md:text-5xl font-black drop-shadow-md">Mari Berkolaborasi</h2>
+                                <h2 className="text-4xl md:text-5xl font-black drop-shadow-md">{t('home.collab_title')}</h2>
                                 <p className="text-lg md:text-xl text-white/95 max-w-2xl mx-auto font-medium leading-relaxed">
-                                    Jadikan kotamu bagian dari jaringan digital Nusantara. Bagikan cerita unik, budaya, dan potensi daerahmu kepada dunia.
+                                    {t('home.collab_desc')}
                                 </p>
                                 <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-6">
                                     <Link href="/kontribusi?type=kota">
@@ -359,16 +402,9 @@ export default function Home({ cities = [] }) {
                                             whileTap={{ scale: 0.95 }}
                                             className="w-full sm:w-auto px-8 py-4 bg-white text-primary rounded-xl font-bold shadow-xl hover:bg-slate-50 transition-colors"
                                         >
-                                            Daftarkan Kota Anda
+                                            {t('home.collab_cta')}
                                         </motion.button>
                                     </Link>
-                                    <motion.button
-                                        whileHover={{ scale: 1.05, backgroundColor: "rgba(255, 255, 255, 0.2)" }}
-                                        whileTap={{ scale: 0.95 }}
-                                        className="w-full sm:w-auto px-8 py-4 bg-primary/20 backdrop-blur-md border border-white/30 text-white rounded-xl font-bold hover:bg-white/10 transition-colors flex items-center justify-center gap-2"
-                                    >
-                                        <span className="material-symbols-outlined">info</span> Pelajari Lebih Lanjut
-                                    </motion.button>
                                 </div>
                             </div>
                         </motion.div>

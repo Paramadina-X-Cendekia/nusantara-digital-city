@@ -3,6 +3,7 @@ import { Head, Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { useLanguage } from '../lib/LanguageContext';
 
 const fadeIn = {
     hidden: { opacity: 0, y: 30 },
@@ -13,14 +14,15 @@ const stagger = {
     visible: { opacity: 1, transition: { staggerChildren: 0.12 } }
 };
 
-const CATEGORIES = [
-    { id: 'semua', label: 'Semua', icon: 'apps' },
-    { id: 'Legenda', label: 'Legenda', icon: 'history_edu' },
-    { id: 'Mitologi', label: 'Mitologi', icon: 'auto_awesome' },
-    { id: 'Cerita Rakyat', label: 'Cerita Rakyat', icon: 'menu_book' },
+const CATEGORIES = (t) => [
+    { id: 'semua', label: t('kisah.all'), icon: 'apps' },
+    { id: 'Legenda', label: t('kisah.legend'), icon: 'history_edu' },
+    { id: 'Mitologi', label: t('kisah.mythology'), icon: 'auto_awesome' },
+    { id: 'Cerita Rakyat', label: t('kisah.folklore'), icon: 'menu_book' },
 ];
 
 export default function KisahRakyat({ kisah }) {
+    const { t } = useLanguage();
     const [activeCategory, setActiveCategory] = useState('semua');
 
     const filtered = activeCategory === 'semua'
@@ -29,7 +31,7 @@ export default function KisahRakyat({ kisah }) {
 
     return (
         <div className="relative flex min-h-screen flex-col overflow-x-hidden bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-300 transition-colors duration-300 antialiased">
-            <Head title="Kisah Rakyat | Nusantara Digital City" />
+            <Head title={`${t('kisah.hero_subtitle')} | Nusantara Digital City`} />
             <Navbar />
 
             <main className="flex-grow">
@@ -41,13 +43,13 @@ export default function KisahRakyat({ kisah }) {
                     <motion.div initial="hidden" animate="visible" variants={stagger} className="container mx-auto px-4 lg:px-10 text-center">
                         <motion.div variants={fadeIn} className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider mb-6">
                             <span className="material-symbols-outlined text-sm">auto_stories</span>
-                            Storytelling Digital
+                            {t('kisah.hero_badge')}
                         </motion.div>
                         <motion.h1 variants={fadeIn} className="text-4xl md:text-6xl font-black tracking-tight mb-6 text-slate-900 dark:text-slate-100">
-                            Kisah & <span className="text-primary">Legenda Nusantara</span>
+                            {t('kisah.hero_title')} <span className="text-primary">{t('kisah.hero_subtitle')}</span>
                         </motion.h1>
                         <motion.p variants={fadeIn} className="max-w-2xl mx-auto text-slate-600 dark:text-slate-400 text-lg leading-relaxed">
-                            Narasi lisan yang diwariskan turun-temurun, kini hadir dalam medium interaktif. Telusuri nilai-nilai luhur dan kearifan lokal melalui kisah-kisah legendaris dari seluruh pelosok negeri.
+                            {t('kisah.hero_desc')}
                         </motion.p>
                     </motion.div>
                 </section>
@@ -56,7 +58,7 @@ export default function KisahRakyat({ kisah }) {
                 <section className="container mx-auto px-4 lg:px-10 py-12">
                     {/* Filter Tabs */}
                     <div className="flex flex-wrap gap-3 mb-10 justify-center">
-                        {CATEGORIES.map((cat) => (
+                        {CATEGORIES(t).map((cat) => (
                             <motion.button
                                 key={cat.id}
                                 whileTap={{ scale: 0.95 }}
@@ -94,7 +96,7 @@ export default function KisahRakyat({ kisah }) {
                                             </div>
                                             <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
                                                 <span className="text-white text-sm font-bold flex items-center gap-1">
-                                                    <span className="material-symbols-outlined text-lg">auto_stories</span> Baca Sekarang
+                                                    <span className="material-symbols-outlined text-lg">auto_stories</span> {t('kisah.read_now')}
                                                 </span>
                                             </div>
                                         </div>
@@ -115,7 +117,7 @@ export default function KisahRakyat({ kisah }) {
                     {filtered.length === 0 && (
                         <div className="text-center py-16">
                             <span className="material-symbols-outlined text-slate-400 text-6xl mb-4">search_off</span>
-                            <p className="text-slate-500 font-medium">Belum ada kisah di kategori ini.</p>
+                            <p className="text-slate-500 font-medium">{t('kisah.no_stories')}</p>
                         </div>
                     )}
                 </section>
@@ -125,7 +127,7 @@ export default function KisahRakyat({ kisah }) {
                     <div className="container mx-auto max-w-4xl text-center">
                         <Link href="/budaya">
                             <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="px-8 py-4 bg-primary text-white rounded-xl font-bold shadow-xl hover:bg-primary/90 transition-colors flex items-center gap-2 mx-auto">
-                                <span className="material-symbols-outlined">arrow_back</span> Kembali ke Budaya
+                                <span className="material-symbols-outlined">arrow_back</span> {t('kisah.back_to_culture')}
                             </motion.button>
                         </Link>
                     </div>

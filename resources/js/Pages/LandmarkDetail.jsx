@@ -18,8 +18,8 @@ export default function LandmarkDetail({ landmark }) {
     const [showArchive, setShowArchive] = useState(false);
 
     const tabs = [
-        { id: 'profil', label: 'Profil Digital', icon: 'account_balance' },
-        { id: 'video', label: 'Video Eksplorasi', icon: 'movie' },
+        { id: 'profil', label: t('landmark_detail.digital_profile'), icon: 'account_balance' },
+        { id: 'video', label: t('landmark_detail.exploration_video'), icon: 'movie' },
     ];
 
     return (
@@ -81,7 +81,7 @@ export default function LandmarkDetail({ landmark }) {
                             >
                                 <div className="lg:col-span-2 space-y-8">
                                     <div id="materi-teks" className="bg-white dark:bg-surface-dark rounded-3xl p-8 md:p-12 border border-slate-200 dark:border-slate-800 shadow-sm">
-                                        <h2 className="text-3xl font-black text-slate-900 dark:text-slate-100 mb-8 border-b border-slate-100 dark:border-slate-800 pb-4">Sejarah & Digitalisasi</h2>
+                                        <h2 className="text-3xl font-black text-slate-900 dark:text-slate-100 mb-8 border-b border-slate-100 dark:border-slate-800 pb-4">{t('landmark_detail.history_digitalization')}</h2>
                                         <div className="prose prose-slate dark:prose-invert max-w-none">
                                             <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-lg whitespace-pre-line first-letter:text-5xl first-letter:font-black first-letter:mr-3 first-letter:float-left first-letter:text-primary">
                                                 {landmark.longDesc}
@@ -94,27 +94,27 @@ export default function LandmarkDetail({ landmark }) {
                                     {/* Info Card */}
                                     <div className="bg-primary/10 rounded-3xl p-8 border border-primary/20">
                                         <h3 className="font-black text-primary text-xl mb-4 flex items-center gap-2">
-                                            <span className="material-symbols-outlined">info</span> Informasi Cepat
+                                            <span className="material-symbols-outlined">info</span> {t('landmark_detail.quick_info')}
                                         </h3>
                                         <div className="space-y-4">
                                             <div>
-                                                <p className="text-xs text-slate-500 uppercase font-bold tracking-wider">Lokasi</p>
+                                                <p className="text-xs text-slate-500 uppercase font-bold tracking-wider">{t('landmark_detail.location')}</p>
                                                 <p className="text-slate-700 dark:text-slate-300 font-medium">{landmark.location}</p>
                                             </div>
                                             <div>
-                                                <p className="text-xs text-slate-500 uppercase font-bold tracking-wider">Kategori</p>
+                                                <p className="text-xs text-slate-500 uppercase font-bold tracking-wider">{t('landmark_detail.category')}</p>
                                                 <p className="text-slate-700 dark:text-slate-300 font-medium">{landmark.category}</p>
                                             </div>
                                             <div>
-                                                <p className="text-xs text-slate-500 uppercase font-bold tracking-wider">Status Media</p>
-                                                <p className="text-primary font-bold">Interaktif & Edukatif</p>
+                                                <p className="text-xs text-slate-500 uppercase font-bold tracking-wider">{t('landmark_detail.media_status')}</p>
+                                                <p className="text-primary font-bold">{t('landmark_detail.interactive_educational')}</p>
                                             </div>
                                         </div>
                                     </div>
 
                                     {/* Features Card */}
                                     <div className="bg-white dark:bg-surface-dark rounded-3xl p-8 border border-slate-200 dark:border-slate-800 shadow-sm">
-                                        <h3 className="font-black text-slate-900 dark:text-slate-100 text-xl mb-6">Media Pembelajaran</h3>
+                                        <h3 className="font-black text-slate-900 dark:text-slate-100 text-xl mb-6">{t('landmark_detail.learning_media')}</h3>
                                         <ul className="space-y-4">
                                             <motion.li 
                                                 whileHover={{ scale: 1.02, x: 5 }}
@@ -129,8 +129,8 @@ export default function LandmarkDetail({ landmark }) {
                                                     <span className="material-symbols-outlined">menu_book</span>
                                                 </div>
                                                 <div className="flex flex-col">
-                                                    <span className="font-bold text-slate-700 dark:text-slate-300">Materi Edukasi Interaktif</span>
-                                                    <span className="text-[10px] text-slate-500">Baca modul sejarah lengkap</span>
+                                                    <span className="font-bold text-slate-700 dark:text-slate-300">{t('landmark_detail.edu_material')}</span>
+                                                    <span className="text-[10px] text-slate-500">{t('landmark_detail.edu_material_desc')}</span>
                                                 </div>
                                             </motion.li>
 
@@ -144,8 +144,8 @@ export default function LandmarkDetail({ landmark }) {
                                                     <span className="material-symbols-outlined">campaign</span>
                                                 </div>
                                                 <div className="flex flex-col">
-                                                    <span className="font-bold text-slate-700 dark:text-slate-300">Media Promosi Budaya</span>
-                                                    <span className="text-[10px] text-slate-500">Tonton video profil promosi</span>
+                                                    <span className="font-bold text-slate-700 dark:text-slate-300">{t('landmark_detail.promotion_media')}</span>
+                                                    <span className="text-[10px] text-slate-500">{t('landmark_detail.promotion_media_desc')}</span>
                                                 </div>
                                             </motion.li>
 
@@ -159,8 +159,8 @@ export default function LandmarkDetail({ landmark }) {
                                                     <span className="material-symbols-outlined">history_edu</span>
                                                 </div>
                                                 <div className="flex flex-col">
-                                                    <span className="font-bold text-slate-700 dark:text-slate-300">Arsip Sejarah Digital</span>
-                                                    <span className="text-[10px] text-slate-500">Buka dokumen & sertifikat</span>
+                                                    <span className="font-bold text-slate-700 dark:text-slate-300">{t('landmark_detail.digital_archive')}</span>
+                                                    <span className="text-[10px] text-slate-500">{t('landmark_detail.digital_archive_desc')}</span>
                                                 </div>
                                             </motion.li>
                                         </ul>
@@ -189,8 +189,8 @@ export default function LandmarkDetail({ landmark }) {
                                     />
                                 </div>
                                 <div className="p-8 text-center">
-                                    <h3 className="text-2xl font-black text-slate-900 dark:text-slate-100 mb-2">Eksplorasi Virtual</h3>
-                                    <p className="text-slate-500 dark:text-slate-400">Tonton video eksplorasi digital untuk mendapatkan perspektif baru dari landmark ini.</p>
+                                    <h3 className="text-2xl font-black text-slate-900 dark:text-slate-100 mb-2">{t('landmark_detail.virtual_exploration')}</h3>
+                                    <p className="text-slate-500 dark:text-slate-400">{t('landmark_detail.virtual_exploration_desc')}</p>
                                 </div>
                             </motion.div>
                         )}
@@ -202,7 +202,7 @@ export default function LandmarkDetail({ landmark }) {
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                         <Link href="/budaya">
                             <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="px-8 py-4 bg-primary text-white rounded-2xl font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-colors flex items-center gap-2">
-                                <span className="material-symbols-outlined">arrow_back</span> Kembali ke Budaya
+                                <span className="material-symbols-outlined">arrow_back</span> {t('landmark_detail.back_to_culture')}
                             </motion.button>
                         </Link>
                     </div>
@@ -226,7 +226,7 @@ export default function LandmarkDetail({ landmark }) {
                             <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
                                 <h3 className="text-2xl font-black text-slate-900 dark:text-slate-100 flex items-center gap-3">
                                     <span className="material-symbols-outlined text-primary">history_edu</span>
-                                    Arsip Digital: {landmark.name}
+                                    {t('landmark_detail.digital_archive_title')}: {landmark.name}
                                 </h3>
                                 <button onClick={() => setShowArchive(false)} className="size-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center hover:bg-primary/20 hover:text-primary transition-colors">
                                     <span className="material-symbols-outlined">close</span>
@@ -234,18 +234,18 @@ export default function LandmarkDetail({ landmark }) {
                             </div>
                             <div className="p-8 space-y-6">
                                 <div className="bg-primary/5 rounded-2xl p-6 border border-primary/10">
-                                    <p className="text-sm font-bold text-primary uppercase tracking-widest mb-2">Ringkasan Dokumen</p>
+                                    <p className="text-sm font-bold text-primary uppercase tracking-widest mb-2">{t('landmark_detail.archive_summary')}</p>
                                     <p className="text-slate-700 dark:text-slate-300 leading-relaxed italic">
-                                        "Dokumen ini memuat data digitalisasi {landmark.name} sebagai bagian dari upaya pelestarian budaya nasional berbasis teknologi. Telah terdaftar dalam katalog Nusantara Digital City untuk keperluan edukasi dan promosi pariwisata."
+                                        "{t('landmark_detail.archive_desc', { name: landmark.name })}"
                                     </p>
                                 </div>
                                 <div className="grid grid-cols-2 gap-4 text-sm">
                                     <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50">
-                                        <p className="text-slate-500 mb-1">Kode Arsip</p>
+                                        <p className="text-slate-500 mb-1">{t('landmark_detail.archive_code')}</p>
                                         <p className="font-mono font-bold text-primary">NDC-{landmark.slug.toUpperCase()}-2024</p>
                                     </div>
                                     <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50">
-                                        <p className="text-slate-500 mb-1">Status Verifikasi</p>
+                                        <p className="text-slate-500 mb-1">{t('landmark_detail.verification_status')}</p>
                                         <p className="font-bold text-green-500 flex items-center gap-1">
                                             <span className="material-symbols-outlined text-sm">verified</span> Verified
                                         </p>
@@ -253,10 +253,10 @@ export default function LandmarkDetail({ landmark }) {
                                 </div>
                                 <div className="flex gap-4 pt-4">
                                     <button className="flex-1 bg-primary text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-primary/25 hover:bg-primary/90 transition-all">
-                                        <span className="material-symbols-outlined">download</span> Unduh Materi PDF
+                                        <span className="material-symbols-outlined">download</span> {t('landmark_detail.download_pdf')}
                                     </button>
                                     <button className="flex-1 border border-slate-200 dark:border-slate-700 py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all">
-                                        <span className="material-symbols-outlined">share</span> Bagikan Profil
+                                        <span className="material-symbols-outlined">share</span> {t('landmark_detail.share_profile')}
                                     </button>
                                 </div>
                             </div>

@@ -74,7 +74,7 @@ function Auto3DViewer({ imgUrl }) {
                 <OrbitControls enableZoom={true} enablePan={false} autoRotate autoRotateSpeed={1.5} />
             </Canvas>
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-slate-900/60 backdrop-blur-md px-4 py-2 rounded-full text-white text-xs font-medium flex items-center gap-2 pointer-events-none">
-                <span className="material-symbols-outlined text-[16px]">360</span> Geser untuk melihat detail Baju Batik
+                <span className="material-symbols-outlined text-[16px]">360</span> {t('art_detail.touch_hotspot_desc')}
             </div>
         </div>
     );
@@ -89,11 +89,11 @@ const stagger = {
     visible: { opacity: 1, transition: { staggerChildren: 0.12 } }
 };
 
-const TAB_MAP = [
-    { id: 'galeri', label: 'Eksplorasi Makna', icon: 'auto_stories' },
-    { id: 'audio', label: 'Audio Spasial', icon: 'music_note' },
-    { id: 'ar', label: 'Eksplorasi 3D & AR', icon: 'view_in_ar' },
-    { id: 'video', label: 'Video Dokumenter', icon: 'video_library' },
+const TAB_MAP = (t) => [
+    { id: 'galeri', label: t('art_detail.explore_meaning'), icon: 'auto_stories' },
+    { id: 'audio', label: t('art_detail.spatial_audio'), icon: 'music_note' },
+    { id: 'ar', label: t('art_detail.explore_3d_ar'), icon: 'view_in_ar' },
+    { id: 'video', label: t('art_detail.documentary_video'), icon: 'video_library' },
 ];
 
 export default function DetailSeni({ art }) {
@@ -101,7 +101,7 @@ export default function DetailSeni({ art }) {
     const [galleryIdx, setGalleryIdx] = useState(0);
 
     // Filter tabs based on asset capabilities
-    const tabs = TAB_MAP.filter((t) => {
+    const tabs = TAB_MAP(t).filter((t) => {
         if (t.id === 'audio' && !art.hasAudio) return false;
         if (t.id === 'ar' && !art.hasAR) return false;
         return true;
@@ -141,14 +141,14 @@ export default function DetailSeni({ art }) {
                 <section className="container mx-auto px-4 lg:px-10 py-10">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeIn} className="lg:col-span-2">
-                            <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">Tentang {art.title}</h2>
+                            <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">{t('art_detail.about')} {art.title}</h2>
                             <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm">{art.longDesc || art.desc}</p>
                         </motion.div>
                         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeIn}>
                             <div className="bg-white dark:bg-surface-dark rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
                                 <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100 mb-4 flex items-center gap-2">
                                     <span className="material-symbols-outlined text-primary">fact_check</span>
-                                    Fakta Menarik
+                                    {t('art_detail.interesting_facts')}
                                 </h3>
                                 <ul className="space-y-3">
                                     {(art.facts || []).map((fact, i) => (
@@ -217,7 +217,7 @@ export default function DetailSeni({ art }) {
                                         <div className="absolute bottom-6 left-6 text-white z-10">
                                             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="flex items-center gap-2 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full text-[10px] font-bold tracking-widest uppercase">
                                                 <span className="material-symbols-outlined text-sm text-primary">explore</span>
-                                                Interactive Philosophy Map
+                                                {t('art_detail.interactive_philosophy_map')}
                                             </motion.div>
                                         </div>
                                     </div>
@@ -225,11 +225,11 @@ export default function DetailSeni({ art }) {
                                     {/* Right: Legend/Details */}
                                     <div className="w-full lg:col-span-5 p-8 border-t lg:border-t-0 lg:border-l border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30 overflow-y-auto lg:h-[600px]">
                                         <div className="mb-8">
-                                            <h3 className="text-xl font-black text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+                                            <h3 className="text-xl font-black text-slate-900 dark:white mb-2 flex items-center gap-2">
                                                 <span className="material-symbols-outlined text-primary">auto_stories</span>
-                                                Eksplorasi Makna
+                                                {t('art_detail.explore_meaning')}
                                             </h3>
-                                            <p className="text-sm text-slate-600 dark:text-slate-400">Sentuh atau arahkan kursor pada ikon untuk mengungkap filosofi mendalam di balik motif ini.</p>
+                                            <p className="text-sm text-slate-600 dark:text-slate-400">{t('art_detail.touch_hotspot_desc')}</p>
                                         </div>
 
                                         <div className="space-y-6">
@@ -249,10 +249,10 @@ export default function DetailSeni({ art }) {
                                         <div className="mt-12 p-5 rounded-2xl bg-primary/5 border border-primary/10">
                                             <div className="flex items-center gap-3 text-primary mb-3">
                                                 <span className="material-symbols-outlined font-bold">lightbulb</span>
-                                                <span className="text-xs font-black tracking-wider uppercase">Fakta Budaya</span>
+                                                <span className="text-xs font-black tracking-wider uppercase">{t('art_detail.cultural_insight')}</span>
                                             </div>
                                             <p className="text-[11px] text-slate-600 dark:text-slate-400 italic leading-relaxed">
-                                                "Seni Nusantara bukan sekadar hiasan, melainkan prasasti doa dan harapan yang tersemat dalam setiap goresannya."
+                                                "{t('art_detail.cultural_insight_quote')}"
                                             </p>
                                         </div>
                                     </div>
@@ -268,8 +268,8 @@ export default function DetailSeni({ art }) {
                                         <div className="size-20 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mx-auto mb-6">
                                             <span className="material-symbols-outlined text-4xl">spatial_audio</span>
                                         </div>
-                                        <h3 className="text-2xl font-black text-slate-900 dark:text-slate-100 mb-4">Audio Spasial Gamelan</h3>
-                                        <p className="text-slate-600 dark:text-slate-400 leading-relaxed mb-8">{art.audioDesc || 'Rasakan sensasi berada di tengah orkestra Gamelan melalui audio spasial 360°.'}</p>
+                                        <h3 className="text-2xl font-black text-slate-900 dark:text-slate-100 mb-4">{t('art_detail.spatial_audio')}</h3>
+                                        <p className="text-slate-600 dark:text-slate-400 leading-relaxed mb-8">{art.audioDesc || t('art_detail.spatial_audio_desc')}</p>
                                         {/* Audio visualisation */}
                                         <div className="bg-slate-100 dark:bg-slate-800 rounded-2xl p-8 mb-6">
                                             <div className="flex items-end justify-center gap-1 h-24 mb-4">
@@ -289,7 +289,7 @@ export default function DetailSeni({ art }) {
                                                     />
                                                 ))}
                                             </div>
-                                            <p className="text-xs text-slate-500 font-mono uppercase tracking-wider">🎧 Gunakan headphone untuk pengalaman terbaik</p>
+                                            <p className="text-xs text-slate-500 font-mono uppercase tracking-wider">🎧 {t('art_detail.headphone_reminder')}</p>
                                         </div>
                                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                             {['Saron', 'Bonang', 'Kenong', 'Gong'].map((inst) => (
@@ -331,7 +331,7 @@ export default function DetailSeni({ art }) {
                                                     fontWeight: 700, fontSize: '14px', border: 'none', cursor: 'pointer',
                                                     display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 20px rgba(54,140,226,0.4)',
                                                 }}>
-                                                    📱 Lihat di AR
+                                                    📱 {t('art_detail.view_in_ar')}
                                                 </button>
                                                 <div className="absolute top-4 left-4 bg-primary/90 backdrop-blur-md text-white px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5">
                                                     <span className="material-symbols-outlined text-sm">view_in_ar</span>
@@ -345,8 +345,7 @@ export default function DetailSeni({ art }) {
                                             <div className="w-full h-full flex items-center justify-center">
                                                 <div className="text-center text-slate-500">
                                                     <span className="material-symbols-outlined text-6xl mb-4 block">view_in_ar</span>
-                                                    <p className="text-sm font-medium">Model 3D belum tersedia</p>
-                                                    <p className="text-xs mt-1">Upload file .glb ke Firebase untuk mengaktifkan</p>
+                                                    <p className="text-sm font-medium">{t('art_detail.model_not_available')}</p>
                                                 </div>
                                             </div>
                                         )}
@@ -357,15 +356,15 @@ export default function DetailSeni({ art }) {
                                             <div>
                                                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider mb-4">
                                                     <span className="material-symbols-outlined text-sm">view_in_ar</span>
-                                                    Immersive Experience (Opsional)
+                                                    {t('art_detail.ar_experience')}
                                                 </div>
-                                                <h3 className="text-2xl font-black text-slate-900 dark:text-slate-100 mb-4">Visualisasi 3D Masa Depan</h3>
-                                                <p className="text-slate-600 dark:text-slate-400 leading-relaxed mb-6">{art.arDesc || 'Teknologi ini memungkinkan Anda melihat objek dari segala sudut. Ini adalah contoh branding digital yang bisa dikembangkan untuk promosi daerah.'}</p>
+                                                <h3 className="text-2xl font-black text-slate-900 dark:text-slate-100 mb-4">{t('art_detail.future_visualization')}</h3>
+                                                <p className="text-slate-600 dark:text-slate-400 leading-relaxed mb-6">{art.arDesc || t('art_detail.ar_experience')}</p>
                                                 <div className="space-y-3">
                                                     {[
-                                                        { icon: 'touch_app', text: 'Drag untuk memutar model 3D' },
-                                                        { icon: 'pinch_zoom_in', text: 'Pinch atau scroll untuk zoom' },
-                                                        { icon: 'view_in_ar', text: 'Tekan "Lihat di AR" untuk mode AR (mobile)' },
+                                                        { icon: 'touch_app', text: t('art_detail.ar_instr_1') },
+                                                        { icon: 'pinch_zoom_in', text: t('art_detail.ar_instr_2') },
+                                                        { icon: 'view_in_ar', text: t('art_detail.ar_instr_3') },
                                                     ].map((step, i) => (
                                                         <motion.div key={i} initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.15 }} className="flex items-center gap-3 text-sm text-slate-700 dark:text-slate-300">
                                                             <span className="size-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
@@ -413,7 +412,7 @@ export default function DetailSeni({ art }) {
                                     </div>
                                     <div className="p-6">
                                         <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
-                                            Saksikan proses kreatif dan sejarah di balik {art.title} melalui dokumenter eksklusif dari Nusantara Digital City.
+                                            {t('art_detail.documentary_video_desc', { title: art.title })}
                                         </p>
                                     </div>
                                 </div>
@@ -427,12 +426,12 @@ export default function DetailSeni({ art }) {
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                         <Link href="/eksplorasi-seni">
                             <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="px-8 py-4 bg-primary text-white rounded-xl font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-colors inline-flex items-center gap-2">
-                                <span className="material-symbols-outlined">arrow_back</span> Kembali ke Galeri
+                                <span className="material-symbols-outlined">arrow_back</span> {t('art_detail.back_to_gallery')}
                             </motion.button>
                         </Link>
                         <Link href="/kontribusi-seni">
                             <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="px-8 py-4 bg-white dark:bg-surface-dark text-primary rounded-xl font-bold border border-slate-200 dark:border-slate-700 hover:border-primary transition-colors inline-flex items-center gap-2">
-                                <span className="material-symbols-outlined">add_circle</span> Kontribusi Karya
+                                <span className="material-symbols-outlined">add_circle</span> {t('art_detail.contribute_work')}
                             </motion.button>
                         </Link>
                     </div>

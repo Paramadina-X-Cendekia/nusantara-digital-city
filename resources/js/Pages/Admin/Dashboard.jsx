@@ -23,9 +23,9 @@ export default function AdminDashboard({ auth, allContributions = [], pendingCou
     const filteredContributions = allContributions.filter(c => c.type === activeTab);
 
     const tabs = [
-        { id: 'kota', label: 'Kota', icon: 'location_city', count: allContributions.filter(c => c.type === 'kota' && c.status === 'pending').length },
-        { id: 'budaya', label: 'Seni & Budaya', icon: 'theater_comedy', count: allContributions.filter(c => c.type === 'budaya' && c.status === 'pending').length },
-        { id: 'kuliner', label: 'Wisata & Kuliner', icon: 'restaurant', count: allContributions.filter(c => c.type === 'kuliner' && c.status === 'pending').length },
+        { id: 'kota', label: t('kontribusi.category_city'), icon: 'location_city', count: allContributions.filter(c => c.type === 'kota' && c.status === 'pending').length },
+        { id: 'budaya', label: t('kontribusi.category_culture'), icon: 'theater_comedy', count: allContributions.filter(c => c.type === 'budaya' && c.status === 'pending').length },
+        { id: 'kuliner', label: t('kontribusi.category_tourism'), icon: 'restaurant', count: allContributions.filter(c => c.type === 'kuliner' && c.status === 'pending').length },
     ];
 
     const getStatusColor = (status) => {
@@ -44,14 +44,14 @@ export default function AdminDashboard({ auth, allContributions = [], pendingCou
                 {/* Admin Header */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div className="space-y-1">
-                        <h1 className="text-3xl font-black italic tracking-tight">Antrian Moderasi</h1>
-                        <p className="text-slate-500 dark:text-slate-400 text-sm">Validasi data nusantara sebelum dipublikasikan ke publik.</p>
+                        <h1 className="text-3xl font-black italic tracking-tight">{t('dashboard.moderation_title')}</h1>
+                        <p className="text-slate-500 dark:text-slate-400 text-sm">{t('dashboard.moderation_subtitle')}</p>
                     </div>
                     <div className="flex items-center gap-3 px-6 py-3 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
                         <div className="size-8 rounded-lg bg-orange-500 text-white flex items-center justify-center">
                             <span className="material-symbols-outlined text-lg">pending_actions</span>
                         </div>
-                        <p className="text-sm font-bold"><span className="text-orange-500">{pendingCount}</span> Menunggu</p>
+                        <p className="text-sm font-bold"><span className="text-orange-500">{pendingCount}</span> {t('dashboard.pending')}</p>
                     </div>
                 </div>
 
@@ -75,10 +75,10 @@ export default function AdminDashboard({ auth, allContributions = [], pendingCou
                         <table className="w-full">
                             <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest border-b border-slate-100 dark:border-slate-800">
                                 <tr>
-                                    <th className="px-8 py-4 text-left">Kontributor</th>
-                                    <th className="px-8 py-4 text-left">Nama Entitas</th>
-                                    <th className="px-8 py-4 text-left">Status</th>
-                                    <th className="px-8 py-4 text-left">Aksi</th>
+                                    <th className="px-8 py-4 text-left">{t('dashboard.table_contributor')}</th>
+                                    <th className="px-8 py-4 text-left">{t('dashboard.table_entity')}</th>
+                                    <th className="px-8 py-4 text-left">{t('dashboard.table_status')}</th>
+                                    <th className="px-8 py-4 text-left">{t('dashboard.table_action')}</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -101,7 +101,7 @@ export default function AdminDashboard({ auth, allContributions = [], pendingCou
                                                 onClick={() => openDetails(c)}
                                                 className="text-[10px] font-black italic text-primary hover:underline mt-1"
                                             >
-                                                Lihat Rincian &rarr;
+                                                {t('dashboard.view_details')} &rarr;
                                             </button>
                                         </td>
                                         <td className="px-8 py-5">
@@ -128,7 +128,7 @@ export default function AdminDashboard({ auth, allContributions = [], pendingCou
                                                     </button>
                                                 </div>
                                             ) : (
-                                                <span className="text-[10px] font-bold text-slate-400 italic">Terproses</span>
+                                                <span className="text-[10px] font-bold text-slate-400 italic">{t('dashboard.processed')}</span>
                                             )}
                                         </td>
                                     </tr>
@@ -137,7 +137,7 @@ export default function AdminDashboard({ auth, allContributions = [], pendingCou
                                         <td colSpan="4" className="px-8 py-20 text-center">
                                             <div className="text-slate-400 flex flex-col items-center gap-3">
                                                 <span className="material-symbols-outlined text-5xl">inventory_2</span>
-                                                <p className="font-bold italic">Tidak ada antrian untuk kategori ini.</p>
+                                                <p className="font-bold italic">{t('dashboard.no_queue')}</p>
                                             </div>
                                         </td>
                                     </tr>

@@ -2,6 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function DetailModal({ isOpen, onClose, contribution }) {
+    const { lang, t } = useLanguage();
     if (!contribution) return null;
 
     const renderDetails = () => {
@@ -11,12 +12,12 @@ export default function DetailModal({ isOpen, onClose, contribution }) {
             case 'kota':
                 return (
                     <div className="grid grid-cols-2 gap-6">
-                        <DetailItem label="Nama Kota" value={data.cityName} />
-                        <DetailItem label="Provinsi" value={data.province} />
-                        <DetailItem label="Kategori" value={data.category} />
-                        <DetailItem label="Website" value={data.website} />
+                        <DetailItem label={t('modal.label_city_name')} value={data.cityName} />
+                        <DetailItem label={t('modal.label_province')} value={data.province} />
+                        <DetailItem label={t('modal.label_category')} value={data.category} />
+                        <DetailItem label={t('modal.label_website')} value={data.website} />
                         <div className="col-span-2">
-                            <DetailItem label="Deskripsi" value={data.description} />
+                            <DetailItem label={t('modal.label_description')} value={data.description} />
                         </div>
                     </div>
                 );
@@ -29,15 +30,15 @@ export default function DetailModal({ isOpen, onClose, contribution }) {
                             </div>
                         )}
                         <div className="grid grid-cols-2 gap-6">
-                            <DetailItem label="Nama Karya / Situs / Cerita" value={data.artName} />
-                            <DetailItem label="Kategori" value={data.artCategory} />
-                            {data.artCategory === 'seni' && <DetailItem label="Jenis Seni" value={data.artSubCategory} /> }
-                            <DetailItem label="Asal" value={data.origin} />
-                            <DetailItem label="Provinsi" value={data.province} />
-                            {data.lat && <DetailItem label="Latitude" value={data.lat} /> }
-                            {data.lng && <DetailItem label="Longitude" value={data.lng} /> }
+                            <DetailItem label={t('modal.label_art_name')} value={data.artName} />
+                            <DetailItem label={t('modal.label_category')} value={data.artCategory} />
+                            {data.artCategory === 'seni' && <DetailItem label={t('modal.label_art_type')} value={data.artSubCategory} /> }
+                            <DetailItem label={t('modal.label_origin')} value={data.origin} />
+                            <DetailItem label={t('modal.label_province')} value={data.province} />
+                            {data.lat && <DetailItem label={t('modal.label_lat')} value={data.lat} /> }
+                            {data.lng && <DetailItem label={t('modal.label_lng')} value={data.lng} /> }
                             <div className="col-span-2">
-                                <DetailItem label="Deskripsi" value={data.description} />
+                                <DetailItem label={t('modal.label_description')} value={data.description} />
                             </div>
                         </div>
                     </div>
@@ -45,11 +46,11 @@ export default function DetailModal({ isOpen, onClose, contribution }) {
             case 'kuliner':
                 return (
                     <div className="grid grid-cols-2 gap-6">
-                        <DetailItem label="Nama Tempat" value={data.shopName} />
-                        <DetailItem label="Kota/Kab" value={data.city} />
-                        <DetailItem label="Alamat" value={data.address} />
-                        <DetailItem label="Menu Digital" value={data.digitalMenu ? 'Ya' : 'Tidak'} />
-                        <DetailItem label="Profil Bisnis" value={data.businessProfile ? 'Ya' : 'Tidak'} />
+                        <DetailItem label={t('modal.label_shop_name')} value={data.shopName} />
+                        <DetailItem label={t('modal.label_city_kab')} value={data.city} />
+                        <DetailItem label={t('modal.label_address')} value={data.address} />
+                        <DetailItem label={t('modal.label_digital_menu')} value={data.digitalMenu ? t('modal.yes') : t('modal.no')} />
+                        <DetailItem label={t('modal.label_business_profile')} value={data.businessProfile ? t('modal.yes') : t('modal.no')} />
                     </div>
                 );
             default:
@@ -76,7 +77,7 @@ export default function DetailModal({ isOpen, onClose, contribution }) {
                     >
                         <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
                             <div>
-                                <h3 className="text-2xl font-black italic">Detail Kontribusi</h3>
+                                <h3 className="text-2xl font-black italic">{t('modal.detail_title')}</h3>
                                 <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">ID: #{contribution.id} • {contribution.type}</p>
                             </div>
                             <button onClick={onClose} className="size-10 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center transition-all">
@@ -93,7 +94,7 @@ export default function DetailModal({ isOpen, onClose, contribution }) {
                                 onClick={onClose}
                                 className="px-8 py-3 bg-slate-900 dark:bg-white dark:text-slate-950 text-white rounded-2xl font-black italic shadow-xl transition-all hover:scale-105"
                             >
-                                Tutup
+                                {t('modal.close')}
                             </button>
                         </div>
                     </motion.div>

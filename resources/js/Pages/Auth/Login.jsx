@@ -1,7 +1,9 @@
 import { Head, useForm, Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
+import { useLanguage } from '@/lib/LanguageContext';
 
 export default function Login() {
+    const { t } = useLanguage();
     const { data, setData, post, processing, errors } = useForm({
         email: '',
         password: '',
@@ -14,7 +16,7 @@ export default function Login() {
 
     return (
         <div className="min-h-screen bg-white dark:bg-slate-950 font-display text-slate-900 dark:text-slate-100 antialiased flex overflow-hidden">
-            <Head title="Masuk | Nusantara Digital City" />
+            <Head title={`${t('nav.login')} | Nusantara Digital City`} />
             
             {/* Left Side: Form */}
             <div className="w-full lg:w-1/2 flex flex-col justify-center px-6 md:px-12 lg:px-20 py-12 relative z-10 bg-white dark:bg-slate-950 overflow-y-auto">
@@ -28,7 +30,7 @@ export default function Login() {
                         className="inline-flex items-center gap-2 text-slate-500 hover:text-primary transition-colors font-bold group"
                     >
                         <span className="material-symbols-outlined transition-transform group-hover:-translate-x-1">arrow_back</span>
-                        <span>Kembali ke Beranda</span>
+                        <span>{t('auth.back_to_home')}</span>
                     </Link>
 
                     <div className="space-y-4">
@@ -37,27 +39,27 @@ export default function Login() {
                             <h2 className="text-xl font-black italic tracking-tighter">Nusantara <span className="text-primary">Digital</span> City</h2>
                         </div>
                         <div className="space-y-2">
-                            <h1 className="text-4xl font-black tracking-tight leading-tight">Selamat Datang <span className="text-primary italic">Kembali!</span></h1>
-                            <p className="text-slate-500 dark:text-slate-400 text-lg">Masuk untuk mengelola kontribusi digital Anda dan jelajahi warisan nusantara.</p>
+                            <h1 className="text-4xl font-black tracking-tight leading-tight">{t('auth.login_welcome').split(' ')[0]} <span className="text-primary italic">{t('auth.login_welcome').split(' ').slice(1).join(' ')}</span></h1>
+                            <p className="text-slate-500 dark:text-slate-400 text-lg">{t('auth.login_subtitle')}</p>
                         </div>
                     </div>
 
                     <form onSubmit={submit} className="space-y-6">
                         <div className="space-y-2">
-                            <label className="text-sm font-bold uppercase tracking-wider text-slate-400">Email Address</label>
+                            <label className="text-sm font-bold uppercase tracking-wider text-slate-400">{t('auth.email_label')}</label>
                             <input 
                                 type="email" 
                                 value={data.email} 
                                 onChange={e => setData('email', e.target.value)} 
                                 className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-                                placeholder="nama@email.com"
+                                placeholder={t('auth.placeholder_email')}
                                 required
                             />
                             {errors.email && <p className="text-red-500 text-xs mt-1 font-medium">{errors.email}</p>}
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-sm font-bold uppercase tracking-wider text-slate-400">Password</label>
+                            <label className="text-sm font-bold uppercase tracking-wider text-slate-400">{t('auth.password_label')}</label>
                             <input 
                                 type="password" 
                                 value={data.password} 
@@ -76,11 +78,11 @@ export default function Login() {
                             {processing ? (
                                 <>
                                     <span className="animate-spin material-symbols-outlined">progress_activity</span>
-                                    <span>Memproses...</span>
+                                    <span>{t('auth.processing')}</span>
                                 </>
                             ) : (
                                 <>
-                                    <span>Masuk ke Akun</span>
+                                    <span>{t('auth.login_button')}</span>
                                     <span className="material-symbols-outlined">login</span>
                                 </>
                             )}
@@ -89,7 +91,7 @@ export default function Login() {
 
                     <div className="pt-4 border-t border-slate-100 dark:border-slate-800 text-center">
                         <p className="text-slate-500">
-                            Belum memiliki akun? <Link href="/register" className="text-primary font-bold hover:underline">Daftar sekarang gratis</Link>
+                            {t('auth.no_account')} <Link href="/register" className="text-primary font-bold hover:underline">{t('auth.register_now')}</Link>
                         </p>
                     </div>
                 </motion.div>
@@ -115,15 +117,15 @@ export default function Login() {
                         <span className="material-symbols-outlined text-white">explore</span>
                     </div>
                     <div className="space-y-2">
-                        <h3 className="text-2xl font-black italic">Digitally Preserving Our Rich Heritage</h3>
-                        <p className="text-white/80 leading-relaxed font-medium">Bantu kami mengumpulkan, mendokumentasikan, dan membagikan keindahan nusantara kepeda dunia melalui teknologi digital.</p>
+                        <h3 className="text-2xl font-black italic">{t('auth.auth_visual_title')}</h3>
+                        <p className="text-white/80 leading-relaxed font-medium">{t('auth.auth_visual_desc')}</p>
                     </div>
                 </motion.div>
 
                 {/* Decorative Elements */}
                 <div className="absolute top-0 right-0 p-12 z-20">
                     <div className="text-right">
-                        <p className="text-white/60 font-black text-6xl italic opacity-20 select-none">NDC VER 2.0</p>
+                        <p className="text-white/60 font-black text-6xl italic opacity-20 select-none">{t('auth.join_network')}</p>
                     </div>
                 </div>
             </div>

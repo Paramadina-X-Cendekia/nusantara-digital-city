@@ -3,6 +3,7 @@ import { Head, Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { useLanguage } from '@/lib/LanguageContext';
 
 const fadeIn = {
     hidden: { opacity: 0, y: 30 },
@@ -13,17 +14,63 @@ const stagger = {
     visible: { opacity: 1, transition: { staggerChildren: 0.15 } }
 };
 
-const TABS = [
-    { id: 'situs-bersejarah', label: 'Situs Bersejarah', icon: 'account_balance' },
-    { id: 'Warisan Takbenda', label: 'Seni Tradisional', icon: 'palette' },
-    { id: 'Cerita Rakyat & Legenda Digital', label: 'Cerita Rakyat', icon: 'auto_stories' },
-];
-
-export default function Budaya({ landmarks }) {
+export default function Budaya({ landmarks, budayaData }) {
+    const { t } = useLanguage();
     const [activeTab, setActiveTab] = useState('situs-bersejarah');
     const [sortOrder, setSortOrder] = useState('default');
     const [isSortOpen, setIsSortOpen] = useState(false);
     const sortRef = useRef(null);
+    const [previewIndex, setPreviewIndex] = useState(0);
+
+    const TABS = [
+        { id: 'situs-bersejarah', label: t('budaya.tab_historical'), icon: 'account_balance' },
+        { id: 'Warisan Takbenda', label: t('budaya.tab_traditional'), icon: 'palette' },
+        { id: 'Cerita Rakyat & Legenda Digital', label: t('budaya.tab_folklore'), icon: 'auto_stories' },
+    ];
+
+    const dynamicPreviewLocations = useMemo(() => {
+        const locations = [];
+        
+        // Add hardcoded landmarks if they have coordinates
+        if (landmarks) {
+            landmarks.forEach(l => {
+                if (l.lat && l.lng) {
+                    locations.push({
+                        name: l.name,
+                        coords: `${Math.abs(l.lat).toFixed(4)}° ${l.lat < 0 ? 'S' : 'N'}, ${Math.abs(l.lng).toFixed(4)}° ${l.lng < 0 ? 'W' : 'E'}`
+                    });
+                }
+            });
+        }
+
+        // Add user-contributed data if it has coordinates
+        if (Array.isArray(budayaData)) {
+            budayaData.forEach(b => {
+                if (b.lat && b.lng) {
+                    locations.push({
+                        name: b.artName || 'Untitled Site',
+                        coords: `${Math.abs(parseFloat(b.lat)).toFixed(4)}° ${parseFloat(b.lat) < 0 ? 'S' : 'N'}, ${Math.abs(parseFloat(b.lng)).toFixed(4)}° ${parseFloat(b.lng) < 0 ? 'W' : 'E'}`
+                    });
+                }
+            });
+        }
+
+        // Add a default if empty
+        if (locations.length === 0) {
+            locations.push({ name: 'Jakarta Digital District', coords: '6.2088° S, 106.8456° E' });
+        }
+
+        return locations;
+    }, [landmarks]);
+
+    useEffect(() => {
+        if (dynamicPreviewLocations.length <= 1) return;
+        
+        const interval = setInterval(() => {
+            setPreviewIndex((prev) => (prev + 1) % dynamicPreviewLocations.length);
+        }, 5000);
+        return () => clearInterval(interval);
+    }, [dynamicPreviewLocations]);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -55,7 +102,7 @@ export default function Budaya({ landmarks }) {
 
     return (
         <div className="relative flex min-h-screen flex-col bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-300 transition-colors duration-300 antialiased">
-            <Head title="Budaya | Nusantara Digital City" />
+            <Head title={t('nav.culture') + " | Nusantara Digital City"} />
             <Navbar />
 
             <main className="flex-grow">
@@ -80,13 +127,13 @@ export default function Budaya({ landmarks }) {
                                 className="relative z-10 max-w-3xl"
                             >
                                 <motion.span variants={fadeIn} className="bg-primary/20 backdrop-blur-md border border-primary/30 text-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-6 inline-block">
-                                    Jembatan Digital Warisan
+                                    {t('budaya.hero_badge')}
                                 </motion.span>
                                 <motion.h1 variants={fadeIn} className="text-white text-4xl md:text-6xl font-black leading-tight tracking-tight mb-6">
-                                    Jejak Budaya <br /><span className="text-primary">Nusantara</span>
+                                    {t('budaya.hero_title')} <br /><span className="text-primary">{t('budaya.hero_subtitle')}</span>
                                 </motion.h1>
                                 <motion.p variants={fadeIn} className="text-slate-300 text-lg md:text-xl font-medium leading-relaxed max-w-2xl">
-                                    Mendigitalisasi kearifan lokal melalui teknologi imersif. Menghubungkan kekayaan tradisi masa lalu dengan masa depan untuk membangun identitas bangsa di era digital.
+                                    {t('budaya.hero_desc')}
                                 </motion.p>
                             </motion.div>
                         </div>
@@ -125,7 +172,7 @@ export default function Budaya({ landmarks }) {
                                     className="bg-primary/10 text-primary size-10 md:w-auto md:px-4 md:py-2 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-primary hover:text-white transition-all shadow-sm"
                                 >
                                     <span className="material-symbols-outlined text-lg">filter_list</span>
-                                    <span className="hidden md:inline">{sortOrder === 'default' ? 'Urutkan' : `Urutkan: ${sortOrder === 'asc' ? 'A-Z' : 'Z-A'}`}</span>
+                                    <span className="hidden md:inline">{sortOrder === 'default' ? t('budaya.sort_label') : `${t('budaya.sort_label')}: ${sortOrder === 'asc' ? 'A-Z' : 'Z-A'}`}</span>
                                 </motion.button>
                                 
                                 <AnimatePresence>
@@ -146,13 +193,13 @@ export default function Budaya({ landmarks }) {
                                                 onClick={() => { setSortOrder('asc'); setIsSortOpen(false); }}
                                                 className="w-full text-left px-4 py-3 text-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-2"
                                             >
-                                                <span className="material-symbols-outlined text-sm">sort_by_alpha</span> Nama (A-Z)
+                                                <span className="material-symbols-outlined text-sm">sort_by_alpha</span> {t('budaya.sort_alpha')}
                                             </button>
                                             <button 
                                                 onClick={() => { setSortOrder('desc'); setIsSortOpen(false); }}
                                                 className="w-full text-left px-4 py-3 text-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-2"
                                             >
-                                                <span className="material-symbols-outlined text-sm">filter_list_off</span> Nama (Z-A)
+                                                <span className="material-symbols-outlined text-sm">filter_list_off</span> {t('budaya.sort_alpha_rev')}
                                             </button>
                                         </motion.div>
                                     )}
@@ -168,11 +215,11 @@ export default function Budaya({ landmarks }) {
                     <section id="situs-bersejarah" className="mb-20 scroll-mt-20 md:scroll-mt-32">
                         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeIn} className="flex flex-col md:flex-row items-start md:items-end justify-between mb-10 gap-4">
                             <div>
-                                <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">Profil Kota &amp; Landmark Bersejarah</h2>
-                                <p className="text-slate-500 dark:text-slate-400">Menelusuri titik-titik sejarah yang membentuk fondasi kota digital kita.</p>
+                                <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">{t('budaya.section_historical_title')}</h2>
+                                <p className="text-slate-500 dark:text-slate-400">{t('budaya.section_historical_desc')}</p>
                             </div>
                             <motion.a whileHover={{ x: 5 }} className="hidden md:flex items-center gap-2 text-primary font-bold cursor-pointer hover:underline">
-                                Lihat Semua <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                                {t('budaya.view_all')} <span className="material-symbols-outlined text-sm">arrow_forward</span>
                             </motion.a>
                         </motion.div>
 
@@ -196,7 +243,7 @@ export default function Budaya({ landmarks }) {
                                         <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed line-clamp-3">{item.desc}</p>
                                         <Link href={`/budaya/landmark/${item.slug}`}>
                                             <motion.div whileHover={{ gap: '0.75rem' }} className="mt-6 inline-flex items-center text-primary font-bold text-sm gap-2 transition-all cursor-pointer">
-                                                Pelajari Profil Digital
+                                                {t('budaya.learn_digital_profile')}
                                                 <span className="material-symbols-outlined text-sm">arrow_forward</span>
                                             </motion.div>
                                         </Link>
@@ -220,8 +267,8 @@ export default function Budaya({ landmarks }) {
                                         <img alt="Indonesian batik" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDuSfqiJRkxODrddf-6RuvSwa01DTHoOUXdRKz2IR0jmKl3N8-UEPriuFB8PXZrIcLuDTsdqF1lYffYUP92PwhvcC8MnPKxJDMsS2QUtab1HMvnBSSy9AVXBCm8CYoTzRWfnPZd1Knj9tbbOnEKiMFndx9rZsXZzKufNUznJMvFwKnEAKzlawa4AljZQVO8K4EeS3i2pbCMSadufRenMCeah9onXIrmig6iiv3zhUVhq37UShohWH8StvAr58umrth1NQiUVOjaYhI" />
                                     </motion.div>
                                     <div className="bg-primary/10 backdrop-blur-md p-6 rounded-2xl border border-primary/20">
-                                        <h4 className="font-bold text-primary mb-1">Edukasi Motif</h4>
-                                        <p className="text-xs text-slate-600 dark:text-slate-400">Pelajari filosofi dan sejarah di balik setiap motif batik nusantara.</p>
+                                        <h4 className="font-bold text-primary mb-1">{t('budaya.motif_education')}</h4>
+                                        <p className="text-xs text-slate-600 dark:text-slate-400">{t('budaya.motif_desc')}</p>
                                     </div>
                                 </div>
                                 <div className="space-y-4 pt-12">
@@ -229,8 +276,8 @@ export default function Budaya({ landmarks }) {
                                         <img alt="Gamelan" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC0FVwiBcNLeL0Ect74iuTzIEMu4Ctu1txJ1hjjkUmcO2Lw2UXLQUbNWThHD10DWJvCcTR1n5fYVifSW04RoXkffrHqGsy2KS9Sy3yR4LsP_0QdIUz4km9YOjT2UKU8Sq7Uz37Udu6NYP6wD7F-OQYDl-6YjCnyGW-2vWUBPQWCdFFby1XTW-cd9aPvTftzfXyD3VuHgMoxnt-3ROirBkccx3b6jBCgSYb4aVZxeM92ma5_jqPpGTsXhlMBFtLbsT6pb5S0K_r4Y4Pz" />
                                     </motion.div>
                                     <div className="bg-primary/10 backdrop-blur-md p-6 rounded-2xl border border-primary/20">
-                                        <h4 className="font-bold text-primary mb-1">Harmoni Nusantara</h4>
-                                        <p className="text-xs text-slate-600 dark:text-slate-400">Mempelajari teknik permainan instrumen tradisional secara digital.</p>
+                                        <h4 className="font-bold text-primary mb-1">{t('budaya.harmony_title')}</h4>
+                                        <p className="text-xs text-slate-600 dark:text-slate-400">{t('budaya.harmony_desc')}</p>
                                     </div>
                                 </div>
                             </div>
@@ -238,11 +285,11 @@ export default function Budaya({ landmarks }) {
                             {/* Content */}
                             <div>
                                 <h2 className="text-4xl font-black text-slate-900 dark:text-slate-100 mb-8 leading-tight">
-                                    Warisan Takbenda: <br />
-                                    <span className="text-primary text-3xl">Batik, Gamelan &amp; Seni Tradisi</span>
+                                    {t('budaya.intangible_heritage')}: <br />
+                                    <span className="text-primary text-3xl">{t('budaya.intangible_title')}</span>
                                 </h2>
                                 <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed mb-8">
-                                    Diakui oleh UNESCO, warisan ini adalah ruh Nusantara. Di platform ini, kami menghadirkan cara baru bagi generasi muda untuk berinteraksi, belajar, dan melestarikan seni tradisional melalui platform edukasi digital.
+                                    {t('budaya.intangible_desc')}
                                 </p>
                                 <div className="flex flex-col gap-6 mb-10">
                                     <div className="flex gap-5">
@@ -250,8 +297,8 @@ export default function Budaya({ landmarks }) {
                                             <span className="material-symbols-outlined text-primary">auto_fix_high</span>
                                         </div>
                                         <div>
-                                            <h4 className="font-bold text-slate-900 dark:text-slate-100">Restorasi Visual Digital</h4>
-                                            <p className="text-sm text-slate-500 dark:text-slate-400">Teknologi AI untuk merekonstruksi pola batik kuno dan instrumen tradisional yang mulai langka.</p>
+                                            <h4 className="font-bold text-slate-900 dark:text-slate-100">{t('budaya.visual_restoration')}</h4>
+                                            <p className="text-sm text-slate-500 dark:text-slate-400">{t('budaya.visual_restoration_desc')}</p>
                                         </div>
                                     </div>
                                     <div className="flex gap-5">
@@ -259,8 +306,8 @@ export default function Budaya({ landmarks }) {
                                             <span className="material-symbols-outlined text-primary">spatial_audio</span>
                                         </div>
                                         <div>
-                                            <h4 className="font-bold text-slate-900 dark:text-slate-100">Eksplorasi Audio Spasial</h4>
-                                            <p className="text-sm text-slate-500 dark:text-slate-400">Rasakan sensasi berada di tengah orkestra Gamelan melalui teknologi audio 360 derajat.</p>
+                                            <h4 className="font-bold text-slate-900 dark:text-slate-100">{t('budaya.spatial_audio')}</h4>
+                                            <p className="text-sm text-slate-500 dark:text-slate-400">{t('budaya.spatial_audio_desc')}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -270,7 +317,7 @@ export default function Budaya({ landmarks }) {
                                         whileTap={{ scale: 0.97 }}
                                         className="bg-primary text-white px-8 py-4 rounded-xl font-bold hover:bg-primary/90 transition-all shadow-lg shadow-primary/25 flex items-center gap-2"
                                     >
-                                        Mulai Eksplorasi Seni <span className="material-symbols-outlined">rocket_launch</span>
+                                        {t('budaya.start_art_exploration')} <span className="material-symbols-outlined">rocket_launch</span>
                                     </motion.button>
                                 </Link>
                             </div>
@@ -285,12 +332,12 @@ export default function Budaya({ landmarks }) {
                     <section id="Cerita Rakyat & Legenda Digital" className="mb-20 scroll-mt-20 md:scroll-mt-32">
                         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeIn} className="flex flex-col md:flex-row items-start md:items-center justify-between mb-10 gap-4">
                             <div>
-                                <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100">Cerita Rakyat &amp; Legenda Digital</h2>
-                                <p className="text-slate-500 dark:text-slate-400">Narasi lisan yang kini diabadikan melalui medium storytelling interaktif.</p>
+                                <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100">{t('budaya.folklore_section_title')}</h2>
+                                <p className="text-slate-500 dark:text-slate-400">{t('budaya.folklore_section_desc')}</p>
                             </div>
                             <Link href="/kisah-rakyat">
                                 <motion.div whileHover={{ x: 5 }} className="text-primary font-bold flex items-center gap-2 cursor-pointer hover:underline">
-                                    Lihat Semua Kisah <span className="material-symbols-outlined text-sm">open_in_new</span>
+                                    {t('budaya.view_all')} <span className="material-symbols-outlined text-sm">open_in_new</span>
                                 </motion.div>
                             </Link>
                         </motion.div>
@@ -301,11 +348,11 @@ export default function Budaya({ landmarks }) {
                                 <motion.div variants={fadeIn} whileHover={{ y: -6 }} className="h-full relative group overflow-hidden rounded-2xl cursor-pointer">
                                     <img alt="Mist covering a tropical mountain peak" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuABI-jZrAZvVvJvZH6KZBhH8ojB0S_qUfOa3DqgUaYGz6Z-8Av2l7SKksdPxULUMLQ2PPt0tedxQ5UzxZ8uxsWJ4309Ml6QTEqk05VJtG3GCPG67J_9zS8pvI_Z3Jj38w0A9AUBowVvCR6FCfJwoKcb6PZMC9L6sMLHqdxuAwf6sFjbO5p2T6chSgX_xOWisIGvJ9x-hwt82JPV2ErNwDb6h0_ZFsufnN14gPAo_fuMeESUTBYGy6djCPrWniloWLTPdf-xI3S_AdGa" />
                                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/20 to-transparent flex flex-col justify-end p-8">
-                                        <span className="bg-primary/20 backdrop-blur-md border border-primary/30 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase w-fit mb-4 tracking-widest">Storytelling Imersif</span>
+                                        <span className="bg-primary/20 backdrop-blur-md border border-primary/30 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase w-fit mb-4 tracking-widest">{t('budaya.immersive_storytelling')}</span>
                                         <h3 className="text-white text-2xl md:text-3xl font-black mb-3">Asal Usul Danau Toba</h3>
                                         <p className="text-slate-200 text-sm max-w-sm">Jelajahi kisah pengkhianatan janji melalui visualisasi digital yang menghidupkan legenda vulkanik ini.</p>
                                         <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="mt-6 w-fit bg-primary text-white px-6 py-2 rounded-lg font-bold text-sm hover:bg-primary/90 transition-all shadow-lg shadow-primary/20">
-                                            Baca Sekarang
+                                            {t('budaya.read_now')}
                                         </motion.button>
                                     </div>
                                 </motion.div>
@@ -355,9 +402,9 @@ export default function Budaya({ landmarks }) {
                         <div className="bg-surface-dark rounded-3xl p-8 lg:p-12 border border-primary/20 overflow-hidden relative shadow-2xl">
                             <div className="flex flex-col lg:flex-row gap-12 items-center relative z-10">
                                 <div className="flex-1">
-                                    <h2 className="text-3xl font-black text-white mb-6">Peta Warisan Digital Nusantara</h2>
+                                    <h2 className="text-3xl font-black text-white mb-6">{t('budaya.digital_map_section_title')}</h2>
                                     <p className="text-slate-400 text-lg mb-8 leading-relaxed">
-                                        Gunakan peta interaktif kami untuk menemukan titik-titik bersejarah di seluruh penjuru Indonesia. Dapatkan pengalaman AR untuk melihat visualisasi masa lalu tepat di lokasi Anda berada.
+                                        {t('budaya.digital_map_section_desc')}
                                     </p>
                                     <Link href="/peta-warisan">
                                         <motion.button
@@ -366,23 +413,65 @@ export default function Budaya({ landmarks }) {
                                             className="bg-primary text-white px-8 py-4 rounded-xl font-bold flex items-center justify-center gap-3 shadow-xl shadow-primary/30 transition-transform"
                                         >
                                             <span className="material-symbols-outlined">map</span>
-                                            Buka Peta Interaktif
+                                            {t('budaya.open_interactive_map')}
                                         </motion.button>
                                     </Link>
                                 </div>
-                                <div className="flex-1 w-full h-80 bg-slate-900 rounded-2xl border border-slate-700 flex flex-col items-center justify-center relative overflow-hidden">
+                                <div className="flex-1 w-full h-80 bg-slate-900 rounded-3xl border border-slate-700 flex flex-col items-center justify-center relative overflow-hidden group">
                                     <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20"></div>
-                                    <div className="text-center relative z-10">
-                                        <div className="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
-                                            <span className="material-symbols-outlined text-primary text-4xl">location_searching</span>
+                                    
+                                    {/* Scanning Lines */}
+                                    <motion.div 
+                                        animate={{ top: ['0%', '100%', '0%'] }}
+                                        transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
+                                        className="absolute left-0 right-0 h-[1px] bg-primary/40 z-0 pointer-events-none"
+                                    />
+
+                                    <div className="text-center relative z-10 p-6 w-full">
+                                        <div className="relative mb-8 flex justify-center">
+                                            {/* Outer Ring */}
+                                            <div className="absolute inset-0 w-24 h-24 border-2 border-primary/20 rounded-full mx-auto animate-ping"></div>
+                                            {/* Inner Ring */}
+                                            <div className="absolute inset-0 w-24 h-24 border border-primary/40 rounded-full mx-auto animate-pulse"></div>
+                                            
+                                            <div className="w-24 h-24 bg-primary/20 rounded-full flex items-center justify-center relative shadow-[0_0_30px_rgba(var(--color-primary),0.3)]">
+                                                <span className="material-symbols-outlined text-primary text-5xl">my_location</span>
+                                            </div>
                                         </div>
-                                        <p className="text-slate-300 font-bold mb-2">Pratinjau Lokasi: Jakarta Digital District</p>
-                                        <p className="text-xs text-slate-500 font-mono">Koordinat: 6.2088° S, 106.8456° E</p>
+
+                                        <AnimatePresence mode="wait">
+                                            <motion.div
+                                                key={previewIndex}
+                                                initial={{ opacity: 0, y: 10 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                exit={{ opacity: 0, y: -10 }}
+                                                transition={{ duration: 0.5 }}
+                                            >
+                                                <p className="text-primary font-mono text-[10px] uppercase tracking-widest mb-1 font-bold">{t('budaya.live_preview_sync')}</p>
+                                                <p className="text-white text-xl font-black mb-2">{dynamicPreviewLocations[previewIndex]?.name}</p>
+                                                <p className="text-xs text-slate-400 font-mono bg-slate-800/50 py-1 px-3 rounded-full inline-block border border-slate-700">
+                                                    COORD: {dynamicPreviewLocations[previewIndex]?.coords}
+                                                </p>
+                                            </motion.div>
+                                        </AnimatePresence>
                                     </div>
-                                    <div className="absolute bottom-4 right-4 flex gap-2">
-                                        <div className="size-2 bg-primary rounded-full animate-bounce"></div>
-                                        <div className="size-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '75ms' }}></div>
-                                        <div className="size-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+
+                                    {/* Corner Accents */}
+                                    <div className="absolute top-4 left-4 size-4 border-t-2 border-l-2 border-primary/40"></div>
+                                    <div className="absolute top-4 right-4 size-4 border-t-2 border-r-2 border-primary/40"></div>
+                                    <div className="absolute bottom-4 left-4 size-4 border-b-2 border-l-2 border-primary/40"></div>
+                                    <div className="absolute bottom-4 right-4 size-4 border-b-2 border-r-2 border-primary/40"></div>
+
+                                    {/* Connectivity Indicators */}
+                                    <div className="absolute bottom-6 right-8 flex gap-2">
+                                        {[0, 1, 2].map((i) => (
+                                            <motion.div 
+                                                key={i}
+                                                animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
+                                                transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.2 }}
+                                                className="size-2 bg-primary rounded-full"
+                                            />
+                                        ))}
                                     </div>
                                 </div>
                             </div>

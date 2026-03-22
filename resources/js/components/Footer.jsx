@@ -1,4 +1,8 @@
+import { useLanguage } from '@/lib/LanguageContext';
+
 export default function Footer() {
+    const { t } = useLanguage();
+
     return (
         <footer className="bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 pt-16 pb-8 px-4">
             <div className="container mx-auto max-w-6xl">
@@ -9,7 +13,7 @@ export default function Footer() {
                             <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">Nusantara Digital</h2>
                         </div>
                         <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-                            Membangun ekosistem kota pintar yang berkelanjutan di seluruh penjuru Indonesia dengan semangat kolaborasi dan inovasi.
+                            {t('footer.description')}
                         </p>
                         <div className="flex gap-4">
                             <a className="size-10 rounded-full bg-slate-100 dark:bg-slate-900 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:bg-primary hover:text-white transition-colors" href="#">
@@ -20,7 +24,7 @@ export default function Footer() {
                             </a>
                         </div>
                         <div className="pt-2 flex items-center gap-2">
-                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Powered by</span>
+                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{t('footer.powered_by')}</span>
                             <div className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
                                 <span className="material-symbols-outlined text-[14px] text-primary">auto_awesome</span>
                                 <span className="text-[10px] font-bold text-slate-900 dark:text-white uppercase tracking-tighter">Gemini AI</span>
@@ -28,26 +32,25 @@ export default function Footer() {
                         </div>
                     </div>
                     <div className="space-y-6">
-                        <h3 className="font-bold text-slate-900 dark:text-white">Navigasi</h3>
+                        <h3 className="font-bold text-slate-900 dark:text-white">{t('footer.navigation')}</h3>
                         <ul className="space-y-4 text-sm text-slate-600 dark:text-slate-400">
-                            <li><a className="hover:text-primary transition-colors hover:translate-x-1 inline-block transform" href="/">Beranda</a></li>
-                            <li><a className="hover:text-primary transition-colors hover:translate-x-1 inline-block transform" href="/budaya">Budaya</a></li>
-                            <li><a className="hover:text-primary transition-colors hover:translate-x-1 inline-block transform" href="/wisata">Wisata</a></li>
-                            <li><a className="hover:text-primary transition-colors hover:translate-x-1 inline-block transform" href="#">Peta Interaktif</a></li>
+                            <li><a className="hover:text-primary transition-colors hover:translate-x-1 inline-block transform" href="/">{t('nav.home')}</a></li>
+                            <li><a className="hover:text-primary transition-colors hover:translate-x-1 inline-block transform" href="/budaya">{t('nav.culture')}</a></li>
+                            <li><a className="hover:text-primary transition-colors hover:translate-x-1 inline-block transform" href="/wisata">{t('nav.tourism')}</a></li>
                         </ul>
                     </div>
                     <div className="space-y-6">
-                        <h3 className="font-bold text-slate-900 dark:text-white">Informasi</h3>
+                        <h3 className="font-bold text-slate-900 dark:text-white">{t('footer.information')}</h3>
                         <ul className="space-y-4 text-sm text-slate-600 dark:text-slate-400">
-                            <li><a className="hover:text-primary transition-colors hover:translate-x-1 inline-block transform" href="#">Tentang Kami</a></li>
-                            <li><a className="hover:text-primary transition-colors hover:translate-x-1 inline-block transform" href="#">Pusat Bantuan</a></li>
-                            <li><a className="hover:text-primary transition-colors hover:translate-x-1 inline-block transform" href="#">Kebijakan Privasi</a></li>
-                            <li><a className="hover:text-primary transition-colors hover:translate-x-1 inline-block transform" href="#">Syarat &amp; Ketentuan</a></li>
+                            <li><a className="hover:text-primary transition-colors hover:translate-x-1 inline-block transform" href="#">{t('footer.about_us')}</a></li>
+                            <li><a className="hover:text-primary transition-colors hover:translate-x-1 inline-block transform" href="#">{t('footer.help_center')}</a></li>
+                            <li><a className="hover:text-primary transition-colors hover:translate-x-1 inline-block transform" href="#">{t('footer.privacy_policy')}</a></li>
+                            <li><a className="hover:text-primary transition-colors hover:translate-x-1 inline-block transform" href="#">{t('footer.terms_conditions')}</a></li>
                         </ul>
                     </div>
                 </div>
                 <div className="pt-8 border-t border-slate-200 dark:border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-slate-500">
-                    <p>© 2026 Nusantara Digital City. Hak Cipta Dilindungi Undang-Undang.</p>
+                    <p>{t('footer.rights')}</p>
                     <div className="flex gap-8">
                         <a className="hover:text-primary transition-colors" href="#">Facebook</a>
                         <a className="hover:text-primary transition-colors" href="#">Instagram</a>

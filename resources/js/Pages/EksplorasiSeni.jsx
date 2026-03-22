@@ -3,6 +3,7 @@ import { Head, Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { useLanguage } from '../lib/LanguageContext';
 
 const fadeIn = {
     hidden: { opacity: 0, y: 30 },
@@ -13,40 +14,42 @@ const stagger = {
     visible: { opacity: 1, transition: { staggerChildren: 0.12 } }
 };
 
-const CATEGORIES = [
-    { id: 'semua', label: 'Semua', icon: 'apps' },
+const CATEGORIES = (t) => [
+    { id: 'semua', label: t('seni.all_art'), icon: 'apps' },
     { id: 'batik', label: 'Batik', icon: 'design_services' },
     { id: 'gamelan', label: 'Gamelan', icon: 'piano' },
     { id: 'tari', label: 'Tari', icon: 'self_improvement' },
     { id: 'ukir', label: 'Seni Ukir', icon: 'carpenter' },
 ];
 
-const ARTWORKS = [
-    { id: 1, slug: 'batik-parang-rusak', title: 'Batik Parang Rusak', category: 'batik', origin: 'Yogyakarta', desc: 'Motif tertua yang melambangkan kekuatan dan keteguhan hati para kesatria Jawa.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDDuSfqiJRkxODrddf-6RuvSwa01DTHoOUXdRKz2IR0jmKl3N8-UEPriuFB8PXZrIcLuDTsdqF1lYffYUP92PwhvcC8MnPKxJDMsS2QUtab1HMvnBSSy9AVXBCm8CYoTzRWfnPZd1Knj9tbbOnEKiMFndx9rZsXZzKufNUznJMvFwKnEAKzlawa4AljZQVO8K4EeS3i2pbCMSadufRenMCeah9onXIrmig6iiv3zhUVhq37UShohWH8StvAr58umrth1NQiUVOjaYhI', status: 'UNESCO' },
-    { id: 2, slug: 'gamelan-jawa', title: 'Gamelan Jawa', category: 'gamelan', origin: 'Jawa Tengah', desc: 'Ansambel musik tradisional yang menghasilkan harmoni magis dari perpaduan instrumen perunggu.', img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC0FVwiBcNLeL0Ect74iuTzIEMu4Ctu1txJ1hjjkUmcO2Lw2UXLQUbNWThHD10DWJvCcTR1n5fYVifSW04RoXkffrHqGsy2KS9Sy3yR4LsP_0QdIUz4km9YOjT2UKU8Sq7Uz37Udu6NYP6wD7F-OQYDl-6YjCnyGW-2vWUBPQWCdFFby1XTW-cd9aPvTftzfXyD3VuHgMoxnt-3ROirBkccx3b6jBCgSYb4aVZxeM92ma5_jqPpGTsXhlMBFtLbsT6pb5S0K_r4Y4Pz', status: 'UNESCO' },
-    { id: 3, slug: 'tari-kecak', title: 'Tari Kecak', category: 'tari', origin: 'Bali', desc: 'Pertunjukan tari sakral dengan iringan vokal ratusan penari yang menggambarkan kisah epik Ramayana.', img: '/images/seni/tari-kecak.jpg', status: 'Warisan Nasional' },
-    { id: 4, slug: 'batik-mega-mendung', title: 'Batik Mega Mendung', category: 'batik', origin: 'Cirebon', desc: 'Motif awan bergelombang yang menggambarkan kesabaran dan ketenangan menghadapi badai kehidupan.', img: '/images/batik/mega-mendung.png', status: 'UNESCO' },
-    { id: 5, slug: 'tari-saman', title: 'Tari Saman', category: 'tari', origin: 'Aceh', desc: 'Tarian seribu tangan yang menampilkan sinkronisasi sempurna gerakan harmonis para penari.', img: '/images/seni/tari-saman.jpg', status: 'UNESCO' },
-    { id: 6, slug: 'ukiran-jepara', title: 'Ukiran Jepara', category: 'ukir', origin: 'Jawa Tengah', desc: 'Seni ukir kayu berusia ratusan tahun yang menjadi kebanggaan pengrajin dan diekspor ke mancanegara.', img: '/images/ukiran/ukiran-jepara.jpg', status: 'Warisan Nasional' },
+const ARTWORKS = (t) => [
+    { id: 1, slug: 'batik-parang-rusak', title: 'Batik Parang Rusak', category: 'batik', origin: 'Yogyakarta', desc: t('seni_data.batik_parang_desc'), img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDDuSfqiJRkxODrddf-6RuvSwa01DTHoOUXdRKz2IR0jmKl3N8-UEPriuFB8PXZrIcLuDTsdqF1lYffYUP92PwhvcC8MnPKxJDMsS2QUtab1HMvnBSSy9AVXBCm8CYoTzRWfnPZd1Knj9tbbOnEKiMFndx9rZsXZzKufNUznJMvFwKnEAKzlawa4AljZQVO8K4EeS3i2pbCMSadufRenMCeah9onXIrmig6iiv3zhUVhq37UShohWH8StvAr58umrth1NQiUVOjaYhI', status: 'UNESCO' },
+    { id: 2, slug: 'gamelan-jawa', title: 'Gamelan Jawa', category: 'gamelan', origin: 'Jawa Tengah', desc: t('seni_data.gamelan_desc'), img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC0FVwiBcNLeL0Ect74iuTzIEMu4Ctu1txJ1hjjkUmcO2Lw2UXLQUbNWThHD10DWJvCcTR1n5fYVifSW04RoXkffrHqGsy2KS9Sy3yR4LsP_0QdIUz4km9YOjT2UKU8Sq7Uz37Udu6NYP6wD7F-OQYDl-6YjCnyGW-2vWUBPQWCbFFby1XTW-cd9aPvTftzfXyD3VuHgMoxnt-3ROirBkccx3b6jBCgSYb4aVZxeM92ma5_jqPpGTsXhlMBFtLbsT6pb5S0K_r4Y4Pz', status: 'UNESCO' },
+    { id: 3, slug: 'tari-kecak', title: 'Tari Kecak', category: 'tari', origin: 'Bali', desc: t('seni_data.kecak_desc'), img: '/images/seni/tari-kecak.jpg', status: 'Warisan Nasional' },
+    { id: 4, slug: 'batik-mega-mendung', title: 'Batik Mega Mendung', category: 'batik', origin: 'Cirebon', desc: t('seni_data.mega_mendung_desc'), img: '/images/batik/mega-mendung.png', status: 'UNESCO' },
+    { id: 5, slug: 'tari-saman', title: 'Tari Saman', category: 'tari', origin: 'Aceh', desc: t('seni_data.saman_desc'), img: '/images/seni/tari-saman.jpg', status: 'UNESCO' },
+    { id: 6, slug: 'ukiran-jepara', title: 'Ukiran Jepara', category: 'ukir', origin: 'Jawa Tengah', desc: t('seni_data.ukiran_jepara_desc'), img: '/images/ukiran/ukiran-jepara.jpg', status: 'Warisan Nasional' },
 ];
 
-const FEATURES = [
-    { icon: 'auto_stories', title: 'Eksplorasi Makna & Filosofi', desc: 'Ungkap rahasia dan pesan mendalam di balik setiap motif melalui peta interaktif.' },
-    { icon: 'music_note', title: 'Audio Spasial Gamelan', desc: 'Rasakan sensasi berada di tengah orkestra Gamelan melalui teknologi audio 360 derajat.' },
-    { icon: 'view_in_ar', title: 'Eksplorasi 3D & AR', desc: 'Pindai motif batik untuk melihat sejarah dan makna filosofis di baliknya.' },
-    { icon: 'video_library', title: 'Video Dokumenter', desc: 'Saksikan proses pembuatan seni tradisional dari pengrajin asli Nusantara.' },
+const FEATURES = (t) => [
+    { icon: 'auto_stories', title: t('seni.feature1_title'), desc: t('seni.feature1_desc') },
+    { icon: 'music_note', title: t('seni.feature2_title'), desc: t('seni.feature2_desc') },
+    { icon: 'view_in_ar', title: t('seni.feature3_title'), desc: t('seni.feature3_desc') },
+    { icon: 'video_library', title: t('seni.feature4_title'), desc: t('seni.feature4_desc') },
 ];
 
 export default function EksplorasiSeni() {
+    const { t } = useLanguage();
     const [activeCategory, setActiveCategory] = useState('semua');
 
+    const artworks = ARTWORKS(t);
     const filtered = activeCategory === 'semua'
-        ? ARTWORKS
-        : ARTWORKS.filter((a) => a.category === activeCategory);
+        ? artworks
+        : artworks.filter((a) => a.category === activeCategory);
 
     return (
         <div className="relative flex min-h-screen flex-col overflow-x-hidden bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-300 transition-colors duration-300 antialiased">
-            <Head title="Eksplorasi Seni | Nusantara Digital City" />
+            <Head title={`Eksplorasi Seni | Nusantara Digital City`} />
             <Navbar />
 
             <main className="flex-grow">
@@ -58,13 +61,13 @@ export default function EksplorasiSeni() {
                     <motion.div initial="hidden" animate="visible" variants={stagger} className="container mx-auto px-4 lg:px-10 text-center">
                         <motion.div variants={fadeIn} className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider mb-6">
                             <span className="material-symbols-outlined text-sm">palette</span>
-                            Galeri Seni Digital
+                            {t('seni.hero_badge')}
                         </motion.div>
                         <motion.h1 variants={fadeIn} className="text-4xl md:text-6xl font-black tracking-tight mb-6 text-slate-900 dark:text-slate-100">
-                            Eksplorasi <span className="text-primary">Seni Nusantara</span>
+                            {t('seni.hero_title')} <span className="text-primary">{t('seni.hero_subtitle')}</span>
                         </motion.h1>
                         <motion.p variants={fadeIn} className="max-w-2xl mx-auto text-slate-600 dark:text-slate-400 text-lg leading-relaxed">
-                            Temukan keindahan seni tradisional Indonesia yang telah diakui dunia. Dari motif batik hingga harmoni gamelan, rasakan warisan budaya bangsa melalui pengalaman digital imersif.
+                            {t('seni.hero_desc')}
                         </motion.p>
                     </motion.div>
                 </section>
@@ -72,7 +75,7 @@ export default function EksplorasiSeni() {
                 {/* ── Features Strip ── */}
                 <section className="container mx-auto px-4 lg:px-10 pb-12">
                     <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {FEATURES.map((f) => (
+                        {FEATURES(t).map((f) => (
                             <motion.div key={f.title} variants={fadeIn} whileHover={{ y: -6 }} className="p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-surface-dark shadow-sm hover:shadow-xl transition-all group text-center cursor-pointer">
                                 <div className="size-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mx-auto mb-4 transition-transform group-hover:scale-110 group-hover:bg-primary group-hover:text-white">
                                     <span className="material-symbols-outlined text-2xl">{f.icon}</span>
@@ -88,7 +91,7 @@ export default function EksplorasiSeni() {
                 <section className="container mx-auto px-4 lg:px-10 py-12">
                     {/* Filter Tabs */}
                     <div className="flex flex-wrap gap-3 mb-10 justify-center">
-                        {CATEGORIES.map((cat) => (
+                        {CATEGORIES(t).map((cat) => (
                             <motion.button
                                 key={cat.id}
                                 whileTap={{ scale: 0.95 }}
@@ -125,7 +128,7 @@ export default function EksplorasiSeni() {
                                             </div>
                                             <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
                                                 <span className="text-white text-sm font-bold flex items-center gap-1">
-                                                    <span className="material-symbols-outlined text-lg">visibility</span> Lihat Detail
+                                                    <span className="material-symbols-outlined text-lg">visibility</span> {t('seni.view_detail')}
                                                 </span>
                                             </div>
                                         </div>
@@ -146,7 +149,7 @@ export default function EksplorasiSeni() {
                     {filtered.length === 0 && (
                         <div className="text-center py-16">
                             <span className="material-symbols-outlined text-slate-400 text-6xl mb-4">search_off</span>
-                            <p className="text-slate-500 font-medium">Belum ada karya seni di kategori ini.</p>
+                            <p className="text-slate-500 font-medium">{t('seni.no_art')}</p>
                         </div>
                     )}
                 </section>
@@ -166,19 +169,19 @@ export default function EksplorasiSeni() {
 
                             <div className="relative z-10 space-y-6">
                                 <span className="material-symbols-outlined text-5xl text-white/90">auto_fix_high</span>
-                                <h2 className="text-3xl md:text-5xl font-black drop-shadow-md">Lestarikan Seni Bersama</h2>
+                                <h2 className="text-3xl md:text-5xl font-black drop-shadow-md">{t('seni.cta_title')}</h2>
                                 <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto font-medium leading-relaxed">
-                                    Punya karya seni tradisional yang ingin didigitalisasi? Kontribusikan warisan budaya daerah Anda ke dalam arsip digital Nusantara.
+                                    {t('seni.cta_desc')}
                                 </p>
                                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
                                     <Link href="/kontribusi?type=budaya">
                                         <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="px-8 py-4 bg-white text-primary rounded-xl font-bold shadow-xl hover:bg-slate-50 transition-colors">
-                                            Kontribusi Karya Seni
+                                            {t('seni.cta_button')}
                                         </motion.button>
                                     </Link>
                                     <Link href="/budaya">
                                         <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="px-8 py-4 bg-white/10 backdrop-blur-md border border-white/30 text-white rounded-xl font-bold hover:bg-white/20 transition-colors flex items-center gap-2">
-                                            <span className="material-symbols-outlined">arrow_back</span> Kembali ke Budaya
+                                            <span className="material-symbols-outlined">arrow_back</span> {t('seni.back_to_culture')}
                                         </motion.button>
                                     </Link>
                                 </div>

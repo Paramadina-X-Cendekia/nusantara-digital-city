@@ -3,6 +3,7 @@ import { Head, Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { useLanguage } from '../lib/LanguageContext';
 
 const fadeIn = {
     hidden: { opacity: 0, y: 30 },
@@ -14,11 +15,12 @@ const stagger = {
 };
 
 export default function DetailKisah({ story }) {
+    const { t } = useLanguage();
     const [activeTab, setActiveTab] = useState('cerita');
 
-    const tabs = [
-        { id: 'cerita', label: 'Baca Cerita', icon: 'menu_book' },
-        { id: 'video', label: 'Video Animasi', icon: 'movie' },
+    const tabs = (t) => [
+        { id: 'cerita', label: t('kisah.read_story'), icon: 'menu_book' },
+        { id: 'video', label: t('kisah.animated_video'), icon: 'movie' },
     ];
 
     return (
@@ -51,7 +53,7 @@ export default function DetailKisah({ story }) {
                 {/* ── Tabs Navigation ── */}
                 <section className="container mx-auto px-4 lg:px-10 py-10">
                     <div className="flex flex-wrap gap-4 mb-10 justify-center">
-                        {tabs.map((tab) => (
+                        {tabs(t).map((tab) => (
                             <motion.button
                                 key={tab.id}
                                 whileTap={{ scale: 0.95 }}
@@ -80,7 +82,7 @@ export default function DetailKisah({ story }) {
                             >
                                 <div className="lg:col-span-2 space-y-8">
                                     <div className="bg-white dark:bg-surface-dark rounded-3xl p-8 md:p-12 border border-slate-200 dark:border-slate-800 shadow-sm">
-                                        <h2 className="text-3xl font-black text-slate-900 dark:text-slate-100 mb-8 border-b border-slate-100 dark:border-slate-800 pb-4">Isi Kisah</h2>
+                                        <h2 className="text-3xl font-black text-slate-900 dark:text-slate-100 mb-8 border-b border-slate-100 dark:border-slate-800 pb-4">{t('kisah.story_content')}</h2>
                                         <div className="prose prose-slate dark:prose-invert max-w-none">
                                             <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-lg whitespace-pre-line first-letter:text-5xl first-letter:font-black first-letter:mr-3 first-letter:float-left first-letter:text-primary">
                                                 {story.longDesc}
@@ -93,7 +95,7 @@ export default function DetailKisah({ story }) {
                                     {/* Moral Value Card */}
                                     <div className="bg-primary/10 rounded-3xl p-8 border border-primary/20">
                                         <h3 className="font-black text-primary text-xl mb-4 flex items-center gap-2">
-                                            <span className="material-symbols-outlined">eco</span> Nilai Moral
+                                            <span className="material-symbols-outlined">eco</span> {t('kisah.moral_value')}
                                         </h3>
                                         <p className="text-slate-700 dark:text-slate-300 italic font-medium">
                                             "{story.moral}"
@@ -102,7 +104,7 @@ export default function DetailKisah({ story }) {
 
                                     {/* Characters Card */}
                                     <div className="bg-white dark:bg-surface-dark rounded-3xl p-8 border border-slate-200 dark:border-slate-800 shadow-sm">
-                                        <h3 className="font-black text-slate-900 dark:text-slate-100 text-xl mb-6">Tokoh Utama</h3>
+                                        <h3 className="font-black text-slate-900 dark:text-slate-100 text-xl mb-6">{t('kisah.main_characters')}</h3>
                                         <ul className="space-y-4">
                                             {story.characters.map((char, i) => (
                                                 <li key={i} className="flex items-center gap-4">
@@ -138,8 +140,8 @@ export default function DetailKisah({ story }) {
                                     />
                                 </div>
                                 <div className="p-8 text-center">
-                                    <h3 className="text-2xl font-black text-slate-900 dark:text-slate-100 mb-2">Visualisasi Storytelling Digital</h3>
-                                    <p className="text-slate-500 dark:text-slate-400">Saksikan kisah ini dalam bentuk animasi digital yang memukau.</p>
+                                    <h3 className="text-2xl font-black text-slate-900 dark:text-slate-100 mb-2">{t('kisah.digital_visualization')}</h3>
+                                    <p className="text-slate-500 dark:text-slate-400">{t('kisah.visual_desc')}</p>
                                 </div>
                             </motion.div>
                         )}
@@ -151,7 +153,7 @@ export default function DetailKisah({ story }) {
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                         <Link href="/kisah-rakyat">
                             <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="px-8 py-4 bg-primary text-white rounded-2xl font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-colors flex items-center gap-2">
-                                <span className="material-symbols-outlined">arrow_back</span> Kembali ke Daftar Kisah
+                                <span className="material-symbols-outlined">arrow_back</span> {t('kisah.back_to_list')}
                             </motion.button>
                         </Link>
                     </div>
