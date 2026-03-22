@@ -39,6 +39,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/budaya', [\App\Http\Controllers\PublicBudayaController::class, 'index'])->name('budaya');
+Route::get('/budaya/landmark/{slug}', [\App\Http\Controllers\PublicBudayaController::class, 'showLandmark'])->name('landmark.detail');
 
 Route::get('/kisah-rakyat', [KisahController::class, 'index'])->name('kisah-rakyat');
 Route::get('/kisah-rakyat/{slug}', [KisahController::class, 'show'])->name('detail-kisah');

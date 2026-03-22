@@ -19,28 +19,7 @@ const TABS = [
     { id: 'Cerita Rakyat & Legenda Digital', label: 'Cerita Rakyat', icon: 'auto_stories' },
 ];
 
-const LANDMARKS = [
-    {
-        name: 'Candi Borobudur',
-        location: 'MAGELANG, JAWA TENGAH',
-        desc: 'Monumen Buddha terbesar di dunia yang kini terintegrasi dengan pemetaan digital 3D untuk pelestarian global.',
-        img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAmVGjpiFKZjpI9BwjsM25QvGWbekbZZ0uAitz_OxH8eFMPXgLtyuvuBHw4YeSgiMDqAAoSO4-cHz7qPYCnx1ngM48nlYWaDIT337z0MQSivXiihgtXu53w-7wna96oRGl_XdwKbO6yFtw5lCpSqcf3X51Ume3CV_uoc-w0FJhmHiJiztUe0SmD5RYqFLgvj5USl_s0V4vzULjTzl1TvoPZEiY0YMpkCqb_UGiBxMnKt_zqiM0KNJMGL9l6YfqINBvgZ_8HVhnYLt37',
-    },
-    {
-        name: 'Candi Prambanan',
-        location: 'SLEMAN, YOGYAKARTA',
-        desc: 'Kompleks candi Hindu termegah yang menjadi ikon integrasi seni pertunjukan tradisional dan teknologi tata cahaya modern.',
-        img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA0jeSakdv6nP10Lx12LKRiQNerivDknx-BZKVNP1-dY2xZ2fhj-s73LMz8DjaQWwYKWxR6FXfwb65BUUHaDgGH1VJN4C2LxAvAUR7OkaoZfZiZ2SInN_5ES0WQdzC5HbausLNI5hpYB9c-QNJyUR4agdXx_73N26Dn_9XI2OW25qKf-gjjzh_584EFA0Vzxvyyx4gW8GUqIwhaAmp6_7LJyGlq6Rru6PMVX-sD4QsGgBZHIwI4aA220TEW_Br8d8CpApYUZvCbzxhz',
-    },
-    {
-        name: 'Kota Tua Jakarta',
-        location: 'JAKARTA BARAT',
-        desc: 'Saksi sejarah kolonial yang kini bertransformasi menjadi pusat kreativitas digital bagi kreator muda nusantara.',
-        img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCp0a0cSr56zKwoiH0unY6uIn_kWisHe6JKm4pJQNVCtbW0n-2kYvRQApHX_tGWmeoyvXqzvHOmvhhSq80OAxY8BFCFEMAqViU3shvZgYEy_ekJQUGeKGjVfuAD3egeTOJI7lBBspycUFeDnp-_Tg7jVonhEK_EgNfwYUY2pUNBtGEMPqxffwYi4feIkc6B9uHQSMy5hF_1Q0PRFtLfI_e_koAa3TDqZHDzPmME0wSO3Kxsm4xzKW-p1_zH2hpp8FHZk0iGFlv-SqLh',
-    },
-];
-
-export default function Budaya() {
+export default function Budaya({ landmarks }) {
     const [activeTab, setActiveTab] = useState('situs-bersejarah');
     const [sortOrder, setSortOrder] = useState('default');
     const [isSortOpen, setIsSortOpen] = useState(false);
@@ -57,7 +36,7 @@ export default function Budaya() {
     }, []);
 
     const sortedLandmarks = useMemo(() => {
-        let items = [...LANDMARKS];
+        let items = [...(landmarks || [])];
         if (sortOrder === 'asc') {
             return items.sort((a, b) => a.name.localeCompare(b.name));
         } else if (sortOrder === 'desc') {
@@ -215,10 +194,12 @@ export default function Budaya() {
                                         </div>
                                         <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-3 group-hover:text-primary transition-colors">{item.name}</h3>
                                         <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed line-clamp-3">{item.desc}</p>
-                                        <motion.a whileHover={{ gap: '0.75rem' }} className="mt-6 inline-flex items-center text-primary font-bold text-sm gap-2 transition-all cursor-pointer">
-                                            Pelajari Profil Digital
-                                            <span className="material-symbols-outlined text-sm">arrow_forward</span>
-                                        </motion.a>
+                                        <Link href={`/budaya/landmark/${item.slug}`}>
+                                            <motion.div whileHover={{ gap: '0.75rem' }} className="mt-6 inline-flex items-center text-primary font-bold text-sm gap-2 transition-all cursor-pointer">
+                                                Pelajari Profil Digital
+                                                <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                                            </motion.div>
+                                        </Link>
                                     </div>
                                 </motion.div>
                             ))}
