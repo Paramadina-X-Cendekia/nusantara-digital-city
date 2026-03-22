@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/Navbar';
@@ -14,9 +14,9 @@ const stagger = {
 };
 
 const TABS = [
-    { id: 'sejarah', label: 'Situs Bersejarah', icon: 'account_balance' },
-    { id: 'seni', label: 'Seni Tradisional', icon: 'palette' },
-    { id: 'cerita', label: 'Cerita Rakyat', icon: 'auto_stories' },
+    { id: 'situs-bersejarah', label: 'Situs Bersejarah', icon: 'account_balance' },
+    { id: 'Warisan Takbenda', label: 'Seni Tradisional', icon: 'palette' },
+    { id: 'Cerita Rakyat & Legenda Digital', label: 'Cerita Rakyat', icon: 'auto_stories' },
 ];
 
 const LANDMARKS = [
@@ -41,10 +41,41 @@ const LANDMARKS = [
 ];
 
 export default function Budaya() {
-    const [activeTab, setActiveTab] = useState('sejarah');
+    const [activeTab, setActiveTab] = useState('situs-bersejarah');
+    const [sortOrder, setSortOrder] = useState('default');
+    const [isSortOpen, setIsSortOpen] = useState(false);
+    const sortRef = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (sortRef.current && !sortRef.current.contains(event.target)) {
+                setIsSortOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    const sortedLandmarks = useMemo(() => {
+        let items = [...LANDMARKS];
+        if (sortOrder === 'asc') {
+            return items.sort((a, b) => a.name.localeCompare(b.name));
+        } else if (sortOrder === 'desc') {
+            return items.sort((a, b) => b.name.localeCompare(a.name));
+        }
+        return items;
+    }, [sortOrder]);
+
+    const handleTabClick = (id) => {
+        setActiveTab(id);
+        const element = document.getElementById(id);
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    };
 
     return (
-        <div className="relative flex min-h-screen flex-col overflow-x-hidden bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-300 transition-colors duration-300 antialiased">
+        <div className="relative flex min-h-screen flex-col bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-300 transition-colors duration-300 antialiased">
             <Head title="Budaya | Nusantara Digital City" />
             <Navbar />
 
@@ -81,40 +112,81 @@ export default function Budaya() {
                             </motion.div>
                         </div>
                     </motion.section>
+                </div>
 
-                    {/* ── Category Filter Tabs ── */}
-                    <motion.div
-                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
-                        className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12 border-b border-slate-200 dark:border-slate-800"
-                    >
-                        <div className="flex flex-wrap">
-                            {TABS.map((tab) => (
-                                <button
-                                    key={tab.id}
-                                    onClick={() => setActiveTab(tab.id)}
-                                    className={`flex items-center justify-center px-6 pb-4 pt-2 transition-all border-b-[3px] ${
-                                        activeTab === tab.id
-                                            ? 'border-primary text-slate-900 dark:text-slate-100'
-                                            : 'border-transparent text-slate-500 hover:text-primary'
-                                    }`}
-                                >
-                                    <span className={`material-symbols-outlined mr-2 ${activeTab === tab.id ? 'text-primary' : ''}`}>{tab.icon}</span>
-                                    <p className="text-sm font-bold">{tab.label}</p>
-                                </button>
-                            ))}
-                        </div>
-                        <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="mb-4 bg-primary/10 text-primary px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 hover:bg-primary hover:text-white transition-all"
+                {/* ── Category Filter Tabs (Sticky Wrapper) ── */}
+                <div className="sticky top-16 z-40 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 transition-all duration-300">
+                    <div className="container mx-auto px-4 lg:px-10">
+                        <motion.div
+                            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
+                            className="flex flex-row items-center justify-between gap-4 py-2"
                         >
-                            <span className="material-symbols-outlined text-lg">filter_list</span>
-                            Urutkan Berdasarkan
-                        </motion.button>
-                    </motion.div>
+                            <div className="flex flex-row overflow-x-auto flex-nowrap no-scrollbar scroll-smooth gap-2">
+                                {TABS.map((tab) => (
+                                    <button
+                                        key={tab.id}
+                                        onClick={() => handleTabClick(tab.id)}
+                                        className={`flex items-center justify-center px-5 py-2 whitespace-nowrap transition-all rounded-xl ${
+                                            activeTab === tab.id
+                                                ? 'bg-primary text-white shadow-lg shadow-primary/25'
+                                                : 'text-slate-500 hover:text-primary hover:bg-primary/5'
+                                        }`}
+                                    >
+                                        <span className={`material-symbols-outlined mr-2 text-xl ${activeTab === tab.id ? 'text-white' : ''}`}>{tab.icon}</span>
+                                        <p className="text-sm font-bold">{tab.label}</p>
+                                    </button>
+                                ))}
+                            </div>
+                            
+                            <div className="relative shrink-0 flex items-center" ref={sortRef}>
+                                <motion.button
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    onClick={() => setIsSortOpen(!isSortOpen)}
+                                    className="bg-primary/10 text-primary size-10 md:w-auto md:px-4 md:py-2 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-primary hover:text-white transition-all shadow-sm"
+                                >
+                                    <span className="material-symbols-outlined text-lg">filter_list</span>
+                                    <span className="hidden md:inline">{sortOrder === 'default' ? 'Urutkan' : `Urutkan: ${sortOrder === 'asc' ? 'A-Z' : 'Z-A'}`}</span>
+                                </motion.button>
+                                
+                                <AnimatePresence>
+                                    {isSortOpen && (
+                                        <motion.div
+                                            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                                            exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                                            className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xl z-50 overflow-hidden"
+                                        >
+                                            <button 
+                                                onClick={() => { setSortOrder('default'); setIsSortOpen(false); }}
+                                                className="w-full text-left px-4 py-3 text-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-2"
+                                            >
+                                                <span className="material-symbols-outlined text-sm">reorder</span> Default
+                                            </button>
+                                            <button 
+                                                onClick={() => { setSortOrder('asc'); setIsSortOpen(false); }}
+                                                className="w-full text-left px-4 py-3 text-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-2"
+                                            >
+                                                <span className="material-symbols-outlined text-sm">sort_by_alpha</span> Nama (A-Z)
+                                            </button>
+                                            <button 
+                                                onClick={() => { setSortOrder('desc'); setIsSortOpen(false); }}
+                                                className="w-full text-left px-4 py-3 text-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-2"
+                                            >
+                                                <span className="material-symbols-outlined text-sm">filter_list_off</span> Nama (Z-A)
+                                            </button>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
+                        </motion.div>
+                    </div>
+                </div>
+
+                <div className="container mx-auto px-4 lg:px-10 py-12">
 
                     {/* ── Section: Landmark Bersejarah ── */}
-                    <section className="mb-20">
+                    <section id="situs-bersejarah" className="mb-20 scroll-mt-20 md:scroll-mt-32">
                         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeIn} className="flex flex-col md:flex-row items-start md:items-end justify-between mb-10 gap-4">
                             <div>
                                 <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">Profil Kota &amp; Landmark Bersejarah</h2>
@@ -126,7 +198,7 @@ export default function Budaya() {
                         </motion.div>
 
                         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {LANDMARKS.map((item) => (
+                            {sortedLandmarks.map((item) => (
                                 <motion.div
                                     key={item.name}
                                     variants={fadeIn}
@@ -155,8 +227,9 @@ export default function Budaya() {
 
                     {/* ── Section: Warisan Takbenda ── */}
                     <motion.section
+                        id="Warisan Takbenda"
                         initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-80px' }} variants={fadeIn}
-                        className="mb-20 bg-slate-100 dark:bg-slate-900/50 rounded-3xl p-8 lg:p-16 border border-slate-200 dark:border-slate-800 overflow-hidden relative"
+                        className="mb-20 bg-slate-100 dark:bg-slate-900/50 rounded-3xl p-8 lg:p-16 border border-slate-200 dark:border-slate-800 overflow-hidden relative scroll-mt-20 md:scroll-mt-32"
                     >
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10">
                             {/* Image Collage */}
@@ -228,7 +301,7 @@ export default function Budaya() {
                     </motion.section>
 
                     {/* ── Section: Cerita Rakyat ── */}
-                    <section className="mb-20">
+                    <section id="Cerita Rakyat & Legenda Digital" className="mb-20 scroll-mt-20 md:scroll-mt-32">
                         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeIn} className="flex flex-col md:flex-row items-start md:items-center justify-between mb-10 gap-4">
                             <div>
                                 <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100">Cerita Rakyat &amp; Legenda Digital</h2>
