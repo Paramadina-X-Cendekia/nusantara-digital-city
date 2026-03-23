@@ -1,6 +1,7 @@
 import { Head, useForm, Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '@/lib/LanguageContext';
+import ImageWithFallback from '../../components/ImageWithFallback';
 
 export default function Login() {
     const { t } = useLanguage();
@@ -100,10 +101,11 @@ export default function Login() {
             {/* Right Side: Visual Content */}
             <div className="hidden lg:block lg:w-1/2 relative bg-primary overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/60 mix-blend-multiply z-10" />
-                <img 
+                <ImageWithFallback 
                     src="/images/auth/login_visual.png" 
                     alt="Nusantara Digital City Visual" 
                     className="absolute inset-0 w-full h-full object-cover grayscale-[20%] hover:grayscale-0 transition-all duration-700 hover:scale-105"
+                    fallbackIcon="login"
                 />
                 
                 {/* Floating Card Info */}

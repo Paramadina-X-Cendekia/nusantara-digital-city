@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Link, usePage, router } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '@/lib/LanguageContext';
+import ImageWithFallback from './ImageWithFallback';
 
 export default function Navbar() {
     const { auth } = usePage().props;
@@ -211,7 +212,7 @@ export default function Navbar() {
                                 isUserMenuOpen ? 'text-primary' : 'text-slate-400 dark:text-slate-500'
                             }`}
                         >
-                            <img src={auth.user.avatar} alt={auth.user.name} className={`size-6 rounded-full border ${isUserMenuOpen ? 'border-primary' : 'border-slate-200 dark:border-slate-700'}`} />
+                            <ImageWithFallback src={auth.user.avatar} alt={auth.user.name} className={`size-6 rounded-full border ${isUserMenuOpen ? 'border-primary' : 'border-slate-200 dark:border-slate-700'}`} fallbackIcon="person" />
                             <span className="text-[9px] font-bold tracking-tight uppercase">{t('nav.me')}</span>
                         </button>
                     ) : (

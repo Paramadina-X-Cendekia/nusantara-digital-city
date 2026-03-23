@@ -3,6 +3,8 @@ import { Head, Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { useLanguage } from '@/lib/LanguageContext';
+import ImageWithFallback from '../components/ImageWithFallback';
 
 const fadeIn = {
     hidden: { opacity: 0, y: 30 },
@@ -14,6 +16,7 @@ const stagger = {
 };
 
 export default function LandmarkDetail({ landmark }) {
+    const { t } = useLanguage();
     const [activeTab, setActiveTab] = useState('profil');
     const [showArchive, setShowArchive] = useState(false);
 
@@ -30,7 +33,7 @@ export default function LandmarkDetail({ landmark }) {
             <main className="flex-grow">
                 {/* ── Hero ── */}
                 <section className="relative overflow-hidden h-80 md:h-[500px]">
-                    <img className="absolute inset-0 w-full h-full object-cover" alt={landmark.name} src={landmark.img} />
+                    <ImageWithFallback className="absolute inset-0 w-full h-full object-cover" alt={landmark.name} src={landmark.img} fallbackIcon="account_balance" />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent"></div>
                     
                     <div className="absolute bottom-0 left-0 right-0 p-8 md:p-16 z-10">

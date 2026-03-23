@@ -6,6 +6,8 @@ import { OrbitControls, useTexture } from '@react-three/drei';
 import * as THREE from 'three';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { useLanguage } from '@/lib/LanguageContext';
+import ImageWithFallback from '../components/ImageWithFallback';
 
 // Auto 3D Viewer for Batik (Turns 2D image into 3D T-Shirt)
 function BatikCloth({ imgUrl }) {
@@ -61,7 +63,7 @@ function BatikCloth({ imgUrl }) {
     );
 }
 
-function Auto3DViewer({ imgUrl }) {
+function Auto3DViewer({ imgUrl, t }) {
     return (
         <div className="w-full h-full relative cursor-move">
             <Canvas camera={{ position: [0, 0, 8], fov: 50 }}>
@@ -97,6 +99,7 @@ const TAB_MAP = (t) => [
 ];
 
 export default function DetailSeni({ art }) {
+    const { t } = useLanguage();
     const [activeTab, setActiveTab] = useState('galeri');
     const [galleryIdx, setGalleryIdx] = useState(0);
 
@@ -117,7 +120,7 @@ export default function DetailSeni({ art }) {
                 {/* ── Hero ── */}
                 <section className="relative overflow-hidden">
                     <div className="h-72 md:h-96 w-full relative">
-                        <img className="w-full h-full object-cover" alt={art.title} src={art.img} />
+                        <ImageWithFallback className="w-full h-full object-cover" alt={art.title} src={art.img} fallbackIcon="palette" />
                         <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/60 to-transparent"></div>
                         <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 z-10">
                             <div className="container mx-auto">
@@ -190,7 +193,7 @@ export default function DetailSeni({ art }) {
                                 <div className="bg-white dark:bg-surface-dark rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xl lg:grid lg:grid-cols-12 min-h-[500px]">
                                     {/* Left: Interactive Image */}
                                     <div className="relative lg:col-span-7 bg-slate-100 dark:bg-slate-900 overflow-hidden group h-[400px] lg:h-[600px]">
-                                        <img className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src={art.img} alt={art.title} />
+                                        <ImageWithFallback className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src={art.img} alt={art.title} fallbackIcon="palette" />
                                         <div className="absolute inset-0 bg-black/10"></div>
                                         
                                         {(art.hotspots || []).map((hs, i) => (
@@ -311,7 +314,7 @@ export default function DetailSeni({ art }) {
                                     {/* 3D Model Viewer */}
                                     <div className="relative bg-slate-100 dark:bg-slate-900" style={{ height: '450px' }}>
                                         {art.category === 'batik' ? (
-                                            <Auto3DViewer imgUrl={art.img} />
+                                            <Auto3DViewer imgUrl={art.img} t={t} />
                                         ) : art.modelUrl ? (
                                             <model-viewer
                                                 src={art.modelUrl}

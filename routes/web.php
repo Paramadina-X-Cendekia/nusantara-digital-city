@@ -92,3 +92,7 @@ Route::get('/peta-wisata', function () {
 Route::get('/daftar-wisata', function () {
     return Inertia::render('DaftarWisata');
 })->name('daftar-wisata');
+
+Route::get('/wisata/{slug}', function ($slug) {
+    return Inertia::render('WisataDetail', ['slug' => $slug]);
+})->name('wisata.detail');

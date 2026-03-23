@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { useLanguage } from '../lib/LanguageContext';
+import ImageWithFallback from '../components/ImageWithFallback';
 
 const fadeIn = {
     hidden: { opacity: 0, y: 30 },
@@ -106,7 +107,7 @@ function LeafletMap({ sites, activeSite, setActiveSite, t }) {
                 >
                     <Popup className="custom-popup">
                         <div style={{ minWidth: '220px' }}>
-                            <img src={site.img} alt={site.name} style={{ width: '100%', height: '120px', objectFit: 'cover', borderRadius: '8px', marginBottom: '8px' }} />
+                            <ImageWithFallback src={site.img} alt={site.name} style={{ width: '100%', height: '120px', objectFit: 'cover', borderRadius: '8px', marginBottom: '8px' }} fallbackIcon="account_balance" />
                             <h3 style={{ margin: '0 0 4px', fontWeight: 800, fontSize: '14px' }}>{site.name}</h3>
                             <p style={{ margin: '0 0 4px', color: '#368ce2', fontSize: '11px', fontWeight: 600 }}>{site.location}</p>
                             <p style={{ margin: '0 0 4px', color: '#64748b', fontSize: '11px', lineHeight: 1.5 }}>{site.desc}</p>
@@ -216,7 +217,7 @@ export default function PetaWarisan({ dynamicSites = [] }) {
                             <div className="bg-white dark:bg-surface-dark rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden">
                                 <div className="grid grid-cols-1 md:grid-cols-2">
                                     <div className="h-64 md:h-auto overflow-hidden relative">
-                                        <img className="w-full h-full object-cover" alt={selected.name} src={selected.img} />
+                                        <ImageWithFallback className="w-full h-full object-cover" alt={selected.name} src={selected.img} fallbackIcon="account_balance" />
                                         <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/20"></div>
                                         <div className="absolute top-4 left-4 bg-primary/90 backdrop-blur-md text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">{selected.status}</div>
                                     </div>
@@ -269,7 +270,7 @@ export default function PetaWarisan({ dynamicSites = [] }) {
                             >
                                 <div className="flex items-start gap-4">
                                     <div className="size-14 rounded-xl overflow-hidden shrink-0 border-2 border-slate-200 dark:border-slate-700 group-hover:border-primary transition-colors">
-                                        <img className="w-full h-full object-cover" alt={site.name} src={site.img} />
+                                        <ImageWithFallback className="w-full h-full object-cover" alt={site.name} src={site.img} fallbackIcon="account_balance" />
                                     </div>
                                     <div className="min-w-0">
                                         <h4 className={`font-bold text-sm mb-0.5 truncate transition-colors ${activeSite === site.id ? 'text-primary' : 'text-slate-900 dark:text-slate-100 group-hover:text-primary'}`}>{site.name}</h4>

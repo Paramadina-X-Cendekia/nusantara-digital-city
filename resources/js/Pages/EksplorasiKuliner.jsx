@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { useLanguage } from '../lib/LanguageContext';
+import { getCulinaryData } from '../data/culinary';
+import ImageWithFallback from '../components/ImageWithFallback';
 
 const fadeIn = {
     hidden: { opacity: 0, y: 30 },
@@ -19,24 +21,45 @@ const TABS = (t) => [
     { id: 'story', label: t('kuliner.tab_story'), icon: 'history_edu' },
 ];
 
-const MENU_DISHES = (t) => [
-    { id: 1, name: 'Rendang Padang', origin: 'Sumatera Barat', desc: t('kuliner.dish1_desc'), img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCAv_ltKBeh7xx7xlev2-yXctsKVKFGGhCEFOga2B4xdOAx8Vm7TeDtLJSaLUEyZlHfq2qvwEM7tivFGTHR3c3yKJ2kIOsqdNurIdOP6Hp8CrOqnRTkF0Li4Luj1RAkWiM7Dq1jXQb035bh71T_w5ozHCPtlWYpy_kZI3K4YRyM5zlnMvaxjotFFrZyMpFKiQGK_IMN12il5LH6gf9kTUYeN233QEYkfIIaVKepUOEI9nG9wpXxXNh9g3yQ8FeL5I7Lfp2YeAGTGRx3', status: t('kuliner.digital_menu') },
-    { id: 2, name: 'Sate Madura', origin: 'Jawa Timur', desc: t('kuliner.dish2_desc'), img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAU-vWNOQzD80OgXv38CD0s5NF26JbK4pSh9Jg7AT8vMNvozSNs9gNS51DGbBsLrrmWfcX2U9Gepf2eA4PfDDeVg65oJKCLwBSaVu9HQ9KFoFLJhpumlmWsd_NVPhEvDMCC7nwpHk96tyo4HdR-J1RqgbANkD0OYQ1cuofxJpj8Ieas9CJnU1rd5eRbHkoX6DwFSSe2xR7PaZae-aewjdz6Bdq1blyfmzniyCujBm-VWXPjNlXTIBM0jISVRpJtTOUbCaUFknlW9Atj', status: t('kuliner.digital_menu') },
-    { id: 3, name: 'Gudeg Jogja', origin: 'Yogyakarta', desc: t('kuliner.dish3_desc'), img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDG4EFxcBpgXIgCaq7MmUNfwNpEWPDL3nUlyPfXBMnGRqQpwaJXYW_-W5esyNgXuX2khxDfJDRgLB9wEhAFBlw1VWzurRyB-2oRngkWiMZVKtRh1vrOkSVGzRQMcbBUwdmpAi60PJtaaQLMaWZ_ohe8gd0b3TpcOBrXBp3YOySdBthVFe_PJ3hwPdtfTJiyEk92nuyb3NVXUtIWMPx8nTnu7oSFGVMRDJkMX45F7-ynj3Uy6Q5NIRsdq1e7cI8hybqEnmVtKFdk_5TK', status: t('kuliner.digital_menu') },
-];
-
-const TRACE_ITEMS = (t) => [
-    { id: 1, name: t('kuliner.item1_name'), farmer: 'Pak Darso, Magelang', date: '14 Mar 2026', dist: '45 km', verified: true, img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuArUqDFHdGl6aYFb1l3aFc88-RwLg1EzHYhbsxTjneL2idpROpUoDwZg_JBBETD2rPOAn9OmiG-AqVjpzG_8jDgrX4uRPALNxXgS3kyQl1JOMjvkweDk0Cn7j_RZe5z2kCo4u6E4y-W81me4zYHnEC16lNv8Xu8PQfYb2YXoHIGuaXF3ehoaSU3XZnUoxBdnbd6qU_ppABtBIOiu6QG1Lu089rcRiL2sfL23Gkri_5TmJWIoK2HEnEP91o9kgg4Lu7JmS8NPoJn-1q-' },
-    { id: 2, name: t('kuliner.item2_name'), farmer: 'Bu Sari, Subang', date: '12 Mar 2026', dist: '120 km', verified: true, img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBM3X2wbsMSafomWICPVvP_WNw5zEjW3TBIMDHzByEl0abDkmrorgIc88jNL-v3v7JJF7upMacCUMz0vCkVGUDbGF3S339mQxZCR-wGIZwljTj3JCwK6G9i2OBw8ozhUSa6CQLYPJofJxaED0TmmvlmipRBI2Uh1P7Kp7l334tcqT0Azc3pd432k3TnmZqbNPrCUTXBPRlKmxpK3DIr2ciCYZIxest4-CrAjbI2mc056Rw23DXj_xBzswZPBtz62Q2bCxI-BQ84lKf6' },
-    { id: 3, name: t('kuliner.item3_name'), farmer: 'Koperasi Kelapa, Indramayu', date: '15 Mar 2026', dist: '80 km', verified: true, img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCp0a0cSr56zKwoiH0unY6uIn_kWisHe6JKm4pJQNVCtbW0n-2kYvRQApHX_tGWmeoyvXqzvHOmvhhSq80OAxY8BFCFEMAqViU3shvZgYEy_ekJQUGeKGjVfuAD3egeTOJI7lBBspycUFeDnp-_Tg7jVonhEK_EgNfwYUY2pUNBtGEMPqxffwYi4feIkc6B9uHQSMy5hF_1Q0PRFtLfI_e_koAa3TDqZHDzPmME0wSO3Kxsm4xzKW-p1_zH2hpp8FHZk0iGFlv-SqLh' },
-];
-
 export default function EksplorasiKuliner() {
     const { t } = useLanguage();
     const [activeTab, setActiveTab] = useState('menu');
+    const [selectedDish, setSelectedDish] = useState(null);
+    const [isScanning, setIsScanning] = useState(false);
+    const [selectedIngredient, setSelectedIngredient] = useState(null);
+    const [shareStatus, setShareStatus] = useState(null);
+    const culinaryData = getCulinaryData(t);
+
+    const handleShare = async (dish) => {
+        const shareData = {
+            title: `${dish.name} | Nusantara Digital City`,
+            text: `${dish.name}: ${dish.desc}. Telusuri kisah bahan lokalnya di Nusantara Digital City!`,
+            url: window.location.href
+        };
+
+        try {
+            if (navigator.share) {
+                await navigator.share(shareData);
+            } else {
+                await navigator.clipboard.writeText(`${shareData.text} ${shareData.url}`);
+                setShareStatus('success');
+                setTimeout(() => setShareStatus(null), 3000);
+            }
+        } catch (err) {
+            console.error('Error sharing:', err);
+        }
+    };
+
+    useEffect(() => {
+        if (selectedDish) {
+            setIsScanning(true);
+            const timer = setTimeout(() => setIsScanning(false), 1500);
+            return () => clearTimeout(timer);
+        }
+    }, [selectedDish]);
 
     return (
-        <div className="relative flex min-h-screen flex-col overflow-x-hidden bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-300 transition-colors duration-300 antialiased">
+        <div className="relative flex min-h-screen flex-col bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-300 transition-colors duration-300 antialiased">
             <Head title={`Eksplorasi Kuliner | Nusantara Digital City`} />
             <Navbar />
 
@@ -44,103 +67,90 @@ export default function EksplorasiKuliner() {
                 {/* ── Hero ── */}
                 <section className="relative py-20 overflow-hidden">
                     <div className="absolute inset-0 bg-primary/5 dark:bg-primary/10 -z-10"></div>
-                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/20 via-transparent to-transparent opacity-50 -z-10"></div>
-
-                    <motion.div initial="hidden" animate="visible" variants={stagger} className="container mx-auto px-4 lg:px-10 text-center">
-                        <motion.div variants={fadeIn} className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider mb-6">
-                            <span className="material-symbols-outlined text-sm">lunch_dining</span>
-                            {t('kuliner.hero_badge')}
+                    <div className="container mx-auto px-4 lg:px-10 text-center">
+                        <motion.div initial="hidden" animate="visible" variants={stagger} className="relative z-10">
+                            <motion.div variants={fadeIn} className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider mb-6">
+                                <span className="material-symbols-outlined text-sm">lunch_dining</span>
+                                {t('kuliner.hero_badge')}
+                            </motion.div>
+                            <motion.h1 variants={fadeIn} className="text-4xl md:text-6xl font-black tracking-tight mb-6 text-slate-900 dark:text-slate-100 uppercase">
+                                {t('kuliner.hero_title')} <span className="text-primary">{t('kuliner.hero_subtitle')}</span>
+                            </motion.h1>
+                            <motion.p variants={fadeIn} className="max-w-2xl mx-auto text-slate-600 dark:text-slate-400 text-lg leading-relaxed">
+                                {t('kuliner.hero_desc')}
+                            </motion.p>
                         </motion.div>
-                        <motion.h1 variants={fadeIn} className="text-4xl md:text-6xl font-black tracking-tight mb-6 text-slate-900 dark:text-slate-100">
-                            {t('kuliner.hero_title')} <span className="text-primary">{t('kuliner.hero_subtitle')}</span>
-                        </motion.h1>
-                        <motion.p variants={fadeIn} className="max-w-2xl mx-auto text-slate-600 dark:text-slate-400 text-lg leading-relaxed">
-                            {t('kuliner.hero_desc')}
-                        </motion.p>
-                    </motion.div>
-                </section>
-
-                {/* ── Two Feature Highlights ── */}
-                <section className="container mx-auto px-4 lg:px-10 pb-12">
-                    <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger} className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <motion.div variants={fadeIn} whileHover={{ y: -6 }} className="relative p-8 rounded-2xl border border-primary/20 bg-white dark:bg-surface-dark shadow-sm hover:shadow-xl transition-all overflow-hidden group">
-                            <div className="absolute top-0 right-0 w-40 h-40 bg-primary/5 rounded-full blur-3xl -mr-16 -mt-16"></div>
-                            <div className="relative z-10">
-                                <div className="size-14 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-5 group-hover:bg-primary group-hover:text-white transition-colors">
-                                    <span className="material-symbols-outlined text-3xl">qr_code_2</span>
-                                </div>
-                                <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2">{t('kuliner.card_qr_title')}</h3>
-                                <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">{t('kuliner.card_qr_desc')}</p>
-                            </div>
-                        </motion.div>
-                        <motion.div variants={fadeIn} whileHover={{ y: -6 }} className="relative p-8 rounded-2xl border border-primary/20 bg-white dark:bg-surface-dark shadow-sm hover:shadow-xl transition-all overflow-hidden group">
-                            <div className="absolute top-0 right-0 w-40 h-40 bg-primary/5 rounded-full blur-3xl -mr-16 -mt-16"></div>
-                            <div className="relative z-10">
-                                <div className="size-14 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-5 group-hover:bg-primary group-hover:text-white transition-colors">
-                                    <span className="material-symbols-outlined text-3xl">history_edu</span>
-                                </div>
-                                <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2">{t('kuliner.card_story_title')}</h3>
-                                <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">{t('kuliner.card_story_desc')}</p>
-                            </div>
-                        </motion.div>
-                    </motion.div>
-                </section>
-
-                {/* ── Tab Switch: AR / Traceability ── */}
-                <section className="container mx-auto px-4 lg:px-10 py-8">
-                    <div className="flex justify-center gap-4 mb-12">
-                        {TABS(t).map((tab) => (
-                            <motion.button
-                                key={tab.id}
-                                whileTap={{ scale: 0.95 }}
-                                onClick={() => setActiveTab(tab.id)}
-                                className={`flex items-center gap-2 px-6 py-3 rounded-full text-sm font-bold transition-all duration-300 ${
-                                    activeTab === tab.id
-                                        ? 'bg-primary text-white shadow-lg shadow-primary/30'
-                                        : 'bg-white dark:bg-surface-dark text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:border-primary/50 hover:text-primary'
-                                }`}
-                            >
-                                <span className="material-symbols-outlined text-xl">{tab.icon}</span>
-                                {tab.label}
-                            </motion.button>
-                        ))}
                     </div>
+                </section>
 
+                {/* ── Category Filter Tabs (Sticky Wrapper) ── */}
+                <div className="sticky top-16 z-40 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 transition-all duration-300">
+                    <div className="container mx-auto px-4 lg:px-10">
+                        <motion.div
+                            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
+                            className="flex flex-row items-center justify-center gap-4 py-2"
+                        >
+                            <div className="flex flex-row overflow-x-auto flex-nowrap no-scrollbar scroll-smooth gap-2">
+                                {TABS(t).map((tab) => (
+                                    <button
+                                        key={tab.id}
+                                        onClick={() => setActiveTab(tab.id)}
+                                        className={`flex items-center justify-center px-6 py-2 whitespace-nowrap transition-all rounded-xl ${
+                                            activeTab === tab.id
+                                                ? 'bg-primary text-white shadow-lg shadow-primary/25'
+                                                : 'text-slate-500 hover:text-primary hover:bg-primary/5'
+                                        }`}
+                                    >
+                                        <span className={`material-symbols-outlined mr-2 text-xl ${activeTab === tab.id ? 'text-white' : ''}`}>{tab.icon}</span>
+                                        <p className="text-sm font-bold">{tab.label}</p>
+                                    </button>
+                                ))}
+                            </div>
+                        </motion.div>
+                    </div>
+                </div>
+
+                {/* ── Content Section ── */}
+                <section className="container mx-auto px-4 lg:px-10 py-12">
                     <AnimatePresence mode="wait">
                         {activeTab === 'menu' && (
                             <motion.div key="menu" initial="hidden" animate="visible" exit="hidden" variants={stagger}>
-                                <motion.div variants={fadeIn} className="text-center mb-10">
-                                    <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">{t('kuliner.digital_menu_title')}</h2>
-                                    <p className="text-slate-500 dark:text-slate-400">{t('kuliner.digital_menu_desc')}</p>
+                                <motion.div variants={fadeIn} className="text-center mb-16">
+                                    <h2 className="text-4xl font-black text-slate-900 dark:text-slate-100 mb-4 uppercase tracking-tight">{t('kuliner.digital_menu_title')}</h2>
+                                    <p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">{t('kuliner.digital_menu_desc')}</p>
                                 </motion.div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                                    {MENU_DISHES(t).map((dish) => (
+                                    {culinaryData.dishes.map((dish) => (
                                         <motion.div
                                             key={dish.id}
                                             variants={fadeIn}
                                             whileHover={{ y: -8 }}
-                                            className="group bg-white dark:bg-surface-dark rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all border border-slate-200 dark:border-slate-800"
+                                            onClick={() => setSelectedDish(dish)}
+                                            className="group bg-white dark:bg-surface-dark rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all border border-slate-200 dark:border-slate-800 cursor-pointer"
                                         >
-                                            <div className="h-56 overflow-hidden relative">
-                                                <img className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={dish.name} src={dish.img} />
-                                                <div className="absolute top-4 left-4 bg-primary/90 backdrop-blur-md text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
+                                            <div className="h-64 overflow-hidden relative">
+                                                <ImageWithFallback className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={dish.name} src={dish.img} fallbackIcon="restaurant" />
+                                                <div className="absolute top-4 left-4 bg-primary/90 backdrop-blur-md text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 shadow-xl shadow-primary/20">
                                                     <span className="material-symbols-outlined text-xs">qr_code_2</span> {dish.status}
                                                 </div>
-                                                {/* Digital overlay on hover */}
                                                 <div className="absolute inset-0 bg-primary/20 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center">
-                                                    <div className="bg-white/90 dark:bg-slate-900/90 px-6 py-4 rounded-xl text-center shadow-xl">
-                                                        <span className="material-symbols-outlined text-primary text-4xl mb-1">menu_book</span>
-                                                        <p className="text-sm font-bold text-slate-900 dark:text-slate-100">{t('kuliner.open_menu')}</p>
+                                                    <div className="bg-white/95 dark:bg-slate-900/95 px-8 py-5 rounded-2xl text-center shadow-2xl scale-90 group-hover:scale-100 transition-transform">
+                                                        <span className="material-symbols-outlined text-primary text-4xl mb-2">menu_book</span>
+                                                        <p className="text-sm font-black text-slate-900 dark:text-slate-100 uppercase tracking-widest">{t('kuliner.open_menu')}</p>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div className="p-6">
-                                                <div className="flex items-center gap-2 text-primary text-xs font-bold mb-2">
+                                            <div className="p-8">
+                                                <div className="flex items-center gap-2 text-primary text-[10px] font-black uppercase tracking-widest mb-3">
                                                     <span className="material-symbols-outlined text-base">location_on</span>
                                                     {dish.origin}
                                                 </div>
-                                                <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-2 group-hover:text-primary transition-colors">{dish.name}</h3>
-                                                <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">{dish.desc}</p>
+                                                <h3 className="text-2xl font-black text-slate-900 dark:text-slate-100 mb-3 group-hover:text-primary transition-colors tracking-tight">{dish.name}</h3>
+                                                <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-6">{dish.desc}</p>
+                                                <div className="flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-6">
+                                                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Digital Curation</p>
+                                                    <span className="material-symbols-outlined text-primary font-bold">arrow_forward</span>
+                                                </div>
                                             </div>
                                         </motion.div>
                                     ))}
@@ -150,56 +160,57 @@ export default function EksplorasiKuliner() {
 
                         {activeTab === 'story' && (
                             <motion.div key="story" initial="hidden" animate="visible" exit="hidden" variants={stagger}>
-                                <motion.div variants={fadeIn} className="text-center mb-10">
-                                    <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">{t('kuliner.bite_story_title')}</h2>
-                                    <p className="text-slate-500 dark:text-slate-400">{t('kuliner.bite_story_desc')}</p>
+                                <motion.div variants={fadeIn} className="text-center mb-16">
+                                    <h2 className="text-4xl font-black text-slate-900 dark:text-slate-100 mb-4 uppercase tracking-tight">{t('kuliner.bite_story_title')}</h2>
+                                    <p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">{t('kuliner.bite_story_desc')}</p>
                                 </motion.div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                                    {TRACE_ITEMS(t).map((item) => (
+                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                                    {culinaryData.ingredients.map((item) => (
                                         <motion.div
                                             key={item.id}
                                             variants={fadeIn}
                                             whileHover={{ y: -8 }}
-                                            className="group bg-white dark:bg-surface-dark rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all border border-slate-200 dark:border-slate-800"
+                                            className="group bg-white dark:bg-surface-dark rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all border border-slate-200 dark:border-slate-800"
                                         >
-                                            <div className="h-48 overflow-hidden relative">
-                                                <img className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={item.name} src={item.img} />
+                                            <div className="h-56 overflow-hidden relative">
+                                                <ImageWithFallback className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={item.name} src={item.img} fallbackIcon="agriculture" />
                                                 {item.verified && (
-                                                    <div className="absolute top-4 left-4 bg-green-600/90 backdrop-blur-md text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
-                                                        <span className="material-symbols-outlined text-xs">verified</span> {t('kuliner.verified')}
+                                                    <div className="absolute top-4 left-4 bg-green-600/90 backdrop-blur-md text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 shadow-xl shadow-green-900/20">
+                                                        <span className="material-symbols-outlined text-xs font-bold">verified</span> {t('kuliner.verified')}
                                                     </div>
                                                 )}
                                             </div>
-                                            <div className="p-6">
-                                                <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-3 group-hover:text-primary transition-colors">{item.name}</h3>
-                                                <div className="space-y-3">
-                                                    <div className="flex items-center gap-3 text-sm">
-                                                        <div className="size-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                                            <div className="p-8">
+                                                <h3 className="text-2xl font-black text-slate-900 dark:text-slate-100 mb-4 group-hover:text-primary transition-colors tracking-tight uppercase">{item.name}</h3>
+                                                <p className="text-sm text-slate-500 leading-relaxed mb-6 italic">"{item.story}"</p>
+                                                <div className="space-y-4 border-t border-slate-100 dark:border-slate-800 pt-6">
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="size-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
                                                             <span className="material-symbols-outlined text-lg">person</span>
                                                         </div>
                                                         <div>
-                                                            <p className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">{t('kuliner.farmer')}</p>
-                                                            <p className="font-medium text-slate-900 dark:text-slate-100">{item.farmer}</p>
+                                                            <p className="text-[10px] text-slate-400 uppercase font-black tracking-widest">{t('kuliner.farmer')}</p>
+                                                            <p className="font-bold text-slate-900 dark:text-slate-100 text-sm">{item.farmer}</p>
                                                         </div>
                                                     </div>
-                                                    <div className="flex items-center gap-3 text-sm">
-                                                        <div className="size-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                                                            <span className="material-symbols-outlined text-lg">calendar_today</span>
-                                                        </div>
-                                                        <div>
-                                                            <p className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">{t('kuliner.harvest_date')}</p>
-                                                            <p className="font-medium text-slate-900 dark:text-slate-100">{item.date}</p>
-                                                        </div>
-                                                    </div>
-                                                    <div className="flex items-center gap-3 text-sm">
-                                                        <div className="size-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="size-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
                                                             <span className="material-symbols-outlined text-lg">straighten</span>
                                                         </div>
                                                         <div>
-                                                            <p className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">{t('kuliner.source_dist')}</p>
-                                                            <p className="font-medium text-slate-900 dark:text-slate-100">{item.dist}</p>
+                                                            <p className="text-[10px] text-slate-400 uppercase font-black tracking-widest">{t('kuliner.source_dist')}</p>
+                                                            <p className="font-bold text-slate-900 dark:text-slate-100 text-sm">{item.dist}</p>
                                                         </div>
                                                     </div>
+                                                    <motion.button 
+                                                        whileHover={{ scale: 1.02 }} 
+                                                        whileTap={{ scale: 0.98 }}
+                                                        onClick={() => setSelectedIngredient(item)}
+                                                        className="w-full mt-4 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-primary hover:text-white transition-all flex items-center justify-center gap-2"
+                                                    >
+                                                        <span className="material-symbols-outlined text-sm">map</span>
+                                                        Trace on Origin Map
+                                                    </motion.button>
                                                 </div>
                                             </div>
                                         </motion.div>
@@ -210,24 +221,188 @@ export default function EksplorasiKuliner() {
                     </AnimatePresence>
                 </section>
 
+                {/* ── Modal: Digital Menu ── */}
+                <AnimatePresence>
+                    {selectedDish && (
+                        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setSelectedDish(null)} className="absolute inset-0 bg-slate-900/60 backdrop-blur-md"></motion.div>
+                            <motion.div 
+                                initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                                className="relative bg-white dark:bg-surface-dark w-full max-w-4xl rounded-[2.5rem] overflow-hidden shadow-2xl flex flex-col md:flex-row max-h-[90vh]"
+                            >
+                                <div className="w-full md:w-2/5 h-64 md:h-auto overflow-hidden relative">
+                                    <ImageWithFallback src={selectedDish.img} className="w-full h-full object-cover" alt={selectedDish.name} fallbackIcon="restaurant" />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
+                                    <div className="absolute bottom-8 left-8 text-white">
+                                        <h3 className="text-3xl font-black mb-1 uppercase tracking-tight">{selectedDish.name}</h3>
+                                        <p className="text-xs font-bold text-white/80 tracking-widest uppercase">{t('kuliner.digital_menu')}</p>
+                                    </div>
+                                    <button onClick={() => setSelectedDish(null)} className="absolute top-6 left-6 size-10 rounded-full bg-black/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/40 md:hidden">
+                                        <span className="material-symbols-outlined">close</span>
+                                    </button>
+                                </div>
+                                <div className="w-full md:w-3/5 p-8 md:p-12 overflow-y-auto no-scrollbar relative">
+                                    <AnimatePresence mode="wait">
+                                        {isScanning ? (
+                                            <motion.div 
+                                                key="scanning"
+                                                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                                                className="h-full flex flex-col items-center justify-center py-12"
+                                            >
+                                                <div className="relative size-32 mb-8">
+                                                    <motion.div 
+                                                        animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.6, 0.3] }}
+                                                        transition={{ duration: 2, repeat: Infinity }}
+                                                        className="absolute inset-0 bg-primary/20 rounded-3xl"
+                                                    />
+                                                    <div className="absolute inset-0 border-2 border-primary/30 rounded-3xl animate-pulse" />
+                                                    <div className="h-full w-full flex items-center justify-center">
+                                                        <span className="material-symbols-outlined text-primary text-6xl">qr_code_scanner</span>
+                                                    </div>
+                                                    <motion.div 
+                                                        animate={{ top: ['10%', '90%', '10%'] }}
+                                                        transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
+                                                        className="absolute left-4 right-4 h-0.5 bg-primary z-10 shadow-[0_0_15px_rgba(var(--color-primary),1)]"
+                                                    />
+                                                </div>
+                                                <h4 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-widest">{t('kuliner.scan_to_open')}</h4>
+                                                <p className="text-sm text-slate-500 mt-2 font-mono">Decrypting Digital Menu...</p>
+                                            </motion.div>
+                                        ) : (
+                                            <motion.div 
+                                                key="menu-content"
+                                                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                                            >
+                                                <div className="flex justify-between items-start mb-8">
+                                                    <div>
+                                                        <h4 className="text-2xl font-black text-slate-900 dark:text-white mb-2 uppercase tracking-tight">{t('kuliner.ingredient_composition')}</h4>
+                                                        <div className="size-1 h-1 w-20 bg-primary rounded-full"></div>
+                                                    </div>
+                                                    <button onClick={() => setSelectedDish(null)} className="hidden md:flex size-10 rounded-full bg-slate-100 dark:bg-slate-800 items-center justify-center text-slate-500 hover:text-primary transition-colors">
+                                                        <span className="material-symbols-outlined">close</span>
+                                                    </button>
+                                                </div>
+                                                <div className="grid grid-cols-1 gap-4">
+                                                    {selectedDish.ingredients?.map(item => {
+                                                        const hasStory = culinaryData.ingredients.find(ing => ing.name === item.name);
+                                                        
+                                                        return (
+                                                            <div key={item.id} className="group p-6 rounded-3xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 hover:border-primary/30 hover:bg-primary/5 transition-all">
+                                                                <div className="flex justify-between items-start mb-2">
+                                                                    <div className="flex items-center gap-2">
+                                                                        <span className="size-2 bg-primary rounded-full"></span>
+                                                                        <h5 className="font-black text-slate-900 dark:text-white uppercase tracking-tight">{item.name}</h5>
+                                                                    </div>
+                                                                    <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white dark:bg-slate-800 text-[9px] font-black uppercase tracking-widest text-slate-400 border border-slate-100 dark:border-slate-700 shadow-sm">
+                                                                        Verified <span className="material-symbols-outlined text-[10px]">verified</span>
+                                                                    </div>
+                                                                </div>
+                                                                <p className="text-xs text-slate-500 leading-relaxed mb-4 pl-4">{item.desc}</p>
+                                                                {hasStory && (
+                                                                    <motion.button 
+                                                                        whileHover={{ x: 5 }} whileTap={{ scale: 0.98 }}
+                                                                        onClick={() => setSelectedIngredient(hasStory)}
+                                                                        className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-1.5 pl-4 transition-all hover:underline"
+                                                                    >
+                                                                        {t('kuliner.explore_origin')} <span className="material-symbols-outlined text-xs">arrow_forward</span>
+                                                                    </motion.button>
+                                                                )}
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+                                                <motion.button 
+                                                    whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} 
+                                                    onClick={() => handleShare(selectedDish)}
+                                                    className={`w-full mt-10 text-white py-5 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl flex items-center justify-center gap-3 transition-all duration-300 ${
+                                                        shareStatus === 'success' ? 'bg-green-600 shadow-green-900/20' : 'bg-primary shadow-primary/30'
+                                                    }`}
+                                                >
+                                                    <span className="material-symbols-outlined">{shareStatus === 'success' ? 'check_circle' : 'share'}</span> 
+                                                    {shareStatus === 'success' ? t('kuliner.share_success') : 'Bagikan Kisah Kuliner'}
+                                                </motion.button>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
+                            </motion.div>
+                        </div>
+                    )}
+                </AnimatePresence>
+
+                {/* ── Modal: Ingredient Trace Map ── */}
+                <AnimatePresence>
+                    {selectedIngredient && (
+                        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setSelectedIngredient(null)} className="absolute inset-0 bg-slate-900/60 backdrop-blur-md"></motion.div>
+                            <motion.div 
+                                initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                                className="relative bg-white dark:bg-surface-dark w-full max-w-2xl rounded-[2.5rem] overflow-hidden shadow-2xl p-4 flex flex-col"
+                            >
+                                <div className="h-64 w-full rounded-2xl overflow-hidden relative">
+                                    <iframe
+                                        width="100%"
+                                        height="100%"
+                                        frameBorder="0"
+                                        scrolling="no"
+                                        src={`https://www.openstreetmap.org/export/embed.html?bbox=${selectedIngredient.lng-0.01},${selectedIngredient.lat-0.01},${selectedIngredient.lng+0.01},${selectedIngredient.lat+0.01}&layer=mapnik&marker=${selectedIngredient.lat},${selectedIngredient.lng}`}
+                                        className="grayscale dark:invert"
+                                    ></iframe>
+                                    <div className="absolute top-4 left-4 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-3 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xl">
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <span className="material-symbols-outlined text-primary text-sm font-bold">verified</span>
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-900 dark:text-white">Certified Source</p>
+                                        </div>
+                                        <p className="text-xs text-slate-500 font-mono">LAT: {selectedIngredient.lat} | LNG: {selectedIngredient.lng}</p>
+                                    </div>
+                                </div>
+                                <div className="p-8">
+                                    <div className="flex justify-between items-start mb-6">
+                                        <div>
+                                            <h3 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{selectedIngredient.name}</h3>
+                                            <p className="text-xs text-primary font-bold tracking-widest uppercase">{selectedIngredient.farmer}</p>
+                                        </div>
+                                        <button onClick={() => setSelectedIngredient(null)} className="size-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:text-primary transition-colors">
+                                            <span className="material-symbols-outlined">close</span>
+                                        </button>
+                                    </div>
+                                    <p className="text-slate-600 dark:text-slate-400 leading-relaxed mb-8 font-medium italic">
+                                        "{selectedIngredient.story} Buka gerbang digital untuk melihat sertifikasi petani dan detail panen lengkap di jaringan blockchain kami."
+                                    </p>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700">
+                                            <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-1">Sync Date</p>
+                                            <p className="text-sm font-bold text-slate-900 dark:text-white">{selectedIngredient.date}</p>
+                                        </div>
+                                        <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700">
+                                            <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-1">Carbon Footprint</p>
+                                            <p className="text-sm font-bold text-slate-900 dark:text-white">{selectedIngredient.dist} Travel</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        </div>
+                    )}
+                </AnimatePresence>
+
                 {/* ── How It Works ── */}
                 <section className="container mx-auto px-4 lg:px-10 py-16">
-                    <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeIn} className="text-center mb-12">
-                        <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">{t('kuliner.how_it_works')}</h2>
-                        <p className="text-slate-500 dark:text-slate-400">{t('kuliner.how_desc')}</p>
+                    <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeIn} className="text-center mb-16">
+                        <h2 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{t('kuliner.how_it_works')}</h2>
+                        <p className="text-slate-500 dark:text-slate-400 max-w-xl mx-auto">{t('kuliner.how_desc')}</p>
                     </motion.div>
                     <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger} className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {[
-                            { step: '1', icon: 'qr_code_2', title: t('kuliner.step1_title'), desc: t('kuliner.step1_desc') },
-                            { step: '2', icon: 'history_edu', title: t('kuliner.step2_title'), desc: t('kuliner.step2_desc') },
-                            { step: '3', icon: 'verified', title: t('kuliner.step3_title'), desc: t('kuliner.step3_desc') },
+                            { step: '1', icon: 'qr_code_scanner', title: t('kuliner.step1_title'), desc: t('kuliner.step1_desc') },
+                            { step: '2', icon: 'auto_stories', title: t('kuliner.step2_title'), desc: t('kuliner.step2_desc') },
+                            { step: '3', icon: 'volunteer_activism', title: t('kuliner.step3_title'), desc: t('kuliner.step3_desc') },
                         ].map((item) => (
-                            <motion.div key={item.step} variants={fadeIn} whileHover={{ y: -6 }} className="relative p-8 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-surface-dark shadow-sm hover:shadow-xl transition-all text-center group">
-                                <div className="absolute -top-4 left-1/2 -translate-x-1/2 size-8 rounded-full bg-primary text-white text-sm font-black flex items-center justify-center shadow-lg shadow-primary/30">{item.step}</div>
-                                <div className="size-14 rounded-xl bg-primary/10 text-primary flex items-center justify-center mx-auto mb-5 mt-2 group-hover:bg-primary group-hover:text-white transition-colors">
+                            <motion.div key={item.step} variants={fadeIn} whileHover={{ y: -6 }} className="relative p-10 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-surface-dark shadow-sm hover:shadow-xl transition-all text-center group">
+                                <div className="absolute -top-4 left-1/2 -translate-x-1/2 size-10 rounded-full bg-primary text-white text-sm font-black flex items-center justify-center shadow-xl shadow-primary/30 border-4 border-background-light dark:border-background-dark">{item.step}</div>
+                                <div className="size-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mx-auto mb-6 mt-2 group-hover:bg-primary group-hover:text-white transition-colors">
                                     <span className="material-symbols-outlined text-3xl">{item.icon}</span>
                                 </div>
-                                <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-2">{item.title}</h3>
+                                <h3 className="text-xl font-black text-slate-900 dark:text-slate-100 mb-3 uppercase tracking-tight">{item.title}</h3>
                                 <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">{item.desc}</p>
                             </motion.div>
                         ))}
@@ -235,32 +410,32 @@ export default function EksplorasiKuliner() {
                 </section>
 
                 {/* ── CTA ── */}
-                <section className="py-16 px-4">
-                    <div className="container mx-auto max-w-4xl text-center">
+                <section className="py-20 px-4">
+                    <div className="container mx-auto max-w-5xl text-center">
                         <motion.div
-                            initial={{ scale: 0.9, opacity: 0 }}
+                            initial={{ scale: 0.95, opacity: 0 }}
                             whileInView={{ scale: 1, opacity: 1 }}
                             viewport={{ once: true, margin: '-80px' }}
-                            transition={{ duration: 0.6, type: 'spring', stiffness: 100 }}
-                            className="rounded-3xl bg-primary px-6 py-16 md:py-20 text-white overflow-hidden relative shadow-2xl"
+                            transition={{ duration: 0.8 }}
+                            className="rounded-[3rem] bg-slate-900 border border-white/10 px-6 py-20 text-white overflow-hidden relative shadow-2xl"
                         >
-                            <div className="absolute top-0 right-0 w-80 h-80 bg-white/20 rounded-full blur-3xl -mr-40 -mt-40"></div>
-                            <div className="absolute bottom-0 left-0 w-80 h-80 bg-black/10 rounded-full blur-3xl -ml-40 -mb-40"></div>
+                            <div className="absolute top-0 right-0 w-96 h-96 bg-primary/20 rounded-full blur-[100px] -mr-48 -mt-48"></div>
+                            <div className="absolute bottom-0 left-0 w-80 h-80 bg-primary/10 rounded-full blur-[80px] -ml-40 -mb-40"></div>
 
-                            <div className="relative z-10 space-y-6">
-                                <span className="material-symbols-outlined text-5xl text-white/90">restaurant_menu</span>
-                                <h2 className="text-3xl md:text-4xl font-black drop-shadow-md">{t('kuliner.cta_title')}</h2>
-                                <p className="text-lg text-white/90 max-w-xl mx-auto font-medium leading-relaxed">
+                            <div className="relative z-10 space-y-8 max-w-3xl mx-auto">
+                                <span className="material-symbols-outlined text-6xl text-primary animate-pulse">restaurant_menu</span>
+                                <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tight drop-shadow-lg">{t('kuliner.cta_title')}</h2>
+                                <p className="text-lg text-slate-400 font-medium leading-relaxed">
                                     {t('kuliner.cta_desc')}
                                 </p>
-                                <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+                                <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-6">
                                     <Link href="/kontribusi?type=kuliner">
-                                        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="px-8 py-4 bg-white text-primary rounded-xl font-bold shadow-xl hover:bg-slate-50 transition-colors">
+                                        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="px-10 py-5 bg-primary text-white rounded-2xl font-black uppercase tracking-widest shadow-2xl shadow-primary/30 hover:bg-primary/90 transition-all">
                                             {t('kuliner.cta_button')}
                                         </motion.button>
                                     </Link>
                                     <Link href="/wisata">
-                                        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="px-8 py-4 bg-white/10 backdrop-blur-md border border-white/30 text-white rounded-xl font-bold hover:bg-white/20 transition-colors flex items-center gap-2">
+                                        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="px-10 py-5 bg-white/5 backdrop-blur-md border border-white/10 text-white rounded-2xl font-black uppercase tracking-widest hover:bg-white/10 transition-all flex items-center gap-3">
                                             <span className="material-symbols-outlined">arrow_back</span> {t('wisata.back_to_tourism')}
                                         </motion.button>
                                     </Link>

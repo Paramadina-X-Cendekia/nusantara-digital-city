@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { useLanguage } from '../lib/LanguageContext';
+import ImageWithFallback from '../components/ImageWithFallback';
 
 const fadeIn = {
     hidden: { opacity: 0, y: 30 },
@@ -54,26 +55,31 @@ export default function KisahRakyat({ kisah }) {
                     </motion.div>
                 </section>
 
-                {/* ── Category Filter + List ── */}
-                <section className="container mx-auto px-4 lg:px-10 py-12">
-                    {/* Filter Tabs */}
-                    <div className="flex flex-wrap gap-3 mb-10 justify-center">
-                        {CATEGORIES(t).map((cat) => (
-                            <motion.button
-                                key={cat.id}
-                                whileTap={{ scale: 0.95 }}
-                                onClick={() => setActiveCategory(cat.id)}
-                                className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ${
-                                    activeCategory === cat.id
-                                        ? 'bg-primary text-white shadow-lg shadow-primary/30'
-                                        : 'bg-white dark:bg-surface-dark text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:border-primary/50 hover:text-primary'
-                                }`}
-                            >
-                                <span className="material-symbols-outlined text-xl">{cat.icon}</span>
-                                {cat.label}
-                            </motion.button>
-                        ))}
+                {/* ── Category Filter (Sticky Wrapper) ── */}
+                <div className="sticky top-16 z-40 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 transition-all duration-300">
+                    <div className="container mx-auto px-4 lg:px-10 py-3">
+                        <div className="flex flex-row overflow-x-auto flex-nowrap no-scrollbar scroll-smooth gap-3 justify-start md:justify-center">
+                            {CATEGORIES(t).map((cat) => (
+                                <motion.button
+                                    key={cat.id}
+                                    whileTap={{ scale: 0.95 }}
+                                    onClick={() => setActiveCategory(cat.id)}
+                                    className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 whitespace-nowrap ${
+                                        activeCategory === cat.id
+                                            ? 'bg-primary text-white shadow-lg shadow-primary/30'
+                                            : 'bg-white dark:bg-surface-dark text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:border-primary/50 hover:text-primary'
+                                    }`}
+                                >
+                                    <span className="material-symbols-outlined text-xl">{cat.icon}</span>
+                                    {cat.label}
+                                </motion.button>
+                            ))}
+                        </div>
                     </div>
+                </div>
+
+                {/* ── Stories Grid ── */}
+                <section className="container mx-auto px-4 lg:px-10 py-12">
 
                     {/* Stories Grid */}
                     <AnimatePresence mode="wait">
@@ -90,7 +96,7 @@ export default function KisahRakyat({ kisah }) {
                                         className="group bg-white dark:bg-surface-dark rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all border border-slate-200 dark:border-slate-800 cursor-pointer h-full"
                                     >
                                         <div className="h-56 overflow-hidden relative">
-                                            <img className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={item.title} src={item.img} />
+                                            <ImageWithFallback className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={item.title} src={item.img} fallbackIcon="auto_stories" />
                                             <div className="absolute top-4 left-4 bg-primary/90 backdrop-blur-md text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
                                                 {item.category}
                                             </div>

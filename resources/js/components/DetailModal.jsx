@@ -1,5 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLanguage } from '@/lib/LanguageContext';
+import ImageWithFallback from './ImageWithFallback';
 
 export default function DetailModal({ isOpen, onClose, contribution }) {
     const { lang, t } = useLanguage();
@@ -26,7 +28,7 @@ export default function DetailModal({ isOpen, onClose, contribution }) {
                     <div className="space-y-6">
                         {data.imageUrl && (
                             <div className="w-full h-48 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-sm">
-                                <img src={data.imageUrl} alt={data.artName} className="w-full h-full object-cover" />
+                                <ImageWithFallback src={data.imageUrl} alt={data.artName} className="w-full h-full object-cover" fallbackIcon="account_balance" />
                             </div>
                         )}
                         <div className="grid grid-cols-2 gap-6">

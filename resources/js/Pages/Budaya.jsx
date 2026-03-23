@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { useLanguage } from '@/lib/LanguageContext';
+import ImageWithFallback from '../components/ImageWithFallback';
 
 const fadeIn = {
     hidden: { opacity: 0, y: 30 },
@@ -232,7 +233,7 @@ export default function Budaya({ landmarks, budayaData }) {
                                     className="group bg-white dark:bg-surface-dark rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all border border-slate-200 dark:border-slate-800"
                                 >
                                     <div className="h-60 overflow-hidden">
-                                        <img className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt={item.name} src={item.img} />
+                                        <ImageWithFallback className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt={item.name} src={item.img} fallbackIcon="account_balance" />
                                     </div>
                                     <div className="p-8">
                                         <div className="flex items-center gap-2 text-primary text-xs font-bold mb-3">
@@ -264,7 +265,7 @@ export default function Budaya({ landmarks, budayaData }) {
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-4">
                                     <motion.div whileHover={{ rotate: -2 }} className="aspect-[3/4] rounded-2xl overflow-hidden shadow-xl transition-transform duration-500">
-                                        <img alt="Indonesian batik" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDuSfqiJRkxODrddf-6RuvSwa01DTHoOUXdRKz2IR0jmKl3N8-UEPriuFB8PXZrIcLuDTsdqF1lYffYUP92PwhvcC8MnPKxJDMsS2QUtab1HMvnBSSy9AVXBCm8CYoTzRWfnPZd1Knj9tbbOnEKiMFndx9rZsXZzKufNUznJMvFwKnEAKzlawa4AljZQVO8K4EeS3i2pbCMSadufRenMCeah9onXIrmig6iiv3zhUVhq37UShohWH8StvAr58umrth1NQiUVOjaYhI" />
+                                        <ImageWithFallback alt="Indonesian batik" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDuSfqiJRkxODrddf-6RuvSwa01DTHoOUXdRKz2IR0jmKl3N8-UEPriuFB8PXZrIcLuDTsdqF1lYffYUP92PwhvcC8MnPKxJDMsS2QUtab1HMvnBSSy9AVXBCm8CYoTzRWfnPZd1Knj9tbbOnEKiMFndx9rZsXZzKufNUznJMvFwKnEAKzlawa4AljZQVO8K4EeS3i2pbCMSadufRenMCeah9onXIrmig6iiv3zhUVhq37UShohWH8StvAr58umrth1NQiUVOjaYhI" fallbackIcon="palette" />
                                     </motion.div>
                                     <div className="bg-primary/10 backdrop-blur-md p-6 rounded-2xl border border-primary/20">
                                         <h4 className="font-bold text-primary mb-1">{t('budaya.motif_education')}</h4>
@@ -273,7 +274,7 @@ export default function Budaya({ landmarks, budayaData }) {
                                 </div>
                                 <div className="space-y-4 pt-12">
                                     <motion.div whileHover={{ rotate: 2 }} className="aspect-[3/4] rounded-2xl overflow-hidden shadow-xl transition-transform duration-500">
-                                        <img alt="Gamelan" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC0FVwiBcNLeL0Ect74iuTzIEMu4Ctu1txJ1hjjkUmcO2Lw2UXLQUbNWThHD10DWJvCcTR1n5fYVifSW04RoXkffrHqGsy2KS9Sy3yR4LsP_0QdIUz4km9YOjT2UKU8Sq7Uz37Udu6NYP6wD7F-OQYDl-6YjCnyGW-2vWUBPQWCdFFby1XTW-cd9aPvTftzfXyD3VuHgMoxnt-3ROirBkccx3b6jBCgSYb4aVZxeM92ma5_jqPpGTsXhlMBFtLbsT6pb5S0K_r4Y4Pz" />
+                                        <ImageWithFallback alt="Gamelan" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC0FVwiBcNLeL0Ect74iuTzIEMu4Ctu1txJ1hjjkUmcO2Lw2UXLQUbNWThHD10DWJvCcTR1n5fYVifSW04RoXkffrHqGsy2KS9Sy3yR4LsP_0QdIUz4km9YOjT2UKU8Sq7Uz37Udu6NYP6wD7F-OQYDl-6YjCnyGW-2vWUBPQWCdFFby1XTW-cd9aPvTftzfXyD3VuHgMoxnt-3ROirBkccx3b6jBCgSYb4aVZxeM92ma5_jqPpGTsXhlMBFtLbsT6pb5S0K_r4Y4Pz" fallbackIcon="music_note" />
                                     </motion.div>
                                     <div className="bg-primary/10 backdrop-blur-md p-6 rounded-2xl border border-primary/20">
                                         <h4 className="font-bold text-primary mb-1">{t('budaya.harmony_title')}</h4>
@@ -346,7 +347,7 @@ export default function Budaya({ landmarks, budayaData }) {
                             {/* Large Featured Card */}
                             <Link href="/kisah-rakyat/danau-toba" className="md:col-span-2 md:row-span-2">
                                 <motion.div variants={fadeIn} whileHover={{ y: -6 }} className="h-full relative group overflow-hidden rounded-2xl cursor-pointer">
-                                    <img alt="Mist covering a tropical mountain peak" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuABI-jZrAZvVvJvZH6KZBhH8ojB0S_qUfOa3DqgUaYGz6Z-8Av2l7SKksdPxULUMLQ2PPt0tedxQ5UzxZ8uxsWJ4309Ml6QTEqk05VJtG3GCPG67J_9zS8pvI_Z3Jj38w0A9AUBowVvCR6FCfJwoKcb6PZMC9L6sMLHqdxuAwf6sFjbO5p2T6chSgX_xOWisIGvJ9x-hwt82JPV2ErNwDb6h0_ZFsufnN14gPAo_fuMeESUTBYGy6djCPrWniloWLTPdf-xI3S_AdGa" />
+                                    <ImageWithFallback alt="Mist covering a tropical mountain peak" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuABI-jZrAZvVvJvZH6KZBhH8ojB0S_qUfOa3DqgUaYGz6Z-8Av2l7SKksdPxULUMLQ2PPt0tedxQ5UzxZ8uxsWJ4309Ml6QTEqk05VJtG3GCPG67J_9zS8pvI_Z3Jj38w0A9AUBowVvCR6FCfJwoKcb6PZMC9L6sMLHqdxuAwf6sFjbO5p2T6chSgX_xOWisIGvJ9x-hwt82JPV2ErNwDb6h0_ZFsufnN14gPAo_fuMeESUTBYGy6djCPrWniloWLTPdf-xI3S_AdGa" fallbackIcon="auto_stories" />
                                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/20 to-transparent flex flex-col justify-end p-8">
                                         <span className="bg-primary/20 backdrop-blur-md border border-primary/30 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase w-fit mb-4 tracking-widest">{t('budaya.immersive_storytelling')}</span>
                                         <h3 className="text-white text-2xl md:text-3xl font-black mb-3">Asal Usul Danau Toba</h3>
@@ -361,7 +362,7 @@ export default function Budaya({ landmarks, budayaData }) {
                             {/* Small Card: Kisah Barong */}
                             <Link href="/kisah-rakyat/kisah-barong" className="h-full">
                                 <motion.div variants={fadeIn} whileHover={{ y: -6 }} className="h-full relative group overflow-hidden rounded-2xl cursor-pointer">
-                                    <img alt="Traditional Balinese mask" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3HL3jSj75ITMMUH81MR8HteSGSLXB5OK2Vw2pYzIX1_RdJJdx6mTPv1qP6BodRZvz0UY0IAUNCNlDNDWMlX0Qvpb1hRFPzBRdGlvd2BSseIrepsKh7sZSYe3o1vkCrEK_c782wpr9mGFVkYKtewXjaXflZngRAN5Y1c1X6reZgDguvHaKYQJTv7JKez143UtAoWTjbsdNbl45q0Ii1V6nyOSHxnts744TRJGshKmwNYiNeokkN8crPAlkXwgQjPC24SuRu7_ByPGc" />
+                                    <ImageWithFallback alt="Traditional Balinese mask" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3HL3jSj75ITMMUH81MR8HteSGSLXB5OK2Vw2pYzIX1_RdJJdx6mTPv1qP6BodRZvz0UY0IAUNCNlDNDWMlX0Qvpb1hRFPzBRdGlvd2BSseIrepsKh7sZSYe3o1vkCrEK_c782wpr9mGFVkYKtewXjaXflZngRAN5Y1c1X6reZgDguvHaKYQJTv7JKez143UtAoWTjbsdNbl45q0Ii1V6nyOSHxnts744TRJGshKmwNYiNeokkN8crPAlkXwgQjPC24SuRu7_ByPGc" fallbackIcon="theater_comedy" />
                                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent flex flex-col justify-end p-6">
                                         <h3 className="text-white font-bold text-lg">Kisah Barong</h3>
                                     </div>
@@ -371,7 +372,7 @@ export default function Budaya({ landmarks, budayaData }) {
                             {/* Small Card: Lutung Kasarung */}
                             <Link href="/kisah-rakyat/lutung-kasarung" className="h-full">
                                 <motion.div variants={fadeIn} whileHover={{ y: -6 }} className="h-full relative group overflow-hidden rounded-2xl cursor-pointer">
-                                    <img alt="Tropical islands" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOk7eFXM8Z7djeW87pg0CemNhUYyqvVOTbTru4odSwbuliignpFMApDGhfNKlW6kKyQlCbzJ3ohIoFaRnWWDgvQfazHGAkAjHoSKngL3-wQdr1HcITBwNXh6s5QVGFLqfPkQo7SDDW_mY-6RcScGnPl4Ewr-Vg_6va3QV-h4tnOTTygXWWbXsrbtnnmk6_AzN-1zBFS-khioMRQ3qfwSeVgNhYKSFkLW9kkjlvFAKSOrwFbzI-SYHp13KInW70cdrV_8nUtZOKZ2BQ" />
+                                    <ImageWithFallback alt="Tropical islands" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOk7eFXM8Z7djeW87pg0CemNhUYyqvVOTbTru4odSwbuliignpFMApDGhfNKlW6kKyQlCbzJ3ohIoFaRnWWDgvQfazHGAkAjHoSKngL3-wQdr1HcITBwNXh6s5QVGFLqfPkQo7SDDW_mY-6RcScGnPl4Ewr-Vg_6va3QV-h4tnOTTygXWWbXsrbtnnmk6_AzN-1zBFS-khioMRQ3qfwSeVgNhYKSFkLW9kkjlvFAKSOrwFbzI-SYHp13KInW70cdrV_8nUtZOKZ2BQ" fallbackIcon="menu_book" />
                                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent flex flex-col justify-end p-6">
                                         <h3 className="text-white font-bold text-lg">Lutung Kasarung</h3>
                                     </div>
@@ -381,7 +382,7 @@ export default function Budaya({ landmarks, budayaData }) {
                             {/* Wide Card: Nyi Roro Kidul */}
                             <Link href="/kisah-rakyat/nyi-roro-kidul" className="md:col-span-2">
                                 <motion.div variants={fadeIn} whileHover={{ y: -6 }} className="h-full relative group overflow-hidden rounded-2xl cursor-pointer">
-                                    <img alt="Ocean waves" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbqTGE02a-JEPl7uSbsvhYFGR9iJMoP63A1YFf_OykvI8Lxqk8rAkvf2gE-rGLI_zJbCnMJ4Qqz1ugTSO4gVn2IpIeks3k-FlN4O7penKnQXpXJvzj80g8DfHM5lz8nIJuE4lTWAURjignyWb2naYrGxzpdEdkD6hSgNVhByYEUGGraKPt4xPK3QQkcLdVWPTm0hF8lcvDSaDuws_2tM0XLZFLzKM7dShu7gPPVJcUQ_ksn8-7wM9O5p-fFlyGc39uZesDGZInGSX7" />
+                                    <ImageWithFallback alt="Ocean waves" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbqTGE02a-JEPl7uSbsvhYFGR9iJMoP63A1YFf_OykvI8Lxqk8rAkvf2gE-rGLI_zJbCnMJ4Qqz1ugTSO4gVn2IpIeks3k-FlN4O7penKnQXpXJvzj80g8DfHM5lz8nIJuE4lTWAURjignyWb2naYrGxzpdEdkD6hSgNVhByYEUGGraKPt4xPK3QQkcLdVWPTm0hF8lcvDSaDuws_2tM0XLZFLzKM7dShu7gPPVJcUQ_ksn8-7wM9O5p-fFlyGc39uZesDGZInGSX7" fallbackIcon="waves" />
                                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent flex flex-col justify-end p-8">
                                         <h3 className="text-white text-xl font-bold">Legenda Nyi Roro Kidul</h3>
                                         <p className="text-slate-300 text-sm mt-2">Misteri penguasa laut selatan dalam perspektif digital art.</p>
