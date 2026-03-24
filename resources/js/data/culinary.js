@@ -4,7 +4,7 @@ export const getCulinaryData = (t) => ({
             id: 1, 
             name: 'Rendang Padang', 
             origin: 'Sumatera Barat', 
-            desc: t('wisata.dest10_desc'), 
+            desc: t('kuliner.dish1_desc'), 
             img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCAv_ltKBeh7xx7xlev2-yXctsKVKFGGhCEFOga2B4xdOAx8Vm7TeDtLJSaLUEyZlHfq2qvwEM7tivFGTHR3c3yKJ2kIOsqdNurIdOP6Hp8CrOqnRTkF0Li4Luj1RAkWiM7Dq1jXQb035bh71T_w5ozHCPtlWYpy_kZI3K4YRyM5zlnMvaxjotFFrZyMpFKiQGK_IMN12il5LH6gf9kTUYeN233QEYkfIIaVKepUOEI9nG9wpXxXNh9g3yQ8FeL5I7Lfp2YeAGTGRx3', 
             status: t('kuliner.verified'),
             ingredients: [
@@ -17,7 +17,7 @@ export const getCulinaryData = (t) => ({
             id: 2, 
             name: 'Sate Madura', 
             origin: 'Jawa Timur', 
-            desc: t('wisata.dest10_desc'), 
+            desc: t('kuliner.dish2_desc'), 
             img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAU-vWNOQzD80OgXv38CD0s5NF26JbK4pSh9Jg7AT8vMNvozSNs9gNS51DGbBsLrrmWfcX2U9Gepf2eA4PfDDeVg65oJKCLwBSaVu9HQ9KFoFLJhpumlmWsd_NVPhEvDMCC7nwpHk96tyo4HdR-J1RqgbANkD0OYQ1cuofxJpj8Ieas9CJnU1rd5eRbHkoX6DwFSSe2xR7PaZae-aewjdz6Bdq1blyfmzniyCujBm-VWXPjNlXTIBM0jISVRpJtTOUbCaUFknlW9Atj', 
             status: t('kuliner.verified'),
             ingredients: [
@@ -30,7 +30,7 @@ export const getCulinaryData = (t) => ({
             id: 3, 
             name: 'Gudeg Jogja', 
             origin: 'Yogyakarta', 
-            desc: t('wisata.dest10_desc'), 
+            desc: t('kuliner.dish3_desc'), 
             img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDG4EFxcBpgXIgCaq7MmUNfwNpEWPDL3nUlyPfXBMnGRqQpwaJXYW_-W5esyNgXuX2khxDfJDRgLB9wEhAFBlw1VWzurRyB-2oRngkWiMZVKtRh1vrOkSVGzRQMcbBUwdmpAi60PJtaaQLMaWZ_ohe8gd0b3TpcOBrXBp3YOySdBthVFe_PJ3hwPdtfTJiyEk92nuyb3NVXUtIWMPx8nTnu7oSFGVMRDJkMX45F7-ynj3Uy6Q5NIRsdq1e7cI8hybqEnmVtKFdk_5TK', 
             status: t('kuliner.verified'),
             ingredients: [

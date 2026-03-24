@@ -102,9 +102,8 @@ function LeafletMap({ destinations, activeSite, setActiveSite, t }) {
                             <h3 style={{ margin: '0 0 4px', fontWeight: 800, fontSize: '14px' }}>{d.name}</h3>
                             <p style={{ margin: '0 0 4px', color: '#368ce2', fontSize: '11px', fontWeight: 600 }}>{d.location}</p>
                             <p style={{ margin: '0 0 8px', color: '#64748b', fontSize: '11px', lineHeight: 1.5 }}>{d.desc}</p>
-                             <p style={{ margin: '0 0 8px', color: '#64748b', fontSize: '11px', lineHeight: 1.5 }}>{d.desc}</p>
-                             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                 <span style={{ fontWeight: 800, fontSize: '11px', color: '#368ce2' }}>{d.category.toUpperCase()}</span>
+                             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '4px' }}>
+                                 <span style={{ fontWeight: 800, fontSize: '11px', color: CAT_COLORS[d.category], backgroundColor: `${CAT_COLORS[d.category]}15`, padding: '2px 8px', borderRadius: '4px' }}>{d.category.toUpperCase()}</span>
                              </div>
                         </div>
                     </Popup>

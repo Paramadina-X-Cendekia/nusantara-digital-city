@@ -117,7 +117,19 @@ export default function EksplorasiKuliner() {
                             <motion.div key="menu" initial="hidden" animate="visible" exit="hidden" variants={stagger}>
                                 <motion.div variants={fadeIn} className="text-center mb-16">
                                     <h2 className="text-4xl font-black text-slate-900 dark:text-slate-100 mb-4 uppercase tracking-tight">{t('kuliner.digital_menu_title')}</h2>
-                                    <p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">{t('kuliner.digital_menu_desc')}</p>
+                                    <p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto mb-8">{t('kuliner.digital_menu_desc')}</p>
+                                    
+                                    <div className="max-w-3xl mx-auto p-6 bg-primary/5 rounded-[2rem] border border-primary/20 flex flex-col md:flex-row items-center gap-6 text-left">
+                                        <div className="size-16 rounded-2xl bg-white dark:bg-slate-800 shadow-xl flex items-center justify-center shrink-0">
+                                            <span className="material-symbols-outlined text-3xl text-primary">qr_code_2</span>
+                                        </div>
+                                        <div>
+                                            <h4 className="font-black text-slate-900 dark:text-white uppercase tracking-wider text-sm mb-1">Hygienic Digital Curation</h4>
+                                            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
+                                                Akses menu secara digital tanpa sentuhan untuk pengalaman kuliner yang lebih aman. Setiap hidangan dilengkapi dengan informasi komposisi rempah dan anjuran penyajian yang autentik.
+                                            </p>
+                                        </div>
+                                    </div>
                                 </motion.div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                                     {culinaryData.dishes.map((dish) => (
@@ -162,7 +174,19 @@ export default function EksplorasiKuliner() {
                             <motion.div key="story" initial="hidden" animate="visible" exit="hidden" variants={stagger}>
                                 <motion.div variants={fadeIn} className="text-center mb-16">
                                     <h2 className="text-4xl font-black text-slate-900 dark:text-slate-100 mb-4 uppercase tracking-tight">{t('kuliner.bite_story_title')}</h2>
-                                    <p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">{t('kuliner.bite_story_desc')}</p>
+                                    <p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto mb-8">{t('kuliner.bite_story_desc')}</p>
+
+                                    <div className="max-w-3xl mx-auto p-6 bg-emerald-500/5 rounded-[2rem] border border-emerald-500/20 flex flex-col md:flex-row items-center gap-6 text-left">
+                                        <div className="size-16 rounded-2xl bg-white dark:bg-slate-800 shadow-xl flex items-center justify-center shrink-0">
+                                            <span className="material-symbols-outlined text-3xl text-emerald-600">agriculture</span>
+                                        </div>
+                                        <div>
+                                            <h4 className="font-black text-slate-900 dark:text-white uppercase tracking-wider text-sm mb-1">Local Farm Traceability</h4>
+                                            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
+                                                Kenali pahlawan pangan kita. Melalui pilar digitalisasi ini, Anda dapat menulusuri asal-usul bahan baku langsung dari lahan petani lokal hingga ke meja makan Anda.
+                                            </p>
+                                        </div>
+                                    </div>
                                 </motion.div>
                                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                                     {culinaryData.ingredients.map((item) => (
@@ -436,7 +460,7 @@ export default function EksplorasiKuliner() {
                                     </Link>
                                     <Link href="/wisata">
                                         <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="px-10 py-5 bg-white/5 backdrop-blur-md border border-white/10 text-white rounded-2xl font-black uppercase tracking-widest hover:bg-white/10 transition-all flex items-center gap-3">
-                                            <span className="material-symbols-outlined">arrow_back</span> {t('wisata.back_to_tourism')}
+                                            <span className="material-symbols-outlined">arrow_back</span> {t('peta_wisata.back_to_tourism')}
                                         </motion.button>
                                     </Link>
                                 </div>

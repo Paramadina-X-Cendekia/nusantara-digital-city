@@ -3,8 +3,10 @@ import { Head, router } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import DashboardLayout from '../../Layouts/DashboardLayout';
 import DetailModal from '../../components/DetailModal';
+import { useLanguage } from '../../lib/LanguageContext';
 
 export default function AdminDashboard({ auth, allContributions = [], pendingCount = 0 }) {
+    const { t } = useLanguage();
     const [activeTab, setActiveTab] = useState('kota');
     const [selectedContribution, setSelectedContribution] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Kreait\Laravel\Firebase\Facades\Firebase;
 
 class KisahController extends Controller
 {
@@ -63,21 +64,79 @@ class KisahController extends Controller
 
     public function index()
     {
+        $allKisah = $this->getKisahData();
+
+        try {
+            $database = Firebase::project('app')->database();
+            $snapshot = $database->getReference('seni_budaya')->getSnapshot();
+
+            if ($snapshot->hasChildren()) {
+                foreach ($snapshot->getValue() as $id => $data) {
+                    if (isset($data['artCategory']) && $data['artCategory'] === 'cerita' && (!isset($data['status']) || $data['status'] === 'approved')) {
+                        $allKisah[$id] = [
+                            'slug' => $id,
+                            'title' => $data['artName'] ?? 'Untitled',
+                            'category' => $data['artSubCategory'] ?? 'Cerita Rakyat',
+                            'origin' => $data['origin'] ?? '',
+                            'desc' => $data['shortDesc'] ?? ($data['description'] ?? ''),
+                            'longDesc' => $data['description'] ?? '',
+                            'img' => $data['imageUrl'] ?? '',
+                            'moral' => $data['moral'] ?? '',
+                            'characters' => $data['characters'] ?? [],
+                            'videoUrl' => $data['videoLink'] ?? '',
+                        ];
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            // Silently ignore if Firebase fails
+        }
+
         return Inertia::render('KisahRakyat', [
-            'kisah' => array_values($this->getKisahData()),
+            'kisah' => array_values($allKisah),
         ]);
     }
 
     public function show($slug)
     {
         $allKisah = $this->getKisahData();
+        $story = null;
 
-        if (!isset($allKisah[$slug])) {
+        try {
+            $database = Firebase::project('app')->database();
+            $snapshot = $database->getReference('seni_budaya/' . $slug)->getSnapshot();
+            
+            if ($snapshot->exists()) {
+                $data = $snapshot->getValue();
+                if (isset($data['artCategory']) && $data['artCategory'] === 'cerita' && (!isset($data['status']) || $data['status'] === 'approved')) {
+                    $story = [
+                        'slug' => $slug,
+                        'title' => $data['artName'] ?? 'Untitled',
+                        'category' => $data['artSubCategory'] ?? 'Cerita Rakyat',
+                        'origin' => $data['origin'] ?? '',
+                        'desc' => $data['shortDesc'] ?? ($data['description'] ?? ''),
+                        'longDesc' => $data['description'] ?? '',
+                        'img' => $data['imageUrl'] ?? '',
+                        'moral' => $data['moral'] ?? '',
+                        'characters' => $data['characters'] ?? [],
+                        'videoUrl' => $data['videoLink'] ?? '',
+                    ];
+                }
+            }
+        } catch (\Exception $e) {
+            // Silently ignore
+        }
+
+        if (!$story && isset($allKisah[$slug])) {
+            $story = $allKisah[$slug];
+        }
+
+        if (!$story) {
             abort(404, 'Kisah tidak ditemukan');
         }
 
         return Inertia::render('DetailKisah', [
-            'story' => $allKisah[$slug],
+            'story' => $story,
         ]);
     }
 }

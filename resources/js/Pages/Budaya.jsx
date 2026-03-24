@@ -91,7 +91,66 @@ export default function Budaya({ landmarks, budayaData }) {
             return items.sort((a, b) => b.name.localeCompare(a.name));
         }
         return items;
-    }, [sortOrder]);
+    }, [sortOrder, landmarks]);
+
+    const folkloreItems = useMemo(() => {
+        let items = [];
+        if (Array.isArray(budayaData)) {
+            items = budayaData.filter(b => b.artCategory === 'cerita' && (!b.status || b.status === 'approved'));
+        }
+        return items.slice(0, 4);
+    }, [budayaData]);
+
+    const renderFolkloreCard = (item, type) => {
+        if (!item) return null;
+        
+        const href = `/kisah-rakyat/${item.id || item.slug}`;
+        const title = item.artName || 'Untitled';
+        const desc = item.shortDesc || item.description || '';
+        const img = item.imageUrl || '';
+        const category = item.artSubCategory || 'Cerita Rakyat';
+
+        if (type === 'large') {
+            return (
+                <Link key={item.id} href={href} className="md:col-span-2 md:row-span-2 h-full block">
+                    <motion.div variants={fadeIn} whileHover={{ y: -6 }} className="h-full relative group overflow-hidden rounded-2xl cursor-pointer">
+                        <ImageWithFallback alt={title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src={img} fallbackIcon="auto_stories" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/20 to-transparent flex flex-col justify-end p-8">
+                            <span className="bg-primary/20 backdrop-blur-md border border-primary/30 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase w-fit mb-4 tracking-widest">{category}</span>
+                            <h3 className="text-white text-2xl md:text-3xl font-black mb-3">{title}</h3>
+                            <p className="text-slate-200 text-sm max-w-sm line-clamp-2">{desc}</p>
+                            <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="mt-6 w-fit bg-primary text-white px-6 py-2 rounded-lg font-bold text-sm hover:bg-primary/90 transition-all shadow-lg shadow-primary/20">
+                                {t('budaya.read_now')}
+                            </motion.button>
+                        </div>
+                    </motion.div>
+                </Link>
+            );
+        } else if (type === 'small') {
+            return (
+                <Link key={item.id} href={href} className="h-full block">
+                    <motion.div variants={fadeIn} whileHover={{ y: -6 }} className="h-full relative group overflow-hidden rounded-2xl cursor-pointer">
+                        <ImageWithFallback alt={title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src={img} fallbackIcon="library_books" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent flex flex-col justify-end p-6">
+                            <h3 className="text-white font-bold text-lg">{title}</h3>
+                        </div>
+                    </motion.div>
+                </Link>
+            );
+        } else if (type === 'wide') {
+            return (
+                <Link key={item.id} href={href} className="md:col-span-2 h-full block">
+                    <motion.div variants={fadeIn} whileHover={{ y: -6 }} className="h-full relative group overflow-hidden rounded-2xl cursor-pointer">
+                        <ImageWithFallback alt={title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src={img} fallbackIcon="auto_stories" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent flex flex-col justify-end p-8">
+                            <h3 className="text-white text-xl font-bold">{title}</h3>
+                            <p className="text-slate-300 text-sm mt-2 line-clamp-1">{desc}</p>
+                        </div>
+                    </motion.div>
+                </Link>
+            );
+        }
+    };
 
     const handleTabClick = (id) => {
         setActiveTab(id);
@@ -219,9 +278,9 @@ export default function Budaya({ landmarks, budayaData }) {
                                 <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">{t('budaya.section_historical_title')}</h2>
                                 <p className="text-slate-500 dark:text-slate-400">{t('budaya.section_historical_desc')}</p>
                             </div>
-                            <motion.a whileHover={{ x: 5 }} className="hidden md:flex items-center gap-2 text-primary font-bold cursor-pointer hover:underline">
+                            <Link href="/situs-bersejarah" className="hidden md:flex items-center gap-2 text-primary font-bold cursor-pointer hover:underline">
                                 {t('budaya.view_all')} <span className="material-symbols-outlined text-sm">arrow_forward</span>
-                            </motion.a>
+                            </Link>
                         </motion.div>
 
                         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -344,51 +403,10 @@ export default function Budaya({ landmarks, budayaData }) {
                         </motion.div>
 
                         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger} className="grid grid-cols-1 md:grid-cols-4 gap-6 auto-rows-[280px] md:auto-rows-[1fr]" style={{ gridTemplateRows: 'repeat(2, minmax(280px, 1fr))' }}>
-                            {/* Large Featured Card */}
-                            <Link href="/kisah-rakyat/danau-toba" className="md:col-span-2 md:row-span-2">
-                                <motion.div variants={fadeIn} whileHover={{ y: -6 }} className="h-full relative group overflow-hidden rounded-2xl cursor-pointer">
-                                    <ImageWithFallback alt="Mist covering a tropical mountain peak" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuABI-jZrAZvVvJvZH6KZBhH8ojB0S_qUfOa3DqgUaYGz6Z-8Av2l7SKksdPxULUMLQ2PPt0tedxQ5UzxZ8uxsWJ4309Ml6QTEqk05VJtG3GCPG67J_9zS8pvI_Z3Jj38w0A9AUBowVvCR6FCfJwoKcb6PZMC9L6sMLHqdxuAwf6sFjbO5p2T6chSgX_xOWisIGvJ9x-hwt82JPV2ErNwDb6h0_ZFsufnN14gPAo_fuMeESUTBYGy6djCPrWniloWLTPdf-xI3S_AdGa" fallbackIcon="auto_stories" />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/20 to-transparent flex flex-col justify-end p-8">
-                                        <span className="bg-primary/20 backdrop-blur-md border border-primary/30 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase w-fit mb-4 tracking-widest">{t('budaya.immersive_storytelling')}</span>
-                                        <h3 className="text-white text-2xl md:text-3xl font-black mb-3">Asal Usul Danau Toba</h3>
-                                        <p className="text-slate-200 text-sm max-w-sm">Jelajahi kisah pengkhianatan janji melalui visualisasi digital yang menghidupkan legenda vulkanik ini.</p>
-                                        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="mt-6 w-fit bg-primary text-white px-6 py-2 rounded-lg font-bold text-sm hover:bg-primary/90 transition-all shadow-lg shadow-primary/20">
-                                            {t('budaya.read_now')}
-                                        </motion.button>
-                                    </div>
-                                </motion.div>
-                            </Link>
-
-                            {/* Small Card: Kisah Barong */}
-                            <Link href="/kisah-rakyat/kisah-barong" className="h-full">
-                                <motion.div variants={fadeIn} whileHover={{ y: -6 }} className="h-full relative group overflow-hidden rounded-2xl cursor-pointer">
-                                    <ImageWithFallback alt="Traditional Balinese mask" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3HL3jSj75ITMMUH81MR8HteSGSLXB5OK2Vw2pYzIX1_RdJJdx6mTPv1qP6BodRZvz0UY0IAUNCNlDNDWMlX0Qvpb1hRFPzBRdGlvd2BSseIrepsKh7sZSYe3o1vkCrEK_c782wpr9mGFVkYKtewXjaXflZngRAN5Y1c1X6reZgDguvHaKYQJTv7JKez143UtAoWTjbsdNbl45q0Ii1V6nyOSHxnts744TRJGshKmwNYiNeokkN8crPAlkXwgQjPC24SuRu7_ByPGc" fallbackIcon="theater_comedy" />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent flex flex-col justify-end p-6">
-                                        <h3 className="text-white font-bold text-lg">Kisah Barong</h3>
-                                    </div>
-                                </motion.div>
-                            </Link>
-
-                            {/* Small Card: Lutung Kasarung */}
-                            <Link href="/kisah-rakyat/lutung-kasarung" className="h-full">
-                                <motion.div variants={fadeIn} whileHover={{ y: -6 }} className="h-full relative group overflow-hidden rounded-2xl cursor-pointer">
-                                    <ImageWithFallback alt="Tropical islands" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOk7eFXM8Z7djeW87pg0CemNhUYyqvVOTbTru4odSwbuliignpFMApDGhfNKlW6kKyQlCbzJ3ohIoFaRnWWDgvQfazHGAkAjHoSKngL3-wQdr1HcITBwNXh6s5QVGFLqfPkQo7SDDW_mY-6RcScGnPl4Ewr-Vg_6va3QV-h4tnOTTygXWWbXsrbtnnmk6_AzN-1zBFS-khioMRQ3qfwSeVgNhYKSFkLW9kkjlvFAKSOrwFbzI-SYHp13KInW70cdrV_8nUtZOKZ2BQ" fallbackIcon="menu_book" />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent flex flex-col justify-end p-6">
-                                        <h3 className="text-white font-bold text-lg">Lutung Kasarung</h3>
-                                    </div>
-                                </motion.div>
-                            </Link>
-
-                            {/* Wide Card: Nyi Roro Kidul */}
-                            <Link href="/kisah-rakyat/nyi-roro-kidul" className="md:col-span-2">
-                                <motion.div variants={fadeIn} whileHover={{ y: -6 }} className="h-full relative group overflow-hidden rounded-2xl cursor-pointer">
-                                    <ImageWithFallback alt="Ocean waves" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbqTGE02a-JEPl7uSbsvhYFGR9iJMoP63A1YFf_OykvI8Lxqk8rAkvf2gE-rGLI_zJbCnMJ4Qqz1ugTSO4gVn2IpIeks3k-FlN4O7penKnQXpXJvzj80g8DfHM5lz8nIJuE4lTWAURjignyWb2naYrGxzpdEdkD6hSgNVhByYEUGGraKPt4xPK3QQkcLdVWPTm0hF8lcvDSaDuws_2tM0XLZFLzKM7dShu7gPPVJcUQ_ksn8-7wM9O5p-fFlyGc39uZesDGZInGSX7" fallbackIcon="waves" />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent flex flex-col justify-end p-8">
-                                        <h3 className="text-white text-xl font-bold">Legenda Nyi Roro Kidul</h3>
-                                        <p className="text-slate-300 text-sm mt-2">Misteri penguasa laut selatan dalam perspektif digital art.</p>
-                                    </div>
-                                </motion.div>
-                            </Link>
+                            {folkloreItems[0] && renderFolkloreCard(folkloreItems[0], 'large')}
+                            {folkloreItems[1] && renderFolkloreCard(folkloreItems[1], 'small')}
+                            {folkloreItems[2] && renderFolkloreCard(folkloreItems[2], 'small')}
+                            {folkloreItems[3] && renderFolkloreCard(folkloreItems[3], 'wide')}
                         </motion.div>
                     </section>
 

@@ -1,4 +1,4 @@
-import { useState, useRef, Suspense } from 'react';
+import React, { useState, useRef, Suspense, useEffect } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Canvas, useFrame } from '@react-three/fiber';
@@ -8,11 +8,26 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { useLanguage } from '@/lib/LanguageContext';
 import ImageWithFallback from '../components/ImageWithFallback';
+import ErrorBoundary from '../components/ErrorBoundary';
+
+// Simple Error Boundary for 3D/Audio
+class ThreeErrorHandler extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { hasError: false };
+    }
+    static getDerivedStateFromError(error) { return { hasError: true }; }
+    componentDidCatch(error, errorInfo) { console.error("Three.js Error:", error, errorInfo); }
+    render() {
+        if (this.state.hasError) return this.props.fallback;
+        return this.props.children;
+    }
+}
 
 // Auto 3D Viewer for Batik (Turns 2D image into 3D T-Shirt)
 function BatikCloth({ imgUrl }) {
     const meshRef = useRef();
-    const texture = useTexture(imgUrl);
+    const texture = useTexture(imgUrl || 'https://images.unsplash.com/photo-1544787210-28240ac9ac0a?q=80&w=800');
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
     texture.repeat.set(0.5, 0.5);
@@ -66,15 +81,17 @@ function BatikCloth({ imgUrl }) {
 function Auto3DViewer({ imgUrl, t }) {
     return (
         <div className="w-full h-full relative cursor-move">
-            <Canvas camera={{ position: [0, 0, 8], fov: 50 }}>
-                <ambientLight intensity={0.5} />
-                <directionalLight position={[10, 10, 10]} intensity={1.5} castShadow />
-                <directionalLight position={[-10, -10, -10]} intensity={0.5} />
-                <Suspense fallback={null}>
-                    <BatikCloth imgUrl={imgUrl} />
-                </Suspense>
-                <OrbitControls enableZoom={true} enablePan={false} autoRotate autoRotateSpeed={1.5} />
-            </Canvas>
+            <ThreeErrorHandler fallback={<div className="w-full h-full flex items-center justify-center bg-slate-100 dark:bg-slate-900 text-slate-500 text-xs italic">Gagal memuat viewer 3D</div>}>
+                <Canvas camera={{ position: [0, 0, 8], fov: 50 }}>
+                    <ambientLight intensity={0.5} />
+                    <directionalLight position={[10, 10, 10]} intensity={1.5} castShadow />
+                    <directionalLight position={[-10, -10, -10]} intensity={0.5} />
+                    <Suspense fallback={null}>
+                        <BatikCloth imgUrl={imgUrl} />
+                    </Suspense>
+                    <OrbitControls enableZoom={true} enablePan={false} autoRotate autoRotateSpeed={1.5} />
+                </Canvas>
+            </ThreeErrorHandler>
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-slate-900/60 backdrop-blur-md px-4 py-2 rounded-full text-white text-xs font-medium flex items-center gap-2 pointer-events-none">
                 <span className="material-symbols-outlined text-[16px]">360</span> {t('art_detail.touch_hotspot_desc')}
             </div>
@@ -98,20 +115,161 @@ const TAB_MAP = (t) => [
     { id: 'video', label: t('art_detail.documentary_video'), icon: 'video_library' },
 ];
 
-export default function DetailSeni({ art }) {
+export default function DetailSeniWrapper(props) {
+    return (
+        <ErrorBoundary>
+            <DetailSeni {...props} />
+        </ErrorBoundary>
+    );
+}
+
+function DetailSeni({ art }) {
+    console.log("Rendering DetailSeni with art:", art);
     const { t } = useLanguage();
     const [activeTab, setActiveTab] = useState('galeri');
     const [galleryIdx, setGalleryIdx] = useState(0);
+    const [volume, setVolume] = useState(0.8);
+    const [echo, setEcho] = useState(0.3);
+    const [isPlaying, setIsPlaying] = useState(false);
+    const audioCtxRef = useRef(null);
+    const gainNodeRef = useRef(null);
+    const delayNodeRef = useRef(null);
+    const feedbackNodeRef = useRef(null);
+    const analyserNodeRef = useRef(null);
+    const audioSourceRef = useRef(null);
+    const barsContainerRef = useRef(null);
+    const animationFrameRef = useRef(null);
+
+    if (!art) {
+        console.warn("DetailSeni: No art object provided");
+        return null;
+    }
 
     // Filter tabs based on asset capabilities
-    const tabs = TAB_MAP(t).filter((t) => {
-        if (t.id === 'audio' && !art.hasAudio) return false;
-        if (t.id === 'ar' && !art.hasAR) return false;
+    const tabs = (TAB_MAP(t) || []).filter((tab) => {
+        if (tab.id === 'audio' && !art.hasAudio) return false;
+        if (tab.id === 'ar' && !art.hasAR) return false;
+        if (tab.id === 'video' && !art.videoUrl) return false;
         return true;
     });
 
+    const initAudio = async () => {
+        if (!audioCtxRef.current) {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContext) return;
+            audioCtxRef.current = new AudioContext();
+
+            gainNodeRef.current = audioCtxRef.current.createGain();
+            delayNodeRef.current = audioCtxRef.current.createDelay();
+            feedbackNodeRef.current = audioCtxRef.current.createGain();
+            analyserNodeRef.current = audioCtxRef.current.createAnalyser();
+
+            analyserNodeRef.current.fftSize = 64;
+
+            delayNodeRef.current.delayTime.value = 0.4;
+            feedbackNodeRef.current.gain.value = echo;
+            gainNodeRef.current.gain.value = volume;
+
+            // Audio Graph:
+            // source -> analyser -> gainNode (master) -> destination
+            // analyser -> delayNode -> feedbackGain -> delayNode
+            // delayNode -> gainNode (master)
+
+            const audioEl = new Audio(art.audioUrl || '/audio/gamelan_indo.mp3');
+            audioEl.crossOrigin = "anonymous";
+            audioEl.loop = true;
+
+            const source = audioCtxRef.current.createMediaElementSource(audioEl);
+            
+            source.connect(analyserNodeRef.current);
+            analyserNodeRef.current.connect(gainNodeRef.current);
+            analyserNodeRef.current.connect(delayNodeRef.current);
+            
+            delayNodeRef.current.connect(feedbackNodeRef.current);
+            feedbackNodeRef.current.connect(delayNodeRef.current);
+            delayNodeRef.current.connect(gainNodeRef.current);
+            
+            gainNodeRef.current.connect(audioCtxRef.current.destination);
+
+            audioSourceRef.current = audioEl;
+        }
+    };
+
+    const togglePlay = async () => {
+        if (!audioCtxRef.current) await initAudio();
+
+        if (audioCtxRef.current.state === 'suspended') {
+            await audioCtxRef.current.resume();
+        }
+
+        if (isPlaying) {
+            audioSourceRef.current.pause();
+            setIsPlaying(false);
+        } else {
+            audioSourceRef.current.play();
+            setIsPlaying(true);
+        }
+    };
+
+    useEffect(() => {
+        if (gainNodeRef.current) gainNodeRef.current.gain.value = volume;
+    }, [volume]);
+
+    useEffect(() => {
+        if (feedbackNodeRef.current) feedbackNodeRef.current.gain.value = echo;
+    }, [echo]);
+
+    const updateVisualizer = () => {
+        if (!analyserNodeRef.current || !barsContainerRef.current) return;
+        
+        const dataArray = new Uint8Array(analyserNodeRef.current.frequencyBinCount);
+        analyserNodeRef.current.getByteFrequencyData(dataArray);
+        
+        const bars = barsContainerRef.current.children;
+        const step = Math.max(1, Math.floor(dataArray.length / bars.length));
+        
+        for (let i = 0; i < bars.length; i++) {
+            let sum = 0;
+            for(let j = 0; j < step; j++) {
+                sum += dataArray[i * step + j] || 0;
+            }
+            const average = sum / step;
+            const height = 10 + (average / 255) * 86;
+            if (bars[i]) bars[i].style.height = `${height}px`;
+        }
+        
+        animationFrameRef.current = requestAnimationFrame(updateVisualizer);
+    };
+
+    useEffect(() => {
+        if (isPlaying) {
+            updateVisualizer();
+        } else {
+            if (animationFrameRef.current) {
+                cancelAnimationFrame(animationFrameRef.current);
+            }
+            if (barsContainerRef.current) {
+                const bars = barsContainerRef.current.children;
+                for (let i = 0; i < bars.length; i++) {
+                    bars[i].style.height = '10px';
+                }
+            }
+        }
+        return () => {
+            if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
+        };
+    }, [isPlaying]);
+
+    useEffect(() => {
+        return () => {
+            if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
+            if (audioSourceRef.current) audioSourceRef.current.pause();
+            if (audioCtxRef.current) audioCtxRef.current.close();
+        };
+    }, []);
+
     return (
-        <div className="relative flex min-h-screen flex-col overflow-x-hidden bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-300 transition-colors duration-300 antialiased">
+        <div className="relative flex min-h-screen flex-col bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-300 transition-colors duration-300 antialiased">
             <Head title={`${art.title} | Eksplorasi Seni`} />
             <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
             <Navbar />
@@ -174,11 +332,10 @@ export default function DetailSeni({ art }) {
                                 key={tab.id}
                                 whileTap={{ scale: 0.95 }}
                                 onClick={() => setActiveTab(tab.id)}
-                                className={`flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold transition-all duration-300 ${
-                                    activeTab === tab.id
+                                className={`flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold transition-all duration-300 ${activeTab === tab.id
                                         ? 'bg-primary text-white shadow-lg shadow-primary/30'
                                         : 'bg-white dark:bg-surface-dark text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:border-primary/50 hover:text-primary'
-                                }`}
+                                    }`}
                             >
                                 <span className="material-symbols-outlined text-xl">{tab.icon}</span>
                                 {tab.label}
@@ -195,9 +352,9 @@ export default function DetailSeni({ art }) {
                                     <div className="relative lg:col-span-7 bg-slate-100 dark:bg-slate-900 overflow-hidden group h-[400px] lg:h-[600px]">
                                         <ImageWithFallback className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src={art.img} alt={art.title} fallbackIcon="palette" />
                                         <div className="absolute inset-0 bg-black/10"></div>
-                                        
+
                                         {(art.hotspots || []).map((hs, i) => (
-                                            <div 
+                                            <div
                                                 key={i}
                                                 className="absolute z-20 group/hs cursor-pointer group"
                                                 style={{ left: `${hs.x}%`, top: `${hs.y}%` }}
@@ -228,7 +385,7 @@ export default function DetailSeni({ art }) {
                                     {/* Right: Legend/Details */}
                                     <div className="w-full lg:col-span-5 p-8 border-t lg:border-t-0 lg:border-l border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30 overflow-y-auto lg:h-[600px]">
                                         <div className="mb-8">
-                                            <h3 className="text-xl font-black text-slate-900 dark:white mb-2 flex items-center gap-2">
+                                            <h3 className="text-xl font-black text-slate-900 dark:text-white mb-2 flex items-center gap-2">
                                                 <span className="material-symbols-outlined text-primary">auto_stories</span>
                                                 {t('art_detail.explore_meaning')}
                                             </h3>
@@ -272,32 +429,68 @@ export default function DetailSeni({ art }) {
                                             <span className="material-symbols-outlined text-4xl">spatial_audio</span>
                                         </div>
                                         <h3 className="text-2xl font-black text-slate-900 dark:text-slate-100 mb-4">{t('art_detail.spatial_audio')}</h3>
-                                        <p className="text-slate-600 dark:text-slate-400 leading-relaxed mb-8">{art.audioDesc || t('art_detail.spatial_audio_desc')}</p>
+                                        <p className="text-slate-600 dark:text-slate-400 leading-relaxed mb-6">{art.audioDesc || t('art_detail.spatial_audio_desc')}</p>
+
+                                        <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4 mb-8 flex items-center gap-3 justify-center">
+                                            <span className="material-symbols-outlined text-primary animate-pulse">headphones</span>
+                                            <p className="text-xs font-bold text-primary uppercase tracking-widest">{t('art_detail.headphone_reminder')}</p>
+                                        </div>
+
+                                        {/* Controls */}
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+                                            <div className="space-y-4">
+                                                <div className="flex justify-between items-center">
+                                                    <span className="text-xs font-black uppercase tracking-widest text-slate-500">Volume</span>
+                                                    <span className="text-xs font-mono text-primary">{Math.round(volume * 100)}%</span>
+                                                </div>
+                                                <input
+                                                    type="range" min="0" max="1" step="0.01"
+                                                    value={volume} onChange={(e) => setVolume(parseFloat(e.target.value))}
+                                                    className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-primary"
+                                                />
+                                            </div>
+                                            <div className="space-y-4">
+                                                <div className="flex justify-between items-center">
+                                                    <span className="text-xs font-black uppercase tracking-widest text-slate-500">Echo / Reverb</span>
+                                                    <span className="text-xs font-mono text-primary">{Math.round(echo * 100)}%</span>
+                                                </div>
+                                                <input
+                                                    type="range" min="0" max="0.8" step="0.01"
+                                                    value={echo} onChange={(e) => setEcho(parseFloat(e.target.value))}
+                                                    className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-primary"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="flex justify-center mb-10">
+                                            <motion.button
+                                                whileHover={{ scale: 1.05 }}
+                                                whileTap={{ scale: 0.95 }}
+                                                onClick={togglePlay}
+                                                className={`size-20 rounded-full flex items-center justify-center shadow-2xl transition-all ${isPlaying ? 'bg-red-500 shadow-red-500/30' : 'bg-primary shadow-primary/30'}`}
+                                            >
+                                                <span className="material-symbols-outlined text-4xl text-white">
+                                                    {isPlaying ? 'pause' : 'play_arrow'}
+                                                </span>
+                                            </motion.button>
+                                        </div>
+
                                         {/* Audio visualisation */}
                                         <div className="bg-slate-100 dark:bg-slate-800 rounded-2xl p-8 mb-6">
-                                            <div className="flex items-end justify-center gap-1 h-24 mb-4">
-                                                {Array.from({ length: 20 }).map((_, i) => (
-                                                    <motion.div
+                                            <div ref={barsContainerRef} className="flex items-end justify-center gap-1 h-24">
+                                                {Array.from({ length: 24 }).map((_, i) => (
+                                                    <div
                                                         key={i}
-                                                        className="w-2 bg-primary rounded-full"
-                                                        animate={{
-                                                            height: [10, Math.random() * 60 + 20, 10],
-                                                        }}
-                                                        transition={{
-                                                            duration: 1 + Math.random(),
-                                                            repeat: Infinity,
-                                                            repeatType: 'reverse',
-                                                            delay: i * 0.05,
-                                                        }}
+                                                        className="w-2 bg-primary rounded-full transition-all duration-75"
+                                                        style={{ height: '10px' }}
                                                     />
                                                 ))}
                                             </div>
-                                            <p className="text-xs text-slate-500 font-mono uppercase tracking-wider">🎧 {t('art_detail.headphone_reminder')}</p>
                                         </div>
                                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                             {['Saron', 'Bonang', 'Kenong', 'Gong'].map((inst) => (
                                                 <div key={inst} className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-center">
-                                                    <span className="material-symbols-outlined text-primary text-2xl mb-2 block">piano</span>
+                                                    <span className="material-symbols-outlined text-primary text-2xl mb-2 block">music_note</span>
                                                     <p className="text-xs font-bold text-slate-700 dark:text-slate-300">{inst}</p>
                                                 </div>
                                             ))}
@@ -313,7 +506,7 @@ export default function DetailSeni({ art }) {
                                 <div className="bg-white dark:bg-surface-dark rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-lg">
                                     {/* 3D Model Viewer */}
                                     <div className="relative bg-slate-100 dark:bg-slate-900" style={{ height: '450px' }}>
-                                        {art.category === 'batik' ? (
+                                        {((art.category === 'batik' || art.artSubCategory === 'batik') && art.img) ? (
                                             <Auto3DViewer imgUrl={art.img} t={t} />
                                         ) : art.modelUrl ? (
                                             <model-viewer
@@ -367,7 +560,6 @@ export default function DetailSeni({ art }) {
                                                     {[
                                                         { icon: 'touch_app', text: t('art_detail.ar_instr_1') },
                                                         { icon: 'pinch_zoom_in', text: t('art_detail.ar_instr_2') },
-                                                        { icon: 'view_in_ar', text: t('art_detail.ar_instr_3') },
                                                     ].map((step, i) => (
                                                         <motion.div key={i} initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.15 }} className="flex items-center gap-3 text-sm text-slate-700 dark:text-slate-300">
                                                             <span className="size-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">

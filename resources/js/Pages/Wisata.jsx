@@ -349,8 +349,8 @@ export default function Wisata() {
                                             <span className="material-symbols-outlined text-primary">storefront</span>
                                         </div>
                                         <div>
-                                            <h4 className="font-bold text-slate-900 dark:text-slate-100">{t('wisata.digital_profile')}</h4>
-                                            <p className="text-sm text-slate-500 dark:text-slate-400">{t('wisata.digital_profile_desc')}</p>
+                                            <h4 className="font-bold text-slate-900 dark:text-slate-100">{t('wisata.local_story')}</h4>
+                                            <p className="text-sm text-slate-500 dark:text-slate-400">{t('wisata.local_story_desc')}</p>
                                         </div>
                                     </div>
                                 </div>

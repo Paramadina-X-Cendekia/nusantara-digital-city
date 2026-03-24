@@ -35,12 +35,12 @@ export default function LandmarkDetail({ landmark }) {
                 <section className="relative overflow-hidden h-80 md:h-[500px]">
                     <ImageWithFallback className="absolute inset-0 w-full h-full object-cover" alt={landmark.name} src={landmark.img} fallbackIcon="account_balance" />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent"></div>
-                    
+
                     <div className="absolute bottom-0 left-0 right-0 p-8 md:p-16 z-10">
                         <div className="container mx-auto">
                             <motion.div initial="hidden" animate="visible" variants={stagger}>
                                 <motion.div variants={fadeIn} className="flex flex-wrap items-center gap-2 mb-4">
-                                    <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-primary/90 text-white">{landmark.category}</span>
+                                    <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-primary/90 text-white">Situs Bersejarah</span>
                                     <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/20 backdrop-blur-md text-white">{landmark.location}</span>
                                 </motion.div>
                                 <motion.h1 variants={fadeIn} className="text-4xl md:text-6xl font-black text-white mb-4 drop-shadow-2xl">{landmark.name}</motion.h1>
@@ -60,11 +60,10 @@ export default function LandmarkDetail({ landmark }) {
                                 key={tab.id}
                                 whileTap={{ scale: 0.95 }}
                                 onClick={() => setActiveTab(tab.id)}
-                                className={`flex items-center gap-2 px-8 py-4 rounded-2xl text-sm font-bold transition-all duration-300 ${
-                                    activeTab === tab.id
+                                className={`flex items-center gap-2 px-8 py-4 rounded-2xl text-sm font-bold transition-all duration-300 ${activeTab === tab.id
                                         ? 'bg-primary text-white shadow-xl shadow-primary/30'
                                         : 'bg-white dark:bg-surface-dark text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:border-primary/50 hover:text-primary'
-                                }`}
+                                    }`}
                             >
                                 <span className="material-symbols-outlined text-2xl">{tab.icon}</span>
                                 {tab.label}
@@ -119,7 +118,7 @@ export default function LandmarkDetail({ landmark }) {
                                     <div className="bg-white dark:bg-surface-dark rounded-3xl p-8 border border-slate-200 dark:border-slate-800 shadow-sm">
                                         <h3 className="font-black text-slate-900 dark:text-slate-100 text-xl mb-6">{t('landmark_detail.learning_media')}</h3>
                                         <ul className="space-y-4">
-                                            <motion.li 
+                                            <motion.li
                                                 whileHover={{ scale: 1.02, x: 5 }}
                                                 whileTap={{ scale: 0.98 }}
                                                 onClick={() => {
@@ -137,7 +136,7 @@ export default function LandmarkDetail({ landmark }) {
                                                 </div>
                                             </motion.li>
 
-                                            <motion.li 
+                                            <motion.li
                                                 whileHover={{ scale: 1.02, x: 5 }}
                                                 whileTap={{ scale: 0.98 }}
                                                 onClick={() => setActiveTab('video')}
@@ -152,7 +151,7 @@ export default function LandmarkDetail({ landmark }) {
                                                 </div>
                                             </motion.li>
 
-                                            <motion.li 
+                                            <motion.li
                                                 whileHover={{ scale: 1.02, x: 5 }}
                                                 whileTap={{ scale: 0.98 }}
                                                 onClick={() => setShowArchive(true)}
@@ -214,13 +213,13 @@ export default function LandmarkDetail({ landmark }) {
 
             <AnimatePresence>
                 {showArchive && (
-                    <motion.div 
-                        initial={{ opacity: 0 }} 
-                        animate={{ opacity: 1 }} 
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-md"
                     >
-                        <motion.div 
+                        <motion.div
                             initial={{ scale: 0.9, y: 20 }}
                             animate={{ scale: 1, y: 0 }}
                             exit={{ scale: 0.9, y: 20 }}

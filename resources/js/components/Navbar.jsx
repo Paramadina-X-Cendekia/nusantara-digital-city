@@ -57,7 +57,7 @@ export default function Navbar() {
                 initial={{ y: -100 }}
                 animate={{ y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="sticky top-0 z-50 w-full border-b border-slate-200 dark:border-slate-800 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md"
+                className="sticky top-0 z-[100] w-full border-b border-slate-200 dark:border-slate-800 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md"
             >
                 <div className="container mx-auto px-4 lg:px-10">
                     <div className="flex h-16 items-center justify-between">
@@ -159,6 +159,10 @@ export default function Navbar() {
                                             exit={{ opacity: 0, y: 10, scale: 0.95 }}
                                             className="absolute right-0 mt-3 w-48 bg-white dark:bg-surface-dark rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl py-2 z-50 overflow-hidden"
                                         >
+                                            <Link href="/profil" className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                                                <span className="material-symbols-outlined text-xl">account_circle</span>
+                                                {t('profile.title')}
+                                            </Link>
                                             <Link href="/dashboard" className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                                                 <span className="material-symbols-outlined text-xl">grid_view</span>
                                                 {t('nav.dashboard')}

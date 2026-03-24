@@ -21,39 +21,48 @@ const CATEGORIES = (t) => [
     { id: 'kuliner', title: t('kontribusi.category_tourism'), icon: 'restaurant', desc: t('kontribusi.category_tourism_desc') },
 ];
 
-export default function Kontribusi({ cities = [], initialType = 'kota' }) {
+export default function Kontribusi({ cities = [], initialType = 'kota', editingContribution = null }) {
     const { t } = useLanguage();
-    const [selectedType, setSelectedType] = useState(initialType);
+    const [selectedType, setSelectedType] = useState(editingContribution?.type || initialType);
     const [showSuccess, setShowSuccess] = useState(false);
     const [isGenerating, setIsGenerating] = useState(false);
 
     const { data, setData, post, processing, errors, reset, recentlySuccessful } = useForm({
-        type: initialType,
-        // Common fields are now handled by auth
-        // Kota specific
-        cityName: '',
-        province: '',
-        category: 'kota',
-        maps_link: '',
-        website: '',
-        description: '',
-        // Budaya specific
-        artName: '',
-        artCategory: 'seni', // sejarah, seni, cerita
-        artSubCategory: 'batik', // batik, gamelan, tari, ukir
-        origin: '',
-        imageUrl: '',
+        type: editingContribution?.type || initialType,
+        cityName: editingContribution?.data?.cityName || '',
+        province: editingContribution?.data?.province || '',
+        category: editingContribution?.data?.category || 'kota',
+        website: editingContribution?.data?.website || '',
+        description: editingContribution?.data?.description || '',
+        shortDesc: editingContribution?.data?.shortDesc || '',
+        lat: editingContribution?.data?.lat || '',
+        lng: editingContribution?.data?.lng || '',
+        artName: editingContribution?.data?.artName || '',
+        artCategory: editingContribution?.data?.artCategory || 'seni',
+        artSubCategory: editingContribution?.data?.artSubCategory || 'batik',
+        origin: editingContribution?.data?.origin || '',
+        imageUrl: editingContribution?.data?.imageUrl || '',
         imageFile: null,
-        era: '',
-        lat: '',
-        lng: '',
-        // Kuliner specific
-        shopName: '',
-        city: '',
-        address: '',
-        menuCount: '',
-        digitalMenu: true,
-        businessProfile: true,
+        era: editingContribution?.data?.era || '',
+        moral: editingContribution?.data?.moral || '',
+        characters: editingContribution?.data?.characters || '',
+        shopName: editingContribution?.data?.shopName || '',
+        city: editingContribution?.data?.city || '',
+        address: editingContribution?.data?.address || '',
+        menuCount: editingContribution?.data?.menuCount || '',
+        digitalMenu: editingContribution?.data?.digitalMenu ?? true,
+        localStory: editingContribution?.data?.localStory ?? true,
+        dishName: editingContribution?.data?.dishName || '',
+        dishDescription: editingContribution?.data?.dishDescription || '',
+        spices: editingContribution?.data?.spices || '',
+        dishImage: null,
+        ingredientName: editingContribution?.data?.ingredientName || '',
+        farmerName: editingContribution?.data?.farmerName || '',
+        harvestDate: editingContribution?.data?.harvestDate || '',
+        ingredientStory: editingContribution?.data?.ingredientStory || '',
+        ingredientImage: null,
+        videoLink: editingContribution?.data?.videoLink || '',
+        tourismDescription: editingContribution?.data?.tourismDescription || '',
     });
 
     useEffect(() => {
@@ -72,15 +81,22 @@ export default function Kontribusi({ cities = [], initialType = 'kota' }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        post('/kontribusi', {
-            preserveScroll: true,
-        });
+        if (editingContribution) {
+            post(`/kontribusi/${editingContribution.id}/update`, {
+                preserveScroll: true,
+            });
+        } else {
+            post('/kontribusi', {
+                preserveScroll: true,
+            });
+        }
     };
 
-    const handleGenerateAI = async () => {
-        const name = selectedType === 'kota' ? data.cityName : 
+    const handleGenerateAI = async (customType = null, customName = null) => {
+        const selectedTypeForAI = customType || selectedType;
+        const name = customName || (selectedType === 'kota' ? data.cityName : 
                      selectedType === 'budaya' ? data.artName : 
-                     data.shopName;
+                     data.shopName || data.dishName);
         
         if (!name) {
             alert(t('kontribusi.fill_name_first'));
@@ -98,20 +114,51 @@ export default function Kontribusi({ cities = [], initialType = 'kota' }) {
                     'X-CSRF-TOKEN': csrfToken
                 },
                 body: JSON.stringify({
-                    type: selectedType,
+                    type: selectedTypeForAI,
                     name: name
                 })
             });
 
             const result = await response.json();
             if (result.description) {
-                setData(prev => ({
-                    ...prev,
-                    description: result.description,
-                    era: result.era || prev.era,
-                    lat: result.lat || prev.lat,
-                    lng: result.lng || prev.lng
-                }));
+                if (selectedTypeForAI === 'kota') {
+                    setData(prev => ({
+                        ...prev,
+                        description: result.description,
+                        lat: result.lat || prev.lat,
+                        lng: result.lng || prev.lng,
+                    }));
+                } else if (selectedTypeForAI === 'budaya') {
+                    setData(prev => ({
+                        ...prev,
+                        description: result.description,
+                        era: result.era || prev.era,
+                        lat: result.lat || prev.lat,
+                        lng: result.lng || prev.lng
+                    }));
+                } else if (selectedTypeForAI === 'kuliner') {
+                    setData(prev => ({
+                        ...prev,
+                        description: result.description,
+                        city: result.origin_city || prev.city,
+                        lat: result.lat || prev.lat,
+                        lng: result.lng || prev.lng
+                    }));
+                } else if (selectedTypeForAI === 'bahan') {
+                    setData(prev => ({
+                        ...prev,
+                        ingredientStory: result.description,
+                        lat: result.lat || prev.lat,
+                        lng: result.lng || prev.lng
+                    }));
+                } else if (selectedTypeForAI === 'wisata') {
+                    setData(prev => ({
+                        ...prev,
+                        tourismDescription: result.description,
+                        lat: result.lat || prev.lat,
+                        lng: result.lng || prev.lng
+                    }));
+                }
             } else if (result.error) {
                 alert(result.error);
             }
@@ -138,7 +185,24 @@ export default function Kontribusi({ cities = [], initialType = 'kota' }) {
                                 <input value={data.province} onChange={e => setData('province', e.target.value)} required className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none focus:ring-2 focus:ring-primary transition-all" placeholder={t('kontribusi.placeholder_province')} />
                             </div>
                         </div>
-                        <div className="grid sm:grid-cols-2 gap-6">
+                        <div className="grid sm:grid-cols-2 gap-6 relative">
+                            <button 
+                                type="button"
+                                onClick={() => {
+                                    if (navigator.geolocation) {
+                                        navigator.geolocation.getCurrentPosition((pos) => {
+                                            setData('lat', pos.coords.latitude.toFixed(6));
+                                            setData('lng', pos.coords.longitude.toFixed(6));
+                                        }, (err) => alert("Gagal mendapatkan lokasi: " + err.message));
+                                    } else {
+                                        alert("Geolocation tidak didukung browser ini.");
+                                    }
+                                }}
+                                className="absolute -top-3 right-4 bg-primary text-white px-3 py-1 rounded-full text-[10px] font-bold shadow-lg hover:bg-primary/90 transition-all flex items-center gap-1.5 z-10"
+                            >
+                                <span className="material-symbols-outlined text-xs">my_location</span>
+                                Dapatkan Lokasi
+                            </button>
                             <div className="space-y-2">
                                 <label className="text-sm font-medium">{t('kontribusi.label_category')}</label>
                                 <select value={data.category} onChange={e => setData('category', e.target.value)} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none focus:ring-2 focus:ring-primary">
@@ -147,10 +211,17 @@ export default function Kontribusi({ cities = [], initialType = 'kota' }) {
                                     <option value="desa">{t('kontribusi.opt_desa')}</option>
                                 </select>
                             </div>
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium">{t('kontribusi.label_gmaps')}</label>
-                                <input value={data.maps_link} onChange={e => setData('maps_link', e.target.value)} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none focus:ring-2 focus:ring-primary transition-all" placeholder="https://maps.google.com/..." />
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium">Latitude</label>
+                                    <input type="number" step="0.0001" value={data.lat} onChange={e => setData('lat', e.target.value)} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none focus:ring-2 focus:ring-primary transition-all" placeholder="-6.1751" />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium">Longitude</label>
+                                    <input type="number" step="0.0001" value={data.lng} onChange={e => setData('lng', e.target.value)} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none focus:ring-2 focus:ring-primary transition-all" placeholder="106.8272" />
+                                </div>
                             </div>
+                            <p className="col-span-2 text-[10px] text-slate-500 font-medium italic">{t('kontribusi.coord_hint')}</p>
                         </div>
                         <div className="space-y-2">
                             <div className="flex items-center justify-between">
@@ -188,7 +259,14 @@ export default function Kontribusi({ cities = [], initialType = 'kota' }) {
                             </div>
                             <div className="space-y-2">
                                 <label className="text-sm font-medium">{t('kontribusi.label_art_category')}</label>
-                                <select value={data.artCategory} onChange={e => setData('artCategory', e.target.value)} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none focus:ring-2 focus:ring-primary">
+                                <select value={data.artCategory} onChange={e => {
+                                    const val = e.target.value;
+                                    setData(prev => ({
+                                        ...prev,
+                                        artCategory: val,
+                                        artSubCategory: val === 'cerita' ? 'Legenda' : (val === 'seni' ? 'batik' : prev.artSubCategory)
+                                    }));
+                                }} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none focus:ring-2 focus:ring-primary">
                                     <option value="seni">{t('kontribusi.opt_seni')}</option>
                                     <option value="sejarah">{t('kontribusi.opt_sejarah')}</option>
                                     <option value="cerita">{t('kontribusi.opt_cerita')}</option>
@@ -205,6 +283,17 @@ export default function Kontribusi({ cities = [], initialType = 'kota' }) {
                                     <option value="tari">Tari Tradisional</option>
                                     <option value="ukir">Seni Ukir</option>
                                     <option value="lainnya">Lainnya</option>
+                                </select>
+                            </div>
+                        )}
+
+                        {data.artCategory === 'cerita' && (
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium">Kategori Cerita</label>
+                                <select value={data.artSubCategory} onChange={e => setData('artSubCategory', e.target.value)} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none focus:ring-2 focus:ring-primary">
+                                    <option value="Legenda">Legenda</option>
+                                    <option value="Mitologi">Mitologi</option>
+                                    <option value="Cerita Rakyat">Cerita Rakyat</option>
                                 </select>
                             </div>
                         )}
@@ -232,8 +321,12 @@ export default function Kontribusi({ cities = [], initialType = 'kota' }) {
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">{t('kontribusi.label_art_era')}</label>
                                 <input value={data.era} onChange={e => setData('era', e.target.value)} required className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none focus:ring-2 focus:ring-primary transition-all" placeholder={t('kontribusi.placeholder_art_era')} />
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium">{t('kontribusi.label_video_link')}</label>
+                                <input value={data.videoLink} onChange={e => setData('videoLink', e.target.value)} className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none focus:ring-2 focus:ring-primary transition-all" placeholder="https://youtube.com/watch?v=..." />
                             </div>
 
                             <div className="hidden">
@@ -251,16 +344,95 @@ export default function Kontribusi({ cities = [], initialType = 'kota' }) {
                         </div>
 
                         {data.artCategory === 'sejarah' && (
-                            <div className="grid sm:grid-cols-2 gap-6 p-6 bg-primary/5 rounded-2xl border border-primary/20">
+                            <div className="grid sm:grid-cols-2 gap-6 p-6 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-200 dark:border-slate-800 relative">
+                                <button 
+                                    type="button"
+                                    onClick={() => {
+                                        if (navigator.geolocation) {
+                                            navigator.geolocation.getCurrentPosition((pos) => {
+                                                setData('lat', pos.coords.latitude.toFixed(6));
+                                                setData('lng', pos.coords.longitude.toFixed(6));
+                                            }, (err) => alert("Gagal mendapatkan lokasi: " + err.message));
+                                        } else {
+                                            alert("Geolocation tidak didukung browser ini.");
+                                        }
+                                    }}
+                                    className="absolute -top-3 right-4 bg-primary text-white px-3 py-1 rounded-full text-[10px] font-bold shadow-lg hover:bg-primary/90 transition-all flex items-center gap-1.5 z-10"
+                                >
+                                    <span className="material-symbols-outlined text-xs">my_location</span>
+                                    Dapatkan Lokasi
+                                </button>
                                 <div className="space-y-2">
-                                    <label className="text-sm font-bold text-primary">Latitude *</label>
-                                    <input value={data.lat} onChange={e => setData('lat', e.target.value)} required type="number" step="any" className="w-full bg-white dark:bg-slate-900 border border-primary/30 rounded-xl p-3 outline-none focus:ring-2 focus:ring-primary transition-all" placeholder="-7.6079" />
+                                    <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Latitude</label>
+                                    <input value={data.lat} onChange={e => setData('lat', e.target.value)} required type="number" step="any" className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-4 text-sm outline-none focus:ring-2 focus:ring-primary shadow-sm" placeholder="-7.6079" />
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-sm font-bold text-primary">Longitude *</label>
-                                    <input value={data.lng} onChange={e => setData('lng', e.target.value)} required type="number" step="any" className="w-full bg-white dark:bg-slate-900 border border-primary/30 rounded-xl p-3 outline-none focus:ring-2 focus:ring-primary transition-all" placeholder="110.2038" />
+                                    <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Longitude</label>
+                                    <input value={data.lng} onChange={e => setData('lng', e.target.value)} required type="number" step="any" className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-4 text-sm outline-none focus:ring-2 focus:ring-primary shadow-sm" placeholder="110.2038" />
                                 </div>
-                                <p className="col-span-2 text-[10px] text-slate-500 italic">{t('kontribusi.coord_hint')}</p>
+                            </div>
+                        )}
+
+                        {data.artCategory === 'cerita' && (
+                            <div className="grid sm:grid-cols-2 gap-6 p-6 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-200 dark:border-slate-800 relative">
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Tokoh Utama</label>
+                                    <div className="flex flex-wrap items-center gap-2 w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 shadow-sm focus-within:ring-2 focus-within:ring-primary transition-all">
+                                        {data.characters ? data.characters.split(',').filter(Boolean).map((char, index) => (
+                                            <div key={index} className="flex items-center gap-1 bg-primary/10 text-primary px-3 py-1.5 rounded-full text-xs font-bold">
+                                                <span>{char.trim()}</span>
+                                                <button 
+                                                    type="button" 
+                                                    onClick={() => {
+                                                        const newChars = data.characters.split(',').filter(Boolean).map(s => s.trim());
+                                                        newChars.splice(index, 1);
+                                                        setData('characters', newChars.join(','));
+                                                    }}
+                                                    className="hover:text-primary/70 material-symbols-outlined text-[14px]"
+                                                >
+                                                    close
+                                                </button>
+                                            </div>
+                                        )) : null}
+                                        <input 
+                                            type="text" 
+                                            className="flex-1 bg-transparent border-none outline-none text-sm p-1 min-w-[150px] dark:text-slate-100" 
+                                            placeholder={!data.characters ? "Ketik nama, lalu Enter (,)" : ""}
+                                            required={!data.characters}
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter' || e.key === ',') {
+                                                    e.preventDefault();
+                                                    const val = e.target.value.trim();
+                                                    if (val) {
+                                                        const currentChars = data.characters ? data.characters.split(',').filter(Boolean).map(s => s.trim()) : [];
+                                                        currentChars.push(val);
+                                                        setData('characters', currentChars.join(','));
+                                                        e.target.value = '';
+                                                    }
+                                                } else if (e.key === 'Backspace' && !e.target.value && data.characters) {
+                                                    e.preventDefault();
+                                                    const currentChars = data.characters.split(',').filter(Boolean).map(s => s.trim());
+                                                    currentChars.pop();
+                                                    setData('characters', currentChars.join(','));
+                                                }
+                                            }}
+                                            onBlur={(e) => {
+                                                const val = e.target.value.trim();
+                                                if (val) {
+                                                    const currentChars = data.characters ? data.characters.split(',').filter(Boolean).map(s => s.trim()) : [];
+                                                    currentChars.push(val);
+                                                    setData('characters', currentChars.join(','));
+                                                    e.target.value = '';
+                                                }
+                                            }}
+                                        />
+                                    </div>
+                                    <p className="text-[10px] text-slate-500 font-medium italic">Tekan Enter atau koma (,) untuk menambah tokoh.</p>
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Nilai Moral</label>
+                                    <input value={data.moral} onChange={e => setData('moral', e.target.value)} required type="text" className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-4 text-sm outline-none focus:ring-2 focus:ring-primary shadow-sm" placeholder="Nilai moral dari cerita ini" />
+                                </div>
                             </div>
                         )}
 
@@ -281,6 +453,25 @@ export default function Kontribusi({ cities = [], initialType = 'kota' }) {
                                     <p className="text-[10px] text-slate-400 mt-1">PNG, JPG up to 5MB</p>
                                 </div>
                             </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">Deskripsi Singkat (Maks 15 Kata)</label>
+                            <input 
+                                value={data.shortDesc} 
+                                onChange={e => {
+                                    const words = e.target.value.trim().split(/\s+/).filter(Boolean);
+                                    if (e.target.value === '' || words.length <= 15) {
+                                        setData('shortDesc', e.target.value);
+                                    }
+                                }} 
+                                required 
+                                className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none focus:ring-2 focus:ring-primary transition-all" 
+                                placeholder="Tuliskan deskripsi singkat..." 
+                            />
+                            <p className="text-[10px] text-slate-500 font-medium italic">
+                                {data.shortDesc ? data.shortDesc.trim().split(/\s+/).filter(Boolean).length : 0} / 15 kata
+                            </p>
                         </div>
 
                         <div className="space-y-2">
@@ -329,27 +520,157 @@ export default function Kontribusi({ cities = [], initialType = 'kota' }) {
                             <label className="text-sm font-medium">{t('kontribusi.label_address')}</label>
                             <input value={data.address} onChange={e => setData('address', e.target.value)} required className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none focus:ring-2 focus:ring-primary transition-all" placeholder="Jl. Kebangsaan No. 45" />
                         </div>
-                        <div className="grid grid-cols-1 gap-4">
-                            <label className={`flex flex-col gap-3 p-6 rounded-2xl border cursor-pointer transition-all ${data.digitalMenu ? 'border-primary bg-primary/5 shadow-lg shadow-primary/5' : 'border-slate-200 hover:border-primary/30'}`}>
-                                <div className="flex items-center gap-3">
-                                    <input type="checkbox" checked={data.digitalMenu} onChange={e => setData('digitalMenu', e.target.checked)} className="sr-only" />
-                                    <div className={`size-10 rounded-xl flex items-center justify-center transition-colors ${data.digitalMenu ? 'bg-primary text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}>
-                                        <span className="material-symbols-outlined">qr_code</span>
-                                    </div>
-                                    <span className="font-bold">{t('kontribusi.digital_menu')}</span>
+                        <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                                <label className="text-xs font-bold uppercase tracking-widest text-slate-400">{t('kontribusi.label_tourism_desc')}</label>
+                                <button 
+                                    type="button"
+                                    onClick={() => handleGenerateAI('wisata', data.tourismName)}
+                                    disabled={isGenerating}
+                                    className="flex items-center gap-1.5 text-xs font-bold text-primary hover:text-primary/80 transition-all disabled:opacity-50"
+                                >
+                                    <span className={`material-symbols-outlined text-sm ${isGenerating ? 'animate-spin' : ''}`}>
+                                         {isGenerating ? 'sync' : 'auto_awesome'}
+                                    </span>
+                                    {isGenerating ? t('kontribusi.generating') : t('kontribusi.generate_ai')}
+                                </button>
+                            </div>
+                            <textarea value={data.tourismDescription} onChange={e => setData('tourismDescription', e.target.value)} required className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-4 text-sm outline-none focus:ring-2 focus:ring-primary shadow-sm resize-none" rows="4" placeholder="Deskripsi lengkap destinasi..."></textarea>
+                        </div>
+
+                        {/* Digital Presence & Location for Kuliner/Wisata */}
+                        <div className="p-6 bg-slate-50 dark:bg-slate-900 rounded-[2rem] border border-slate-200 dark:border-slate-800 space-y-4 relative">
+                            <button 
+                                type="button"
+                                onClick={() => {
+                                    if (navigator.geolocation) {
+                                        navigator.geolocation.getCurrentPosition((pos) => {
+                                            setData('lat', pos.coords.latitude.toFixed(6));
+                                            setData('lng', pos.coords.longitude.toFixed(6));
+                                        }, (err) => alert("Gagal mendapatkan lokasi: " + err.message));
+                                    } else {
+                                        alert("Geolocation tidak didukung browser ini.");
+                                    }
+                                }}
+                                className="absolute -top-3 right-4 bg-primary text-white px-3 py-1 rounded-full text-[10px] font-bold shadow-lg hover:bg-primary/90 transition-all flex items-center gap-1.5 z-10"
+                            >
+                                <span className="material-symbols-outlined text-xs">my_location</span>
+                                Dapatkan Lokasi
+                            </button>
+                            <div className="flex items-center gap-3 mb-2">
+                                <div className="size-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                                    <span className="material-symbols-outlined">location_on</span>
                                 </div>
-                                <p className="text-xs text-slate-500 dark:text-slate-400 ml-13">{t('kontribusi.digital_menu_desc')}</p>
-                            </label>
-                            <label className={`flex flex-col gap-3 p-6 rounded-2xl border cursor-pointer transition-all ${data.businessProfile ? 'border-primary bg-primary/5 shadow-lg shadow-primary/5' : 'border-slate-200 hover:border-primary/30'}`}>
-                                <div className="flex items-center gap-3">
-                                    <input type="checkbox" checked={data.businessProfile} onChange={e => setData('businessProfile', e.target.checked)} className="sr-only" />
-                                    <div className={`size-10 rounded-xl flex items-center justify-center transition-colors ${data.businessProfile ? 'bg-primary text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}>
-                                        <span className="material-symbols-outlined">history_edu</span>
-                                    </div>
-                                    <span className="font-bold">{t('kontribusi.business_profile')}</span>
+                                <div>
+                                    <h4 className="font-bold text-sm tracking-tight">{t('kontribusi.label_location_services')}</h4>
+                                    <p className="text-[10px] text-slate-500">{t('kontribusi.label_location_hint')}</p>
                                 </div>
-                                <p className="text-xs text-slate-500 dark:text-slate-400 ml-13">{t('kontribusi.business_profile_desc')}</p>
-                            </label>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-1">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Latitude</label>
+                                    <input type="number" step="any" value={data.lat} onChange={e => setData('lat', e.target.value)} className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs outline-none focus:ring-2 focus:ring-primary" placeholder="-6.1754" />
+                                </div>
+                                <div className="space-y-1">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Longitude</label>
+                                    <input type="number" step="any" value={data.lng} onChange={e => setData('lng', e.target.value)} className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-xs outline-none focus:ring-2 focus:ring-primary" placeholder="106.8272" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-4">
+                                <label className={`flex flex-col gap-3 p-6 rounded-2xl border cursor-pointer transition-all ${data.digitalMenu ? 'border-primary bg-primary/5 shadow-lg shadow-primary/5' : 'border-slate-200 hover:border-primary/30'}`}>
+                                    <div className="flex items-center gap-3">
+                                        <input type="checkbox" checked={data.digitalMenu} onChange={e => setData('digitalMenu', e.target.checked)} className="sr-only" />
+                                        <div className={`size-10 rounded-xl flex items-center justify-center transition-colors ${data.digitalMenu ? 'bg-primary text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}>
+                                            <span className="material-symbols-outlined">qr_code</span>
+                                        </div>
+                                        <span className="font-bold">{t('kontribusi.digital_menu')}</span>
+                                    </div>
+                                    <p className="text-xs text-slate-500 dark:text-slate-400 ml-13">{t('kontribusi.digital_menu_desc')}</p>
+                                </label>
+
+                                {data.digitalMenu && (
+                                    <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="space-y-4 p-6 bg-slate-50 dark:bg-slate-900 rounded-[2rem] border border-slate-200 dark:border-slate-800">
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-bold uppercase tracking-widest text-slate-400">{t('kontribusi.label_dish_name')}</label>
+                                            <input value={data.dishName} onChange={e => setData('dishName', e.target.value)} required className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-primary" placeholder="Rendang Padang / Sate Madura" />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-bold uppercase tracking-widest text-slate-400">{t('kontribusi.label_dish_desc')}</label>
+                                            <textarea value={data.dishDescription} onChange={e => setData('dishDescription', e.target.value)} required className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-primary resize-none" rows="2" placeholder="Deskripsi singkat hidangan..."></textarea>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-bold uppercase tracking-widest text-slate-400">{t('kontribusi.label_spices')}</label>
+                                            <textarea value={data.spices} onChange={e => setData('spices', e.target.value)} required className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-primary" placeholder="Bawang merah, Bawang putih, Cabai, dll..."></textarea>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-bold uppercase tracking-widest text-slate-400">{t('kontribusi.label_dish_image')}</label>
+                                            <input type="file" accept="image/*" onChange={e => setData('dishImage', e.target.files[0])} className="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer" />
+                                        </div>
+                                    </motion.div>
+                                )}
+                            </div>
+
+                            <div className="space-y-4">
+                                <label className={`flex flex-col gap-3 p-6 rounded-2xl border cursor-pointer transition-all ${data.localStory ? 'border-primary bg-primary/5 shadow-lg shadow-primary/5' : 'border-slate-200 hover:border-primary/30'}`}>
+                                    <div className="flex items-center gap-3">
+                                        <input type="checkbox" checked={data.localStory} onChange={e => setData('localStory', e.target.checked)} className="sr-only" />
+                                        <div className={`size-10 rounded-xl flex items-center justify-center transition-colors ${data.localStory ? 'bg-primary text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}>
+                                            <span className="material-symbols-outlined">history_edu</span>
+                                        </div>
+                                        <span className="font-bold">{t('kontribusi.local_story')}</span>
+                                    </div>
+                                    <p className="text-xs text-slate-500 dark:text-slate-400 ml-13">{t('kontribusi.local_story_desc')}</p>
+                                </label>
+
+                                {data.localStory && (
+                                    <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="space-y-4 p-6 bg-slate-50 dark:bg-slate-900 rounded-[2rem] border border-slate-200 dark:border-slate-800">
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-bold uppercase tracking-widest text-slate-400">{t('kontribusi.label_ingredient_name')}</label>
+                                            <input value={data.ingredientName} onChange={e => setData('ingredientName', e.target.value)} required className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-primary" placeholder="Contoh: Daging Sapi Lokal / Cabai Rawit" />
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="space-y-2">
+                                                <label className="text-xs font-bold uppercase tracking-widest text-slate-400">{t('kontribusi.label_farmer_name')}</label>
+                                                <input value={data.farmerName} onChange={e => setData('farmerName', e.target.value)} required className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-primary" placeholder="Nama Petani..." />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-xs font-bold uppercase tracking-widest text-slate-400">{t('kontribusi.label_harvest_date')}</label>
+                                                <input type="text" value={data.harvestDate} onChange={e => setData('harvestDate', e.target.value)} required className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-primary" placeholder="Mar 2026" />
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <div className="flex items-center justify-between">
+                                                <label className="text-xs font-bold uppercase tracking-widest text-slate-400">{t('kontribusi.label_ingredient_story')}</label>
+                                                <button 
+                                                    type="button"
+                                                    onClick={() => {
+                                                        if (!data.ingredientName) {
+                                                            alert(t('kontribusi.fill_name_first'));
+                                                            return;
+                                                        }
+                                                        handleGenerateAI('bahan', data.ingredientName);
+                                                    }}
+                                                    disabled={isGenerating}
+                                                    className="flex items-center gap-1 text-[10px] font-black text-primary hover:text-primary/80 transition-all disabled:opacity-50"
+                                                >
+                                                    <span className={`material-symbols-outlined text-[14px] ${isGenerating ? 'animate-spin' : ''}`}>
+                                                        {isGenerating ? 'sync' : 'auto_awesome'}
+                                                    </span>
+                                                    {isGenerating ? t('kontribusi.generating') : t('kontribusi.generate_ingredient_ai')}
+                                                </button>
+                                            </div>
+                                            <textarea value={data.ingredientStory} onChange={e => setData('ingredientStory', e.target.value)} required className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-primary resize-none" rows="2" placeholder="Ceritakan asal-usul bahan ini..."></textarea>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-bold uppercase tracking-widest text-slate-400">{t('kontribusi.label_ingredient_image')}</label>
+                                            <input type="file" accept="image/*" onChange={e => setData('ingredientImage', e.target.files[0])} className="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer" />
+                                        </div>
+                                    </motion.div>
+                                )}
+                            </div>
                         </div>
                     </motion.div>
                 );

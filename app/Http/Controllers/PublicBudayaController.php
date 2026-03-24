@@ -61,29 +61,112 @@ class PublicBudayaController extends Controller
     {
         $snapshot = $this->database->getReference('seni_budaya')->getSnapshot();
         $budayaData = [];
+        $landmarks = [];
         
         if ($snapshot->hasChildren()) {
             foreach ($snapshot->getValue() as $id => $data) {
-                $budayaData[] = array_merge(['id' => $id], $data);
+                $status = $data['status'] ?? 'approved';
+                if ($status === 'approved') {
+                    $budayaData[] = array_merge(['id' => $id], $data);
+                    
+                    if (isset($data['artCategory']) && $data['artCategory'] === 'sejarah') {
+                        $landmarks[] = [
+                            'name' => $data['artName'] ?? 'Untitled',
+                            'slug' => $id,
+                            'location' => ($data['origin'] ?? '') . ', ' . ($data['province'] ?? ''),
+                            'category' => $data['artSubCategory'] ?? 'Situs Bersejarah',
+                            'desc' => $data['shortDesc'] ?? ($data['description'] ?? ''),
+                            'longDesc' => $data['description'] ?? '',
+                            'img' => $data['imageUrl'] ?? '',
+                            'videoUrl' => $data['videoLink'] ?? '',
+                            'lat' => $data['lat'] ?? null,
+                            'lng' => $data['lng'] ?? null,
+                        ];
+                    }
+                }
             }
+        }
+
+        if (empty($landmarks)) {
+            $landmarks = array_values($this->getLandmarksData());
         }
 
         return Inertia::render('Budaya', [
             'budayaData' => $budayaData,
-            'landmarks' => array_values($this->getLandmarksData())
+            'landmarks' => $landmarks
+        ]);
+    }
+
+    public function situsBersejarah()
+    {
+        $snapshot = $this->database->getReference('seni_budaya')->getSnapshot();
+        $landmarks = [];
+        
+        if ($snapshot->hasChildren()) {
+            foreach ($snapshot->getValue() as $id => $data) {
+                $status = $data['status'] ?? 'approved';
+                if ($status === 'approved' && isset($data['artCategory']) && $data['artCategory'] === 'sejarah') {
+                    $landmarks[] = [
+                        'name' => $data['artName'] ?? 'Untitled',
+                        'slug' => $id,
+                        'location' => ($data['origin'] ?? '') . ', ' . ($data['province'] ?? ''),
+                        'category' => $data['artSubCategory'] ?? 'Situs Bersejarah',
+                        'desc' => $data['shortDesc'] ?? ($data['description'] ?? ''),
+                        'longDesc' => $data['description'] ?? '',
+                        'img' => $data['imageUrl'] ?? '',
+                        'videoUrl' => $data['videoLink'] ?? '',
+                        'lat' => $data['lat'] ?? null,
+                        'lng' => $data['lng'] ?? null,
+                    ];
+                }
+            }
+        }
+
+        if (empty($landmarks)) {
+            $landmarks = array_values($this->getLandmarksData());
+        }
+
+        return Inertia::render('SitusBersejarah', [
+            'sites' => $landmarks
         ]);
     }
 
     public function showLandmark($slug)
     {
-        $landmarks = $this->getLandmarksData();
+        $snapshot = $this->database->getReference('seni_budaya/' . $slug)->getSnapshot();
+        $landmark = null;
 
-        if (!isset($landmarks[$slug])) {
+        if ($snapshot->exists()) {
+            $data = $snapshot->getValue();
+            if (isset($data['artCategory']) && $data['artCategory'] === 'sejarah') {
+                $landmark = [
+                    'name' => $data['artName'] ?? 'Untitled',
+                    'slug' => $slug,
+                    'location' => ($data['origin'] ?? '') . ', ' . ($data['province'] ?? ''),
+                    'category' => $data['artSubCategory'] ?? 'Situs Bersejarah',
+                    'desc' => $data['shortDesc'] ?? ($data['description'] ?? ''),
+                    'longDesc' => $data['description'] ?? '',
+                    'img' => $data['imageUrl'] ?? '',
+                    'videoUrl' => $data['videoLink'] ?? '',
+                    'lat' => $data['lat'] ?? null,
+                    'lng' => $data['lng'] ?? null,
+                ];
+            }
+        }
+
+        if (!$landmark) {
+            $staticLandmarks = $this->getLandmarksData();
+            if (isset($staticLandmarks[$slug])) {
+                $landmark = $staticLandmarks[$slug];
+            }
+        }
+
+        if (!$landmark) {
             abort(404, 'Landmark tidak ditemukan');
         }
 
         return Inertia::render('LandmarkDetail', [
-            'landmark' => $landmarks[$slug]
+            'landmark' => $landmark
         ]);
     }
 

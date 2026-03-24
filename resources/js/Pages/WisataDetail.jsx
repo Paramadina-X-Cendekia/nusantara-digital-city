@@ -27,7 +27,10 @@ export default function WisataDetail({ slug }) {
         }
     }, [slug, t]);
 
-    if (!destination) return null;
+    if (!destination) {
+        console.warn("WisataDetail: No destination found for slug:", slug);
+        return null;
+    }
 
     return (
         <div className="flex min-h-screen flex-col bg-background-light dark:bg-background-dark transition-colors duration-300 antialiased font-display">
@@ -43,7 +46,7 @@ export default function WisataDetail({ slug }) {
                         transition={{ duration: 1.5 }}
                         className="absolute inset-0"
                     >
-                        <ImageWithFallback src={destination.img} alt={destination.name} className="w-full h-full object-cover" fallbackIcon="landscape" />
+                        <ImageWithFallback src={destination.defaultImg || destination.img} alt={destination.name} className="w-full h-full object-cover" fallbackIcon="landscape" />
                         <div className="absolute inset-0 bg-gradient-to-b from-slate-900/40 via-transparent to-slate-900/90"></div>
                     </motion.div>
                     
@@ -85,7 +88,7 @@ export default function WisataDetail({ slug }) {
                                     <span className="size-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
                                         <span className="material-symbols-outlined uppercase">info</span>
                                     </span>
-                                    Overview
+                                    {t('wisata.overview')}
                                 </h2>
                                 <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed mb-8 whitespace-pre-line">
                                     {destination.desc}
@@ -97,7 +100,7 @@ export default function WisataDetail({ slug }) {
                                     <span className="size-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
                                         <span className="material-symbols-outlined uppercase">explore</span>
                                     </span>
-                                    Digital Presence & Location
+                                    {t('wisata.location_title')}
                                 </h2>
                                 <div className="rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden relative group shadow-2xl">
                                     <iframe
@@ -146,7 +149,7 @@ export default function WisataDetail({ slug }) {
                                     </div>
                                 </div>
                                 <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full mt-8 bg-primary text-white py-4 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-primary/30 hover:bg-primary/90 transition-all">
-                                    Book Guide Experience
+                                    {t('wisata.book_guide')}
                                 </motion.button>
                             </motion.div>
 

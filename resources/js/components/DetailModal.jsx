@@ -18,6 +18,8 @@ export default function DetailModal({ isOpen, onClose, contribution }) {
                         <DetailItem label={t('modal.label_province')} value={data.province} />
                         <DetailItem label={t('modal.label_category')} value={data.category} />
                         <DetailItem label={t('modal.label_website')} value={data.website} />
+                        <DetailItem label={t('modal.label_lat')} value={data.lat} />
+                        <DetailItem label={t('modal.label_lng')} value={data.lng} />
                         <div className="col-span-2">
                             <DetailItem label={t('modal.label_description')} value={data.description} />
                         </div>
@@ -52,7 +54,7 @@ export default function DetailModal({ isOpen, onClose, contribution }) {
                         <DetailItem label={t('modal.label_city_kab')} value={data.city} />
                         <DetailItem label={t('modal.label_address')} value={data.address} />
                         <DetailItem label={t('modal.label_digital_menu')} value={data.digitalMenu ? t('modal.yes') : t('modal.no')} />
-                        <DetailItem label={t('modal.label_business_profile')} value={data.businessProfile ? t('modal.yes') : t('modal.no')} />
+                        <DetailItem label={t('modal.label_local_story')} value={data.localStory ? t('modal.yes') : t('modal.no')} />
                     </div>
                 );
             default:

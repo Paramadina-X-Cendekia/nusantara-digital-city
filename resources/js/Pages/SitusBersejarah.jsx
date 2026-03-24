@@ -1,0 +1,108 @@
+import { useState } from 'react';
+import { Head, Link } from '@inertiajs/react';
+import { motion, AnimatePresence } from 'framer-motion';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
+import { useLanguage } from '../lib/LanguageContext';
+import ImageWithFallback from '../components/ImageWithFallback';
+
+const fadeIn = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } }
+};
+const stagger = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.12 } }
+};
+
+export default function SitusBersejarah({ sites }) {
+    const { t } = useLanguage();
+
+    return (
+        <div className="relative flex min-h-screen flex-col overflow-x-hidden bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-300 transition-colors duration-300 antialiased">
+            <Head title={`Situs Bersejarah | Nusantara Digital City`} />
+            <Navbar />
+
+            <main className="flex-grow">
+                {/* ── Hero ── */}
+                <section className="relative py-20 overflow-hidden">
+                    <div className="absolute inset-0 bg-primary/5 dark:bg-primary/10 -z-10"></div>
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/20 via-transparent to-transparent opacity-50 -z-10"></div>
+
+                    <motion.div initial="hidden" animate="visible" variants={stagger} className="container mx-auto px-4 lg:px-10 text-center">
+                        <motion.div variants={fadeIn} className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider mb-6">
+                            <span className="material-symbols-outlined text-sm">account_balance</span>
+                            EKSPLORASI SEJARAH
+                        </motion.div>
+                        <motion.h1 variants={fadeIn} className="text-4xl md:text-6xl font-black tracking-tight mb-6 text-slate-900 dark:text-slate-100">
+                            Situs <span className="text-primary">Bersejarah</span>
+                        </motion.h1>
+                        <motion.p variants={fadeIn} className="max-w-2xl mx-auto text-slate-600 dark:text-slate-400 text-lg leading-relaxed">
+                            Jelajahi warisan peradaban Nusantara melalui situs-situs bersejarah yang diabadikan secara digital.
+                        </motion.p>
+                    </motion.div>
+                </section>
+
+                {/* ── Sites Grid ── */}
+                <section className="container mx-auto px-4 lg:px-10 py-12">
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            initial="hidden" animate="visible" exit="hidden" variants={stagger}
+                            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+                        >
+                            {sites.map((item) => (
+                                <Link key={item.slug} href={`/budaya/landmark/${item.slug}`}>
+                                    <motion.div
+                                        variants={fadeIn}
+                                        whileHover={{ y: -8 }}
+                                        className="group bg-white dark:bg-surface-dark rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all border border-slate-200 dark:border-slate-800 cursor-pointer h-full"
+                                    >
+                                        <div className="h-56 overflow-hidden relative">
+                                            <ImageWithFallback className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={item.name} src={item.img} fallbackIcon="account_balance" />
+                                            <div className="absolute top-4 left-4 bg-primary/90 backdrop-blur-md text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                                                Situs Bersejarah
+                                            </div>
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
+                                                <span className="text-white text-sm font-bold flex items-center gap-1">
+                                                    <span className="material-symbols-outlined text-lg">public</span> Pelajari Selengkapnya
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div className="p-6">
+                                            <div className="flex items-center gap-2 text-primary text-xs font-bold mb-2">
+                                                <span className="material-symbols-outlined text-base">location_on</span>
+                                                {item.location}
+                                            </div>
+                                            <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-2 group-hover:text-primary transition-colors">{item.name}</h3>
+                                            <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed line-clamp-3">{item.desc}</p>
+                                        </div>
+                                    </motion.div>
+                                </Link>
+                            ))}
+                        </motion.div>
+                    </AnimatePresence>
+
+                    {sites.length === 0 && (
+                        <div className="text-center py-16">
+                            <span className="material-symbols-outlined text-slate-400 text-6xl mb-4">search_off</span>
+                            <p className="text-slate-500 font-medium">Belum ada data situs bersejarah.</p>
+                        </div>
+                    )}
+                </section>
+
+                {/* ── Back CTA ── */}
+                <section className="py-20 px-4">
+                    <div className="container mx-auto max-w-4xl text-center">
+                        <Link href="/budaya">
+                            <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="px-8 py-4 bg-primary text-white rounded-xl font-bold shadow-xl hover:bg-primary/90 transition-colors flex items-center gap-2 mx-auto">
+                                <span className="material-symbols-outlined">arrow_back</span> Kembali ke Budaya
+                            </motion.button>
+                        </Link>
+                    </div>
+                </section>
+            </main>
+
+            <Footer />
+        </div>
+    );
+}

@@ -21,16 +21,24 @@ export const LanguageProvider = ({ children }) => {
         setLang((prev) => (prev === 'id' ? 'en' : 'id'));
     };
 
-    const t = (path) => {
+    const t = (path, params = {}) => {
         const keys = path.split('.');
         let result = translations[lang];
         for (const key of keys) {
-            if (result[key]) {
+            if (result && result[key]) {
                 result = result[key];
             } else {
                 return path; // Fallback to path name
             }
         }
+        
+        // Simple interpolation
+        if (typeof result === 'string') {
+            Object.keys(params).forEach(key => {
+                result = result.replace(`{${key}}`, params[key]);
+            });
+        }
+        
         return result;
     };
 

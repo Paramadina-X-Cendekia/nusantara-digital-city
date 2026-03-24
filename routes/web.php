@@ -10,6 +10,7 @@ use App\Http\Controllers\KisahController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ProfileController;
 
 Route::get('/', [CityController::class, 'index'])->name('home');
 
@@ -25,10 +26,14 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/profil', [ProfileController::class, 'show'])->name('profil');
     
     // Auth-only contribution routes
     Route::get('/kontribusi', [\App\Http\Controllers\ContributionController::class, 'index'])->name('kontribusi');
     Route::post('/kontribusi', [\App\Http\Controllers\ContributionController::class, 'store'])->name('kontribusi.store');
+    Route::get('/kontribusi/{id}/edit', [\App\Http\Controllers\ContributionController::class, 'edit'])->name('kontribusi.edit');
+    Route::post('/kontribusi/{id}/update', [\App\Http\Controllers\ContributionController::class, 'update'])->name('kontribusi.update');
+    Route::delete('/kontribusi/{id}', [\App\Http\Controllers\ContributionController::class, 'destroy'])->name('kontribusi.destroy');
     Route::post('/kontribusi/generate-description', [\App\Http\Controllers\ContributionController::class, 'generateDescription'])->name('kontribusi.generate');
 
     // Admin-only moderation routes
@@ -40,6 +45,7 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/budaya', [\App\Http\Controllers\PublicBudayaController::class, 'index'])->name('budaya');
 Route::get('/budaya/landmark/{slug}', [\App\Http\Controllers\PublicBudayaController::class, 'showLandmark'])->name('landmark.detail');
+Route::get('/situs-bersejarah', [\App\Http\Controllers\PublicBudayaController::class, 'situsBersejarah'])->name('situs-bersejarah');
 
 Route::get('/kisah-rakyat', [KisahController::class, 'index'])->name('kisah-rakyat');
 Route::get('/kisah-rakyat/{slug}', [KisahController::class, 'show'])->name('detail-kisah');

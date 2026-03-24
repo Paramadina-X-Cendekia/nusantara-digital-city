@@ -1,9 +1,11 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import DashboardLayout from '../Layouts/DashboardLayout';
 import Badge from '../components/Badge';
+import { useLanguage } from '../lib/LanguageContext';
 
 export default function Dashboard({ auth, contributions = [], stats = { total: 0, approved: 0 } }) {
+    const { t } = useLanguage();
     // Logic to determine badges
     const badges = [];
     badges.push('contributor');
@@ -83,6 +85,7 @@ export default function Dashboard({ auth, contributions = [], stats = { total: 0
                                             <th className="px-8 py-4 text-left">{t('dashboard.table_name')}</th>
                                             <th className="px-8 py-4 text-left">{t('dashboard.table_status')}</th>
                                             <th className="px-8 py-4 text-left">{t('dashboard.table_date')}</th>
+                                            <th className="px-8 py-4 text-left">{t('dashboard.table_action')}</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -100,6 +103,35 @@ export default function Dashboard({ auth, contributions = [], stats = { total: 0
                                                     </span>
                                                 </td>
                                                 <td className="px-8 py-5 text-sm text-slate-500">{new Date(c.created_at).toLocaleDateString('id-ID')}</td>
+                                                <td className="px-8 py-5">
+                                                    <div className="flex items-center gap-2">
+                                                        {c.status !== 'approved' && (
+                                                            <>
+                                                                <Link
+                                                                    href={`/kontribusi/${c.id}/edit`}
+                                                                    className="size-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-sm"
+                                                                    title={t('dashboard.edit')}
+                                                                >
+                                                                    <span className="material-symbols-outlined text-sm">edit</span>
+                                                                </Link>
+                                                                <button
+                                                                    onClick={() => {
+                                                                        if (confirm(t('dashboard.confirm_delete') || 'Apakah Anda yakin ingin menghapus kontribusi ini?')) {
+                                                                            router.delete(`/kontribusi/${c.id}`);
+                                                                        }
+                                                                    }}
+                                                                    className="size-8 rounded-lg bg-rose-500/10 text-rose-500 flex items-center justify-center hover:bg-rose-500 hover:text-white transition-all shadow-sm"
+                                                                    title={t('dashboard.delete')}
+                                                                >
+                                                                    <span className="material-symbols-outlined text-sm">delete</span>
+                                                                </button>
+                                                            </>
+                                                        )}
+                                                        {c.status === 'approved' && (
+                                                            <span className="text-[10px] font-bold text-slate-400 italic">{t('dashboard.locked') || 'Terkunci'}</span>
+                                                        )}
+                                                    </div>
+                                                </td>
                                             </tr>
                                         ))}
                                     </tbody>

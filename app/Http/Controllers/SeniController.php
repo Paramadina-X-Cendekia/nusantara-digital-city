@@ -61,6 +61,7 @@ class SeniController extends Controller
                     ['url' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuA0jeSakdv6nP10Lx12LKRiQNerivDknx-BZKVNP1-dY2xZ2fhj-s73LMz8DjaQWwYKWxR6FXfwb65BUUHaDgGH1VJN4C2LxAvAUR7OkaoZfZiZ2SInN_5ES0WQdzC5HbausLNI5hpYB9c-QNJyUR4agdXx_73N26Dn_9XI2OW25qKf-gjjzh_584EFA0Vzxvyyx4gW8GUqIwhaAmp6_7LJyGlq6Rru6PMVX-sD4QsGgBZHIwI4aA220TEW_Br8d8CpApYUZvCbzxhz', 'caption' => 'Pertunjukan Gamelan Keraton'],
                 ],
                 'hasAudio' => true,
+                'audioUrl' => '/audio/gamelan_indo.mp3',
                 'audioDesc' => 'Rasakan sensasi berada di tengah orkestra Gamelan melalui audio spasial 360°. Dengarkan harmoni dari setiap instrumen—saron, bonang, kenong, gong—dalam pengalaman imersif.',
                 'videoUrl' => 'https://www.youtube.com/embed/dQw4w9WgXcQ',
                 'videoTitle' => 'Dokumenter: Harmoni Abadi Gamelan Jawa',
@@ -257,7 +258,7 @@ class SeniController extends Controller
                 foreach ($snapshot->getValue() as $key => $value) {
                     $cities[] = [
                         'id' => $key,
-                        'name' => $value['name'] ?? 'Unknown',
+                        'name' => $value['name'] ?? $value['cityName'] ?? 'Unknown',
                         'province' => $value['province'] ?? '-'
                     ];
                 }

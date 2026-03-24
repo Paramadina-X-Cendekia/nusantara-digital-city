@@ -107,7 +107,7 @@ export default function DetailKisah({ story }) {
                                     <div className="bg-white dark:bg-surface-dark rounded-3xl p-8 border border-slate-200 dark:border-slate-800 shadow-sm">
                                         <h3 className="font-black text-slate-900 dark:text-slate-100 text-xl mb-6">{t('kisah.main_characters')}</h3>
                                         <ul className="space-y-4">
-                                            {story.characters.map((char, i) => (
+                                            {(Array.isArray(story.characters) ? story.characters : (story.characters ? story.characters.split(',').map(s => s.trim()) : [])).map((char, i) => (
                                                 <li key={i} className="flex items-center gap-4">
                                                     <div className="size-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-primary font-bold">
                                                         {char.charAt(0)}

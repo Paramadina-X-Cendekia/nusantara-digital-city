@@ -19,6 +19,7 @@ class CityController extends Controller
             $cities = [];
             if ($snapshot->hasChildren()) {
                 foreach ($snapshot->getValue() as $key => $value) {
+                    $value['name'] = $value['name'] ?? $value['cityName'] ?? 'Unknown';
                     $cities[] = array_merge(['id' => $key], $value);
                 }
             }
@@ -107,7 +108,8 @@ class CityController extends Controller
                     'name' => $regData['cityName'],
                     'province' => $regData['province'],
                     'description' => $regData['description'],
-                    'maps_link' => $regData['maps_link'] ?? null,
+                    'lat' => $regData['lat'] ?? null,
+                    'lng' => $regData['lng'] ?? null,
                     'category' => $regData['category'],
                     'website' => $regData['website'] ?? null,
                     'status' => 'approved',
@@ -171,7 +173,7 @@ class CityController extends Controller
                 foreach ($snapshot->getValue() as $key => $value) {
                     $cities[] = [
                         'id' => $key,
-                        'name' => $value['name'] ?? 'Unknown',
+                        'name' => $value['name'] ?? $value['cityName'] ?? 'Unknown',
                         'province' => $value['province'] ?? '-'
                     ];
                 }

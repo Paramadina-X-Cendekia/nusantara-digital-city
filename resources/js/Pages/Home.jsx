@@ -9,10 +9,12 @@ import { useLanguage } from '@/lib/LanguageContext';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function Home({ cities = [] }) {
+export default function Home(props) {
     const { t } = useLanguage();
     const sectionRef = useRef(null);
     const triggerRef = useRef(null);
+    const timelineRef = useRef(null);
+    const lineRef = useRef(null);
     const [openFaq, setOpenFaq] = useState(null);
 
     const PILARS = [
@@ -36,24 +38,107 @@ export default function Home({ cities = [] }) {
     ];
 
     useEffect(() => {
-        const pin = gsap.fromTo(
-            sectionRef.current,
-            { x: 0 },
-            {
-                x: () => -(sectionRef.current.scrollWidth - window.innerWidth),
-                ease: "none",
-                scrollTrigger: {
-                    trigger: triggerRef.current,
-                    start: "top top",
-                    end: () => `+=${sectionRef.current.scrollWidth}`, // Dynamic duration
-                    scrub: 1,
-                    pin: true,
-                    anticipatePin: 1
+        let pin;
+        let badgeAnim;
+        let lineAnim;
+        let iconAnim;
+
+        if (sectionRef.current && triggerRef.current) {
+            pin = gsap.fromTo(
+                sectionRef.current,
+                { x: 0 },
+                {
+                    x: () => -(sectionRef.current.scrollWidth - window.innerWidth),
+                    ease: "none",
+                    scrollTrigger: {
+                        trigger: triggerRef.current,
+                        start: "top top",
+                        end: () => `+=${sectionRef.current.scrollWidth}`,
+                        scrub: 1,
+                        pin: true,
+                        anticipatePin: 1
+                    }
                 }
+            );
+
+            // Timeline Line GSAP Animation
+            if (lineRef.current && timelineRef.current) {
+                lineAnim = gsap.fromTo(
+                    lineRef.current,
+                    { scaleY: 0 },
+                    {
+                        scaleY: 1,
+                        ease: "none",
+                        scrollTrigger: {
+                            trigger: timelineRef.current,
+                            start: "top 60%",
+                            end: "bottom 80%",
+                            scrub: 1
+                        }
+                    }
+                );
             }
-        );
+
+            // Timeline Icons GSAP Animation
+            iconAnim = gsap.from(".timeline-icon", {
+                scale: 0,
+                opacity: 0,
+                stagger: 0.3,
+                duration: 0.6,
+                ease: "back.out(1.7)",
+                scrollTrigger: {
+                    trigger: timelineRef.current,
+                    start: "top 60%",
+                    end: "bottom 80%",
+                    scrub: 1
+                }
+            });
+
+            // GSAP Animation for Badges Alternating Layout
+            const timelineItems = gsap.utils.toArray('.timeline-item');
+            badgeAnim = timelineItems.map((item, i) => {
+                const icon = item.querySelector('.badge-icon-anim');
+                const text = item.querySelector('.badge-text-anim');
+                
+                const tl = gsap.timeline({
+                    scrollTrigger: {
+                        trigger: item,
+                        start: "top 80%",
+                        toggleActions: "play none none reverse"
+                    }
+                });
+
+                const isMobile = window.innerWidth < 768;
+
+                tl.from(icon, {
+                    x: isMobile ? 0 : (i % 2 === 0 ? -50 : 50),
+                    y: isMobile ? 30 : 0,
+                    opacity: 0,
+                    duration: 0.8,
+                    ease: "power3.out"
+                }).from(text, {
+                    x: isMobile ? 0 : (i % 2 === 0 ? 50 : -50),
+                    y: isMobile ? 30 : 0,
+                    opacity: 0,
+                    duration: 0.8,
+                    ease: "power3.out"
+                }, "-=0.6");
+                
+                return tl;
+            });
+
+            // Ensure ScrollTrigger refreshes
+            ScrollTrigger.refresh();
+            setTimeout(() => ScrollTrigger.refresh(), 1000);
+        }
+
         return () => {
-            pin.kill();
+            if (pin) pin.kill();
+            if (Array.isArray(badgeAnim)) badgeAnim.forEach(tl => tl.kill());
+            else if (badgeAnim) badgeAnim.kill();
+            if (lineAnim) lineAnim.kill();
+            if (iconAnim) iconAnim.kill();
+            ScrollTrigger.getAll().forEach(t => t.kill());
         };
     }, []);
 
@@ -71,7 +156,7 @@ export default function Home({ cities = [] }) {
     };
 
     return (
-        <div className="relative flex min-h-screen flex-col overflow-x-hidden bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-300 transition-colors duration-300">
+        <div className="relative flex min-h-screen flex-col bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-300 transition-colors duration-300 antialiased">
             <Head title={t('nav.home') + " | Nusantara Digital City"} />
             <Navbar />
 
@@ -101,16 +186,19 @@ export default function Home({ cities = [] }) {
                                     {t('home.hero_subtitle')}
                                 </motion.p>
                                 <motion.div variants={fadeIn} className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-                                    <motion.button
-                                        whileHover={{ scale: 1.05 }}
-                                        whileTap={{ scale: 0.95 }}
-                                        className="rounded-lg h-12 px-8 bg-primary text-white text-base font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-colors"
-                                    >
-                                        {t('home.cta_explore')}
-                                    </motion.button>
+                                    <Link href="/budaya">
+                                        <motion.button
+                                            whileHover={{ scale: 1.05 }}
+                                            whileTap={{ scale: 0.95 }}
+                                            className="w-full sm:w-auto rounded-lg h-12 px-8 bg-primary text-white text-base font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-colors"
+                                        >
+                                            {t('home.cta_explore')}
+                                        </motion.button>
+                                    </Link>
                                     <motion.button
                                         whileHover={{ scale: 1.05, backgroundColor: "rgba(255, 255, 255, 0.2)" }}
                                         whileTap={{ scale: 0.95 }}
+                                        onClick={() => triggerRef.current?.scrollIntoView({ behavior: 'smooth' })}
                                         className="rounded-lg h-12 px-8 bg-white/10 backdrop-blur-md text-white border border-white/20 text-base font-bold hover:bg-white/20 transition-colors"
                                     >
                                         {t('home.cta_learn')}
@@ -320,6 +408,82 @@ export default function Home({ cities = [] }) {
                                     </div>
                                 </motion.div>
                             ))}
+                        </div>
+                    </div>
+                </section>
+
+                {/* Contributor Badge Section with GSAP */}
+                <section className="py-24 px-4 bg-white dark:bg-slate-950 overflow-hidden">
+                    <div className="container mx-auto max-w-6xl">
+                        <div className="text-center mb-20 space-y-4">
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-widest"
+                            >
+                                Rewards & Recognition
+                            </motion.div>
+                            <h2 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-slate-100 italic">
+                                {t('home.badge_title')} <span className="text-primary">{t('home.badge_subtitle')}</span>
+                            </h2>
+                            <p className="text-lg text-slate-500 dark:text-slate-400 max-w-2xl mx-auto font-medium">
+                                {t('home.badge_desc')}
+                            </p>
+                        </div>
+
+                        <div ref={timelineRef} className="badge-timeline-container relative max-w-5xl mx-auto mt-16 pt-10">
+                            {/* Central Line */}
+                            <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-slate-200 dark:bg-slate-800 -translate-x-1/2 rounded-full hidden md:block">
+                                <div 
+                                    ref={lineRef}
+                                    className="w-full h-full bg-primary rounded-full origin-top"
+                                    style={{ transform: 'scaleY(0)' }}
+                                />
+                            </div>
+
+                            <div className="space-y-16">
+                                {[
+                                    { title: t('home.badge_1_title'), desc: t('home.badge_1_desc'), color: 'from-amber-400 to-amber-600', icon: 'explore', level: 'Level 1 (0-3 Kontribusi)' },
+                                    { title: t('home.badge_2_title'), desc: t('home.badge_2_desc'), color: 'from-blue-400 to-blue-600', icon: 'history_edu', level: 'Level 2 (4-10 Kontribusi)' },
+                                    { title: t('home.badge_3_title'), desc: t('home.badge_3_desc'), color: 'from-emerald-400 to-emerald-600', icon: 'shield', level: 'Level 3 (11-20 Kontribusi)' },
+                                    { title: t('home.badge_4_title'), desc: t('home.badge_4_desc'), color: 'from-purple-400 to-purple-600', icon: 'military_tech', level: 'Level 4 (21+ Kontribusi)' },
+                                ].map((badge, idx) => (
+                                    <div key={idx} className={`timeline-item relative flex flex-col md:flex-row items-center gap-6 md:gap-10 lg:gap-20 ${idx % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
+                                        
+                                        {/* Icon Side */}
+                                        <div className={`badge-icon-anim flex-1 w-full flex justify-center ${idx % 2 === 0 ? 'md:justify-end' : 'md:justify-start'}`}>
+                                            <div className="relative p-6 rounded-[2.5rem] bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 flex items-center justify-center hover:shadow-2xl hover:shadow-primary/5 transition-all duration-300 max-w-[240px] md:max-w-[280px] w-full">
+                                                <div className={`size-24 md:size-32 rounded-full bg-gradient-to-br ${badge.color} flex items-center justify-center p-1 shadow-xl hover:scale-110 transition-transform duration-500`}>
+                                                    <div className="size-full rounded-full bg-inherit flex items-center justify-center text-white border-4 border-white/20 text-5xl md:text-6xl drop-shadow-md">
+                                                        <span className="material-symbols-outlined">{badge.icon}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Center Node */}
+                                        <div className="absolute left-1/2 -translate-x-1/2 hidden md:flex items-center justify-center z-10 pointer-events-none">
+                                            <div className="timeline-icon size-14 rounded-full bg-white dark:bg-slate-950 border-4 border-primary flex items-center justify-center shadow-lg shadow-primary/20 text-primary">
+                                                <span className="material-symbols-outlined text-xl">{badge.icon}</span>
+                                            </div>
+                                        </div>
+                                        
+                                        {/* Text Side (Penjelasan Badge) */}
+                                        <div className={`badge-text-anim flex-1 w-full flex flex-col justify-center items-center text-center ${idx % 2 === 0 ? 'md:items-start md:text-left' : 'md:items-end md:text-right'}`}>
+                                            <div className={`space-y-3 max-w-sm ${idx % 2 === 0 ? '' : 'md:ml-auto'} flex flex-col items-center ${idx % 2 === 0 ? 'md:items-start' : 'md:items-end'}`}>
+                                                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-widest">
+                                                    {badge.level}
+                                                </div>
+                                                <h3 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-slate-100 uppercase italic leading-tight">{badge.title}</h3>
+                                                <p className="text-slate-500 dark:text-slate-400 text-sm md:text-base font-medium leading-relaxed">
+                                                    {badge.desc}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </section>
