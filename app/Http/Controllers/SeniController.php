@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Cache;
 
 class SeniController extends Controller
 {
@@ -221,18 +222,34 @@ class SeniController extends Controller
 
         // Try to enrich data from Firebase
         try {
-            $factory = (new \Kreait\Firebase\Factory())
-                ->withServiceAccount(base_path(env('FIREBASE_CREDENTIALS')))
-                ->withDatabaseUri(env('FIREBASE_DATABASE_URL', 'https://nusantara-digital-city-default-rtdb.firebaseio.com'));
-            $database = $factory->createDatabase();
+            $database = $this->getFirebaseDatabase();
 
-            $reference = $database->getReference('seni/' . $slug);
+            $reference = $database->getReference('seni_budaya/' . $slug);
             $snapshot = $reference->getSnapshot();
 
             if ($snapshot->exists()) {
                 $firebaseData = $snapshot->getValue();
-                // Merge Firebase data (overrides local defaults)
+                // Ensure consistency in field names and merge
+                if (isset($firebaseData['artName'])) $firebaseData['title'] = $firebaseData['artName'];
+                if (isset($firebaseData['description'])) $firebaseData['desc'] = $firebaseData['description'];
+                if (isset($firebaseData['mainImageUrl'])) $firebaseData['img'] = $firebaseData['mainImageUrl'];
+                if (isset($firebaseData['imageUrl']) && !isset($firebaseData['mainImageUrl'])) $firebaseData['img'] = $firebaseData['imageUrl'];
+                
                 $art = array_merge($art, $firebaseData);
+
+                // Fetch current badge info
+                $contributorInfo = $this->getContributorInfo(
+                    $firebaseData['contributor_id'] ?? null,
+                    $firebaseData['contributor'] ?? null,
+                    $firebaseData['contributor_profession'] ?? null,
+                    $firebaseData['contributor_badge'] ?? null
+                );
+
+                $art['contributor'] = $contributorInfo['name'];
+                $art['contributor_profession'] = $contributorInfo['profession'];
+                $art['contributor_badge'] = $contributorInfo['badge'];
+                $art['contributor_badge_icon'] = $contributorInfo['badge_icon'] ?? ($firebaseData['contributor_badge_icon'] ?? null);
+                $art['contributor_badge_color'] = $contributorInfo['badge_color'] ?? ($firebaseData['contributor_badge_color'] ?? null);
             }
         } catch (\Exception $e) {
             // Firebase not configured — use local data silently
@@ -249,20 +266,23 @@ class SeniController extends Controller
     public function kontribusi()
     {
         try {
-            $database = $this->getFirebaseDatabase();
-            $reference = $database->getReference('cities');
-            $snapshot = $reference->getSnapshot();
-            
-            $cities = [];
-            if ($snapshot->hasChildren()) {
-                foreach ($snapshot->getValue() as $key => $value) {
-                    $cities[] = [
-                        'id' => $key,
-                        'name' => $value['name'] ?? $value['cityName'] ?? 'Unknown',
-                        'province' => $value['province'] ?? '-'
-                    ];
+            $cities = Cache::remember('firebase_cities', 86400, function() {
+                $database = $this->getFirebaseDatabase();
+                $reference = $database->getReference('cities');
+                $snapshot = $reference->getSnapshot();
+                
+                $citiesList = [];
+                if ($snapshot->hasChildren()) {
+                    foreach ($snapshot->getValue() as $key => $value) {
+                        $citiesList[] = [
+                            'id' => $key,
+                            'name' => $value['name'] ?? $value['cityName'] ?? 'Unknown',
+                            'province' => $value['province'] ?? '-'
+                        ];
+                    }
                 }
-            }
+                return $citiesList;
+            });
             
             return Inertia::render('KontribusiSeni', [
                 'cities' => $cities

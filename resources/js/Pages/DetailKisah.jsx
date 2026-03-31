@@ -5,6 +5,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { useLanguage } from '../lib/LanguageContext';
 import ImageWithFallback from '../components/ImageWithFallback';
+import { getYoutubeEmbedUrl } from '../lib/utils';
 
 const fadeIn = {
     hidden: { opacity: 0, y: 30 },
@@ -93,6 +94,34 @@ export default function DetailKisah({ story }) {
                                 </div>
 
                                 <div className="space-y-8">
+                                    {/* Contributor Card */}
+                                    {story.contributor && (
+                                        <div className="bg-white dark:bg-surface-dark rounded-3xl p-8 border border-slate-200 dark:border-slate-800 shadow-sm">
+                                            <h3 className="font-black text-slate-900 dark:text-slate-100 text-xl mb-6 uppercase tracking-tight">Kontributor</h3>
+                                            <div className="flex items-center gap-4">
+                                                <div className="size-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0 relative overflow-hidden">
+                                                    <span className="material-symbols-outlined text-4xl">person</span>
+                                                    <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent"></div>
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <p className="font-black text-slate-900 dark:text-white uppercase tracking-tight leading-tight mb-1">{story.contributor}</p>
+                                                    <p className="text-xs text-slate-500 font-bold uppercase tracking-wider">{story.contributor_profession || '-'}</p>
+                                                </div>
+                                            </div>
+                                            <div className="mt-6 pt-6 border-t border-slate-100 dark:border-slate-800">
+                                                <div className="flex items-center gap-2 mb-3">
+                                                    <span className="material-symbols-outlined text-sm font-bold" style={{ color: story.contributor_badge_color || '#F59E0B' }}>
+                                                        {story.contributor_badge_icon || 'explore'}
+                                                    </span>
+                                                    <span className="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 bg-slate-50 dark:bg-slate-800 rounded-md border border-slate-100 dark:border-slate-700" style={{ color: story.contributor_badge_color || '#F59E0B' }}>
+                                                        {story.contributor_badge || 'Nusantara Pioneer'}
+                                                    </span>
+                                                </div>
+                                                <p className="text-[10px] text-slate-400 font-medium italic">Telah berkontribusi mendigitalisasi kisah ini pada {story.created_at ? new Date(story.created_at).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }) : 'Maret 2024'}.</p>
+                                            </div>
+                                        </div>
+                                    )}
+
                                     {/* Moral Value Card */}
                                     <div className="bg-primary/10 rounded-3xl p-8 border border-primary/20">
                                         <h3 className="font-black text-primary text-xl mb-4 flex items-center gap-2">
@@ -133,7 +162,7 @@ export default function DetailKisah({ story }) {
                                 <div className="aspect-video relative">
                                     <iframe
                                         className="absolute inset-0 w-full h-full"
-                                        src={story.videoUrl}
+                                        src={getYoutubeEmbedUrl(story.videoUrl)}
                                         title={story.title}
                                         frameBorder="0"
                                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

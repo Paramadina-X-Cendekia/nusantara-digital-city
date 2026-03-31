@@ -8,6 +8,7 @@ export default function Register() {
     const { data, setData, post, processing, errors } = useForm({
         name: '',
         email: '',
+        profession: '',
         password: '',
         password_confirmation: '',
     });
@@ -71,6 +72,17 @@ export default function Register() {
                                 required
                             />
                             {errors.email && <p className="text-red-500 text-xs mt-1 font-medium">{errors.email}</p>}
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-sm font-bold uppercase tracking-wider text-slate-400">{t('auth.profession_label')}</label>
+                            <input 
+                                value={data.profession} 
+                                onChange={e => setData('profession', e.target.value)} 
+                                className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 outline-none focus:ring-2 focus:ring-primary transition-all"
+                                placeholder={t('auth.placeholder_profession')}
+                            />
+                            {errors.profession && <p className="text-red-500 text-xs mt-1 font-medium">{errors.profession}</p>}
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

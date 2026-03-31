@@ -14,6 +14,9 @@ class Contribution extends Model
         'data',
         'status',
         'user_id',
+        'rejection_note',
+        'admin_rating',
+        'is_duplicate',
     ];
 
     protected $casts = [

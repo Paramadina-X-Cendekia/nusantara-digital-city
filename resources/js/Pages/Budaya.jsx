@@ -18,15 +18,12 @@ const stagger = {
 export default function Budaya({ landmarks, budayaData }) {
     const { t } = useLanguage();
     const [activeTab, setActiveTab] = useState('situs-bersejarah');
-    const [sortOrder, setSortOrder] = useState('default');
-    const [isSortOpen, setIsSortOpen] = useState(false);
-    const sortRef = useRef(null);
     const [previewIndex, setPreviewIndex] = useState(0);
 
     const TABS = [
         { id: 'situs-bersejarah', label: t('budaya.tab_historical'), icon: 'account_balance' },
-        { id: 'Warisan Takbenda', label: t('budaya.tab_traditional'), icon: 'palette' },
-        { id: 'Cerita Rakyat & Legenda Digital', label: t('budaya.tab_folklore'), icon: 'auto_stories' },
+        { id: 'warisan-takbenda', label: t('budaya.tab_traditional'), icon: 'palette' },
+        { id: 'cerita-rakyat', label: t('budaya.tab_folklore'), icon: 'auto_stories' },
     ];
 
     const dynamicPreviewLocations = useMemo(() => {
@@ -73,30 +70,14 @@ export default function Budaya({ landmarks, budayaData }) {
         return () => clearInterval(interval);
     }, [dynamicPreviewLocations]);
 
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (sortRef.current && !sortRef.current.contains(event.target)) {
-                setIsSortOpen(false);
-            }
-        };
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
-
     const sortedLandmarks = useMemo(() => {
-        let items = [...(landmarks || [])];
-        if (sortOrder === 'asc') {
-            return items.sort((a, b) => a.name.localeCompare(b.name));
-        } else if (sortOrder === 'desc') {
-            return items.sort((a, b) => b.name.localeCompare(a.name));
-        }
-        return items;
-    }, [sortOrder, landmarks]);
+        return [...(landmarks || [])].slice(0, 3);
+    }, [landmarks]);
 
     const folkloreItems = useMemo(() => {
         let items = [];
         if (Array.isArray(budayaData)) {
-            items = budayaData.filter(b => b.artCategory === 'cerita' && (!b.status || b.status === 'approved'));
+            items = budayaData.filter(b => (b.artCategory === 'cerita' || b.type === 'budaya') && (!b.status || b.status === 'approved'));
         }
         return items.slice(0, 4);
     }, [budayaData]);
@@ -131,8 +112,10 @@ export default function Budaya({ landmarks, budayaData }) {
                 <Link key={item.id} href={href} className="h-full block">
                     <motion.div variants={fadeIn} whileHover={{ y: -6 }} className="h-full relative group overflow-hidden rounded-2xl cursor-pointer">
                         <ImageWithFallback alt={title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src={img} fallbackIcon="library_books" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent flex flex-col justify-end p-6">
-                            <h3 className="text-white font-bold text-lg">{title}</h3>
+                        <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6" key="overlay">
+                            <span className="text-white text-sm font-bold flex items-center gap-1">
+                                <span className="material-symbols-outlined text-lg">auto_stories</span> {t('kisah.read_now')}
+                            </span>
                         </div>
                     </motion.div>
                 </Link>
@@ -203,69 +186,22 @@ export default function Budaya({ landmarks, budayaData }) {
                 {/* ── Category Filter Tabs (Sticky Wrapper) ── */}
                 <div className="sticky top-16 z-40 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 transition-all duration-300">
                     <div className="container mx-auto px-4 lg:px-10">
-                        <motion.div
-                            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
-                            className="flex flex-row items-center justify-between gap-4 py-2"
-                        >
-                            <div className="flex flex-row overflow-x-auto flex-nowrap no-scrollbar scroll-smooth gap-2">
-                                {TABS.map((tab) => (
-                                    <button
-                                        key={tab.id}
-                                        onClick={() => handleTabClick(tab.id)}
-                                        className={`flex items-center justify-center px-5 py-2 whitespace-nowrap transition-all rounded-xl ${
-                                            activeTab === tab.id
-                                                ? 'bg-primary text-white shadow-lg shadow-primary/25'
-                                                : 'text-slate-500 hover:text-primary hover:bg-primary/5'
-                                        }`}
-                                    >
-                                        <span className={`material-symbols-outlined mr-2 text-xl ${activeTab === tab.id ? 'text-white' : ''}`}>{tab.icon}</span>
-                                        <p className="text-sm font-bold">{tab.label}</p>
-                                    </button>
-                                ))}
-                            </div>
-                            
-                            <div className="relative shrink-0 flex items-center" ref={sortRef}>
-                                <motion.button
-                                    whileHover={{ scale: 1.05 }}
-                                    whileTap={{ scale: 0.95 }}
-                                    onClick={() => setIsSortOpen(!isSortOpen)}
-                                    className="bg-primary/10 text-primary size-10 md:w-auto md:px-4 md:py-2 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-primary hover:text-white transition-all shadow-sm"
+                        <div className="flex flex-row overflow-x-auto flex-nowrap no-scrollbar scroll-smooth gap-4 py-2">
+                            {TABS.map((tab) => (
+                                <button
+                                    key={tab.id}
+                                    onClick={() => handleTabClick(tab.id)}
+                                    className={`flex items-center justify-center px-5 py-2 whitespace-nowrap transition-all rounded-xl ${
+                                        activeTab === tab.id
+                                            ? 'bg-primary text-white shadow-lg shadow-primary/25'
+                                            : 'text-slate-500 hover:text-primary hover:bg-primary/5'
+                                    }`}
                                 >
-                                    <span className="material-symbols-outlined text-lg">filter_list</span>
-                                    <span className="hidden md:inline">{sortOrder === 'default' ? t('budaya.sort_label') : `${t('budaya.sort_label')}: ${sortOrder === 'asc' ? 'A-Z' : 'Z-A'}`}</span>
-                                </motion.button>
-                                
-                                <AnimatePresence>
-                                    {isSortOpen && (
-                                        <motion.div
-                                            initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                                            exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                                            className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xl z-50 overflow-hidden"
-                                        >
-                                            <button 
-                                                onClick={() => { setSortOrder('default'); setIsSortOpen(false); }}
-                                                className="w-full text-left px-4 py-3 text-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-2"
-                                            >
-                                                <span className="material-symbols-outlined text-sm">reorder</span> Default
-                                            </button>
-                                            <button 
-                                                onClick={() => { setSortOrder('asc'); setIsSortOpen(false); }}
-                                                className="w-full text-left px-4 py-3 text-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-2"
-                                            >
-                                                <span className="material-symbols-outlined text-sm">sort_by_alpha</span> {t('budaya.sort_alpha')}
-                                            </button>
-                                            <button 
-                                                onClick={() => { setSortOrder('desc'); setIsSortOpen(false); }}
-                                                className="w-full text-left px-4 py-3 text-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-2"
-                                            >
-                                                <span className="material-symbols-outlined text-sm">filter_list_off</span> {t('budaya.sort_alpha_rev')}
-                                            </button>
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
-                            </div>
-                        </motion.div>
+                                    <span className={`material-symbols-outlined mr-2 text-xl ${activeTab === tab.id ? 'text-white' : ''}`}>{tab.icon}</span>
+                                    <p className="text-sm font-bold">{tab.label}</p>
+                                </button>
+                            ))}
+                        </div>
                     </div>
                 </div>
 
@@ -284,9 +220,9 @@ export default function Budaya({ landmarks, budayaData }) {
                         </motion.div>
 
                         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {sortedLandmarks.map((item) => (
+                            {sortedLandmarks.slice(0, 3).map((item) => (
                                 <motion.div
-                                    key={item.name}
+                                    key={item.slug || item.name}
                                     variants={fadeIn}
                                     whileHover={{ y: -8 }}
                                     className="group bg-white dark:bg-surface-dark rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all border border-slate-200 dark:border-slate-800"
@@ -315,7 +251,7 @@ export default function Budaya({ landmarks, budayaData }) {
 
                     {/* ── Section: Warisan Takbenda ── */}
                     <motion.section
-                        id="Warisan Takbenda"
+                        id="warisan-takbenda"
                         initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-80px' }} variants={fadeIn}
                         className="mb-20 bg-slate-100 dark:bg-slate-900/50 rounded-3xl p-8 lg:p-16 border border-slate-200 dark:border-slate-800 overflow-hidden relative scroll-mt-20 md:scroll-mt-32"
                     >
@@ -389,7 +325,7 @@ export default function Budaya({ landmarks, budayaData }) {
                     </motion.section>
 
                     {/* ── Section: Cerita Rakyat ── */}
-                    <section id="Cerita Rakyat & Legenda Digital" className="mb-20 scroll-mt-20 md:scroll-mt-32">
+                    <section id="cerita-rakyat" className="mb-20 scroll-mt-20 md:scroll-mt-32">
                         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeIn} className="flex flex-col md:flex-row items-start md:items-center justify-between mb-10 gap-4">
                             <div>
                                 <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100">{t('budaya.folklore_section_title')}</h2>

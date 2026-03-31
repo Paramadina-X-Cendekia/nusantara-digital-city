@@ -4,6 +4,13 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 
+// Fix for cURL error 77 on Windows for Firebase and other outgoing requests
+$caFile = dirname(__DIR__) . '/storage/app/cacert.pem';
+if (file_exists($caFile)) {
+    ini_set('curl.cainfo', $caFile);
+    ini_set('openssl.cafile', $caFile);
+}
+
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',

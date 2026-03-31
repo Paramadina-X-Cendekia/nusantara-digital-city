@@ -20,6 +20,23 @@ export default function LandmarkDetail({ landmark }) {
     const [activeTab, setActiveTab] = useState('profil');
     const [showArchive, setShowArchive] = useState(false);
 
+    const handleShare = async () => {
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: landmark.name,
+                    text: landmark.desc,
+                    url: window.location.href,
+                });
+            } catch (err) {
+                console.error("Share failed:", err);
+            }
+        } else {
+            navigator.clipboard.writeText(window.location.href);
+            alert("Link profil disalin ke papan klip!");
+        }
+    };
+
     const tabs = [
         { id: 'profil', label: t('landmark_detail.digital_profile'), icon: 'account_balance' },
         { id: 'video', label: t('landmark_detail.exploration_video'), icon: 'movie' },
@@ -42,6 +59,10 @@ export default function LandmarkDetail({ landmark }) {
                                 <motion.div variants={fadeIn} className="flex flex-wrap items-center gap-2 mb-4">
                                     <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-primary/90 text-white">Situs Bersejarah</span>
                                     <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/20 backdrop-blur-md text-white">{landmark.location}</span>
+                                    <button onClick={handleShare} className="ml-auto flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-wider transition-all border border-white/20">
+                                        <span className="material-symbols-outlined text-sm">share</span>
+                                        Bagikan Profil
+                                    </button>
                                 </motion.div>
                                 <motion.h1 variants={fadeIn} className="text-4xl md:text-6xl font-black text-white mb-4 drop-shadow-2xl">{landmark.name}</motion.h1>
                                 <motion.p variants={fadeIn} className="text-white/90 text-lg max-w-2xl font-medium leading-relaxed drop-shadow-md">
@@ -61,8 +82,8 @@ export default function LandmarkDetail({ landmark }) {
                                 whileTap={{ scale: 0.95 }}
                                 onClick={() => setActiveTab(tab.id)}
                                 className={`flex items-center gap-2 px-8 py-4 rounded-2xl text-sm font-bold transition-all duration-300 ${activeTab === tab.id
-                                        ? 'bg-primary text-white shadow-xl shadow-primary/30'
-                                        : 'bg-white dark:bg-surface-dark text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:border-primary/50 hover:text-primary'
+                                    ? 'bg-primary text-white shadow-xl shadow-primary/30'
+                                    : 'bg-white dark:bg-surface-dark text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:border-primary/50 hover:text-primary'
                                     }`}
                             >
                                 <span className="material-symbols-outlined text-2xl">{tab.icon}</span>
@@ -93,6 +114,34 @@ export default function LandmarkDetail({ landmark }) {
                                 </div>
 
                                 <div className="space-y-8">
+                                    {/* Contributor Card */}
+                                    {landmark.contributor && (
+                                        <div className="bg-white dark:bg-surface-dark rounded-3xl p-8 border border-slate-200 dark:border-slate-800 shadow-sm">
+                                            <h3 className="font-black text-slate-900 dark:text-slate-100 text-xl mb-6 uppercase tracking-tight">Kontributor</h3>
+                                            <div className="flex items-center gap-4">
+                                                <div className="size-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0 relative overflow-hidden">
+                                                    <span className="material-symbols-outlined text-4xl">person</span>
+                                                    <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent"></div>
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <p className="font-black text-slate-900 dark:text-white uppercase tracking-tight leading-tight mb-1">{landmark.contributor}</p>
+                                                    <p className="text-xs text-slate-500 font-bold uppercase tracking-wider">{landmark.contributor_profession || 'Peneliti'}</p>
+                                                </div>
+                                            </div>
+                                            <div className="mt-6 pt-6 border-t border-slate-100 dark:border-slate-800">
+                                                <div className="flex items-center gap-2 mb-3">
+                                                    <span className="material-symbols-outlined text-sm font-bold" style={{ color: landmark.contributor_badge_color || '#F59E0B' }}>
+                                                        {landmark.contributor_badge_icon || 'explore'}
+                                                    </span>
+                                                    <span className="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 bg-slate-50 dark:bg-slate-800 rounded-md border border-slate-100 dark:border-slate-700" style={{ color: landmark.contributor_badge_color || '#F59E0B' }}>
+                                                        {landmark.contributor_badge || 'Nusantara Pioneer'}
+                                                    </span>
+                                                </div>
+                                                <p className="text-[10px] text-slate-400 font-medium italic">Telah berkontribusi mendigitalisasi warisan ini pada {landmark.created_at ? new Date(landmark.created_at).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }) : 'Maret 2024'}.</p>
+                                            </div>
+                                        </div>
+                                    )}
+
                                     {/* Info Card */}
                                     <div className="bg-primary/10 rounded-3xl p-8 border border-primary/20">
                                         <h3 className="font-black text-primary text-xl mb-4 flex items-center gap-2">
@@ -254,10 +303,20 @@ export default function LandmarkDetail({ landmark }) {
                                     </div>
                                 </div>
                                 <div className="flex gap-4 pt-4">
-                                    <button className="flex-1 bg-primary text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-primary/25 hover:bg-primary/90 transition-all">
-                                        <span className="material-symbols-outlined">download</span> {t('landmark_detail.download_pdf')}
-                                    </button>
-                                    <button className="flex-1 border border-slate-200 dark:border-slate-700 py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all">
+                                    {landmark.archiveUrl ? (
+                                        <a 
+                                            href={landmark.archiveUrl} 
+                                            download 
+                                            className="flex-1 bg-primary text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-primary/25 hover:bg-primary/90 transition-all text-sm"
+                                        >
+                                            <span className="material-symbols-outlined">download</span> {t('landmark_detail.download_pdf')}
+                                        </a>
+                                    ) : (
+                                        <button disabled className="flex-1 bg-slate-200 text-slate-400 py-4 rounded-xl font-bold flex items-center justify-center gap-2 cursor-not-allowed text-sm">
+                                            <span className="material-symbols-outlined">download</span> {t('landmark_detail.download_pdf')} (N/A)
+                                        </button>
+                                    )}
+                                    <button onClick={handleShare} className="flex-1 border border-slate-200 dark:border-slate-700 py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all text-sm">
                                         <span className="material-symbols-outlined">share</span> {t('landmark_detail.share_profile')}
                                     </button>
                                 </div>

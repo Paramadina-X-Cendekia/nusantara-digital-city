@@ -13,6 +13,7 @@ export default function DashboardLayout({ children }) {
     const menuItems = isAdmin ? [
         { label: t('nav.admin'), icon: 'grid_view', href: '/dashboard' },
         { label: t('dashboard.moderation_title'), icon: 'verified_user', href: '/dashboard' },
+        { label: t('dashboard.contributor_profiles_title'), icon: 'group', href: '/admin/contributor-profiles' },
         { label: t('nav.back_to_site'), icon: 'arrow_back', href: '/' },
     ] : [
         { label: t('nav.dashboard'), icon: 'dashboard', href: '/dashboard' },

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Kreait\Laravel\Firebase\Facades\Firebase;
+use Illuminate\Support\Facades\Cache;
 
 class PublicBudayaController extends Controller
 {
@@ -59,17 +60,57 @@ class PublicBudayaController extends Controller
 
     public function index()
     {
-        $snapshot = $this->database->getReference('seni_budaya')->getSnapshot();
-        $budayaData = [];
-        $landmarks = [];
-        
-        if ($snapshot->hasChildren()) {
-            foreach ($snapshot->getValue() as $id => $data) {
-                $status = $data['status'] ?? 'approved';
-                if ($status === 'approved') {
-                    $budayaData[] = array_merge(['id' => $id], $data);
-                    
-                    if (isset($data['artCategory']) && $data['artCategory'] === 'sejarah') {
+        return Cache::remember('budaya_index_data', 3600, function () {
+            $snapshot = $this->database->getReference('seni_budaya')->getSnapshot();
+            $budayaData = [];
+            $landmarks = [];
+            
+            if ($snapshot->hasChildren()) {
+                foreach ($snapshot->getValue() as $id => $data) {
+                    $status = $data['status'] ?? 'approved';
+                    if ($status === 'approved') {
+                        $budayaData[] = array_merge(['id' => $id], $data);
+                        
+                        if (isset($data['artCategory']) && $data['artCategory'] === 'sejarah') {
+                            $landmarks[] = [
+                                'name' => $data['artName'] ?? 'Untitled',
+                                'slug' => $id,
+                                'location' => ($data['origin'] ?? '') . ', ' . ($data['province'] ?? ''),
+                                'category' => $data['artSubCategory'] ?? 'Situs Bersejarah',
+                                'desc' => $data['shortDesc'] ?? ($data['description'] ?? ''),
+                                'longDesc' => $data['description'] ?? '',
+                                'img' => $data['mainImageUrl'] ?? ($data['imageUrl'] ?? ''),
+                                'videoUrl' => $data['videoLink'] ?? '',
+                                'lat' => $data['lat'] ?? null,
+                                'lng' => $data['lng'] ?? null,
+                                'archiveUrl' => $data['archiveUrl'] ?? null,
+                            ];
+                        }
+                    }
+                }
+            }
+
+            if (empty($landmarks)) {
+                $landmarks = array_values($this->getLandmarksData());
+            }
+
+            return Inertia::render('Budaya', [
+                'budayaData' => $budayaData,
+                'landmarks' => $landmarks
+            ]);
+        });
+    }
+
+    public function situsBersejarah()
+    {
+        return Cache::remember('budaya_situs_bersejarah', 3600, function () {
+            $snapshot = $this->database->getReference('seni_budaya')->getSnapshot();
+            $landmarks = [];
+            
+            if ($snapshot->hasChildren()) {
+                foreach ($snapshot->getValue() as $id => $data) {
+                    $status = $data['status'] ?? 'approved';
+                    if ($status === 'approved' && isset($data['artCategory']) && $data['artCategory'] === 'sejarah') {
                         $landmarks[] = [
                             'name' => $data['artName'] ?? 'Untitled',
                             'slug' => $id,
@@ -77,7 +118,7 @@ class PublicBudayaController extends Controller
                             'category' => $data['artSubCategory'] ?? 'Situs Bersejarah',
                             'desc' => $data['shortDesc'] ?? ($data['description'] ?? ''),
                             'longDesc' => $data['description'] ?? '',
-                            'img' => $data['imageUrl'] ?? '',
+                            'img' => $data['mainImageUrl'] ?? ($data['imageUrl'] ?? ''),
                             'videoUrl' => $data['videoLink'] ?? '',
                             'lat' => $data['lat'] ?? null,
                             'lng' => $data['lng'] ?? null,
@@ -85,50 +126,15 @@ class PublicBudayaController extends Controller
                     }
                 }
             }
-        }
 
-        if (empty($landmarks)) {
-            $landmarks = array_values($this->getLandmarksData());
-        }
-
-        return Inertia::render('Budaya', [
-            'budayaData' => $budayaData,
-            'landmarks' => $landmarks
-        ]);
-    }
-
-    public function situsBersejarah()
-    {
-        $snapshot = $this->database->getReference('seni_budaya')->getSnapshot();
-        $landmarks = [];
-        
-        if ($snapshot->hasChildren()) {
-            foreach ($snapshot->getValue() as $id => $data) {
-                $status = $data['status'] ?? 'approved';
-                if ($status === 'approved' && isset($data['artCategory']) && $data['artCategory'] === 'sejarah') {
-                    $landmarks[] = [
-                        'name' => $data['artName'] ?? 'Untitled',
-                        'slug' => $id,
-                        'location' => ($data['origin'] ?? '') . ', ' . ($data['province'] ?? ''),
-                        'category' => $data['artSubCategory'] ?? 'Situs Bersejarah',
-                        'desc' => $data['shortDesc'] ?? ($data['description'] ?? ''),
-                        'longDesc' => $data['description'] ?? '',
-                        'img' => $data['imageUrl'] ?? '',
-                        'videoUrl' => $data['videoLink'] ?? '',
-                        'lat' => $data['lat'] ?? null,
-                        'lng' => $data['lng'] ?? null,
-                    ];
-                }
+            if (empty($landmarks)) {
+                $landmarks = array_values($this->getLandmarksData());
             }
-        }
 
-        if (empty($landmarks)) {
-            $landmarks = array_values($this->getLandmarksData());
-        }
-
-        return Inertia::render('SitusBersejarah', [
-            'sites' => $landmarks
-        ]);
+            return Inertia::render('SitusBersejarah', [
+                'sites' => $landmarks
+            ]);
+        });
     }
 
     public function showLandmark($slug)
@@ -139,6 +145,13 @@ class PublicBudayaController extends Controller
         if ($snapshot->exists()) {
             $data = $snapshot->getValue();
             if (isset($data['artCategory']) && $data['artCategory'] === 'sejarah') {
+                $contributorInfo = $this->getContributorInfo(
+                    $data['contributor_id'] ?? null,
+                    $data['contributor'] ?? null,
+                    $data['contributor_profession'] ?? null,
+                    $data['contributor_badge'] ?? null
+                );
+
                 $landmark = [
                     'name' => $data['artName'] ?? 'Untitled',
                     'slug' => $slug,
@@ -146,10 +159,18 @@ class PublicBudayaController extends Controller
                     'category' => $data['artSubCategory'] ?? 'Situs Bersejarah',
                     'desc' => $data['shortDesc'] ?? ($data['description'] ?? ''),
                     'longDesc' => $data['description'] ?? '',
-                    'img' => $data['imageUrl'] ?? '',
+                    'img' => $data['mainImageUrl'] ?? ($data['imageUrl'] ?? ''),
                     'videoUrl' => $data['videoLink'] ?? '',
                     'lat' => $data['lat'] ?? null,
                     'lng' => $data['lng'] ?? null,
+                    'archiveUrl' => $data['archiveUrl'] ?? null,
+                    'contributor' => $contributorInfo['name'],
+                    'contributor_id' => $data['contributor_id'] ?? null,
+                    'contributor_profession' => $contributorInfo['profession'],
+                    'contributor_badge' => $contributorInfo['badge'],
+                    'contributor_badge_icon' => $contributorInfo['badge_icon'] ?? ($data['contributor_badge_icon'] ?? null),
+                    'contributor_badge_color' => $contributorInfo['badge_color'] ?? ($data['contributor_badge_color'] ?? null),
+                    'created_at' => $data['created_at'] ?? null,
                 ];
             }
         }
@@ -172,31 +193,34 @@ class PublicBudayaController extends Controller
 
     public function peta()
     {
-        // Fetch budaya for map (those with lat/lng)
-        $budayaSnapshot = $this->database->getReference('seni_budaya')->getSnapshot();
-        $mapSites = [];
+        return Cache::remember('budaya_peta_warisan', 3600, function () {
+            // Fetch budaya for map (those with lat/lng)
+            $budayaSnapshot = $this->database->getReference('seni_budaya')->getSnapshot();
+            $mapSites = [];
 
-        if ($budayaSnapshot->hasChildren()) {
-            foreach ($budayaSnapshot->getValue() as $id => $data) {
-                if (isset($data['lat']) && isset($data['lng'])) {
-                    $mapSites[] = [
-                        'id' => $id,
-                        'name' => $data['artName'] ?? 'Untitled',
-                        'location' => ($data['origin'] ?? '') . ', ' . ($data['province'] ?? ''),
-                        'desc' => $data['description'] ?? '',
-                        'category' => $data['artCategory'] ?? 'Budaya',
-                        'lat' => (float)$data['lat'],
-                        'lng' => (float)$data['lng'],
-                        'img' => $data['imageUrl'] ?? '',
-                        'year' => $data['year'] ?? $data['era'] ?? 'Tradisional',
-                        'status' => 'Verified'
-                    ];
+            if ($budayaSnapshot->hasChildren()) {
+                foreach ($budayaSnapshot->getValue() as $id => $data) {
+                    $status = $data['status'] ?? 'approved';
+                    if ($status === 'approved') {
+                        $mapSites[] = [
+                            'id' => $id,
+                            'name' => $data['artName'] ?? 'Untitled',
+                            'location' => ($data['origin'] ?? '') . ', ' . ($data['province'] ?? ''),
+                            'desc' => $data['description'] ?? '',
+                            'category' => $data['artCategory'] ?? 'Budaya',
+                            'lat' => isset($data['lat']) ? (float)$data['lat'] : null,
+                            'lng' => isset($data['lng']) ? (float)$data['lng'] : null,
+                            'img' => $data['mainImageUrl'] ?? ($data['imageUrl'] ?? ''),
+                            'year' => $data['year'] ?? $data['era'] ?? 'Tradisional',
+                            'status' => 'Verified'
+                        ];
+                    }
                 }
             }
-        }
 
-        return Inertia::render('PetaWarisan', [
-            'dynamicSites' => $mapSites
-        ]);
+            return Inertia::render('PetaWarisan', [
+                'dynamicSites' => $mapSites
+            ]);
+        });
     }
 }

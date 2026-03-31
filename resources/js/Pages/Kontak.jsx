@@ -1,6 +1,5 @@
-import { useState } from 'react';
-import { Head } from '@inertiajs/react';
-import { motion } from 'framer-motion';
+import { Head, useForm } from '@inertiajs/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { useLanguage } from '../lib/LanguageContext';
@@ -16,15 +15,18 @@ const stagger = {
 
 export default function Kontak() {
     const { t } = useLanguage();
-    const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
-
-    const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+    const { data, setData, post, processing, errors, reset, recentlySuccessful } = useForm({
+        name: '', 
+        email: '', 
+        subject: '', 
+        message: '' 
+    });
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // TODO: integrate with backend
-        alert(t('kontak.sent_success'));
-        setForm({ name: '', email: '', subject: '', message: '' });
+        post(route('kontak.submit'), {
+            onSuccess: () => reset(),
+        });
     };
 
     return (
@@ -68,44 +70,70 @@ export default function Kontak() {
                                     <div className="space-y-2">
                                         <label className="text-sm font-medium text-slate-900 dark:text-slate-200">{t('kontak.full_name')}</label>
                                         <input
-                                            name="name" value={form.name} onChange={handleChange}
-                                            className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-500"
+                                            name="name" value={data.name} onChange={e => setData('name', e.target.value)}
+                                            className={`w-full bg-slate-50 dark:bg-slate-900 border ${errors.name ? 'border-red-500' : 'border-slate-200 dark:border-slate-800'} rounded-xl p-4 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-500`}
                                             placeholder={t('kontak.placeholder_name')} type="text"
                                         />
+                                        {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-sm font-medium text-slate-900 dark:text-slate-200">{t('kontak.email_address')}</label>
                                         <input
-                                            name="email" value={form.email} onChange={handleChange}
-                                            className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-500"
+                                            name="email" value={data.email} onChange={e => setData('email', e.target.value)}
+                                            className={`w-full bg-slate-50 dark:bg-slate-900 border ${errors.email ? 'border-red-500' : 'border-slate-200 dark:border-slate-800'} rounded-xl p-4 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-500`}
                                             placeholder={t('kontak.placeholder_email')} type="email"
                                         />
+                                        {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
                                     </div>
                                 </div>
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium text-slate-900 dark:text-slate-200">{t('kontak.subject')}</label>
                                     <input
-                                        name="subject" value={form.subject} onChange={handleChange}
-                                        className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-500"
+                                        name="subject" value={data.subject} onChange={e => setData('subject', e.target.value)}
+                                        className={`w-full bg-slate-50 dark:bg-slate-900 border ${errors.subject ? 'border-red-500' : 'border-slate-200 dark:border-slate-800'} rounded-xl p-4 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-500`}
                                         placeholder={t('kontak.placeholder_subject')} type="text"
                                     />
+                                    {errors.subject && <p className="text-red-500 text-xs mt-1">{errors.subject}</p>}
                                 </div>
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium text-slate-900 dark:text-slate-200">{t('kontak.message')}</label>
                                     <textarea
-                                        name="message" value={form.message} onChange={handleChange}
-                                        className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-500 resize-none"
+                                        name="message" value={data.message} onChange={e => setData('message', e.target.value)}
+                                        className={`w-full bg-slate-50 dark:bg-slate-900 border ${errors.message ? 'border-red-500' : 'border-slate-200 dark:border-slate-800'} rounded-xl p-4 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-500 resize-none`}
                                         placeholder={t('kontak.placeholder_message')} rows="5"
                                     ></textarea>
+                                    {errors.message && <p className="text-red-500 text-xs mt-1">{errors.message}</p>}
                                 </div>
+
+                                <AnimatePresence>
+                                    {recentlySuccessful && (
+                                        <motion.div 
+                                            initial={{ opacity: 0, height: 0 }}
+                                            animate={{ opacity: 1, height: 'auto' }}
+                                            exit={{ opacity: 0, height: 0 }}
+                                            className="bg-green-500/10 border border-green-500/20 text-green-500 p-4 rounded-xl text-sm font-bold flex items-center gap-2"
+                                        >
+                                            <span className="material-symbols-outlined text-sm">check_circle</span>
+                                            {t('kontak.sent_success')}
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+
                                 <motion.button
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
                                     type="submit"
-                                    className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-2 group shadow-lg shadow-primary/20"
+                                    disabled={processing}
+                                    className={`w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-2 group shadow-lg shadow-primary/20 ${processing ? 'opacity-70 cursor-not-allowed' : ''}`}
                                 >
-                                    {t('kontak.send_now')}
-                                    <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">send</span>
+                                    {processing ? (
+                                        <div className="size-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                    ) : (
+                                        <>
+                                            {t('kontak.send_now')}
+                                            <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">send</span>
+                                        </>
+                                    )}
                                 </motion.button>
                             </motion.form>
                         </motion.div>

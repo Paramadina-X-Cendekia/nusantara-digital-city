@@ -16,7 +16,7 @@ const stagger = {
     visible: { opacity: 1, transition: { staggerChildren: 0.15 } }
 };
 
-export default function Wisata() {
+export default function Wisata({ dynamicDestinations = [] }) {
     const { t } = useLanguage();
     const [activeTab, setActiveTab] = useState('destinasi');
     const [sortOrder, setSortOrder] = useState('default');
@@ -25,6 +25,26 @@ export default function Wisata() {
     const [selectedCategory, setSelectedCategory] = useState('');
     const sortRef = useRef(null);
     const searchResultsRef = useRef(null);
+    const [previewIndex, setPreviewIndex] = useState(0);
+
+    const [destinations, setDestinations] = useState(() => {
+        const base = getBaseDestinations(t);
+        return [...base, ...(dynamicDestinations || [])];
+    });
+
+    useEffect(() => {
+        if (destinations.length === 0) return;
+        
+        const interval = setInterval(() => {
+            setPreviewIndex((prev) => (prev + 1) % destinations.length);
+        }, 5000);
+        return () => clearInterval(interval);
+    }, [destinations]);
+
+    const formatCoords = (lat, lng) => {
+        if (!lat || !lng) return "---";
+        return `${Math.abs(lat).toFixed(4)}° ${lat < 0 ? 'S' : 'N'}, ${Math.abs(lng).toFixed(4)}° ${lng < 0 ? 'W' : 'E'}`;
+    };
 
     const TABS = [
         { id: 'destinasi', label: t('wisata.tab_popular'), icon: 'landscape' },
@@ -50,7 +70,7 @@ export default function Wisata() {
         }
     };
 
-    const [destinations, setDestinations] = useState(() => getBaseDestinations(t));
+
 
     useEffect(() => {
         const fetchOSMData = async () => {
@@ -398,19 +418,91 @@ export default function Wisata() {
                                         </motion.button>
                                     </div>
                                 </div>
-                                <div className="flex-1 w-full h-80 bg-slate-900 rounded-2xl border border-slate-700 flex flex-col items-center justify-center relative overflow-hidden">
-                                    <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20"></div>
-                                    <div className="text-center relative z-10">
-                                        <div className="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
-                                            <span className="material-symbols-outlined text-primary text-4xl">travel_explore</span>
+                                <div className="flex-1 w-full min-h-[350px] bg-slate-900 rounded-3xl border border-slate-700/50 shadow-inner relative overflow-hidden flex flex-col group">
+                                    <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10 pointer-events-none"></div>
+                                    
+                                    {/* Scanning Line */}
+                                    <motion.div 
+                                        animate={{ top: ['0%', '100%', '0%'] }}
+                                        transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
+                                        className="absolute left-0 right-0 h-[1px] bg-primary/40 z-0 pointer-events-none"
+                                    />
+
+                                    {/* Tracking Header */}
+                                    <div className="flex items-center justify-between px-6 py-4 bg-white/5 border-b border-white/5 relative z-10">
+                                        <div className="flex items-center gap-2">
+                                            <div className="size-2 bg-primary rounded-full animate-ping"></div>
+                                            <span className="text-[10px] font-bold text-primary uppercase tracking-widest">{t('wisata.realtime_tracking')}</span>
                                         </div>
-                                        <p className="text-slate-300 font-bold mb-2">{t('wisata.realtime_tracking')}</p>
-                                        <p className="text-xs text-slate-500 font-mono">{t('wisata.satellite_status')}</p>
+                                        <div className="text-[10px] font-mono text-slate-500">{t('wisata.satellite_status')}</div>
                                     </div>
-                                    <div className="absolute bottom-4 right-4 flex gap-2">
-                                        <div className="size-2 bg-primary rounded-full animate-bounce"></div>
-                                        <div className="size-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '75ms' }}></div>
-                                        <div className="size-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+
+                                    {/* Radar UI */}
+                                    <div className="flex-grow flex flex-col items-center justify-center p-6 relative z-10">
+                                        <div className="relative mb-8 flex justify-center">
+                                            {/* Outer Ring */}
+                                            <div className="absolute inset-0 w-24 h-24 border-2 border-primary/20 rounded-full mx-auto animate-ping"></div>
+                                            {/* Inner Ring */}
+                                            <div className="absolute inset-0 w-24 h-24 border border-primary/40 rounded-full mx-auto animate-pulse"></div>
+                                            
+                                            <motion.div 
+                                                className="w-24 h-24 bg-primary/20 rounded-full flex items-center justify-center relative shadow-[0_0_30px_rgba(var(--color-primary),0.3)]"
+                                                whileHover={{ scale: 1.1 }}
+                                            >
+                                                <span className="material-symbols-outlined text-primary text-5xl">travel_explore</span>
+                                            </motion.div>
+                                        </div>
+
+                                        <AnimatePresence mode="wait">
+                                            <motion.div
+                                                key={previewIndex}
+                                                initial={{ opacity: 0, y: 10 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                exit={{ opacity: 0, y: -10 }}
+                                                transition={{ duration: 0.5 }}
+                                                className="text-center w-full"
+                                            >
+                                                <div className="flex items-center justify-center gap-2 mb-2">
+                                                    <div className="size-1.5 bg-primary rounded-full animate-pulse"></div>
+                                                    <p className="text-primary font-mono text-[10px] uppercase tracking-widest font-bold">Live Satellite Sync</p>
+                                                </div>
+                                                <h4 className="text-white text-2xl font-black mb-3 group-hover:text-primary transition-colors line-clamp-1">{destinations[previewIndex]?.name}</h4>
+                                                
+                                                <div className="flex flex-col items-center gap-2">
+                                                    <p className="text-xs text-slate-400 font-mono bg-slate-800/80 py-1.5 px-4 rounded-full border border-slate-700 flex items-center gap-2">
+                                                        <span className="material-symbols-outlined text-[12px] text-primary">my_location</span>
+                                                        COORD: {formatCoords(destinations[previewIndex]?.lat, destinations[previewIndex]?.lng)}
+                                                    </p>
+                                                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest bg-white/5 py-1 px-3 rounded-full flex items-center gap-1.5">
+                                                        <span className="material-symbols-outlined text-[11px]">location_on</span>
+                                                        {destinations[previewIndex]?.location}
+                                                    </p>
+                                                </div>
+                                            </motion.div>
+                                        </AnimatePresence>
+                                    </div>
+
+                                    {/* Connectivity Indicators */}
+                                    <div className="absolute bottom-6 right-8 flex gap-2">
+                                        {[0, 1, 2].map((i) => (
+                                            <motion.div 
+                                                key={i}
+                                                animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
+                                                transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.2 }}
+                                                className="size-1.5 bg-primary rounded-full"
+                                            />
+                                        ))}
+                                    </div>
+
+                                    {/* Corner Accents */}
+                                    <div className="absolute top-4 left-4 size-4 border-t-2 border-l-2 border-primary/40"></div>
+                                    <div className="absolute top-4 right-4 size-4 border-t-2 border-r-2 border-primary/40"></div>
+                                    <div className="absolute bottom-4 left-4 size-4 border-b-2 border-l-2 border-primary/40"></div>
+                                    <div className="absolute bottom-4 right-4 size-4 border-b-2 border-r-2 border-primary/40"></div>
+
+                                    <div className="px-6 py-3 bg-white/5 text-[9px] text-slate-500 font-mono flex items-center justify-between border-t border-white/5">
+                                        <span>STATUS: DATALINK OPTIMIZED</span>
+                                        <span className="animate-pulse">STREAMING_COORDS...</span>
                                     </div>
                                 </div>
                             </div>

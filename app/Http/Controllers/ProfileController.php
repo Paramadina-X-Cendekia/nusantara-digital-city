@@ -23,51 +23,22 @@ class ProfileController extends Controller
             'rejected' => $contributions->where('status', 'rejected')->count(),
         ];
 
-        // Badge Logic
-        $badge = $this->getBadge($stats['approved']);
-
         return Inertia::render('Profil', [
             'user' => $user,
             'contributions' => $contributions,
             'stats' => $stats,
-            'badge' => $badge,
+            'badge' => $user->badge_info,
         ]);
     }
-
-    private function getBadge($approvedCount)
+    public function update(Request $request)
     {
-        if ($approvedCount >= 21) {
-            return [
-                'title' => 'Maestro of the Digital City',
-                'level' => 'Maestro',
-                'icon' => 'military_tech',
-                'color' => '#8B5CF6', // Purple
-                'next' => null
-            ];
-        } elseif ($approvedCount >= 11) {
-            return [
-                'title' => 'Heritage Guardian',
-                'level' => 'Guardian',
-                'icon' => 'shield',
-                'color' => '#10B981', // Emerald
-                'next' => 21
-            ];
-        } elseif ($approvedCount >= 4) {
-            return [
-                'title' => 'Cultural Chronicler',
-                'level' => 'Chronicler',
-                'icon' => 'history_edu',
-                'color' => '#3B82F6', // Blue
-                'next' => 11
-            ];
-        } else {
-            return [
-                'title' => 'Nusantara Pioneer',
-                'level' => 'Pioneer',
-                'icon' => 'explore',
-                'color' => '#F59E0B', // Amber
-                'next' => 4
-            ];
-        }
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'profession' => 'nullable|string|max:100',
+        ]);
+
+        $request->user()->update($request->only('name', 'profession'));
+
+        return back()->with('success', 'Profil berhasil diperbarui');
     }
 }

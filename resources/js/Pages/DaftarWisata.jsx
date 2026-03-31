@@ -20,15 +20,16 @@ const fadeIn = {
     visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
 };
 
-export default function DaftarWisata() {
+export default function DaftarWisata({ dynamicDestinations = [] }) {
     const { t } = useLanguage();
     const [search, setSearch] = useState('');
     const [filter, setFilter] = useState('semua');
     
     // Dynamic data from shared database
-    const [destinations, setDestinations] = useState(() => 
-        getBaseDestinations(t).map(d => ({ ...d, img: d.defaultImg }))
-    );
+    const [destinations, setDestinations] = useState(() => {
+        const base = getBaseDestinations(t).map(d => ({ ...d, img: d.defaultImg }));
+        return [...base, ...(dynamicDestinations || [])];
+    });
 
     // Fetch live OpenStreetMap Nominatim Data on mount
     useEffect(() => {
@@ -145,15 +146,14 @@ export default function DaftarWisata() {
                     </header>
 
                     {/* Results Grid */}
-                    <AnimatePresence mode="wait">
+                    <AnimatePresence mode="popLayout">
                         {filtered.length > 0 ? (
                             <motion.div 
                                 key="grid"
-                                initial="hidden" 
-                                animate="visible" 
-                                variants={{
-                                    visible: { transition: { staggerChildren: 0.05 } }
-                                }}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.3 }}
                                 className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
                             >
                                 {filtered.map(dest => (

@@ -68,7 +68,24 @@ export default function Navbar() {
 
                         <nav className="hidden md:flex items-center gap-8">
                             {navLinks.map((link) => {
-                                const isActive = usePage().url === link.href;
+                                const currentUrl = usePage().url;
+                                let isActive = currentUrl === link.href;
+                                
+                                if (link.href === '/budaya') {
+                                    isActive = currentUrl.startsWith('/budaya') || 
+                                               currentUrl.startsWith('/eksplorasi-seni') || 
+                                               currentUrl.startsWith('/kisah-rakyat') || 
+                                               currentUrl.startsWith('/situs-bersejarah') || 
+                                               currentUrl.startsWith('/peta-warisan') ||
+                                               currentUrl.startsWith('/kontribusi-seni');
+                                } else if (link.href === '/wisata') {
+                                    isActive = currentUrl.startsWith('/wisata') || 
+                                               currentUrl.startsWith('/peta-wisata') || 
+                                               currentUrl.startsWith('/daftar-wisata') ||
+                                               currentUrl.startsWith('/eksplorasi-kuliner') ||
+                                               currentUrl.startsWith('/daftarkan-warung');
+                                }
+
                                 return (
                                     <Link 
                                         key={link.href} 

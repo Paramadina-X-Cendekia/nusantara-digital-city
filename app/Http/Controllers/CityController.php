@@ -24,9 +24,27 @@ class CityController extends Controller
                 }
             }
             
+            $leaderboard = \App\Models\User::where('role', '!=', 'admin')
+            ->withCount(['contributions' => function($query) {
+                $query->where('status', 'approved');
+            }])
+            ->orderByDesc('contributions_count')
+            ->take(10)
+            ->get()
+            ->map(function($user) {
+                return [
+                    'name' => $user->name,
+                    'badge' => $user->badge,
+                    'badge_info' => $user->badge_info,
+                    'points' => $user->points,
+                    'count' => $user->contributions_count
+                ];
+            });
+            
             return Inertia::render('Home', [
                 'name' => 'Nusantara Digital City',
-                'cities' => $cities
+                'cities' => $cities,
+                'leaderboard' => $leaderboard
             ]);
         } catch (\Exception $e) {
             return Inertia::render('Home', [
@@ -35,6 +53,7 @@ class CityController extends Controller
                     ['id' => '1', 'name' => 'Jakarta (Dummy Data)', 'description' => 'Ibukota Indonesia'],
                     ['id' => '2', 'name' => 'Bandung (Dummy Data)', 'description' => 'Kota Kembang']
                 ],
+                'leaderboard' => [],
                 'firebaseError' => 'Firebase error: ' . $e->getMessage()
             ]);
         }
@@ -116,12 +135,12 @@ class CityController extends Controller
                     'approved_at' => now()->toDateTimeString(),
                 ]);
             } elseif ($type === 'budaya') {
-                $database->getReference('seni')->push([
-                    'title' => $regData['artName'],
-                    'category' => $regData['category'],
+                $database->getReference('seni_budaya')->push([
+                    'artName' => $regData['artName'],
+                    'artCategory' => $regData['artCategory'] ?? 'seni',
                     'origin' => $regData['origin'],
                     'province' => $regData['province'] ?? '-',
-                    'desc' => $regData['description'],
+                    'description' => $regData['description'],
                     'status' => 'approved',
                     'approved_at' => now()->toDateTimeString(),
                 ]);
@@ -188,4 +207,5 @@ class CityController extends Controller
             ]);
         }
     }
+
 }

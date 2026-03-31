@@ -80,7 +80,7 @@ class KisahController extends Controller
                             'origin' => $data['origin'] ?? '',
                             'desc' => $data['shortDesc'] ?? ($data['description'] ?? ''),
                             'longDesc' => $data['description'] ?? '',
-                            'img' => $data['imageUrl'] ?? '',
+                            'img' => $data['mainImageUrl'] ?? ($data['imageUrl'] ?? ''),
                             'moral' => $data['moral'] ?? '',
                             'characters' => $data['characters'] ?? [],
                             'videoUrl' => $data['videoLink'] ?? '',
@@ -109,18 +109,32 @@ class KisahController extends Controller
             if ($snapshot->exists()) {
                 $data = $snapshot->getValue();
                 if (isset($data['artCategory']) && $data['artCategory'] === 'cerita' && (!isset($data['status']) || $data['status'] === 'approved')) {
-                    $story = [
-                        'slug' => $slug,
-                        'title' => $data['artName'] ?? 'Untitled',
-                        'category' => $data['artSubCategory'] ?? 'Cerita Rakyat',
-                        'origin' => $data['origin'] ?? '',
-                        'desc' => $data['shortDesc'] ?? ($data['description'] ?? ''),
-                        'longDesc' => $data['description'] ?? '',
-                        'img' => $data['imageUrl'] ?? '',
-                        'moral' => $data['moral'] ?? '',
-                        'characters' => $data['characters'] ?? [],
-                        'videoUrl' => $data['videoLink'] ?? '',
-                    ];
+                $contributorInfo = $this->getContributorInfo(
+                    $data['contributor_id'] ?? null,
+                    $data['contributor'] ?? null,
+                    $data['contributor_profession'] ?? null,
+                    $data['contributor_badge'] ?? null
+                );
+
+                $story = [
+                    'slug' => $slug,
+                    'title' => $data['artName'] ?? 'Untitled',
+                    'category' => $data['artSubCategory'] ?? 'Cerita Rakyat',
+                    'origin' => $data['origin'] ?? '',
+                    'desc' => $data['shortDesc'] ?? ($data['description'] ?? ''),
+                    'longDesc' => $data['description'] ?? '',
+                    'img' => $data['mainImageUrl'] ?? ($data['imageUrl'] ?? ''),
+                    'moral' => $data['moral'] ?? '',
+                    'characters' => $data['characters'] ?? [],
+                    'videoUrl' => $data['videoLink'] ?? '',
+                    'contributor' => $contributorInfo['name'],
+                    'contributor_id' => $data['contributor_id'] ?? null,
+                    'contributor_profession' => $contributorInfo['profession'],
+                    'contributor_badge' => $contributorInfo['badge'],
+                    'contributor_badge_icon' => $contributorInfo['badge_icon'] ?? ($data['contributor_badge_icon'] ?? null),
+                    'contributor_badge_color' => $contributorInfo['badge_color'] ?? ($data['contributor_badge_color'] ?? null),
+                    'created_at' => $data['created_at'] ?? null,
+                ];
                 }
             }
         } catch (\Exception $e) {

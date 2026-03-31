@@ -96,7 +96,7 @@ function LeafletMap({ sites, activeSite, setActiveSite, t }) {
                 attribution='&copy; <a href="https://carto.com/">CARTO</a>'
                 url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
             />
-            {sites.map((site) => (
+            {sites.filter(s => s.lat && s.lng).map((site) => (
                 <Marker
                     key={site.id}
                     position={[site.lat, site.lng]}
@@ -116,7 +116,7 @@ function LeafletMap({ sites, activeSite, setActiveSite, t }) {
                                 <span style={{ background: '#368ce215', color: '#368ce2', padding: '2px 8px', borderRadius: '6px', fontSize: '10px', fontWeight: 700 }}>{site.status}</span>
                                 <span style={{ background: '#f1f5f9', color: '#475569', padding: '2px 8px', borderRadius: '6px', fontSize: '10px', fontWeight: 700 }}>
                                     <span className="material-symbols-outlined" style={{ fontSize: '10px', verticalAlign: 'middle', marginRight: '4px' }}>history</span>
-                                    {site.year || site.year}
+                                    {site.year}
                                 </span>
                             </div>
                         </div>
@@ -129,8 +129,61 @@ function LeafletMap({ sites, activeSite, setActiveSite, t }) {
 
 export default function PetaWarisan({ dynamicSites = [] }) {
     const { t } = useLanguage();
-    const allSites = [...SITES(t), ...dynamicSites];
+    const [allSites, setAllSites] = useState(() => SITES(t));
     const [activeSite, setActiveSite] = useState(null);
+    const [isGeocoding, setIsGeocoding] = useState(false);
+
+    // Sync dynamic sites without resetting allSites every time
+    useEffect(() => {
+        if (dynamicSites && dynamicSites.length > 0) {
+            setAllSites(prev => {
+                const base = SITES(t);
+                // Filter out dynamic sites that already exist in state to avoid duplicates
+                const newDynamic = dynamicSites.filter(ds => !prev.some(ps => ps.id === ds.id));
+                return [...prev, ...newDynamic];
+            });
+        }
+    }, [dynamicSites, t]);
+
+    // Separate effect for geocoding to avoid continuous re-renders of the map container
+    useEffect(() => {
+        const sitesToGeocode = allSites.filter(s => !s.lat || !s.lng);
+        if (sitesToGeocode.length > 0 && !isGeocoding) {
+            autoGeocode(sitesToGeocode);
+        }
+    }, [allSites.length]);
+
+    const autoGeocode = async (sites) => {
+        setIsGeocoding(true);
+        const updatedSites = [...allSites];
+        
+        for (const site of sites) {
+            try {
+                // Using Nominatim for free geocoding
+                const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(site.location + ', Indonesia')}&limit=1`);
+                const data = await res.json();
+                
+                if (data && data[0]) {
+                    const idx = updatedSites.findIndex(s => s.id === site.id);
+                    if (idx !== -1) {
+                        updatedSites[idx] = {
+                            ...updatedSites[idx],
+                            lat: parseFloat(data[0].lat),
+                            lng: parseFloat(data[0].lon)
+                        };
+                    }
+                }
+            } catch (err) {
+                console.error("Geocoding failed for:", site.name, err);
+            }
+            // Add a small delay to avoid rate limits
+            await new Promise(r => setTimeout(r, 1000));
+        }
+        
+        setAllSites([...updatedSites]);
+        setIsGeocoding(false);
+    };
+
     const selected = allSites.find((s) => s.id === activeSite);
 
     return (
@@ -186,12 +239,14 @@ export default function PetaWarisan({ dynamicSites = [] }) {
                         {/* Header */}
                         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800">
                             <div className="flex items-center gap-3">
-                                <div className="size-3 bg-green-500 rounded-full animate-pulse"></div>
-                                <span className="text-sm font-bold text-slate-300">{t('peta_warisan.live_map')}</span>
+                                <div className={`size-3 rounded-full ${isGeocoding ? 'bg-amber-500 animate-spin border-2 border-t-transparent' : 'bg-green-500 animate-pulse'}`}></div>
+                                <span className="text-sm font-bold text-slate-300">
+                                    {isGeocoding ? 'Mengotomatisasi Lokasi...' : t('peta_warisan.live_map')}
+                                </span>
                             </div>
                             <div className="text-xs text-slate-500 font-mono flex items-center gap-1">
                                 <span className="material-symbols-outlined text-primary text-sm">satellite_alt</span>
-                                {allSites.length} {t('peta_warisan.active_points')}
+                                {allSites.filter(s => s.lat).length} {t('peta_warisan.active_points')}
                             </div>
                         </div>
                         {/* Map */}

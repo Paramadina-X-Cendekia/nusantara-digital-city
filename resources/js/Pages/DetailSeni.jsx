@@ -137,8 +137,10 @@ function DetailSeni({ art }) {
     const feedbackNodeRef = useRef(null);
     const analyserNodeRef = useRef(null);
     const audioSourceRef = useRef(null);
-    const barsContainerRef = useRef(null);
     const animationFrameRef = useRef(null);
+    const barsContainerRef = useRef(null);
+    const [previewIndex, setPreviewIndex] = useState(0);
+    const [selectedInstrument, setSelectedInstrument] = useState(null);
 
     if (!art) {
         console.warn("DetailSeni: No art object provided");
@@ -260,13 +262,45 @@ function DetailSeni({ art }) {
         };
     }, [isPlaying]);
 
-    useEffect(() => {
-        return () => {
-            if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
-            if (audioSourceRef.current) audioSourceRef.current.pause();
-            if (audioCtxRef.current) audioCtxRef.current.close();
-        };
-    }, []);
+    const handleShare = async () => {
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: art.title,
+                    text: art.desc,
+                    url: window.location.href,
+                });
+            } catch (err) {
+                console.error("Share failed:", err);
+            }
+        } else {
+            navigator.clipboard.writeText(window.location.href);
+            alert("Link disalin ke papan klip!");
+        }
+    };
+
+    const INSTRUMENT_DETAILS = {
+        'Saron': {
+            icon: 'music_note',
+            desc: 'Saron adalah instrumen gamelan yang termasuk dalam keluarga balungan (kerangka). Terdiri dari bilah-bilah logam di atas rancakan kayu. Saron menghasilkan nada yang lantang dan menjadi penentu melodi utama.',
+            philosophy: 'Melambangkan ketegasan dan keterbukaan dalam menyampaikan pesan moral kehidupan.'
+        },
+        'Bonang': {
+            icon: 'grid_view',
+            desc: 'Bonang adalah instrumen berbentuk pencon (seperti gong kecil) yang diletakkan pada bingkai kayu. Bonang Barung dan Bonang Penerus bertugas memberikan variasi melodi dan hiasan pada lagu.',
+            philosophy: 'Melambangkan keharmonisan dalam keberagaman pikiran dan kreativitas.'
+        },
+        'Kenong': {
+            icon: 'radio_button_checked',
+            desc: 'Kenong adalah instrumen pencon yang paling besar. Fungsinya sebagai penanda titik-titik kalimat lagu (gatra) dan memberikan aksen pada struktur ritmis gamelan.',
+            philosophy: 'Melambangkan kesabaran dan ketenangan dalam mengambil keputusan di akhir suatu proses.'
+        },
+        'Gong': {
+            icon: 'circle',
+            desc: 'Gong Ageng adalah instrumen terbesar dan terpenting dalam gamelan. Dentumannya menandai akhir dari siklus lagu yang besar (gongan).',
+            philosophy: 'Melambangkan kembalinya segala sesuatu kepada sang Pencipta, sebagai titik akhir dan awal yang baru.'
+        }
+    };
 
     return (
         <div className="relative flex min-h-screen flex-col bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-300 transition-colors duration-300 antialiased">
@@ -286,6 +320,10 @@ function DetailSeni({ art }) {
                                     <motion.div variants={fadeIn} className="flex flex-wrap items-center gap-2 mb-4">
                                         <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-primary/90 text-white">{art.status}</span>
                                         <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/20 backdrop-blur-md text-white">{art.category}</span>
+                                        <button onClick={handleShare} className="ml-auto flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-wider transition-all border border-white/20">
+                                            <span className="material-symbols-outlined text-sm">share</span>
+                                            Bagikan Profil
+                                        </button>
                                     </motion.div>
                                     <motion.h1 variants={fadeIn} className="text-3xl md:text-5xl font-black text-white mb-2 drop-shadow-lg">{art.title}</motion.h1>
                                     <motion.div variants={fadeIn} className="flex items-center gap-2 text-white/80 text-sm">
@@ -301,18 +339,73 @@ function DetailSeni({ art }) {
                 {/* ── Description + Facts ── */}
                 <section className="container mx-auto px-4 lg:px-10 py-10">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeIn} className="lg:col-span-2">
-                            <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">{t('art_detail.about')} {art.title}</h2>
-                            <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm">{art.longDesc || art.desc}</p>
+                        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeIn} className="lg:col-span-2 space-y-8">
+                            <div>
+                                <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">{t('art_detail.about')} {art.title}</h2>
+                                <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm">{art.longDesc || art.desc}</p>
+                            </div>
+
+                            {art.makna && (
+                                <div className="p-6 rounded-2xl bg-primary/5 border border-primary/10">
+                                    <h3 className="text-sm font-black text-primary uppercase tracking-widest mb-3 flex items-center gap-2">
+                                        <span className="material-symbols-outlined text-base">psychology</span>
+                                        Eksplorasi Makna & Filosofi
+                                    </h3>
+                                    <p className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed italic">
+                                        "{art.makna}"
+                                    </p>
+                                </div>
+                            )}
+
+                            {art.fakta_budaya && (
+                                <div className="p-6 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800">
+                                    <h3 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-widest mb-3 flex items-center gap-2">
+                                        <span className="material-symbols-outlined text-base">heritage</span>
+                                        Nilai & Fakta Budaya
+                                    </h3>
+                                    <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                                        {art.fakta_budaya}
+                                    </p>
+                                </div>
+                            )}
                         </motion.div>
                         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeIn}>
+                            {/* Contributor Card */}
+                            {art.contributor && (
+                                <div className="bg-white dark:bg-surface-dark rounded-2xl border border-slate-200 dark:border-slate-800 p-6 mb-6">
+                                    <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100 mb-4 flex items-center gap-2 uppercase tracking-tight">
+                                        Kontributor
+                                    </h3>
+                                    <div className="flex items-center gap-3">
+                                        <div className="size-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0 relative overflow-hidden">
+                                            <span className="material-symbols-outlined text-2xl">person</span>
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <p className="font-black text-slate-900 dark:text-white text-xs uppercase tracking-tight leading-tight mb-0.5">{art.contributor}</p>
+                                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">{art.contributor_profession || '-'}</p>
+                                        </div>
+                                    </div>
+                                    <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800">
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <span className="material-symbols-outlined text-[14px] font-bold" style={{ color: art.contributor_badge_color || '#F59E0B' }}>
+                                                {art.contributor_badge_icon || 'explore'}
+                                            </span>
+                                            <span className="text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 bg-slate-50 dark:bg-slate-800 rounded border border-slate-100 dark:border-slate-700" style={{ color: art.contributor_badge_color || '#F59E0B' }}>
+                                                {art.contributor_badge || 'Nusantara Pioneer'}
+                                            </span>
+                                        </div>
+                                        <p className="text-[9px] text-slate-400 font-medium italic">Berkontribusi pada {art.created_at ? new Date(art.created_at).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }) : 'Maret 2024'}.</p>
+                                    </div>
+                                </div>
+                            )}
+
                             <div className="bg-white dark:bg-surface-dark rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
                                 <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100 mb-4 flex items-center gap-2">
                                     <span className="material-symbols-outlined text-primary">fact_check</span>
                                     {t('art_detail.interesting_facts')}
                                 </h3>
                                 <ul className="space-y-3">
-                                    {(art.facts || []).map((fact, i) => (
+                                    {(art.fakta_menarik && art.fakta_menarik.length > 0 ? art.fakta_menarik : (art.facts || [])).map((fact, i) => (
                                         <motion.li key={i} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="flex items-start gap-3 text-sm text-slate-600 dark:text-slate-400">
                                             <span className="size-6 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0 text-xs font-bold">{i + 1}</span>
                                             {fact}
@@ -488,11 +581,18 @@ function DetailSeni({ art }) {
                                             </div>
                                         </div>
                                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                            {['Saron', 'Bonang', 'Kenong', 'Gong'].map((inst) => (
-                                                <div key={inst} className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-center">
-                                                    <span className="material-symbols-outlined text-primary text-2xl mb-2 block">music_note</span>
+                                            {Object.keys(INSTRUMENT_DETAILS).map((inst) => (
+                                                <motion.button
+                                                    key={inst}
+                                                    whileHover={{ y: -5 }}
+                                                    whileTap={{ scale: 0.95 }}
+                                                    onClick={() => setSelectedInstrument(inst)}
+                                                    className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-center hover:border-primary transition-all group"
+                                                >
+                                                    <span className="material-symbols-outlined text-primary text-2xl mb-2 block group-hover:scale-110 transition-transform">{INSTRUMENT_DETAILS[inst].icon}</span>
                                                     <p className="text-xs font-bold text-slate-700 dark:text-slate-300">{inst}</p>
-                                                </div>
+                                                    <span className="text-[9px] text-primary font-bold opacity-0 group-hover:opacity-100 transition-opacity">Klik Detail</span>
+                                                </motion.button>
                                             ))}
                                         </div>
                                     </div>
@@ -632,6 +732,56 @@ function DetailSeni({ art }) {
                     </div>
                 </section>
             </main>
+
+            <AnimatePresence>
+                {selectedInstrument && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-md"
+                        onClick={() => setSelectedInstrument(null)}
+                    >
+                        <motion.div
+                            initial={{ scale: 0.9, y: 20 }}
+                            animate={{ scale: 1, y: 0 }}
+                            exit={{ scale: 0.9, y: 20 }}
+                            className="bg-white dark:bg-surface-dark w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800"
+                            onClick={e => e.stopPropagation()}
+                        >
+                            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
+                                <h3 className="text-xl font-black text-slate-900 dark:text-slate-100 flex items-center gap-3">
+                                    <span className="material-symbols-outlined text-primary text-3xl">{INSTRUMENT_DETAILS[selectedInstrument].icon}</span>
+                                    {selectedInstrument}
+                                </h3>
+                                <button onClick={() => setSelectedInstrument(null)} className="size-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center hover:bg-primary/20 hover:text-primary transition-colors">
+                                    <span className="material-symbols-outlined">close</span>
+                                </button>
+                            </div>
+                            <div className="p-6 space-y-6">
+                                <div className="space-y-2">
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-primary">Deskripsi Instrumen</p>
+                                    <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed font-medium">
+                                        {INSTRUMENT_DETAILS[selectedInstrument].desc}
+                                    </p>
+                                </div>
+                                <div className="p-5 rounded-2xl bg-primary/5 border border-primary/10">
+                                    <div className="flex items-center gap-2 text-primary mb-2">
+                                        <span className="material-symbols-outlined text-sm font-bold">psychology</span>
+                                        <p className="text-[10px] font-black uppercase tracking-widest">Filosofi Budaya</p>
+                                    </div>
+                                    <p className="text-sm text-slate-700 dark:text-slate-300 italic">
+                                        "{INSTRUMENT_DETAILS[selectedInstrument].philosophy}"
+                                    </p>
+                                </div>
+                                <button onClick={() => setSelectedInstrument(null)} className="w-full bg-primary text-white py-3 rounded-xl font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all">
+                                    Tutup Detail
+                                </button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             <Footer />
         </div>

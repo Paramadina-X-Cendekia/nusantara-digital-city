@@ -1,5 +1,6 @@
-import { Head, usePage } from '@inertiajs/react';
-import { motion } from 'framer-motion';
+import { Head, usePage, useForm } from '@inertiajs/react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { useLanguage } from '@/lib/LanguageContext';
@@ -7,6 +8,28 @@ import ImageWithFallback from '@/components/ImageWithFallback';
 
 export default function Profil({ user, contributions, stats, badge }) {
     const { t } = useLanguage();
+    const [isEditing, setIsEditing] = useState(false);
+
+    const { data, setData, patch, processing, errors, reset } = useForm({
+        name: user.name || '',
+        profession: user.profession || '',
+    });
+
+    // Keep form in sync with user prop if it changes externally
+    useEffect(() => {
+        setData({
+            name: user.name || '',
+            profession: user.profession || '',
+        });
+    }, [user.name, user.profession]);
+
+    const handleUpdate = (e) => {
+        e.preventDefault();
+        patch('/profil', {
+            onSuccess: () => setIsEditing(false),
+            preserveScroll: true,
+        });
+    };
 
     const fadeIn = {
         initial: { opacity: 0, y: 20 },
@@ -23,7 +46,7 @@ export default function Profil({ user, contributions, stats, badge }) {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 dark:bg-background-dark text-slate-900 dark:text-slate-100">
+        <div className="min-h-screen bg-slate-50 dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
             <Head title={t('profile.title')} />
             <Navbar />
 
@@ -35,7 +58,15 @@ export default function Profil({ user, contributions, stats, badge }) {
                     className="max-w-5xl mx-auto space-y-8"
                 >
                     {/* Header Section */}
-                    <motion.div variants={fadeIn} className="relative p-8 rounded-[2.5rem] bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden">
+                    <motion.div variants={fadeIn} className="relative p-8 rounded-[2.5rem] bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden group">
+                        <button 
+                            onClick={() => setIsEditing(true)}
+                            className="absolute top-8 right-8 size-12 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 hover:text-primary hover:border-primary/50 transition-all z-20 group"
+                            title="Edit Profil"
+                        >
+                            <span className="material-symbols-outlined group-hover:rotate-12 transition-transform">edit</span>
+                        </button>
+
                         <div className="absolute top-0 right-0 p-12 opacity-5 dark:opacity-10 pointer-events-none">
                             <span className="material-symbols-outlined text-[150px]" style={{ fontVariationSettings: "'FILL' 1" }}>
                                 {badge.icon}
@@ -60,6 +91,12 @@ export default function Profil({ user, contributions, stats, badge }) {
                                 <div>
                                     <h1 className="text-3xl md:text-4xl font-black tracking-tight">{user.name}</h1>
                                     <p className="text-slate-500 dark:text-slate-400 font-medium">{user.email}</p>
+                                    {user.profession && (
+                                        <p className="text-primary font-bold text-sm flex items-center gap-1 mt-1">
+                                            <span className="material-symbols-outlined text-sm">work</span>
+                                            {user.profession}
+                                        </p>
+                                    )}
                                 </div>
                                 <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
                                     <div className="px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-widest">
@@ -197,6 +234,76 @@ export default function Profil({ user, contributions, stats, badge }) {
             </main>
 
             <Footer />
+
+            {/* Edit Profile Modal */}
+            <AnimatePresence>
+                {isEditing && (
+                    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+                        <motion.div 
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setIsEditing(false)}
+                            className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm"
+                        />
+                        <motion.div 
+                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                            className="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800"
+                        >
+                            <div className="p-8 border-b border-slate-100 dark:border-slate-800">
+                                <h3 className="text-2xl font-black italic">Edit Profil</h3>
+                                <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1 text-primary">Update informasi publik Anda</p>
+                            </div>
+                            
+                            <form onSubmit={handleUpdate} className="p-8 space-y-6">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Nama Lengkap</label>
+                                    <input 
+                                        type="text"
+                                        value={data.name}
+                                        onChange={e => setData('name', e.target.value)}
+                                        className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-5 py-4 outline-none focus:ring-2 focus:ring-primary/50 transition-all font-bold"
+                                        placeholder="Masukkan nama lengkap"
+                                        required
+                                    />
+                                    {errors.name && <p className="text-rose-500 text-[10px] font-bold mt-1 ml-1 uppercase">{errors.name}</p>}
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Profesi / Keahlian</label>
+                                    <input 
+                                        type="text"
+                                        value={data.profession}
+                                        onChange={e => setData('profession', e.target.value)}
+                                        className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-5 py-4 outline-none focus:ring-2 focus:ring-primary/50 transition-all font-bold"
+                                        placeholder="Contoh: Digital Historian, Pelajar, dll"
+                                    />
+                                    {errors.profession && <p className="text-rose-500 text-[10px] font-bold mt-1 ml-1 uppercase">{errors.profession}</p>}
+                                </div>
+
+                                <div className="flex gap-4 pt-4">
+                                    <button 
+                                        type="button"
+                                        onClick={() => setIsEditing(false)}
+                                        className="flex-1 px-6 py-4 rounded-2xl font-black uppercase tracking-widest text-xs border border-slate-200 dark:border-slate-700 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all"
+                                    >
+                                        Batal
+                                    </button>
+                                    <button 
+                                        type="submit"
+                                        disabled={processing}
+                                        className="flex-[2] bg-primary text-white px-6 py-4 rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 transition-all"
+                                    >
+                                        {processing ? 'Menyimpan...' : 'Simpan Perubahan'}
+                                    </button>
+                                </div>
+                            </form>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }

@@ -79,13 +79,16 @@ export default function KisahRakyat({ kisah }) {
                 </div>
 
                 {/* ── Stories Grid ── */}
-                <section className="container mx-auto px-4 lg:px-10 py-12">
+                <section className="container mx-auto px-4 lg:px-10 py-12 min-h-[400px]">
 
                     {/* Stories Grid */}
-                    <AnimatePresence mode="wait">
+                    <AnimatePresence mode="popLayout">
                         <motion.div
                             key={activeCategory}
-                            initial="hidden" animate="visible" exit="hidden" variants={stagger}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.3 }}
                             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
                         >
                             {filtered.map((item) => (

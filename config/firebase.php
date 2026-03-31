@@ -195,12 +195,23 @@ return [
                  * https://github.com/beste/firebase-php/blob/6.x/src/Firebase/Http/HttpClientOptions.php
                  */
 
-                'timeout' => env('FIREBASE_HTTP_CLIENT_TIMEOUT'),
+                'timeout' => env('FIREBASE_HTTP_CLIENT_TIMEOUT', 60),
+
+                'verify' => storage_path('app/cacert.pem'),
 
                 'guzzle_middlewares' => [
                     // MyInvokableMiddleware::class,
                     // [MyMiddleware::class, 'static_method'],
                 ],
+            ],
+
+            /*
+             * ------------------------------------------------------------------------
+             * Valinor Data Mapper Caching
+             * ------------------------------------------------------------------------
+             */
+            'valinor' => [
+                'cache' => env('FIREBASE_VALINOR_CACHE_STORE', 'file'),
             ],
         ],
     ],
