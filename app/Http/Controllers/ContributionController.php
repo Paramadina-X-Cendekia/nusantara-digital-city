@@ -115,9 +115,28 @@ class ContributionController extends Controller
                 }
             }
             $cities = array_values($citiesRaw);
+
+            // Fetch existing tourism/kuliner spots for selects
+            $wisataRef = $database->getReference('wisata_kuliner');
+            $wisataSnapshot = $wisataRef->getSnapshot();
+            $spots = [];
+            if ($wisataSnapshot->hasChildren()) {
+                foreach ($wisataSnapshot->getValue() as $key => $value) {
+                    if (($value['status'] ?? 'approved') === 'approved') {
+                        $spotName = $value['tourismName'] ?? ($value['shopName'] ?? 'Untitled');
+                        $spots[] = [
+                            'id' => $key,
+                            'name' => $spotName,
+                            'city' => $value['city'] ?? '',
+                            'category' => $value['category'] ?? 'wisata'
+                        ];
+                    }
+                }
+            }
             
             return Inertia::render('Kontribusi', [
                 'cities' => $cities,
+                'spots' => $spots,
                 'initialType' => $request->query('type', 'kota')
             ]);
         } catch (\Exception $e) {
@@ -220,9 +239,28 @@ class ContributionController extends Controller
                 }
             }
             $cities = array_values($citiesRaw);
+
+             // Fetch existing tourism/kuliner spots for selects
+            $wisataRef = $database->getReference('wisata_kuliner');
+            $wisataSnapshot = $wisataRef->getSnapshot();
+            $spots = [];
+            if ($wisataSnapshot->hasChildren()) {
+                foreach ($wisataSnapshot->getValue() as $key => $value) {
+                    if (($value['status'] ?? 'approved') === 'approved') {
+                        $spotName = $value['tourismName'] ?? ($value['shopName'] ?? 'Untitled');
+                        $spots[] = [
+                            'id' => $key,
+                            'name' => $spotName,
+                            'city' => $value['city'] ?? '',
+                            'category' => $value['category'] ?? 'wisata'
+                        ];
+                    }
+                }
+            }
             
             return Inertia::render('Kontribusi', [
                 'cities' => $cities,
+                'spots' => $spots,
                 'editingContribution' => $contribution,
                 'initialType' => $contribution->type
             ]);
@@ -372,6 +410,37 @@ class ContributionController extends Controller
         }
 
         return response()->json(['description' => $aiResponse]);
+    }
+
+    /**
+     * Analyze archive (PDF/Doc) using AI.
+     */
+    public function analyzeArchive(Request $request)
+    {
+        $request->validate([
+            'archive' => 'required|file|mimes:pdf,jpg,jpeg,png|max:10240',
+        ]);
+
+        try {
+            $file = $request->file('archive');
+            $mimeType = $file->getMimeType();
+            $base64Data = base64_encode(file_get_contents($file->getRealPath()));
+
+            $aiResponse = $this->ai->analyzeArchive($base64Data, $mimeType);
+
+            if (is_array($aiResponse)) {
+                return response()->json($aiResponse);
+            }
+
+            // Fallback for errors
+            if (is_string($aiResponse) && (str_contains($aiResponse, 'Terjadi kesalahan') || str_contains($aiResponse, 'quota'))) {
+                return response()->json(['error' => $aiResponse], 429);
+            }
+
+            return response()->json(['error' => 'Gagal menganalisis dokumen. Pastikan file terbaca dengan jelas.'], 500);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Kesalahan sistem: ' . $e->getMessage()], 500);
+        }
     }
 
     /**

@@ -36,6 +36,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/kontribusi/{id}/update', [\App\Http\Controllers\ContributionController::class, 'update'])->name('kontribusi.update');
     Route::delete('/kontribusi/{id}', [\App\Http\Controllers\ContributionController::class, 'destroy'])->name('kontribusi.destroy');
     Route::post('/kontribusi/generate-description', [\App\Http\Controllers\ContributionController::class, 'generateDescription'])->name('kontribusi.generate');
+    Route::post('/kontribusi/analyze-archive', [\App\Http\Controllers\ContributionController::class, 'analyzeArchive'])->name('kontribusi.analyze_archive');
 
     Route::middleware([\App\Http\Middleware\AdminAuth::class])->group(function () {
         Route::post('/admin/contributions/{id}/approve', [\App\Http\Controllers\ModerationController::class, 'approve'])->name('admin.contributions.approve');

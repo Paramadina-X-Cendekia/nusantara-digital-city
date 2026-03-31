@@ -59,9 +59,9 @@ const SearchableSelect = ({ label, value, onChange, options, placeholder, icon =
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: 10 }}
-                            className="absolute z-[60] top-full left-0 w-full mt-2 bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl max-h-64 overflow-hidden flex flex-col"
+                        className="absolute z-[60] top-full left-0 w-full mt-2 bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl max-h-72 overflow-hidden flex flex-col"
                         >
-                            <div className="overflow-y-auto flex-grow custom-scrollbar">
+                            <div className="overflow-y-auto flex-grow custom-scrollbar py-2">
                                 {filteredOptions.map((opt) => (
                                     <button
                                         key={opt.id}
@@ -116,13 +116,14 @@ const SearchableSelect = ({ label, value, onChange, options, placeholder, icon =
     );
 };
 
-export default function Kontribusi({ cities = [], initialType = 'kota', editingContribution = null }) {
+export default function Kontribusi({ cities = [], spots = [], initialType = 'kota', editingContribution = null }) {
     const { t } = useLanguage();
     const [selectedType, setSelectedType] = useState(editingContribution?.type?.startsWith('kota') ? 'kota' : (editingContribution?.type || initialType));
     const [kotaStep, setKotaStep] = useState(1);
     const [kotaSubCategory, setKotaSubCategory] = useState(editingContribution?.type === 'kota_budaya' ? 'budaya' : (editingContribution?.type === 'kota_kuliner' ? 'kuliner' : null));
     const [showSuccess, setShowSuccess] = useState(false);
     const [isGenerating, setIsGenerating] = useState(false);
+    const [isAnalyzing, setIsAnalyzing] = useState(false);
 
     const { data, setData, post, processing, errors, reset, recentlySuccessful } = useForm({
         type: editingContribution?.type || initialType,
@@ -311,6 +312,59 @@ export default function Kontribusi({ cities = [], initialType = 'kota', editingC
         }
     };
 
+    const handleAnalyzeArchive = async () => {
+        if (!data.archiveFile) {
+            alert("Silakan unggah file arsip (PDF/Gambar) terlebih dahulu.");
+            return;
+        }
+
+        setIsAnalyzing(true);
+        try {
+            const formData = new FormData();
+            formData.append('archive', data.archiveFile);
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+            const response = await fetch('/kontribusi/analyze-archive', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                body: formData
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => null);
+                throw new Error(errorData?.error || `Server Error (${response.status})`);
+            }
+
+            const result = await response.json();
+            if (result && !result.error) {
+                // Populate fields based on AI result
+                setData(prev => ({
+                    ...prev,
+                    artName: result.artName || prev.artName,
+                    artCategory: result.artCategory || prev.artCategory,
+                    artSubCategory: result.artSubCategory || prev.artSubCategory,
+                    origin: result.origin || prev.origin,
+                    era: result.era || prev.era,
+                    description: result.description || prev.description,
+                    shortDesc: result.short_description || prev.shortDesc,
+                    makna: result.makna || prev.makna,
+                    moral: result.moral || prev.moral,
+                    characters: Array.isArray(result.characters) ? result.characters.join(', ') : (result.characters || prev.characters),
+                    fakta_budaya: result.fakta_budaya || prev.fakta_budaya,
+                }));
+            } else if (result.error) {
+                alert(result.error);
+            }
+        } catch (error) {
+            console.error('Archive analysis failed:', error);
+            alert(`Gagal menganalisis dokumen: ${error.message}`);
+        } finally {
+            setIsAnalyzing(false);
+        }
+    };
+
     const renderFormFields = () => {
         const renderBudayaFields = () => (
             <motion.div key="budaya" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6">
@@ -400,21 +454,41 @@ export default function Kontribusi({ cities = [], initialType = 'kota', editingC
                 </div>
 
                 <div className="space-y-2">
-                    <label className="text-sm font-medium">File Arsip / Materi Pendukung (PDF/Doc)</label>
+                    <div className="flex items-center justify-between">
+                        <label className="text-sm font-medium">File Arsip / Materi Pendukung (PDF/Gambar)</label>
+                        {data.archiveFile && (
+                            <button 
+                                type="button"
+                                onClick={handleAnalyzeArchive}
+                                disabled={isAnalyzing}
+                                className="flex items-center gap-1.5 text-xs font-bold text-primary hover:text-primary/80 transition-all disabled:opacity-50"
+                            >
+                                <span className={`material-symbols-outlined text-[14px] ${isAnalyzing ? 'animate-spin' : ''}`}>
+                                    {isAnalyzing ? 'sync' : 'document_scanner'}
+                                </span>
+                                {isAnalyzing ? "Menganalisis..." : "Otomatis Isi dari PDF"}
+                            </button>
+                        )}
+                    </div>
                     <div className="relative group/upload h-20 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800 hover:border-primary transition-all flex flex-col items-center justify-center bg-slate-50/50 dark:bg-slate-900/50">
                         <input 
                             type="file" 
-                            accept=".pdf,.doc,.docx"
+                            accept=".pdf,.jpg,.jpeg,.png"
                             onChange={e => setData('archiveFile', e.target.files[0])}
                             className="absolute inset-0 opacity-0 cursor-pointer z-10" 
                         />
                         <div className="flex items-center gap-3">
                             <span className="material-symbols-outlined text-2xl text-slate-400 group-hover/upload:text-primary transition-colors">history_edu</span>
                             <p className="text-xs font-bold text-slate-500">
-                                {data.archiveFile ? data.archiveFile.name : "Klik untuk unggah arsip digital (PDF)"}
+                                {data.archiveFile ? data.archiveFile.name : "Klik untuk unggah arsip digital (PDF/Gambar)"}
                             </p>
                         </div>
                     </div>
+                    {isAnalyzing && (
+                        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-[10px] text-primary font-bold animate-pulse">
+                            Kecerdasan Buatan sedang membaca dokumen Anda... Mohon tunggu.
+                        </motion.p>
+                    )}
                 </div>
 
                 {data.artCategory === 'cerita' && (
@@ -566,11 +640,19 @@ export default function Kontribusi({ cities = [], initialType = 'kota', editingC
                         value={data.shopName}
                         onChange={val => {
                             setData('shopName', val);
-                            if (val && val.length > 3) {
+                            const spot = spots.find(s => s.name.toLowerCase() === val.toLowerCase());
+                            if (spot) {
+                                setData(prev => ({
+                                    ...prev,
+                                    city: spot.city || prev.city,
+                                    category: spot.category || prev.category
+                                }));
+                            }
+                            if (val && val.length > 3 && !spot) {
                                 handleGenerateAI('kuliner', val);
                             }
                         }}
-                        options={[]}
+                        options={spots}
                         placeholder="Nama Warung / Tempat Wisata..."
                         icon="storefront"
                     />
@@ -952,7 +1034,7 @@ export default function Kontribusi({ cities = [], initialType = 'kota', editingC
                     </div>
 
                     {/* Form Hub */}
-                    <motion.div variants={fadeIn} className="bg-white dark:bg-surface-dark rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden">
+                    <motion.div variants={fadeIn} className="bg-white dark:bg-surface-dark rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-2xl">
                         <form onSubmit={handleSubmit}>
                             {/* Dynamic Fields */}
                             <div className="p-8 md:p-12">

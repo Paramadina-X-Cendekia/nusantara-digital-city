@@ -67,20 +67,70 @@ function LeafletMap({ sites, activeSite, setActiveSite, t }) {
 
     const { MapContainer, TileLayer, Marker, Popup } = MapComponents;
 
-    const customIcon = (isActive) => {
+    const getRegionalIcon = (location) => {
+        const loc = location?.toLowerCase() || '';
+        if (loc.includes('jakarta')) return 'location_city';
+        if (loc.includes('jawa tengah') || loc.includes('yogyakarta')) return 'temple_hindu';
+        if (loc.includes('bali')) return 'temple_buddhist';
+        if (loc.includes('sumatera')) return 'account_balance';
+        if (loc.includes('sulawesi')) return 'sailing';
+        if (loc.includes('papua')) return 'terrain';
+        if (loc.includes('ntt') || loc.includes('ntb') || loc.includes('nusa tenggara')) return 'landscape';
+        if (loc.includes('jawa timur')) return 'volcano';
+        return 'location_on';
+    };
+
+    const customIcon = (site, isActive) => {
+        const iconName = getRegionalIcon(site.location);
+        const size = isActive ? 36 : 28;
+        const iconSize = isActive ? 20 : 16;
+
         return MapComponents.L.divIcon({
             className: 'custom-marker',
-            html: `<div style="
-                width: ${isActive ? '20px' : '14px'};
-                height: ${isActive ? '20px' : '14px'};
-                background: #368ce2;
-                border: 3px solid ${isActive ? '#fff' : 'rgba(54,140,226,0.5)'};
-                border-radius: 50%;
-                box-shadow: 0 0 ${isActive ? '20px' : '10px'} rgba(54,140,226,0.5), 0 0 40px rgba(54,140,226,0.2);
-                transition: all 0.3s ease;
-            "></div>`,
-            iconSize: [isActive ? 20 : 14, isActive ? 20 : 14],
-            iconAnchor: [isActive ? 10 : 7, isActive ? 10 : 7],
+            html: `
+                <div style="
+                    position: relative;
+                    width: ${size}px;
+                    height: ${size}px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                ">
+                    <!-- Pulse Effect (only if active) -->
+                    ${isActive ? `
+                    <div style="
+                        position: absolute;
+                        inset: -4px;
+                        background: rgba(54, 140, 226, 0.4);
+                        border-radius: 50%;
+                        animation: marker-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+                    "></div>
+                    ` : ''}
+                    
+                    <!-- Main Circle -->
+                    <div style="
+                        position: relative;
+                        width: 100%;
+                        height: 100%;
+                        background: #368ce2;
+                        border: 2px solid ${isActive ? '#fff' : 'rgba(255,255,255,0.7)'};
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        box-shadow: 0 4px 12px rgba(0,0,0,0.3), 0 0 10px rgba(54,140,226,0.4);
+                        z-index: 2;
+                        transition: all 0.3s ease;
+                    ">
+                        <span class="material-symbols-outlined" style="
+                            font-size: ${iconSize}px;
+                            color: white;
+                        ">${iconName}</span>
+                    </div>
+                </div>
+            `,
+            iconSize: [size, size],
+            iconAnchor: [size / 2, size / 2],
         });
     };
 
@@ -100,7 +150,7 @@ function LeafletMap({ sites, activeSite, setActiveSite, t }) {
                 <Marker
                     key={site.id}
                     position={[site.lat, site.lng]}
-                    icon={customIcon(activeSite === site.id)}
+                    icon={customIcon(site, activeSite === site.id)}
                     eventHandlers={{
                         click: () => setActiveSite(activeSite === site.id ? null : site.id),
                     }}
@@ -196,6 +246,10 @@ export default function PetaWarisan({ dynamicSites = [] }) {
                 .leaflet-popup-content { margin: 12px !important; }
                 .leaflet-popup-tip { background: #fff !important; }
                 .leaflet-container { font-family: 'Inter', sans-serif !important; }
+                @keyframes marker-pulse {
+                    0% { transform: scale(1); opacity: 0.6; }
+                    100% { transform: scale(1.8); opacity: 0; }
+                }
             `}</style>
             <Navbar />
 

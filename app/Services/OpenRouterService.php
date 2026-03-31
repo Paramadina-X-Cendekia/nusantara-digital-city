@@ -117,4 +117,78 @@ class OpenRouterService
 
         return "Berikan deskripsi singkat tentang '{$name}' dalam format JSON { \"description\": \"...\" }";
     }
+
+    public function analyzeArchive($base64Data, $mimeType)
+    {
+        if (empty($this->apiKey)) {
+            return "Mohon maaf, OpenRouter API Key belum dikonfigurasi. Silakan tambahkan OPENROUTER_API_KEY di file .env.";
+        }
+
+        $prompt = "Tolong analisis dokumen/gambar terlampir yang berisi informasi tentang Warisan Budaya atau Seni di Indonesia. 
+        Ekstrak informasi penting dan berikan respon dalam format JSON murni dengan kunci:
+        - artName: Nama karya seni/budaya/cerita (string).
+        - artCategory: Kategori ('seni', 'sejarah', atau 'cerita').
+        - artSubCategory: Sub-kategori (contoh: 'batik', 'gamelan', 'Legenda', dll).
+        - origin: Nama kota atau daerah asal (string).
+        - era: Zaman atau periode waktu (string).
+        - description: Deskripsi lengkap tentang karya tersebut (minimal 3 kalimat).
+        - short_description: Ringkasan menarik (maksimal 15 kata).
+        - makna: Filosofi atau makna mendalam dari karya tersebut.
+        - moral: Nilai moral atau pesan yang terkandung (terutama jika kategori cerita).
+        - characters: Tokoh-tokoh penting (array of strings, jika ada).
+        - fakta_budaya: Hubungan karya ini dengan identitas budaya masyarakat setempat.
+        
+        PASTIKAN respon HANYA berupa objek JSON yang valid.";
+
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => "Bearer {$this->apiKey}",
+                'Content-Type' => 'application/json',
+                'HTTP-Referer' => config('app.url'),
+                'X-Title' => config('app.name'),
+            ])->timeout(60)->post('https://openrouter.ai/api/v1/chat/completions', [
+                'model' => $this->model,
+                'messages' => [
+                    [
+                        'role' => 'user', 
+                        'content' => [
+                            ['type' => 'text', 'text' => $prompt],
+                            [
+                                'type' => 'image_url', 
+                                'image_url' => [
+                                    'url' => "data:{$mimeType};base64,{$base64Data}"
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                'response_format' => ['type' => 'json_object']
+            ]);
+
+            if ($response->successful()) {
+                $aiResponse = $response->json();
+                $text = $aiResponse['choices'][0]['message']['content'] ?? '{}';
+                
+                $cleanText = preg_replace('/^```json\s*|\s*```$/i', '', trim($text));
+                $decoded = json_decode($cleanText, true);
+
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    return $decoded;
+                }
+
+                if (preg_match('/[\{\[].*[\}\]]/s', $cleanText, $matches)) {
+                    $decoded = json_decode($matches[0], true);
+                    if (json_last_error() === JSON_ERROR_NONE) {
+                        return $decoded;
+                    }
+                }
+
+                return $text;
+            }
+
+            return "Terjadi kesalahan saat menghubungi OpenRouter: " . $response->body();
+        } catch (\Exception $e) {
+            return "Kesalahan sistem: " . $e->getMessage();
+        }
+    }
 }
