@@ -38,8 +38,8 @@ export default function EksplorasiKuliner({ contributedDishes = [], contributedI
 
     const handleShare = async (dish) => {
         const shareData = {
-            title: `${dish.name} | Nusantara Digital City`,
-            text: `${dish.name}: ${dish.desc}. Telusuri kisah bahan lokalnya di Nusantara Digital City!`,
+            title: `${dish.name} | Sinergi Nusa`,
+            text: `${dish.name}: ${dish.desc}. Telusuri kisah bahan lokalnya di Sinergi Nusa!`,
             url: window.location.href
         };
 
@@ -66,7 +66,7 @@ export default function EksplorasiKuliner({ contributedDishes = [], contributedI
 
     return (
         <div className="relative flex min-h-screen flex-col bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-300 transition-colors duration-300 antialiased">
-            <Head title={`Eksplorasi Kuliner | Nusantara Digital City`} />
+            <Head title={`Eksplorasi Kuliner | Sinergi Nusa`} />
             <Navbar />
 
             <main className="flex-grow">
@@ -276,7 +276,7 @@ export default function EksplorasiKuliner({ contributedDishes = [], contributedI
                                         <h3 className="text-3xl font-black mb-1 uppercase tracking-tight">{selectedDish.name}</h3>
                                         <div className="flex items-center gap-2 text-white/80 mb-2">
                                             <span className="material-symbols-outlined text-sm">storefront</span>
-                                            <span className="text-[10px] font-black uppercase tracking-widest">{selectedDish.shopName || 'Nusantara Digital City'}</span>
+                                            <span className="text-[10px] font-black uppercase tracking-widest">{selectedDish.shopName || 'Sinergi Nusa'}</span>
                                         </div>
                                         <p className="text-xs font-bold text-white/60 tracking-widest uppercase">{selectedDish.address || t('kuliner.digital_menu')}</p>
                                     </div>

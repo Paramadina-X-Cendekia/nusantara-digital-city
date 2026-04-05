@@ -1017,7 +1017,7 @@ export default function Kontribusi({ cities = [], spots = [], initialType = 'kot
 
     return (
         <div className="min-h-screen bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased">
-            <Head title={`${t('kontribusi.title')} | Nusantara Digital City`} />
+            <Head title={`${t('kontribusi.title')} | Sinergi Nusa`} />
             <Navbar />
 
             <main className="container mx-auto px-4 py-12 lg:py-20">

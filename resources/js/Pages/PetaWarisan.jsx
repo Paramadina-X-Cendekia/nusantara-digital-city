@@ -138,6 +138,9 @@ function LeafletMap({ sites, activeSite, setActiveSite, t }) {
         <MapContainer
             center={[-2.5, 118]}
             zoom={5}
+            minZoom={5}
+            maxBounds={[[-15, 90], [10, 145]]}
+            maxBoundsViscosity={1.0}
             scrollWheelZoom={true}
             className="w-full h-[500px] rounded-2xl z-0"
             style={{ background: '#0f172a' }}
@@ -145,6 +148,36 @@ function LeafletMap({ sites, activeSite, setActiveSite, t }) {
             <TileLayer
                 attribution='&copy; <a href="https://carto.com/">CARTO</a>'
                 url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+            />
+            
+            {/* Maritime Borders (Stylized) */}
+            <MapComponents.Polyline
+                positions={[
+                    [[6,95], [6,105], [4,110], [6,118], [5,128], [3,141]],
+                    [[-11,94], [-12,105], [-11,115], [-11,125], [-10,141]]
+                ]}
+                pathOptions={{
+                    color: '#368ce2',
+                    weight: 1,
+                    dashArray: '5, 10',
+                    opacity: 0.3
+                }}
+            />
+
+            {/* Ocean Currents (Animated) */}
+            <MapComponents.Polyline
+                positions={[
+                    [[2,118.5], [-2,119.5], [-5,118.5], [-8,115.5]],
+                    [[3,127.5], [-1,128.5], [-4,129.5], [-8,126.5]],
+                    [[5,100], [0,105], [-5,110], [-9,115]]
+                ]}
+                pathOptions={{
+                    color: '#368ce2',
+                    weight: 2,
+                    dashArray: '10, 20',
+                    className: 'ocean-current-line',
+                    opacity: 0.2
+                }}
             />
             {sites.filter(s => s.lat && s.lng).map((site) => (
                 <Marker
@@ -238,7 +271,7 @@ export default function PetaWarisan({ dynamicSites = [] }) {
 
     return (
         <div className="relative flex min-h-screen flex-col overflow-x-hidden bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-300 transition-colors duration-300 antialiased">
-            <Head title={`${t('peta_warisan.hero_title')} | Nusantara Digital City`} />
+            <Head title={`${t('peta_warisan.hero_title')} | Sinergi Nusa`} />
             <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
             <style>{`
                 .custom-marker { background: none !important; border: none !important; }
@@ -249,6 +282,13 @@ export default function PetaWarisan({ dynamicSites = [] }) {
                 @keyframes marker-pulse {
                     0% { transform: scale(1); opacity: 0.6; }
                     100% { transform: scale(1.8); opacity: 0; }
+                }
+                .ocean-current-line {
+                    animation: current-flow 20s linear infinite;
+                }
+                @keyframes current-flow {
+                    from { stroke-dashoffset: 200; }
+                    to { stroke-dashoffset: 0; }
                 }
             `}</style>
             <Navbar />

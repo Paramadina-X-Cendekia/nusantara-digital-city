@@ -293,7 +293,7 @@ export default function LandmarkDetail({ landmark }) {
                                 <div className="grid grid-cols-2 gap-4 text-sm">
                                     <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50">
                                         <p className="text-slate-500 mb-1">{t('landmark_detail.archive_code')}</p>
-                                        <p className="font-mono font-bold text-primary">NDC-{landmark.slug.toUpperCase()}-2024</p>
+                                        <p className="font-mono font-bold text-primary">SN-{landmark.slug.toUpperCase()}-2024</p>
                                     </div>
                                     <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50">
                                         <p className="text-slate-500 mb-1">{t('landmark_detail.verification_status')}</p>

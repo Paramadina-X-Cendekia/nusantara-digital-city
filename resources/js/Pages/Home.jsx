@@ -159,7 +159,7 @@ export default function Home({ leaderboard = [] }) {
 
     return (
         <div className="relative flex min-h-screen flex-col bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-300 transition-colors duration-300 antialiased">
-            <Head title={t('nav.home') + " | Nusantara Digital City"} />
+            <Head title={t('nav.home') + " | Sinergi Nusa"} />
             <Navbar />
 
             <main className="flex-grow">

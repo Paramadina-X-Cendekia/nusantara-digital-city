@@ -9,8 +9,8 @@ export default function Footer() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
                     <div className="col-span-1 md:col-span-1 space-y-6">
                         <div className="flex items-center gap-3">
-                            <span className="material-symbols-outlined text-primary text-3xl">auto_awesome</span>
-                            <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">Nusantara Digital</h2>
+                            <img src="/images/logo_ndc.png" alt="Sinergi Nusa" className="w-8 h-8 object-contain" />
+                            <h2 className="text-lg font-black italic tracking-tighter text-slate-900 dark:text-slate-100 uppercase">Sinergi <span className="text-primary">Nusa</span></h2>
                         </div>
                         <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
                             {t('footer.description')}

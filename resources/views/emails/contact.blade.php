@@ -35,7 +35,7 @@
         </div>
     </div>
     <div class="footer">
-        &copy; {{ date('Y') }} Nusantara Digital City. Seluruh Hak Cipta.
+        &copy; {{ date('Y') }} Sinergi Nusa. Seluruh Hak Cipta.
     </div>
 </body>
 </html>

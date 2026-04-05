@@ -17,7 +17,7 @@ export default function Login() {
 
     return (
         <div className="min-h-screen bg-white dark:bg-slate-950 font-display text-slate-900 dark:text-slate-100 antialiased flex overflow-hidden">
-            <Head title={`${t('nav.login')} | Nusantara Digital City`} />
+            <Head title={`${t('nav.login')} | Sinergi Nusa`} />
             
             {/* Left Side: Form */}
             <div className="w-full lg:w-1/2 flex flex-col justify-center px-6 md:px-12 lg:px-20 py-12 relative z-10 bg-white dark:bg-slate-950 overflow-y-auto">
@@ -103,7 +103,7 @@ export default function Login() {
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/60 mix-blend-multiply z-10" />
                 <ImageWithFallback 
                     src="/images/auth/login_visual.png" 
-                    alt="Nusantara Digital City Visual" 
+                    alt="Sinergi Nusa Visual" 
                     className="absolute inset-0 w-full h-full object-cover grayscale-[20%] hover:grayscale-0 transition-all duration-700 hover:scale-105"
                     fallbackIcon="login"
                 />

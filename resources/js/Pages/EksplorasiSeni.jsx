@@ -50,7 +50,7 @@ export default function EksplorasiSeni() {
 
     return (
         <div className="relative flex min-h-screen flex-col overflow-x-hidden bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-300 transition-colors duration-300 antialiased">
-            <Head title={`Eksplorasi Seni | Nusantara Digital City`} />
+            <Head title={`Eksplorasi Seni | Sinergi Nusa`} />
             <Navbar />
 
             <main className="flex-grow">

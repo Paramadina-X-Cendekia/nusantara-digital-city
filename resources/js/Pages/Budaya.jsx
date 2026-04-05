@@ -145,7 +145,7 @@ export default function Budaya({ landmarks, budayaData }) {
 
     return (
         <div className="relative flex min-h-screen flex-col bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-300 transition-colors duration-300 antialiased">
-            <Head title={t('nav.culture') + " | Nusantara Digital City"} />
+            <Head title={t('nav.culture') + " | Sinergi Nusa"} />
             <Navbar />
 
             <main className="flex-grow">

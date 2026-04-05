@@ -63,7 +63,7 @@ export default function AdminDashboard({ auth, allContributions = [], pendingCou
 
     return (
         <DashboardLayout>
-            <Head title="Admin Dashboard | Nusantara Digital City" />
+            <Head title="Admin Dashboard | Sinergi Nusa" />
 
             <div className="space-y-8">
                 {/* Admin Header */}

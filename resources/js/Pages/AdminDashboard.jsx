@@ -25,7 +25,7 @@ export default function AdminDashboard({ registrations, flash, error }) {
 
     return (
         <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 transition-colors duration-300">
-            <Head title="Admin Dashboard | Nusantara Digital City" />
+            <Head title="Admin Dashboard | Sinergi Nusa" />
             <Navbar />
 
             <main className="flex-grow container mx-auto px-4 lg:px-10 py-12">

@@ -88,7 +88,7 @@ export default function DaftarWisata({ dynamicDestinations = [] }) {
 
     return (
         <div className="flex min-h-screen flex-col bg-background-light dark:bg-background-dark transition-colors duration-300 antialiased font-display">
-            <Head title={`${t('wisata.daftar_title')} | Nusantara Digital City`} />
+            <Head title={`${t('wisata.daftar_title')} | Sinergi Nusa`} />
             <Navbar />
 
             <main className="flex-grow pt-24 pb-16">

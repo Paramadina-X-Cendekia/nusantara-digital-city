@@ -9,7 +9,7 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { LanguageProvider } from './lib/LanguageContext';
 import { useEffect } from 'react';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Nusantara Digital City';
+const appName = import.meta.env.VITE_APP_NAME || 'Sinergi Nusa';
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,

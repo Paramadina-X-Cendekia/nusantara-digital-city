@@ -122,7 +122,7 @@ export default function Wisata({ dynamicDestinations = [] }) {
 
     return (
         <div className="relative flex min-h-screen flex-col bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-300 transition-colors duration-300 antialiased">
-            <Head title={t('nav.tourism') + " | Nusantara Digital City"} />
+            <Head title={t('nav.tourism') + " | Sinergi Nusa"} />
             <Navbar />
 
             <main className="flex-grow">

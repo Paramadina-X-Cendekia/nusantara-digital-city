@@ -42,13 +42,13 @@ class CityController extends Controller
             });
             
             return Inertia::render('Home', [
-                'name' => 'Nusantara Digital City',
+                'name' => 'Sinergi Nusa',
                 'cities' => $cities,
                 'leaderboard' => $leaderboard
             ]);
         } catch (\Exception $e) {
             return Inertia::render('Home', [
-                'name' => 'Nusantara Digital City',
+                'name' => 'Sinergi Nusa',
                 'cities' => [
                     ['id' => '1', 'name' => 'Jakarta (Dummy Data)', 'description' => 'Ibukota Indonesia'],
                     ['id' => '2', 'name' => 'Bandung (Dummy Data)', 'description' => 'Kota Kembang']

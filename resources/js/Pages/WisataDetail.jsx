@@ -77,7 +77,7 @@ export default function WisataDetail({ slug, initialDestination }) {
 
     return (
         <div className="flex min-h-screen flex-col bg-background-light dark:bg-background-dark transition-colors duration-300 antialiased font-display">
-            <Head title={`${destination.name} | Nusantara Digital City`} />
+            <Head title={`${destination.name} | Sinergi Nusa`} />
             <Navbar />
 
             <main className="flex-grow pt-16">
@@ -233,7 +233,7 @@ export default function WisataDetail({ slug, initialDestination }) {
                                                 {destination.contributor_badge_icon || 'explore'}
                                             </span>
                                             <span className="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 bg-slate-50 dark:bg-slate-800 rounded-md border border-slate-100 dark:border-slate-700" style={{ color: destination.contributor_badge_color || '#F59E0B' }}>
-                                                {destination.contributor_badge || 'Nusantara Pioneer'}
+                                                {destination.contributor_badge || 'Perintis Sinergi'}
                                             </span>
                                         </div>
                                         <p className="text-[10px] text-slate-400 font-medium italic">Telah berkontribusi mendigitalisasi destinasi ini pada {destination.created_at ? new Date(destination.created_at).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }) : 'Maret 2024'}.</p>
@@ -270,7 +270,7 @@ export default function WisataDetail({ slug, initialDestination }) {
 
                             <div className="bg-primary/5 border border-primary/10 rounded-3xl p-8">
                                 <h3 className="text-lg font-black text-slate-900 dark:text-white mb-4 italic">"Nature is the best digital architect."</h3>
-                                <p className="text-sm text-slate-500 italic">— Nusantara Digital Explorer</p>
+                                <p className="text-sm text-slate-500 italic">— Sinergi Nusa Explorer</p>
                             </div>
                         </div>
                     </div>

@@ -45,7 +45,7 @@ export default function Dashboard({ auth, contributions = [], stats = { total: 0
 
     return (
         <DashboardLayout>
-            <Head title="Dashboard | Nusantara Digital City" />
+            <Head title="Dashboard | Sinergi Nusa" />
 
             <div className="space-y-12">
                     {/* Welcome Header */}

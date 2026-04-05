@@ -8,7 +8,7 @@ export default function ContributorProfiles({ auth, profiles = [] }) {
 
     return (
         <DashboardLayout>
-            <Head title={`${t('dashboard.contributor_profiles_title')} | Nusantara Digital City`} />
+            <Head title={`${t('dashboard.contributor_profiles_title')} | Sinergi Nusa`} />
 
             <div className="space-y-8">
                 <div className="space-y-1">

@@ -31,7 +31,7 @@ export default function Kontak() {
 
     return (
         <div className="relative flex min-h-screen flex-col overflow-x-hidden bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-300 transition-colors duration-300 antialiased">
-            <Head title={`Kontak | Nusantara Digital City`} />
+            <Head title={`Kontak | Sinergi Nusa`} />
             <Navbar />
 
             <main className="flex-grow">

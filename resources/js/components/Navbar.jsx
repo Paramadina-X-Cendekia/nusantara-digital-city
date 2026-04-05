@@ -61,9 +61,9 @@ export default function Navbar() {
             >
                 <div className="container mx-auto px-4 lg:px-10">
                     <div className="flex h-16 items-center justify-between">
-                        <Link href="/" className="flex items-center gap-2 group">
-                            <span className="material-symbols-outlined text-primary text-2xl transition-transform group-hover:rotate-12">auto_awesome</span>
-                            <h2 className="text-base md:text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100 italic">Nusantara <span className="text-primary">{t('home.digital_city').split(' ')[1]}</span></h2>
+                        <Link href="/" className="flex items-center gap-3 group">
+                            <img src="/images/logo_ndc.png" alt="Sinergi Nusa Logo" className="w-8 h-8 md:w-9 md:h-9 object-contain transition-transform group-hover:rotate-12" />
+                            <h2 className="text-base md:text-lg font-black tracking-tighter text-slate-900 dark:text-slate-100 italic uppercase">Sinergi <span className="text-primary tracking-normal">Nusa</span></h2>
                         </Link>
 
                         <nav className="hidden md:flex items-center gap-8">
