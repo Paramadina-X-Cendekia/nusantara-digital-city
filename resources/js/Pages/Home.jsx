@@ -170,34 +170,35 @@ export default function Home({ leaderboard = [] }) {
                         className="absolute inset-0 bg-cover bg-center"
                         style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuDPosYoLCnNw7zKsitCTwxKXjWF878_zb8mn4UrrqRW5Q-k2RNrFMb4iVgPu7aguuvf87GWI8eQOOq3kLlfMPgRukWlCE6Y_OewV2kDNhfg5Bjp5wrdmhgmVJZby5J6d1c7QeNdrZaX6FY9iN4Oh2Vl08N6dXfrrUSwy2J0HPJoS7LWmxX-a3O2ZrJSwoNDPviVs9TNvQ86kH3p65he-Lpo_uuWyOrKox7ti0sNVzTTdGFBI_VnfW49eNPiXpN2vk5Ja-QspLSVGeo1")' }}
                     />
-                    {/* Gradient overlay — stronger at bottom-left for readability */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-900/60 to-transparent" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/20 to-transparent" />
+                    {/* Shadow overlay */}
+                    <div className="absolute inset-0 bg-background-light/60 dark:bg-background-dark/70" />
+                    {/* Gradient to blend seamlessly */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-background-light from-5% via-background-light/60 to-transparent dark:from-background-dark dark:from-5% dark:via-background-dark/60 dark:to-transparent" />
 
                     {/* Content */}
-                    <div className="relative z-10 flex-grow flex items-center">
-                        <div className="w-full px-6 sm:px-10 lg:px-20 py-24 md:py-32">
+                    <div className="relative z-10 flex-grow flex items-center justify-center text-center">
+                        <div className="w-full px-4 sm:px-10 lg:px-20 py-24 md:py-32 flex flex-col items-center">
                             <motion.div
                                 initial="hidden"
                                 animate="visible"
                                 variants={staggerContainer}
-                                className="max-w-2xl space-y-6"
+                                className="max-w-4xl flex flex-col items-center space-y-6"
                             >
                                 {/* Badge */}
-                                <motion.div variants={fadeIn} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white/90 text-xs font-bold uppercase tracking-widest">
+                                <motion.div variants={fadeIn} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/5 dark:bg-white/10 backdrop-blur-md border border-primary/20 dark:border-white/20 text-primary dark:text-white/90 text-xs font-bold uppercase tracking-widest">
                                     <span className="size-1.5 rounded-full bg-primary animate-pulse" />
                                     Sinergi Nusa — Platform Warisan Digital
                                 </motion.div>
 
-                                <motion.h1 variants={fadeIn} className="text-5xl sm:text-6xl lg:text-7xl font-black text-white leading-[1.05] tracking-tight">
+                                <motion.h1 variants={fadeIn} className="text-5xl sm:text-6xl lg:text-7xl font-black text-slate-900 dark:text-white leading-[1.05] tracking-tight text-center max-w-4xl mx-auto">
                                     {t('home.hero_title')}{' '}<span className="text-primary italic">{t('home.digital_city')}</span>
                                 </motion.h1>
 
-                                <motion.p variants={fadeIn} className="text-base sm:text-lg text-slate-300 font-medium leading-relaxed max-w-xl">
+                                <motion.p variants={fadeIn} className="text-base sm:text-lg text-slate-600 dark:text-slate-300 font-medium leading-relaxed max-w-2xl text-center mx-auto">
                                     {t('home.hero_subtitle')}
                                 </motion.p>
 
-                                <motion.div variants={fadeIn} className="flex flex-col sm:flex-row gap-3 pt-2">
+                                <motion.div variants={fadeIn} className="flex flex-col sm:flex-row gap-4 pt-6 justify-center w-full">
                                     <Link href="/kontribusi">
                                         <motion.button
                                             whileHover={{ scale: 1.05 }}
@@ -208,12 +209,12 @@ export default function Home({ leaderboard = [] }) {
                                         </motion.button>
                                     </Link>
                                     <motion.button
-                                        whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.15)' }}
+                                        whileHover={{ scale: 1.05 }}
                                         whileTap={{ scale: 0.95 }}
                                         onClick={() => {
                                             gsap.to(window, { duration: 1.5, scrollTo: triggerRef.current, ease: 'power4.inOut' });
                                         }}
-                                        className="rounded-xl h-12 px-8 bg-white/10 backdrop-blur-md text-white border border-white/20 text-sm font-bold hover:bg-white/20 transition-colors"
+                                        className="rounded-xl h-12 px-8 bg-slate-200/50 dark:bg-white/10 backdrop-blur-md text-slate-800 dark:text-white border border-slate-300 dark:border-white/20 text-sm font-bold hover:bg-slate-300/50 dark:hover:bg-white/20 transition-colors"
                                     >
                                         {t('home.cta_learn')}
                                     </motion.button>
@@ -226,8 +227,13 @@ export default function Home({ leaderboard = [] }) {
                 </section>
 
                 {/* ── Leaderboard Section ── */}
-                <section className="py-20 bg-slate-50 dark:bg-slate-900/30">
-                    <div className="container mx-auto px-4 lg:px-10">
+                <section className="py-20 bg-slate-50 dark:bg-slate-900/30 relative">
+                    <motion.div 
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.6, duration: 0.6 }}
+                        className="container mx-auto px-4 lg:px-10 relative z-20"
+                    >
                         <div className="text-center mb-16">
                             <h2 className="text-4xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-4">Papan Peringkat Kontributor</h2>
                             <p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">Apresiasi bagi para penjaga warisan budaya yang telah berkontribusi mendigitalisasi kekayaan Nusantara.</p>
@@ -287,7 +293,7 @@ export default function Home({ leaderboard = [] }) {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </motion.div>
                 </section>
                 <section ref={triggerRef} className="overflow-hidden bg-white dark:bg-slate-950">
                     <div ref={sectionRef} className="flex h-[90vh] items-center px-10 md:px-24 gap-16 md:gap-32 w-max">

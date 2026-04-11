@@ -156,37 +156,39 @@ export default function Budaya({ landmarks, budayaData }) {
                         className="absolute inset-0 bg-cover bg-center transition-transform duration-[10s] hover:scale-105"
                         style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuBMGTCFCaDtjpe7yrqfTzA8iN1OmWnIKYRRWrcVY8J7JO_wNsntxW3cVs8kldslW2HSs6RtUMhE2TBuie1gaJjNhoOYUpdaTccsxsZsLHXs318JTqzoKu5riZiYmMILa_dUx62dUp3sP53CtegYCDWM4Cwb4teEXBOXXqObHLQ9u8kmY9EJP5Ru_H_S_V6BmXHyytMsi6p43rpj4WHLHlsGcYDSpFRSCZp9pM0zhte-TExzwWO8Tgq5JKT-z9CGHMShYOKNg8mqhsZ5")' }}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-900/65 to-slate-900/10" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/20 to-transparent" />
+                    {/* Shadow overlay */}
+                    <div className="absolute inset-0 bg-background-light/60 dark:bg-background-dark/70" />
+                    {/* Gradient to blend seamlessly */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-background-light from-5% via-background-light/60 to-transparent dark:from-background-dark dark:from-5% dark:via-background-dark/60 dark:to-transparent" />
 
                     {/* Content */}
-                    <div className="relative z-10 flex-grow flex items-center">
-                        <div className="w-full px-6 sm:px-10 lg:px-20 py-24 md:py-32">
+                    <div className="relative z-10 flex-grow flex items-center justify-center text-center">
+                        <div className="w-full px-4 sm:px-10 lg:px-20 py-24 md:py-32 flex flex-col items-center">
                             <motion.div
                                 initial="hidden" animate="visible" variants={stagger}
-                                className="max-w-2xl space-y-6"
+                                className="max-w-4xl flex flex-col items-center space-y-6"
                             >
-                                <motion.span variants={fadeIn} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white/90 text-xs font-bold uppercase tracking-widest">
+                                <motion.span variants={fadeIn} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/5 dark:bg-white/10 backdrop-blur-md border border-primary/20 dark:border-white/20 text-primary dark:text-white/90 text-xs font-bold uppercase tracking-widest">
                                     <span className="size-1.5 rounded-full bg-primary animate-pulse" />
                                     {t('budaya.hero_badge')}
                                 </motion.span>
 
-                                <motion.h1 variants={fadeIn} className="text-5xl sm:text-6xl lg:text-7xl font-black text-white leading-[1.05] tracking-tight">
+                                <motion.h1 variants={fadeIn} className="text-5xl sm:text-6xl lg:text-7xl font-black text-slate-900 dark:text-white leading-[1.05] tracking-tight text-center max-w-4xl mx-auto">
                                     {t('budaya.hero_title')}{' '}<span className="text-primary italic">{t('budaya.hero_subtitle')}</span>
                                 </motion.h1>
 
-                                <motion.p variants={fadeIn} className="text-base sm:text-lg text-slate-300 font-medium leading-relaxed max-w-xl">
+                                <motion.p variants={fadeIn} className="text-base sm:text-lg text-slate-600 dark:text-slate-300 font-medium leading-relaxed max-w-2xl text-center mx-auto">
                                     {t('budaya.hero_desc')}
                                 </motion.p>
 
-                                <motion.div variants={fadeIn} className="flex flex-col sm:flex-row gap-3 pt-2">
+                                <motion.div variants={fadeIn} className="flex flex-col sm:flex-row gap-4 pt-6 justify-center w-full">
                                     <Link href="/kontribusi">
                                         <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full sm:w-auto rounded-xl h-12 px-8 bg-primary text-white text-sm font-bold shadow-lg shadow-primary/30 hover:bg-primary/90 transition-colors">
                                             {t('nav.new_contribution')}
                                         </motion.button>
                                     </Link>
                                     <Link href="/peta-warisan">
-                                        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="rounded-xl h-12 px-8 bg-white/10 backdrop-blur-md text-white border border-white/20 text-sm font-bold hover:bg-white/20 transition-colors flex items-center gap-2">
+                                        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="rounded-xl h-12 px-8 bg-slate-200/50 dark:bg-white/10 backdrop-blur-md text-slate-800 dark:text-white border border-slate-300 dark:border-white/20 text-sm font-bold hover:bg-slate-300/50 dark:hover:bg-white/20 transition-colors flex items-center gap-2">
                                             <span className="material-symbols-outlined text-sm">map</span>
                                             {t('budaya.open_interactive_map')}
                                         </motion.button>
@@ -200,7 +202,12 @@ export default function Budaya({ landmarks, budayaData }) {
                 </section>
 
                 {/* ── Category Filter Tabs (Sticky Wrapper) ── */}
-                <div className="sticky top-16 z-40 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 transition-all duration-300">
+                <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6, duration: 0.6 }}
+                    className="sticky top-16 z-40 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 transition-all duration-300"
+                >
                     <div className="container mx-auto px-4 lg:px-10">
                         <div className="flex flex-row overflow-x-auto flex-nowrap no-scrollbar scroll-smooth gap-4 py-2">
                             {TABS.map((tab) => (
@@ -219,7 +226,7 @@ export default function Budaya({ landmarks, budayaData }) {
                             ))}
                         </div>
                     </div>
-                </div>
+                </motion.div>
 
                 <div className="container mx-auto px-4 lg:px-10 py-12">
 
