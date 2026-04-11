@@ -197,7 +197,7 @@ return [
 
                 'timeout' => env('FIREBASE_HTTP_CLIENT_TIMEOUT', 60),
 
-                'verify' => storage_path('app/cacert.pem'),
+                'verify' => str_replace('\\', '/', realpath(base_path('storage/app/cacert.pem')) ?: base_path('storage/app/cacert.pem')),
 
                 'guzzle_middlewares' => [
                     // MyInvokableMiddleware::class,
