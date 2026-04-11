@@ -36,8 +36,8 @@ export default function Login() {
 
                     <div className="space-y-4">
                         <div className="flex items-center gap-3">
-                            <span className="material-symbols-outlined text-primary text-4xl">auto_awesome</span>
-                            <h2 className="text-xl font-black italic tracking-tighter">Nusantara <span className="text-primary">Digital</span> City</h2>
+                            <img src="/images/logo_ndc.png" alt="Logo" className="h-10 w-auto" />
+                            <h2 className="text-xl font-black italic tracking-tighter text-slate-900 dark:text-white">Sinergi <span className="text-primary">Nusa</span></h2>
                         </div>
                         <div className="space-y-2">
                             <h1 className="text-4xl font-black tracking-tight leading-tight">{t('auth.login_welcome').split(' ')[0]} <span className="text-primary italic">{t('auth.login_welcome').split(' ').slice(1).join(' ')}</span></h1>

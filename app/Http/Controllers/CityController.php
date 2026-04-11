@@ -10,21 +10,7 @@ class CityController extends Controller
 {
     public function index()
     {
-        try {
-            $database = $this->getFirebaseDatabase();
-            
-            $reference = $database->getReference('cities');
-            $snapshot = $reference->getSnapshot();
-            
-            $cities = [];
-            if ($snapshot->hasChildren()) {
-                foreach ($snapshot->getValue() as $key => $value) {
-                    $value['name'] = $value['name'] ?? $value['cityName'] ?? 'Unknown';
-                    $cities[] = array_merge(['id' => $key], $value);
-                }
-            }
-            
-            $leaderboard = \App\Models\User::where('role', '!=', 'admin')
+        $leaderboard = \App\Models\User::where('role', '!=', 'admin')
             ->withCount(['contributions' => function($query) {
                 $query->where('status', 'approved');
             }])
@@ -40,6 +26,20 @@ class CityController extends Controller
                     'count' => $user->contributions_count
                 ];
             });
+
+        try {
+            $database = $this->getFirebaseDatabase();
+            
+            $reference = $database->getReference('cities');
+            $snapshot = $reference->getSnapshot();
+            
+            $cities = [];
+            if ($snapshot->hasChildren()) {
+                foreach ($snapshot->getValue() as $key => $value) {
+                    $value['name'] = $value['name'] ?? $value['cityName'] ?? 'Unknown';
+                    $cities[] = array_merge(['id' => $key], $value);
+                }
+            }
             
             return Inertia::render('Home', [
                 'name' => 'Sinergi Nusa',
@@ -53,7 +53,7 @@ class CityController extends Controller
                     ['id' => '1', 'name' => 'Jakarta (Dummy Data)', 'description' => 'Ibukota Indonesia'],
                     ['id' => '2', 'name' => 'Bandung (Dummy Data)', 'description' => 'Kota Kembang']
                 ],
-                'leaderboard' => [],
+                'leaderboard' => $leaderboard,
                 'firebaseError' => 'Firebase error: ' . $e->getMessage()
             ]);
         }
