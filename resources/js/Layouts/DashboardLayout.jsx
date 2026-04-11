@@ -30,7 +30,7 @@ export default function DashboardLayout({ children }) {
             {/* Sidebar */}
             <aside className={`bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 transition-all duration-300 flex flex-col ${isSidebarOpen ? 'w-64' : 'w-20'}`}>
                 <div className="p-6 flex items-center gap-3 overflow-hidden">
-                    <img src="/images/logo_ndc.png" alt="Sinergi Nusa" className="w-8 h-8 object-contain shrink-0" />
+                    <img src="/sinusa.png" alt="Sinergi Nusa" className="w-12 h-12 object-contain shrink-0" />
                     {isSidebarOpen && <span className="font-black italic text-lg whitespace-nowrap">Sinergi <span className="text-primary">Nusa</span></span>}
                 </div>
 

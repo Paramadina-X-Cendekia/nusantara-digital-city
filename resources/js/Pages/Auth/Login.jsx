@@ -36,7 +36,7 @@ export default function Login() {
 
                     <div className="space-y-4">
                         <div className="flex items-center gap-3">
-                            <img src="/images/logo_ndc.png" alt="Logo" className="h-10 w-auto" />
+                            <img src="/sinusa.png" alt="Logo" className="h-20 w-auto" />
                             <h2 className="text-xl font-black italic tracking-tighter text-slate-900 dark:text-white">Sinergi <span className="text-primary">Nusa</span></h2>
                         </div>
                         <div className="space-y-2">

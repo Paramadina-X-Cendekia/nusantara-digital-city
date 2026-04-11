@@ -62,7 +62,7 @@ export default function Navbar() {
                 <div className="container mx-auto px-4 lg:px-10">
                     <div className="flex h-16 items-center justify-between">
                         <Link href="/" className="flex items-center gap-3 group">
-                            <img src="/images/logo_ndc.png" alt="Sinergi Nusa Logo" className="w-8 h-8 md:w-9 md:h-9 object-contain transition-transform group-hover:rotate-12" />
+                            <img src="/sinusa.png" alt="Sinergi Nusa Logo" className="w-12 h-12 md:w-14 md:h-14 object-contain transition-transform group-hover:rotate-12" />
                             <h2 className="text-base md:text-lg font-black tracking-tighter text-slate-900 dark:text-slate-100 italic uppercase">Sinergi <span className="text-primary tracking-normal">Nusa</span></h2>
                         </Link>
 
