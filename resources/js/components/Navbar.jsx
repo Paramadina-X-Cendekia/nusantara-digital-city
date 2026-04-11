@@ -9,7 +9,13 @@ export default function Navbar() {
     const { lang, toggleLang, t } = useLanguage();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+    const [isScrolled, setIsScrolled] = useState(false);
     const userMenuRef = useRef(null);
+
+    const currentUrl = usePage().url;
+    const heroPages = ['/', '/budaya', '/wisata', '/eksplorasi-kuliner', '/eksplorasi-seni', '/peta-warisan'];
+    const isHeroPage = heroPages.includes(currentUrl.split('?')[0]);
+    const isTransparent = isHeroPage && !isScrolled;
 
     const navLinks = [
         { label: t('nav.home'), href: '/', icon: 'home' },
@@ -26,13 +32,21 @@ export default function Navbar() {
     });
 
     useEffect(() => {
+        const handleScroll = () => setIsScrolled(window.scrollY > 20);
+        window.addEventListener('scroll', handleScroll);
+        handleScroll();
+
         const handleClickOutside = (event) => {
             if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
                 setIsUserMenuOpen(false);
             }
         };
         document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
+        
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
     }, []);
 
     const toggleTheme = () => {
@@ -57,18 +71,21 @@ export default function Navbar() {
                 initial={{ y: -100 }}
                 animate={{ y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="sticky top-0 z-[100] w-full border-b border-slate-200 dark:border-slate-800 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md"
+                className={`${isHeroPage ? 'fixed' : 'sticky'} top-0 z-[100] w-full transition-all duration-300 ${
+                    isScrolled || !isHeroPage
+                        ? 'border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md shadow-sm'
+                        : 'bg-transparent border-transparent'
+                }`}
             >
                 <div className="container mx-auto px-4 lg:px-10">
                     <div className="flex h-16 items-center justify-between">
                         <Link href="/" className="flex items-center gap-3 group">
                             <img src="/sinusa.png" alt="Sinergi Nusa Logo" className="w-12 h-12 md:w-14 md:h-14 object-contain transition-transform group-hover:rotate-12" />
-                            <h2 className="text-base md:text-lg font-black tracking-tighter text-slate-900 dark:text-slate-100 italic uppercase">Sinergi <span className="text-primary tracking-normal">Nusa</span></h2>
+                            <h2 className={`text-base md:text-lg font-black tracking-tighter italic uppercase transition-colors ${isTransparent ? 'text-white drop-shadow-md' : 'text-slate-900 dark:text-slate-100'}`}>Sinergi <span className="text-primary tracking-normal">Nusa</span></h2>
                         </Link>
 
                         <nav className="hidden md:flex items-center gap-8">
                             {navLinks.map((link) => {
-                                const currentUrl = usePage().url;
                                 let isActive = currentUrl === link.href;
                                 
                                 if (link.href === '/budaya') {
@@ -91,7 +108,11 @@ export default function Navbar() {
                                         key={link.href} 
                                         href={link.href} 
                                         className={`text-sm font-bold transition-colors ${
-                                            isActive ? 'text-primary' : 'text-slate-600 dark:text-slate-300 hover:text-primary'
+                                            isActive 
+                                                ? 'text-primary' 
+                                                : isTransparent 
+                                                    ? 'text-white/90 hover:text-white drop-shadow-md'
+                                                    : 'text-slate-600 dark:text-slate-300 hover:text-primary'
                                         }`}
                                     >
                                         {link.label}
@@ -106,7 +127,11 @@ export default function Navbar() {
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                                 onClick={toggleLang}
-                                className="flex items-center gap-1.5 p-1.5 px-2 md:px-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition-all shadow-sm hover:border-primary/50"
+                                className={`flex items-center gap-1.5 p-1.5 px-2 md:px-3 rounded-xl transition-all shadow-sm ${
+                                    isTransparent
+                                        ? 'bg-white/10 text-white border border-white/20 hover:bg-white/20 backdrop-blur-md'
+                                        : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:border-primary/50'
+                                }`}
                             >
                                 <span className="material-symbols-outlined text-[18px] md:text-[20px] text-primary">translate</span>
                                 <span className="text-[10px] md:text-xs font-black uppercase tracking-widest">{lang}</span>
@@ -116,7 +141,11 @@ export default function Navbar() {
                                 whileHover={{ scale: 1.1, rotate: 15 }}
                                 whileTap={{ scale: 0.9 }}
                                 onClick={toggleTheme}
-                                className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-amber-400 border border-slate-200 dark:border-slate-700 transition-colors shadow-sm"
+                                className={`p-2 rounded-xl transition-colors shadow-sm ${
+                                    isTransparent
+                                        ? 'bg-white/10 text-white border border-white/20 hover:bg-white/20 backdrop-blur-md'
+                                        : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-amber-400 border border-slate-200 dark:border-slate-700'
+                                }`}
                                 aria-label="Toggle Theme"
                             >
                                 <AnimatePresence mode="wait">
@@ -138,14 +167,18 @@ export default function Navbar() {
                                 {auth.user ? (
                                     <motion.div
                                         whileHover={{ scale: 1.05 }}
-                                        className="flex items-center gap-3 cursor-pointer p-1 pl-3 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 transition-all"
+                                        className={`flex items-center gap-3 cursor-pointer p-1 pl-3 rounded-full border transition-all ${
+                                            isTransparent
+                                                ? 'bg-white/10 border-white/20 hover:bg-white/20 backdrop-blur-md'
+                                                : 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700'
+                                        }`}
                                         onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                                     >
                                         <div className="hidden sm:block text-right">
-                                            <p className="text-xs font-black text-slate-900 dark:text-white leading-none">{auth.user.name}</p>
-                                            <p className="text-[10px] font-bold text-primary uppercase tracking-tighter">{auth.user.role === 'admin' ? t('nav.admin') : t('nav.contributor')}</p>
+                                            <p className={`text-xs font-black leading-none ${isTransparent ? 'text-white' : 'text-slate-900 dark:text-white'}`}>{auth.user.name}</p>
+                                            <p className={`text-[10px] font-bold uppercase tracking-tighter ${isTransparent ? 'text-primary drop-shadow-md' : 'text-primary'}`}>{auth.user.role === 'admin' ? t('nav.admin') : t('nav.contributor')}</p>
                                         </div>
-                                        <div className="size-7 md:size-8 rounded-full bg-primary text-white flex items-center justify-center font-bold border-2 border-white dark:border-slate-700 shadow-sm">
+                                        <div className={`size-7 md:size-8 rounded-full bg-primary text-white flex items-center justify-center font-bold border-2 shadow-sm ${isTransparent ? 'border-primary/50' : 'border-white dark:border-slate-700'}`}>
                                             {auth.user.name.charAt(0)}
                                         </div>
                                     </motion.div>

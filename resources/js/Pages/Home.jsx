@@ -163,58 +163,86 @@ export default function Home({ leaderboard = [] }) {
             <Navbar />
 
             <main className="flex-grow">
-                {/* Hero Section */}
-                <section className="relative py-12 lg:py-24 px-4 overflow-hidden">
-                    <div className="container mx-auto">
-                        <motion.div
-                            initial={{ scale: 0.95, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            transition={{ duration: 0.8, ease: "easeOut" }}
-                            className="relative overflow-hidden rounded-2xl bg-slate-900 min-h-[420px] md:min-h-0 md:aspect-[21/9] flex flex-col items-center justify-center px-6 py-12 md:p-10 text-center shadow-2xl"
-                        >
-                            <div className="absolute inset-0 opacity-40 bg-cover bg-center" style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuDPosYoLCnNw7zKsitCTwxKXjWF878_zb8mn4UrrqRW5Q-k2RNrFMb4iVgPu7aguuvf87GWI8eQOOq3kLlfMPgRukWlCE6Y_OewV2kDNhfg5Bjp5wrdmhgmVJZby5J6d1c7QeNdrZaX6FY9iN4Oh2Vl08N6dXfrrUSwy2J0HPJoS7LWmxX-a3O2ZrJSwoNDPviVs9TNvQ86kH3p65he-Lpo_uuWyOrKox7ti0sNVzTTdGFBI_VnfW49eNPiXpN2vk5Ja-QspLSVGeo1")' }}></div>
-                            <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent"></div>
+                {/* Hero Section — full-width, left-aligned */}
+                <section className="relative min-h-screen flex flex-col justify-end overflow-hidden">
+                    {/* Background Image */}
+                    <div
+                        className="absolute inset-0 bg-cover bg-center"
+                        style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuDPosYoLCnNw7zKsitCTwxKXjWF878_zb8mn4UrrqRW5Q-k2RNrFMb4iVgPu7aguuvf87GWI8eQOOq3kLlfMPgRukWlCE6Y_OewV2kDNhfg5Bjp5wrdmhgmVJZby5J6d1c7QeNdrZaX6FY9iN4Oh2Vl08N6dXfrrUSwy2J0HPJoS7LWmxX-a3O2ZrJSwoNDPviVs9TNvQ86kH3p65he-Lpo_uuWyOrKox7ti0sNVzTTdGFBI_VnfW49eNPiXpN2vk5Ja-QspLSVGeo1")' }}
+                    />
+                    {/* Gradient overlay — stronger at bottom-left for readability */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-900/60 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/20 to-transparent" />
 
+                    {/* Content */}
+                    <div className="relative z-10 flex-grow flex items-center">
+                        <div className="w-full px-6 sm:px-10 lg:px-20 py-24 md:py-32">
                             <motion.div
                                 initial="hidden"
                                 animate="visible"
                                 variants={staggerContainer}
-                                className="relative z-10 max-w-3xl space-y-6"
+                                className="max-w-2xl space-y-6"
                             >
-                                <motion.h1 variants={fadeIn} className="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-tight tracking-tight drop-shadow-mdBase">
-                                    {t('home.hero_title')} <span className="text-primary italic">{t('home.digital_city')}</span>
+                                {/* Badge */}
+                                <motion.div variants={fadeIn} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white/90 text-xs font-bold uppercase tracking-widest">
+                                    <span className="size-1.5 rounded-full bg-primary animate-pulse" />
+                                    Sinergi Nusa — Platform Warisan Digital
+                                </motion.div>
+
+                                <motion.h1 variants={fadeIn} className="text-5xl sm:text-6xl lg:text-7xl font-black text-white leading-[1.05] tracking-tight">
+                                    {t('home.hero_title')}{' '}<span className="text-primary italic">{t('home.digital_city')}</span>
                                 </motion.h1>
-                                <motion.p variants={fadeIn} className="text-base md:text-xl text-slate-200 font-medium leading-relaxed drop-shadow-md">
+
+                                <motion.p variants={fadeIn} className="text-base sm:text-lg text-slate-300 font-medium leading-relaxed max-w-xl">
                                     {t('home.hero_subtitle')}
                                 </motion.p>
-                                <motion.div variants={fadeIn} className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+
+                                <motion.div variants={fadeIn} className="flex flex-col sm:flex-row gap-3 pt-2">
                                     <Link href="/kontribusi">
                                         <motion.button
                                             whileHover={{ scale: 1.05 }}
                                             whileTap={{ scale: 0.95 }}
-                                            className="w-full sm:w-auto rounded-lg h-12 px-8 bg-primary text-white text-base font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-colors"
+                                            className="w-full sm:w-auto rounded-xl h-12 px-8 bg-primary text-white text-sm font-bold shadow-lg shadow-primary/30 hover:bg-primary/90 transition-colors"
                                         >
                                             {t('nav.new_contribution')}
                                         </motion.button>
                                     </Link>
                                     <motion.button
-                                        whileHover={{ scale: 1.05, backgroundColor: "rgba(255, 255, 255, 0.2)" }}
+                                        whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.15)' }}
                                         whileTap={{ scale: 0.95 }}
                                         onClick={() => {
-                                            gsap.to(window, {
-                                                duration: 1.5,
-                                                scrollTo: triggerRef.current,
-                                                ease: "power4.inOut"
-                                            });
+                                            gsap.to(window, { duration: 1.5, scrollTo: triggerRef.current, ease: 'power4.inOut' });
                                         }}
-                                        className="rounded-lg h-12 px-8 bg-white/10 backdrop-blur-md text-white border border-white/20 text-base font-bold hover:bg-white/20 transition-colors"
+                                        className="rounded-xl h-12 px-8 bg-white/10 backdrop-blur-md text-white border border-white/20 text-sm font-bold hover:bg-white/20 transition-colors"
                                     >
                                         {t('home.cta_learn')}
                                     </motion.button>
                                 </motion.div>
                             </motion.div>
-                        </motion.div>
+                        </div>
                     </div>
+
+                    {/* Stats Bar */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.8, duration: 0.6 }}
+                        className="relative z-10 bg-slate-950/80 backdrop-blur-xl border-t border-white/10"
+                    >
+                        <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-white/10 px-6 sm:px-10 lg:px-20">
+                            {[
+                                { value: '500+', label: 'Kontributor Aktif' },
+                                { value: '1.200+', label: 'Warisan Terdigitalisasi' },
+                                { value: '34', label: 'Provinsi Terjangkau' },
+                                { value: '100%', label: 'Open Source' },
+                            ].map((stat, i) => (
+                                <div key={i} className="py-5 px-4 sm:px-6 text-center sm:text-left first:pl-0 last:border-r-0">
+                                    <p className="text-xl sm:text-2xl font-black text-white">{stat.value}</p>
+                                    <p className="text-[10px] text-slate-400 uppercase tracking-widest font-bold mt-0.5">{stat.label}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </motion.div>
                 </section>
 
                 {/* ── Leaderboard Section ── */}

@@ -70,23 +70,67 @@ export default function EksplorasiKuliner({ contributedDishes = [], contributedI
             <Navbar />
 
             <main className="flex-grow">
-                {/* ── Hero ── */}
-                <section className="relative py-20 overflow-hidden">
-                    <div className="absolute inset-0 bg-primary/5 dark:bg-primary/10 -z-10"></div>
-                    <div className="container mx-auto px-4 lg:px-10 text-center">
-                        <motion.div initial="hidden" animate="visible" variants={stagger} className="relative z-10">
-                            <motion.div variants={fadeIn} className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider mb-6">
-                                <span className="material-symbols-outlined text-sm">lunch_dining</span>
-                                {t('kuliner.hero_badge')}
+                {/* ── Hero ── full-width, left-aligned */}
+                <section className="relative min-h-screen flex flex-col justify-end overflow-hidden">
+                    {/* Background */}
+                    <div
+                        className="absolute inset-0 bg-cover bg-center"
+                        style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=1600&q=80")' }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-900/65 to-slate-900/10" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/20 to-transparent" />
+
+                    {/* Content */}
+                    <div className="relative z-10 flex-grow flex items-center">
+                        <div className="w-full px-6 sm:px-10 lg:px-20 py-24 md:py-32">
+                            <motion.div initial="hidden" animate="visible" variants={stagger} className="max-w-2xl space-y-6">
+                                <motion.div variants={fadeIn} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white/90 text-xs font-bold uppercase tracking-widest">
+                                    <span className="material-symbols-outlined text-sm text-primary">lunch_dining</span>
+                                    {t('kuliner.hero_badge')}
+                                </motion.div>
+
+                                <motion.h1 variants={fadeIn} className="text-5xl sm:text-6xl lg:text-7xl font-black text-white leading-[1.05] tracking-tight uppercase">
+                                    {t('kuliner.hero_title')}{' '}<span className="text-primary italic">{t('kuliner.hero_subtitle')}</span>
+                                </motion.h1>
+
+                                <motion.p variants={fadeIn} className="text-base sm:text-lg text-slate-300 font-medium leading-relaxed max-w-xl">
+                                    {t('kuliner.hero_desc')}
+                                </motion.p>
+
+                                <motion.div variants={fadeIn} className="flex flex-col sm:flex-row gap-3 pt-2">
+                                    <Link href="/kontribusi">
+                                        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full sm:w-auto rounded-xl h-12 px-8 bg-primary text-white text-sm font-bold shadow-lg shadow-primary/30 hover:bg-primary/90 transition-colors">
+                                            {t('nav.new_contribution')}
+                                        </motion.button>
+                                    </Link>
+                                    <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="rounded-xl h-12 px-8 bg-white/10 backdrop-blur-md text-white border border-white/20 text-sm font-bold hover:bg-white/20 transition-colors flex items-center gap-2">
+                                        <span className="material-symbols-outlined text-sm">restaurant_menu</span>
+                                        {t('kuliner.tab_menu')}
+                                    </motion.button>
+                                </motion.div>
                             </motion.div>
-                            <motion.h1 variants={fadeIn} className="text-4xl md:text-6xl font-black tracking-tight mb-6 text-slate-900 dark:text-slate-100 uppercase">
-                                {t('kuliner.hero_title')} <span className="text-primary">{t('kuliner.hero_subtitle')}</span>
-                            </motion.h1>
-                            <motion.p variants={fadeIn} className="max-w-2xl mx-auto text-slate-600 dark:text-slate-400 text-lg leading-relaxed">
-                                {t('kuliner.hero_desc')}
-                            </motion.p>
-                        </motion.div>
+                        </div>
                     </div>
+
+                    {/* Stats Bar */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8, duration: 0.6 }}
+                        className="relative z-10 bg-slate-950/80 backdrop-blur-xl border-t border-white/10"
+                    >
+                        <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-white/10 px-6 sm:px-10 lg:px-20">
+                            {[
+                                { value: allDishes.length + '+', label: 'Menu Tradisional' },
+                                { value: allIngredients.length + '+', label: 'Bahan Lokal' },
+                                { value: '34', label: 'Daerah Asal' },
+                                { value: '100%', label: 'Kuliner Otentik' },
+                            ].map((stat, i) => (
+                                <div key={i} className="py-5 px-4 sm:px-6 text-center sm:text-left first:pl-0">
+                                    <p className="text-xl sm:text-2xl font-black text-white">{stat.value}</p>
+                                    <p className="text-[10px] text-slate-400 uppercase tracking-widest font-bold mt-0.5">{stat.label}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </motion.div>
                 </section>
 
                 {/* ── Category Filter Tabs (Sticky Wrapper) ── */}

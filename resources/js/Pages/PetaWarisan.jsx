@@ -294,41 +294,73 @@ export default function PetaWarisan({ dynamicSites = [] }) {
             <Navbar />
 
             <main className="flex-grow">
-                {/* ── Hero ── */}
-                <section className="relative py-16 overflow-hidden">
-                    <div className="absolute inset-0 bg-primary/5 dark:bg-primary/10 -z-10"></div>
-                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/20 via-transparent to-transparent opacity-50 -z-10"></div>
-                    <motion.div initial="hidden" animate="visible" variants={stagger} className="container mx-auto px-4 lg:px-10 text-center">
-                        <motion.div variants={fadeIn} className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider mb-6">
-                            <span className="material-symbols-outlined text-sm">explore</span>
-                            {t('peta_warisan.hero_badge')}
-                        </motion.div>
-                        <motion.h1 variants={fadeIn} className="text-4xl md:text-6xl font-black tracking-tight mb-4 text-slate-900 dark:text-slate-100">
-                            {t('peta_warisan.hero_title')} <span className="text-primary">{t('peta_warisan.hero_subtitle')}</span>
-                        </motion.h1>
-                        <motion.p variants={fadeIn} className="max-w-2xl mx-auto text-slate-600 dark:text-slate-400 text-lg leading-relaxed">
-                            {t('peta_warisan.hero_desc')}
-                        </motion.p>
+                {/* ── Hero ── full-width, left-aligned */}
+                <section className="relative min-h-screen flex flex-col justify-end overflow-hidden">
+                    {/* Background */}
+                    <div
+                        className="absolute inset-0 bg-cover bg-center"
+                        style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1524069290683-0457abfe42c3?w=1600&q=80")' }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-900/65 to-slate-900/10" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/20 to-transparent" />
+
+                    {/* Content */}
+                    <div className="relative z-10 flex-grow flex items-center">
+                        <div className="w-full px-6 sm:px-10 lg:px-20 py-24 md:py-32">
+                            <motion.div initial="hidden" animate="visible" variants={stagger} className="max-w-2xl space-y-6">
+                                <motion.div variants={fadeIn} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white/90 text-xs font-bold uppercase tracking-widest">
+                                    <span className="material-symbols-outlined text-sm text-primary">explore</span>
+                                    {t('peta_warisan.hero_badge')}
+                                </motion.div>
+
+                                <motion.h1 variants={fadeIn} className="text-5xl sm:text-6xl lg:text-7xl font-black text-white leading-[1.05] tracking-tight">
+                                    {t('peta_warisan.hero_title')}{' '}<span className="text-primary italic">{t('peta_warisan.hero_subtitle')}</span>
+                                </motion.h1>
+
+                                <motion.p variants={fadeIn} className="text-base sm:text-lg text-slate-300 font-medium leading-relaxed max-w-xl">
+                                    {t('peta_warisan.hero_desc')}
+                                </motion.p>
+
+                                <motion.div variants={fadeIn} className="flex flex-col sm:flex-row gap-3 pt-2">
+                                    <Link href="/kontribusi">
+                                        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full sm:w-auto rounded-xl h-12 px-8 bg-primary text-white text-sm font-bold shadow-lg shadow-primary/30 hover:bg-primary/90 transition-colors">
+                                            {t('nav.new_contribution')}
+                                        </motion.button>
+                                    </Link>
+                                    <motion.button
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
+                                        onClick={() => document.getElementById('peta-interaktif')?.scrollIntoView({ behavior: 'smooth' })}
+                                        className="rounded-xl h-12 px-8 bg-white/10 backdrop-blur-md text-white border border-white/20 text-sm font-bold hover:bg-white/20 transition-colors flex items-center gap-2"
+                                    >
+                                        <span className="material-symbols-outlined text-sm">map</span>
+                                        Lihat Peta
+                                    </motion.button>
+                                </motion.div>
+                            </motion.div>
+                        </div>
+                    </div>
+
+                    {/* Stats Bar */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8, duration: 0.6 }}
+                        className="relative z-10 bg-slate-950/80 backdrop-blur-xl border-t border-white/10"
+                    >
+                        <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-white/10 px-6 sm:px-10 lg:px-20">
+                            {STATS(t).map((s, i) => (
+                                <div key={i} className="py-5 px-4 sm:px-6 text-center sm:text-left first:pl-0">
+                                    <p className="text-xl sm:text-2xl font-black text-white">{s.value}</p>
+                                    <p className="text-[10px] text-slate-400 uppercase tracking-widest font-bold mt-0.5">{s.label}</p>
+                                </div>
+                            ))}
+                        </div>
                     </motion.div>
                 </section>
 
-                {/* ── Stats ── */}
-                <section className="container mx-auto px-4 lg:px-10 pb-10">
-                    <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger} className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        {STATS(t).map((s) => (
-                            <motion.div key={s.label} variants={fadeIn} className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-surface-dark text-center group hover:shadow-lg transition-all">
-                                <div className="size-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center mx-auto mb-2 group-hover:bg-primary group-hover:text-white transition-colors">
-                                    <span className="material-symbols-outlined text-xl">{s.icon}</span>
-                                </div>
-                                <p className="text-xl md:text-2xl font-black text-slate-900 dark:text-slate-100">{s.value}</p>
-                                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">{s.label}</p>
-                            </motion.div>
-                        ))}
-                    </motion.div>
-                </section>
+
 
                 {/* ── Leaflet Map ── */}
-                <section className="container mx-auto px-4 lg:px-10 py-6">
+                <section id="peta-interaktif" className="container mx-auto px-4 lg:px-10 py-6">
                     <motion.div initial={{ opacity: 0, scale: 0.96 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="bg-slate-900 rounded-3xl overflow-hidden shadow-2xl border border-slate-800">
                         {/* Header */}
                         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800">

@@ -126,49 +126,49 @@ export default function Wisata({ dynamicDestinations = [] }) {
             <Navbar />
 
             <main className="flex-grow">
-                <div className="container mx-auto px-4 lg:px-10 py-8">
+                {/* ── Hero Section — full-width, left-aligned ── */}
+                <section className="relative min-h-screen flex flex-col justify-end overflow-hidden">
+                    {/* Background */}
+                    <div
+                        className="absolute inset-0 bg-cover bg-center transition-transform duration-[10s] hover:scale-105"
+                        style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuDG4EFxcBpgXIgCaq7MmUNfwNpEWPDL3nUlyPfXBMnGRqQpwaJXYW_-W5esyNgXuX2khxDfJDRgLB9wEhAFBlw1VWzurRyB-2oRngkWiMZVKtRh1vrOkSVGzRQMcbBUwdmpAi60PJtaaQLMaWZ_ohe8gd0b3TpcOBrXBp3YOySdBthVFe_PJ3hwPdtfTJiyEk92nuyb3NVXUtIWMPx8nTnu7oSFGVMRDJkMX45F7-ynj3Uy6Q5NIRsdq1e7cI8hybqEnmVtKFdk_5TK")' }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-900/65 to-slate-900/10" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/20 to-transparent" />
 
-                    {/* ── Hero Section ── */}
-                    <motion.section
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.7 }}
-                        className="mb-16"
-                    >
-                        <div className="relative overflow-hidden rounded-2xl bg-slate-900 min-h-[450px] flex flex-col justify-center items-center p-8 lg:p-16 shadow-2xl group text-center">
-                            <div
-                                className="absolute inset-0 opacity-40 bg-cover bg-center transition-transform duration-1000 group-hover:scale-105"
-                                style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuDG4EFxcBpgXIgCaq7MmUNfwNpEWPDL3nUlyPfXBMnGRqQpwaJXYW_-W5esyNgXuX2khxDfJDRgLB9wEhAFBlw1VWzurRyB-2oRngkWiMZVKtRh1vrOkSVGzRQMcbBUwdmpAi60PJtaaQLMaWZ_ohe8gd0b3TpcOBrXBp3YOySdBthVFe_PJ3hwPdtfTJiyEk92nuyb3NVXUtIWMPx8nTnu7oSFGVMRDJkMX45F7-ynj3Uy6Q5NIRsdq1e7cI8hybqEnmVtKFdk_5TK")' }}
-                            ></div>
-                            <div className="absolute inset-0 bg-gradient-to-b from-slate-900/40 via-slate-900/80 to-slate-900"></div>
-
-                            <motion.div initial="hidden" animate="visible" variants={stagger} className="relative z-10 max-w-3xl w-full">
-                                <motion.span variants={fadeIn} className="bg-primary/20 backdrop-blur-md border border-primary/30 text-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-6 inline-block">
+                    {/* Content */}
+                    <div className="relative z-10 flex-grow flex items-center">
+                        <div className="w-full px-6 sm:px-10 lg:px-20 py-24 md:py-32">
+                            <motion.div initial="hidden" animate="visible" variants={stagger} className="max-w-2xl space-y-6">
+                                <motion.span variants={fadeIn} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white/90 text-xs font-bold uppercase tracking-widest">
+                                    <span className="size-1.5 rounded-full bg-primary animate-pulse" />
                                     {t('wisata.hero_badge')}
                                 </motion.span>
-                                <motion.h1 variants={fadeIn} className="text-white text-4xl md:text-6xl font-black leading-tight tracking-tight mb-6">
-                                    {t('wisata.hero_title')} <span className="text-primary">{t('wisata.hero_subtitle')}</span>
+
+                                <motion.h1 variants={fadeIn} className="text-5xl sm:text-6xl lg:text-7xl font-black text-white leading-[1.05] tracking-tight">
+                                    {t('wisata.hero_title')}{' '}<span className="text-primary italic">{t('wisata.hero_subtitle')}</span>
                                 </motion.h1>
-                                <motion.p variants={fadeIn} className="text-slate-300 text-lg md:text-xl font-medium leading-relaxed mb-8">
+
+                                <motion.p variants={fadeIn} className="text-base sm:text-lg text-slate-300 font-medium leading-relaxed max-w-xl">
                                     {t('wisata.hero_desc')}
                                 </motion.p>
 
                                 {/* Search & Filter Bar */}
-                                <motion.div variants={fadeIn} className="flex flex-col md:flex-row gap-3 bg-white/10 backdrop-blur-xl p-3 rounded-2xl border border-white/20 shadow-2xl max-w-2xl mx-auto">
+                                <motion.div variants={fadeIn} className="flex flex-col sm:flex-row gap-3 bg-white/10 backdrop-blur-xl p-3 rounded-2xl border border-white/20 shadow-2xl max-w-2xl">
                                     <div className="flex-1 flex items-center bg-slate-900/50 rounded-xl px-4 py-2 border border-slate-700/50">
                                         <span className="material-symbols-outlined text-slate-400 mr-2">search</span>
-                                        <input 
-                                            className="bg-transparent border-none focus:ring-0 focus:outline-none text-white placeholder:text-slate-500 w-full text-sm" 
-                                            placeholder={t('wisata.search_placeholder')} 
-                                            type="text" 
+                                        <input
+                                            className="bg-transparent border-none focus:ring-0 focus:outline-none text-white placeholder:text-slate-500 w-full text-sm"
+                                            placeholder={t('wisata.search_placeholder')}
+                                            type="text"
                                             value={searchQuery}
                                             onChange={(e) => setSearchQuery(e.target.value)}
                                         />
                                     </div>
                                     <div className="flex items-center bg-slate-900/50 rounded-xl px-4 py-2 border border-slate-700/50">
                                         <span className="material-symbols-outlined text-slate-400 mr-2">filter_list</span>
-                                        <select 
-                                            className="bg-transparent border-none focus:ring-0 focus:outline-none text-white text-sm cursor-pointer pr-8"
+                                        <select
+                                            className="bg-transparent border-none focus:ring-0 focus:outline-none text-white text-sm cursor-pointer"
                                             value={selectedCategory}
                                             onChange={(e) => setSelectedCategory(e.target.value)}
                                         >
@@ -179,9 +179,9 @@ export default function Wisata({ dynamicDestinations = [] }) {
                                             <option value="kota" className="bg-slate-900">{t('wisata.city')}</option>
                                         </select>
                                     </div>
-                                    <motion.button 
-                                        whileHover={{ scale: 1.05 }} 
-                                        whileTap={{ scale: 0.95 }} 
+                                    <motion.button
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
                                         onClick={handleExplore}
                                         className="bg-primary text-white px-6 py-2.5 rounded-xl font-bold hover:bg-primary/90 transition-all flex items-center justify-center gap-2 shrink-0"
                                     >
@@ -190,8 +190,28 @@ export default function Wisata({ dynamicDestinations = [] }) {
                                 </motion.div>
                             </motion.div>
                         </div>
-                    </motion.section>
-                </div>
+                    </div>
+
+                    {/* Stats Bar */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8, duration: 0.6 }}
+                        className="relative z-10 bg-slate-950/80 backdrop-blur-xl border-t border-white/10"
+                    >
+                        <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-white/10 px-6 sm:px-10 lg:px-20">
+                            {[
+                                { value: destinations.length + '+', label: 'Destinasi' },
+                                { value: '17.000+', label: 'Pulau Indonesia' },
+                                { value: '34', label: 'Provinsi' },
+                                { value: '100%', label: 'Gratis Akses' },
+                            ].map((stat, i) => (
+                                <div key={i} className="py-5 px-4 sm:px-6 text-center sm:text-left first:pl-0">
+                                    <p className="text-xl sm:text-2xl font-black text-white">{stat.value}</p>
+                                    <p className="text-[10px] text-slate-400 uppercase tracking-widest font-bold mt-0.5">{stat.label}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </motion.div>
+                </section>
 
                 {/* ── Category Filter Tabs (Sticky Wrapper) ── */}
                 <div className="sticky top-16 z-40 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 transition-all duration-300">

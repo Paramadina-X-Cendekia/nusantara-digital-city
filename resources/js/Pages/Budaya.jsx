@@ -149,39 +149,73 @@ export default function Budaya({ landmarks, budayaData }) {
             <Navbar />
 
             <main className="flex-grow">
-                <div className="container mx-auto px-4 lg:px-10 py-8">
+                {/* ── Hero Section — full-width, left-aligned ── */}
+                <section className="relative min-h-screen flex flex-col justify-end overflow-hidden">
+                    {/* Background */}
+                    <div
+                        className="absolute inset-0 bg-cover bg-center transition-transform duration-[10s] hover:scale-105"
+                        style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuBMGTCFCaDtjpe7yrqfTzA8iN1OmWnIKYRRWrcVY8J7JO_wNsntxW3cVs8kldslW2HSs6RtUMhE2TBuie1gaJjNhoOYUpdaTccsxsZsLHXs318JTqzoKu5riZiYmMILa_dUx62dUp3sP53CtegYCDWM4Cwb4teEXBOXXqObHLQ9u8kmY9EJP5Ru_H_S_V6BmXHyytMsi6p43rpj4WHLHlsGcYDSpFRSCZp9pM0zhte-TExzwWO8Tgq5JKT-z9CGHMShYOKNg8mqhsZ5")' }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-900/65 to-slate-900/10" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/20 to-transparent" />
 
-                    {/* ── Hero Section ── */}
-                    <motion.section
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.7 }}
-                        className="mb-16"
-                    >
-                        <div className="relative overflow-hidden rounded-2xl bg-slate-900 min-h-[450px] flex flex-col justify-end p-8 lg:p-16 shadow-2xl group">
-                            <div
-                                className="absolute inset-0 opacity-40 bg-cover bg-center transition-transform duration-1000 group-hover:scale-105"
-                                style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuBMGTCFCaDtjpe7yrqfTzA8iN1OmWnIKYRRWrcVY8J7JO_wNsntxW3cVs8kldslW2HSs6RtUMhE2TBuie1gaJjNhoOYUpdaTccsxsZsLHXs318JTqzoKu5riZiYmMILa_dUx62dUp3sP53CtegYCDWM4Cwb4teEXBOXXqObHLQ9u8kmY9EJP5Ru_H_S_V6BmXHyytMsi6p43rpj4WHLHlsGcYDSpFRSCZp9pM0zhte-TExzwWO8Tgq5JKT-z9CGHMShYOKNg8mqhsZ5")' }}
-                            ></div>
-                            <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/60 to-transparent"></div>
-
+                    {/* Content */}
+                    <div className="relative z-10 flex-grow flex items-center">
+                        <div className="w-full px-6 sm:px-10 lg:px-20 py-24 md:py-32">
                             <motion.div
                                 initial="hidden" animate="visible" variants={stagger}
-                                className="relative z-10 max-w-3xl"
+                                className="max-w-2xl space-y-6"
                             >
-                                <motion.span variants={fadeIn} className="bg-primary/20 backdrop-blur-md border border-primary/30 text-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-6 inline-block">
+                                <motion.span variants={fadeIn} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white/90 text-xs font-bold uppercase tracking-widest">
+                                    <span className="size-1.5 rounded-full bg-primary animate-pulse" />
                                     {t('budaya.hero_badge')}
                                 </motion.span>
-                                <motion.h1 variants={fadeIn} className="text-white text-4xl md:text-6xl font-black leading-tight tracking-tight mb-6">
-                                    {t('budaya.hero_title')} <br /><span className="text-primary">{t('budaya.hero_subtitle')}</span>
+
+                                <motion.h1 variants={fadeIn} className="text-5xl sm:text-6xl lg:text-7xl font-black text-white leading-[1.05] tracking-tight">
+                                    {t('budaya.hero_title')}{' '}<span className="text-primary italic">{t('budaya.hero_subtitle')}</span>
                                 </motion.h1>
-                                <motion.p variants={fadeIn} className="text-slate-300 text-lg md:text-xl font-medium leading-relaxed max-w-2xl">
+
+                                <motion.p variants={fadeIn} className="text-base sm:text-lg text-slate-300 font-medium leading-relaxed max-w-xl">
                                     {t('budaya.hero_desc')}
                                 </motion.p>
+
+                                <motion.div variants={fadeIn} className="flex flex-col sm:flex-row gap-3 pt-2">
+                                    <Link href="/kontribusi">
+                                        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full sm:w-auto rounded-xl h-12 px-8 bg-primary text-white text-sm font-bold shadow-lg shadow-primary/30 hover:bg-primary/90 transition-colors">
+                                            {t('nav.new_contribution')}
+                                        </motion.button>
+                                    </Link>
+                                    <Link href="/peta-warisan">
+                                        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="rounded-xl h-12 px-8 bg-white/10 backdrop-blur-md text-white border border-white/20 text-sm font-bold hover:bg-white/20 transition-colors flex items-center gap-2">
+                                            <span className="material-symbols-outlined text-sm">map</span>
+                                            {t('budaya.open_interactive_map')}
+                                        </motion.button>
+                                    </Link>
+                                </motion.div>
                             </motion.div>
                         </div>
-                    </motion.section>
-                </div>
+                    </div>
+
+                    {/* Stats Bar */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8, duration: 0.6 }}
+                        className="relative z-10 bg-slate-950/80 backdrop-blur-xl border-t border-white/10"
+                    >
+                        <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-white/10 px-6 sm:px-10 lg:px-20">
+                            {[
+                                { value: '12.000+', label: 'Situs Bersejarah' },
+                                { value: '34', label: 'Provinsi' },
+                                { value: '9', label: 'Warisan UNESCO' },
+                                { value: '1.300+', label: 'Kelompok Etnis' },
+                            ].map((stat, i) => (
+                                <div key={i} className="py-5 px-4 sm:px-6 text-center sm:text-left first:pl-0">
+                                    <p className="text-xl sm:text-2xl font-black text-white">{stat.value}</p>
+                                    <p className="text-[10px] text-slate-400 uppercase tracking-widest font-bold mt-0.5">{stat.label}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </motion.div>
+                </section>
 
                 {/* ── Category Filter Tabs (Sticky Wrapper) ── */}
                 <div className="sticky top-16 z-40 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 transition-all duration-300">
