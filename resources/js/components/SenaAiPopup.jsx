@@ -9,6 +9,8 @@ export default function SenaAiPopup() {
     ]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [showSaran, setShowSaran] = useState(true);
+    const [isHovered, setIsHovered] = useState(false);
     const messagesEndRef = useRef(null);
 
     const templates = [
@@ -35,6 +37,7 @@ export default function SenaAiPopup() {
         setMessages(newMessages);
         setInput('');
         setIsLoading(true);
+        setShowSaran(false);
 
         try {
             // Include history to provide context (max last 10 messages to save tokens)
@@ -77,9 +80,9 @@ export default function SenaAiPopup() {
                         {/* Header */}
                         <div className="bg-primary px-5 py-4 flex items-center justify-between text-white shrink-0">
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shrink-0 overflow-hidden border border-white/20 shadow-inner">
-                                    <img src="/images/sena%20pose%20buku.webp" alt="Sena" className="w-full h-full object-cover" 
-                                         onError={(e) => { e.target.outerHTML = '<span class="material-symbols-outlined text-2xl text-slate-800">auto_awesome</span>'; }} />
+                                <div className="w-12 h-12 bg-transparent flex items-center justify-center shrink-0 overflow-visible">
+                                    <img src="/images/sena%20pose%20buku.webp" alt="Sena" className="w-full h-full object-contain drop-shadow-[0_0_5px_rgba(59,130,246,0.5)]" 
+                                         onError={(e) => { e.target.outerHTML = '<span class="material-symbols-outlined text-2xl text-white">auto_awesome</span>'; }} />
                                 </div>
                                 <div>
                                     <h3 className="font-bold text-lg leading-tight">Sena AI</h3>
@@ -130,27 +133,47 @@ export default function SenaAiPopup() {
                             <div ref={messagesEndRef} />
                         </div>
 
-                        {/* Templates Section (only show when there's few messages to keep it clean) */}
-                        {messages.length < 5 && !isLoading && (
-                            <div className="px-4 pb-2 bg-slate-50 dark:bg-slate-950/50 shrink-0">
-                                <p className="text-xs font-bold text-slate-400 mb-2 uppercase tracking-widest pl-1">Saran Pertanyaan:</p>
-                                <div className="flex flex-wrap gap-2">
-                                    {templates.map((tpl, i) => (
-                                        <button
-                                            key={i}
-                                            onClick={() => handleSend(tpl)}
-                                            className="px-3 py-1.5 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-primary dark:hover:border-primary text-slate-600 dark:text-slate-300 hover:text-primary rounded-full transition-colors truncate max-w-full text-left"
-                                        >
-                                            {tpl}
+                        {/* Templates Section (bisa ditoggle) */}
+                        <AnimatePresence>
+                            {showSaran && !isLoading && (
+                                <motion.div 
+                                    initial={{ height: 0, opacity: 0 }}
+                                    animate={{ height: 'auto', opacity: 1 }}
+                                    exit={{ height: 0, opacity: 0 }}
+                                    className="px-4 pb-2 bg-slate-50 dark:bg-slate-950/50 shrink-0 overflow-hidden"
+                                >
+                                    <div className="flex items-center justify-between mb-2 pl-1">
+                                        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Saran Pertanyaan:</p>
+                                        <button onClick={() => setShowSaran(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                                            <span className="material-symbols-outlined text-sm">close</span>
                                         </button>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
+                                    </div>
+                                    <div className="flex flex-wrap gap-2">
+                                        {templates.map((tpl, i) => (
+                                            <button
+                                                key={i}
+                                                onClick={() => handleSend(tpl)}
+                                                className="px-3 py-1.5 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-primary dark:hover:border-primary text-slate-600 dark:text-slate-300 hover:text-primary rounded-full transition-colors truncate max-w-full text-left"
+                                            >
+                                                {tpl}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+
 
                         {/* Input Area */}
                         <div className="p-4 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 shrink-0">
-                            <div className="flex items-end gap-2 bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-700 rounded-2xl focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all p-1 pl-3">
+                            <div className="flex items-end gap-2 bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-700 rounded-2xl focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all p-1.5 pl-2 relative">
+                                <button 
+                                    onClick={() => setShowSaran(!showSaran)} 
+                                    title="Tampilkan saran pertanyaan"
+                                    className={`w-9 h-9 shrink-0 flex items-center justify-center rounded-xl transition-colors mb-0.5 ${showSaran ? 'bg-primary/10 text-primary' : 'text-slate-400 hover:text-primary hover:bg-slate-200 dark:hover:bg-slate-800'}`}
+                                >
+                                    <span className="material-symbols-outlined text-xl">lightbulb</span>
+                                </button>
                                 <textarea
                                     value={input}
                                     onChange={(e) => setInput(e.target.value)}
@@ -180,18 +203,45 @@ export default function SenaAiPopup() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setIsOpen(!isOpen)}
-                className="group w-16 h-16 bg-white rounded-2xl shadow-xl shadow-primary/30 flex items-center justify-center hover:-translate-y-1 transition-all duration-300 relative border-2 border-white dark:border-slate-800 overflow-hidden cursor-pointer"
+                onHoverStart={() => setIsHovered(true)}
+                onHoverEnd={() => setIsHovered(false)}
+                className="group w-20 h-20 bg-transparent flex items-center justify-center hover:-translate-y-2 transition-all duration-300 relative overflow-visible cursor-pointer"
             >
-                <div className="absolute top-0 right-0 w-3.5 h-3.5 bg-red-500 rounded-full border-2 border-white dark:border-slate-800 -m-0.5 animate-pulse z-20 shadow-md"></div>
+                {/* Tooltip Chat Bubble */}
+                <AnimatePresence>
+                    {isHovered && !isOpen && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 10, scale: 0.9 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: 5, scale: 0.9 }}
+                            className="absolute bottom-full right-4 mb-2 w-56 bg-white dark:bg-slate-800 p-3 rounded-2xl rounded-br-none shadow-xl border border-slate-100 dark:border-slate-700 pointer-events-none z-50 origin-bottom-right"
+                        >
+                            <div className="text-xs font-semibold text-slate-700 dark:text-slate-300 break-words leading-relaxed">
+                                {"Aku Sena, panduan AI. Ada yang bisa kubantu?".split("").map((char, index) => (
+                                    <motion.span
+                                        key={index}
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        transition={{ duration: 0.1, delay: index * 0.03 }}
+                                    >
+                                        {char}
+                                    </motion.span>
+                                ))}
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                <div className="absolute top-0 right-2 w-3.5 h-3.5 bg-red-500 rounded-full border-2 border-white dark:border-slate-800 animate-pulse z-20 shadow-md"></div>
                 
                 {/* Gambar Default (Sena Pose Buku) */}
                 <img src="/images/sena%20pose%20buku.webp" alt="Sena" 
-                     className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-0 z-10 bg-white" 
-                     onError={(e) => { e.target.outerHTML = '<div class="w-full h-full flex items-center justify-center bg-primary text-white"><span class="material-symbols-outlined text-3xl">chat_bubble</span></div>'; }} />
+                     className="absolute inset-0 w-full h-full object-contain drop-shadow-[0_0_8px_rgba(59,130,246,0.6)] transition-opacity duration-500 group-hover:opacity-0 z-10" 
+                     onError={(e) => { e.target.outerHTML = '<div class="w-14 h-14 rounded-2xl flex items-center justify-center bg-primary text-white shadow-xl"><span class="material-symbols-outlined text-3xl">chat_bubble</span></div>'; }} />
                      
                 {/* Gambar Hover (Sena Pose Menunjuk) */}
                 <img src="/images/sena%20pose%20menunjuk.webp" alt="Sena Menunjuk" 
-                     className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100 bg-white" />
+                     className="absolute inset-0 w-full h-full object-contain drop-shadow-[0_0_8px_rgba(59,130,246,0.6)] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
             </motion.button>
         </div>
     );
