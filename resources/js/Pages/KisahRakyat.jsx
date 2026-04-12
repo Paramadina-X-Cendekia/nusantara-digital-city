@@ -31,7 +31,7 @@ export default function KisahRakyat({ kisah }) {
         : kisah.filter((k) => k.category === activeCategory);
 
     return (
-        <div className="relative flex min-h-screen flex-col overflow-x-hidden bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-300 transition-colors duration-300 antialiased">
+        <div className="relative flex min-h-screen flex-col bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-300 transition-colors duration-300 antialiased">
             <Head title={`${t('kisah.hero_subtitle')} | Sinergi Nusa`} />
             <Navbar />
 

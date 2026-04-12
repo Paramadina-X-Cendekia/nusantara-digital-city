@@ -237,7 +237,7 @@ export default function PetaWisata({ dynamicDestinations = [] }) {
     const filtered = activeFilter === 'semua' ? destinations : destinations.filter((d) => d.category === activeFilter);
 
     return (
-        <div className="relative flex min-h-screen flex-col overflow-x-hidden bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-300 transition-colors duration-300 antialiased">
+        <div className="relative flex min-h-screen flex-col bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-300 transition-colors duration-300 antialiased">
             <Head title={`Peta Wisata | Sinergi Nusa`} />
             <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
             <style>{`
