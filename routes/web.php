@@ -55,9 +55,13 @@ Route::get('/kisah-rakyat/{slug}', [KisahController::class, 'show'])->name('deta
 Route::get('/wisata', [\App\Http\Controllers\PublicWisataController::class, 'index'])->name('wisata');
 
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\SenaChatController;
 
 Route::get('/kontak', [ContactController::class, 'index'])->name('kontak');
 Route::post('/kontak', [ContactController::class, 'submit'])->name('kontak.submit');
+
+Route::post('/ask-sena', [SenaChatController::class, 'chat'])->name('sena.chat');
+
 
 // Public viewing routes (Keep accessible)
 
