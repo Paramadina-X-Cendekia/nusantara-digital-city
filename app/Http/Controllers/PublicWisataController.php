@@ -32,9 +32,11 @@ class PublicWisataController extends Controller
                             'id' => $id,
                             'slug' => $id,
                             'name' => $data['tourismName'] ?? ($data['shopName'] ?? 'Untitled'),
+                            'name_en' => $data['tourismName_en'] ?? ($data['shopName_en'] ?? null),
                             'location' => $data['city'] ?? ($data['province'] ?? ''),
                             'category' => $category,
                             'desc' => $data['tourismDescription'] ?? ($data['shortDesc'] ?? ($data['description'] ?? '')),
+                            'desc_en' => $data['tourismDescription_en'] ?? ($data['shortDesc_en'] ?? ($data['description_en'] ?? null)),
                             'img' => $data['mainImageUrl'] ?? ($data['imageUrl'] ?? ($data['dishImageUrl'] ?? '')),
                             'query' => ($data['tourismName'] ?? ($data['shopName'] ?? '')) . ' ' . ($data['city'] ?? ''),
                         ];
@@ -63,9 +65,11 @@ class PublicWisataController extends Controller
                         'id' => $id,
                         'slug' => $id,
                         'name' => $data['tourismName'] ?? ($data['shopName'] ?? 'Untitled'),
+                        'name_en' => $data['tourismName_en'] ?? ($data['shopName_en'] ?? null),
                         'location' => $data['city'] ?? ($data['province'] ?? ''),
                         'category' => $category,
                         'desc' => $data['tourismDescription'] ?? ($data['shortDesc'] ?? ($data['description'] ?? '')),
+                        'desc_en' => $data['tourismDescription_en'] ?? ($data['shortDesc_en'] ?? ($data['description_en'] ?? null)),
                         'img' => $data['mainImageUrl'] ?? ($data['imageUrl'] ?? ($data['dishImageUrl'] ?? '')),
                         'query' => ($data['tourismName'] ?? ($data['shopName'] ?? '')) . ' ' . ($data['city'] ?? ''),
                     ];
@@ -95,10 +99,12 @@ class PublicWisataController extends Controller
             // Map Firebase data to destination structure
             $destination = [
                 'name' => $data['tourismName'] ?? ($data['shopName'] ?? 'Untitled'),
+                'name_en' => $data['tourismName_en'] ?? ($data['shopName_en'] ?? null),
                 'slug' => $slug,
                 'location' => $data['city'] ?? ($data['province'] ?? ''),
                 'category' => $data['category'] ?? 'wisata',
                 'desc' => $data['tourismDescription'] ?? ($data['description'] ?? ''),
+                'desc_en' => $data['tourismDescription_en'] ?? ($data['description_en'] ?? null),
                 'img' => $data['mainImageUrl'] ?? ($data['imageUrl'] ?? ($data['dishImageUrl'] ?? '')),
                 'lat' => $data['lat'] ?? null,
                 'lng' => $data['lng'] ?? null,
@@ -213,9 +219,11 @@ class PublicWisataController extends Controller
                     $destinations[] = [
                         'id' => $id,
                         'name' => $data['tourismName'] ?? ($data['shopName'] ?? 'Untitled'),
+                        'name_en' => $data['tourismName_en'] ?? ($data['shopName_en'] ?? null),
                         'location' => $data['city'] ?? ($data['province'] ?? ''),
                         'category' => $data['category'] ?? 'wisata',
                         'desc' => $data['tourismDescription'] ?? ($data['shortDesc'] ?? ($data['description'] ?? '')),
+                        'desc_en' => $data['tourismDescription_en'] ?? ($data['shortDesc_en'] ?? ($data['description_en'] ?? null)),
                         'img' => $data['mainImageUrl'] ?? ($data['imageUrl'] ?? ($data['dishImageUrl'] ?? '')),
                         'lat' => isset($data['lat']) ? (float)$data['lat'] : null,
                         'lng' => isset($data['lng']) ? (float)$data['lng'] : null,

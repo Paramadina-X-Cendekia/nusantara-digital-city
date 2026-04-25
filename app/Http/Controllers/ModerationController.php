@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Contribution;
 use Illuminate\Http\Request;
 use Kreait\Laravel\Firebase\Facades\Firebase;
+use App\Services\OpenRouterService;
 
 class ModerationController extends Controller
 {
@@ -87,6 +88,16 @@ class ModerationController extends Controller
             }
         }
 
+        // Auto-translate fields to English using OpenRouter AI
+        try {
+            $translator = new OpenRouterService();
+            $fieldsToTranslate = $this->getTranslatableFields($type);
+            $data = $translator->translateFields($data, $fieldsToTranslate);
+        } catch (\Exception $e) {
+            \Log::warning('Auto-translation failed during approval: ' . $e->getMessage());
+            // Continue without translation — data will still be saved in Indonesian
+        }
+
         // Handle composite types: split and push to both nodes
         if ($type === 'kota_budaya' || $type === 'kota_kuliner') {
             $kotaData = [
@@ -130,5 +141,24 @@ class ModerationController extends Controller
         }
 
         $this->database->getReference($node)->push($data);
+    }
+
+    /**
+     * Get the list of fields to translate based on contribution type.
+     */
+    private function getTranslatableFields($type)
+    {
+        $common = ['description', 'shortDesc'];
+
+        $typeFields = [
+            'kota' => ['cityName'],
+            'budaya' => ['artName', 'makna', 'fakta_budaya'],
+            'kota_budaya' => ['artName', 'cityName', 'makna', 'fakta_budaya'],
+            'wisata' => ['tourismName', 'shopName', 'tourismDescription', 'short_description'],
+            'kuliner' => ['shopName', 'tourismDescription', 'short_description', 'ingredientStory', 'ingredientName'],
+            'kota_kuliner' => ['shopName', 'cityName', 'tourismDescription', 'short_description', 'ingredientStory', 'ingredientName'],
+        ];
+
+        return array_merge($common, $typeFields[$type] ?? []);
     }
 }

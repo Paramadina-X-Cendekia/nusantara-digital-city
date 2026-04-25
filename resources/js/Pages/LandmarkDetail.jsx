@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { useLanguage } from '@/lib/LanguageContext';
+import { loc } from '@/lib/localize';
 import ImageWithFallback from '../components/ImageWithFallback';
 
 const fadeIn = {
@@ -16,7 +17,7 @@ const stagger = {
 };
 
 export default function LandmarkDetail({ landmark }) {
-    const { t } = useLanguage();
+    const { t, lang } = useLanguage();
     const [activeTab, setActiveTab] = useState('profil');
     const [showArchive, setShowArchive] = useState(false);
 
@@ -64,9 +65,9 @@ export default function LandmarkDetail({ landmark }) {
                                         Bagikan Profil
                                     </button>
                                 </motion.div>
-                                <motion.h1 variants={fadeIn} className="text-4xl md:text-6xl font-black text-white mb-4 drop-shadow-2xl">{landmark.name}</motion.h1>
+                                <motion.h1 variants={fadeIn} className="text-4xl md:text-6xl font-black text-white mb-4 drop-shadow-2xl">{loc(landmark, 'name', lang) || landmark.name}</motion.h1>
                                 <motion.p variants={fadeIn} className="text-white/90 text-lg max-w-2xl font-medium leading-relaxed drop-shadow-md">
-                                    {landmark.desc}
+                                    {loc(landmark, 'desc', lang) || landmark.desc}
                                 </motion.p>
                             </motion.div>
                         </div>
@@ -107,7 +108,7 @@ export default function LandmarkDetail({ landmark }) {
                                         <h2 className="text-3xl font-black text-slate-900 dark:text-slate-100 mb-8 border-b border-slate-100 dark:border-slate-800 pb-4">{t('landmark_detail.history_digitalization')}</h2>
                                         <div className="prose prose-slate dark:prose-invert max-w-none">
                                             <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-lg whitespace-pre-line first-letter:text-5xl first-letter:font-black first-letter:mr-3 first-letter:float-left first-letter:text-primary">
-                                                {landmark.longDesc}
+                                                {loc(landmark, 'longDesc', lang) || landmark.longDesc}
                                             </p>
                                         </div>
                                     </div>

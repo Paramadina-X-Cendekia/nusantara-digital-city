@@ -191,4 +191,63 @@ class OpenRouterService
             return "Kesalahan sistem: " . $e->getMessage();
         }
     }
+
+    /**
+     * Translate a single text from Indonesian to English using AI.
+     */
+    public function translateToEnglish($text)
+    {
+        if (empty($this->apiKey) || empty(trim($text))) {
+            return null;
+        }
+
+        $prompt = "Translate the following Indonesian text to English. Return ONLY the translated text, no explanations or extra formatting:\n\n" . $text;
+
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => "Bearer {$this->apiKey}",
+                'Content-Type' => 'application/json',
+                'HTTP-Referer' => config('app.url'),
+                'X-Title' => config('app.name'),
+            ])->timeout(30)->post('https://openrouter.ai/api/v1/chat/completions', [
+                'model' => $this->model,
+                'messages' => [
+                    ['role' => 'user', 'content' => $prompt]
+                ],
+            ]);
+
+            if ($response->successful()) {
+                $aiResponse = $response->json();
+                $translated = $aiResponse['choices'][0]['message']['content'] ?? null;
+                return $translated ? trim($translated) : null;
+            }
+
+            return null;
+        } catch (\Exception $e) {
+            \Log::warning("Translation failed: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Translate multiple fields in a data array and add _en suffixed versions.
+     * 
+     * @param array $data The original data array
+     * @param array $fields List of field names to translate
+     * @return array The data array with added _en fields
+     */
+    public function translateFields(array $data, array $fields)
+    {
+        foreach ($fields as $field) {
+            if (!empty($data[$field]) && is_string($data[$field])) {
+                $translated = $this->translateToEnglish($data[$field]);
+                if ($translated) {
+                    $data[$field . '_en'] = $translated;
+                }
+                // Small delay to avoid rate limits
+                usleep(300000); // 300ms
+            }
+        }
+        return $data;
+    }
 }

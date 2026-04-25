@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { useLanguage } from '@/lib/LanguageContext';
+import { loc } from '@/lib/localize';
 import ImageWithFallback from '../components/ImageWithFallback';
 
 const fadeIn = {
@@ -16,7 +17,7 @@ const stagger = {
 };
 
 export default function Budaya({ landmarks, budayaData }) {
-    const { t } = useLanguage();
+    const { t, lang } = useLanguage();
     const [activeTab, setActiveTab] = useState('situs-bersejarah');
     const [previewIndex, setPreviewIndex] = useState(0);
 
@@ -86,8 +87,8 @@ export default function Budaya({ landmarks, budayaData }) {
         if (!item) return null;
         
         const href = `/kisah-rakyat/${item.id || item.slug}`;
-        const title = item.artName || 'Untitled';
-        const desc = item.shortDesc || item.description || '';
+        const title = loc(item, 'artName', lang) || item.artName || 'Untitled';
+        const desc = loc(item, 'shortDesc', lang) || loc(item, 'description', lang) || item.shortDesc || item.description || '';
         const img = item.imageUrl || '';
         const category = item.artSubCategory || 'Cerita Rakyat';
 
@@ -258,8 +259,8 @@ export default function Budaya({ landmarks, budayaData }) {
                                             <span className="material-symbols-outlined text-base">location_on</span>
                                             {item.location}
                                         </div>
-                                        <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-3 group-hover:text-primary transition-colors">{item.name}</h3>
-                                        <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed line-clamp-3">{item.desc}</p>
+                                        <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-3 group-hover:text-primary transition-colors">{loc(item, 'name', lang) || item.name}</h3>
+                                        <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed line-clamp-3">{loc(item, 'desc', lang) || item.desc}</p>
                                         <Link href={`/budaya/landmark/${item.slug}`}>
                                             <motion.div whileHover={{ gap: '0.75rem' }} className="mt-6 inline-flex items-center text-primary font-bold text-sm gap-2 transition-all cursor-pointer">
                                                 {t('budaya.learn_digital_profile')}
