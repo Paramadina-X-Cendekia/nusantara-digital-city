@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useMotionValue, animate } from 'framer-motion';
 import axios from 'axios';
 
 export default function SenaAiPopup() {
@@ -11,7 +11,21 @@ export default function SenaAiPopup() {
     const [isLoading, setIsLoading] = useState(false);
     const [showSaran, setShowSaran] = useState(true);
     const [isHovered, setIsHovered] = useState(false);
+    const [isDragging, setIsDragging] = useState(false);
+    const [dragConstraints, setDragConstraints] = useState({ top: 0, left: 0, right: 0, bottom: 0 });
     const messagesEndRef = useRef(null);
+
+    // Load initial position from localStorage
+    const initialPosition = (() => {
+        if (typeof window !== 'undefined') {
+            const saved = localStorage.getItem('senaPosition');
+            return saved ? JSON.parse(saved) : { x: 0, y: 0 };
+        }
+        return { x: 0, y: 0 };
+    })();
+
+    const x = useMotionValue(initialPosition.x);
+    const y = useMotionValue(initialPosition.y);
 
     const templates = [
         "Apa itu Sinergi Nusa?",
@@ -27,6 +41,21 @@ export default function SenaAiPopup() {
     useEffect(() => {
         scrollToBottom();
     }, [messages, isLoading]);
+
+    // Update drag constraints dynamically on resize
+    useEffect(() => {
+        const updateConstraints = () => {
+            setDragConstraints({
+                left: -(window.innerWidth - 100), // Mentok kiri (lebar layar dikurangi margin tombol)
+                top: -(window.innerHeight - 100), // Mentok atas
+                right: 0, // Mentok Kanan
+                bottom: 0 // Mentok Bawah
+            });
+        };
+        updateConstraints();
+        window.addEventListener('resize', updateConstraints);
+        return () => window.removeEventListener('resize', updateConstraints);
+    }, []);
 
     const handleSend = async (text) => {
         if (!text.trim()) return;
@@ -67,21 +96,23 @@ export default function SenaAiPopup() {
     };
 
     return (
-        <div className="fixed bottom-6 right-6 z-[9999] flex flex-col items-end pointer-events-auto">
+        <div className="fixed bottom-6 right-6 z-[9999] flex flex-col items-end pointer-events-none">
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
+                        style={{ x, y }}
+                        onPointerDownCapture={(e) => e.stopPropagation()} // Memastikan drag tidak ketrigger saat klik chat popup
                         initial={{ opacity: 0, y: 20, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 20, scale: 0.95 }}
                         transition={{ duration: 0.3 }}
-                        className="bg-white dark:bg-slate-900 w-[350px] max-w-[calc(100vw-3rem)] h-[500px] max-h-[80vh] flex flex-col rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 mb-4 overflow-hidden"
+                        className="bg-white dark:bg-slate-900 w-[350px] max-w-[calc(100vw-3rem)] h-[500px] max-h-[80vh] flex flex-col rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 mb-4 overflow-hidden pointer-events-auto"
                     >
                         {/* Header */}
                         <div className="bg-primary px-5 py-4 flex items-center justify-between text-white shrink-0">
                             <div className="flex items-center gap-3">
                                 <div className="w-12 h-12 bg-transparent flex items-center justify-center shrink-0 overflow-visible">
-                                    <img src="/images/sena%20pose%20buku.webp" alt="Sena" className="w-full h-full object-contain drop-shadow-[0_0_5px_rgba(59,130,246,0.5)]" 
+                                    <img src="/images/sena%20pose%20buku.webp" alt="Sena" className="w-full h-full object-contain drop-shadow-[0_0_5px_rgba(59,130,246,0.5)] select-none pointer-events-none" draggable="false" onDragStart={(e) => e.preventDefault()}
                                          onError={(e) => { e.target.outerHTML = '<span class="material-symbols-outlined text-2xl text-white">auto_awesome</span>'; }} />
                                 </div>
                                 <div>
@@ -198,14 +229,40 @@ export default function SenaAiPopup() {
 
             {/* Floating Action Button */}
             <motion.button
+                style={{ x, y, touchAction: "none" }}
+                drag
+                dragConstraints={dragConstraints}
+                dragElastic={0.15}
+                dragMomentum={false}
+                onDragStart={() => setIsDragging(true)}
+                onDragEnd={(e, info) => {
+                    setTimeout(() => setIsDragging(false), 150); // delay to prevent click trigger
+                    
+                    const currentX = x.get();
+                    const currentY = y.get();
+                    const halfWidth = window.innerWidth / 2;
+                    let targetX = currentX;
+                    
+                    if (currentX < -halfWidth) {
+                        targetX = -(window.innerWidth - 110);
+                    } else {
+                        targetX = 0;
+                    }
+                    
+                    animate(x, targetX, { type: "spring", bounce: 0.4, duration: 0.6 });
+                    localStorage.setItem('senaPosition', JSON.stringify({ x: targetX, y: currentY }));
+                }}
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => setIsOpen(!isOpen)}
+                whileDrag={{ scale: 1.05, cursor: "grabbing" }}
+                onClick={() => {
+                    if (!isDragging) setIsOpen(!isOpen);
+                }}
                 onHoverStart={() => setIsHovered(true)}
                 onHoverEnd={() => setIsHovered(false)}
-                className="group w-20 h-20 bg-transparent flex items-center justify-center hover:-translate-y-2 transition-all duration-300 relative overflow-visible cursor-pointer"
+                className="group w-20 h-20 bg-transparent flex items-center justify-center relative overflow-visible cursor-grab pointer-events-auto"
             >
                 {/* Tooltip Chat Bubble */}
                 <AnimatePresence>
@@ -235,13 +292,13 @@ export default function SenaAiPopup() {
                 <div className="absolute top-0 right-2 w-3.5 h-3.5 bg-red-500 rounded-full border-2 border-white dark:border-slate-800 animate-pulse z-20 shadow-md"></div>
                 
                 {/* Gambar Default (Sena Pose Buku) */}
-                <img src="/images/sena%20pose%20buku.webp" alt="Sena" 
-                     className="absolute inset-0 w-full h-full object-contain drop-shadow-[0_0_8px_rgba(59,130,246,0.6)] transition-opacity duration-500 group-hover:opacity-0 z-10" 
+                <img src="/images/sena%20pose%20buku.webp" alt="Sena" draggable="false" onDragStart={(e) => e.preventDefault()}
+                     className="absolute inset-0 w-full h-full object-contain drop-shadow-[0_0_8px_rgba(59,130,246,0.6)] transition-opacity duration-500 group-hover:opacity-0 z-10 select-none pointer-events-none" 
                      onError={(e) => { e.target.outerHTML = '<div class="w-14 h-14 rounded-2xl flex items-center justify-center bg-primary text-white shadow-xl"><span class="material-symbols-outlined text-3xl">chat_bubble</span></div>'; }} />
                      
                 {/* Gambar Hover (Sena Pose Menunjuk) */}
-                <img src="/images/sena%20pose%20menunjuk.webp" alt="Sena Menunjuk" 
-                     className="absolute inset-0 w-full h-full object-contain drop-shadow-[0_0_8px_rgba(59,130,246,0.6)] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                <img src="/images/sena%20pose%20menunjuk.webp" alt="Sena Menunjuk" draggable="false" onDragStart={(e) => e.preventDefault()}
+                     className="absolute inset-0 w-full h-full object-contain drop-shadow-[0_0_8px_rgba(59,130,246,0.6)] opacity-0 transition-opacity duration-500 group-hover:opacity-100 select-none pointer-events-none" />
             </motion.button>
         </div>
     );
