@@ -1,16 +1,20 @@
-import { useState, useEffect } from 'react';
-import { Head, Link } from '@inertiajs/react';
-import { motion, AnimatePresence } from 'framer-motion';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
-import { useLanguage } from '../lib/LanguageContext';
-import { loc } from '../lib/localize';
-import { getBaseDestinations } from '../data/destinations';
-import ImageWithFallback from '../components/ImageWithFallback';
+import { useState, useEffect } from "react";
+import { Head, Link } from "@inertiajs/react";
+import { motion, AnimatePresence } from "framer-motion";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import { useLanguage } from "../lib/LanguageContext";
+import { loc } from "../lib/localize";
+import { getBaseDestinations } from "../data/destinations";
+import ImageWithFallback from "../components/ImageWithFallback";
 
 const fadeIn = {
     hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } }
+    visible: {
+        opacity: 1,
+        y: 0,
+        transition: { duration: 0.6, ease: "easeOut" },
+    },
 };
 
 export default function WisataDetail({ slug, initialDestination }) {
@@ -21,56 +25,61 @@ export default function WisataDetail({ slug, initialDestination }) {
     const [isGuideModalOpen, setIsGuideModalOpen] = useState(false);
     const [activeTip, setActiveTip] = useState(0);
 
-
     useEffect(() => {
         // Load Leaflet only in browser
-        Promise.all([
-            import('leaflet'),
-            import('react-leaflet'),
-        ]).then(([L, RL]) => {
-            // Fix default icon issues
-            delete L.default.Icon.Default.prototype._getIconUrl;
-            L.default.Icon.Default.mergeOptions({
-                iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-                iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-                shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-            });
+        Promise.all([import("leaflet"), import("react-leaflet")]).then(
+            ([L, RL]) => {
+                // Fix default icon issues
+                delete L.default.Icon.Default.prototype._getIconUrl;
+                L.default.Icon.Default.mergeOptions({
+                    iconRetinaUrl:
+                        "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+                    iconUrl:
+                        "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+                    shadowUrl:
+                        "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+                });
 
-            // Create custom animated pulse icon
-            const icon = L.default.divIcon({
-                className: 'custom-pulse-marker',
-                html: `
+                // Create custom animated pulse icon
+                const icon = L.default.divIcon({
+                    className: "custom-pulse-marker",
+                    html: `
                     <div class="relative flex items-center justify-center">
                         <div class="absolute w-8 h-8 bg-primary/40 rounded-full animate-ping"></div>
                         <div class="absolute w-12 h-12 bg-primary/20 rounded-full animate-pulse"></div>
                         <div class="relative w-4 h-4 bg-primary border-2 border-white rounded-full shadow-lg"></div>
                     </div>
                 `,
-                iconSize: [24, 24],
-                iconAnchor: [12, 12]
-            });
+                    iconSize: [24, 24],
+                    iconAnchor: [12, 12],
+                });
 
-            setCustomIcon(icon);
-            setMapComponents({ L: L.default, ...RL });
-        });
+                setCustomIcon(icon);
+                setMapComponents({ L: L.default, ...RL });
+            },
+        );
     }, []);
 
     // Effect for geocoding if lat/lng missing
     useEffect(() => {
         if (destination && (!destination.lat || !destination.lng)) {
-            const query = destination.query || (destination.name + ' ' + destination.location);
-            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`)
-                .then(res => res.json())
-                .then(data => {
+            const query =
+                destination.query ||
+                destination.name + " " + destination.location;
+            fetch(
+                `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`,
+            )
+                .then((res) => res.json())
+                .then((data) => {
                     if (data && data[0]) {
-                        setDestination(prev => ({
+                        setDestination((prev) => ({
                             ...prev,
                             lat: parseFloat(data[0].lat),
-                            lng: parseFloat(data[0].lon)
+                            lng: parseFloat(data[0].lon),
                         }));
                     }
                 })
-                .catch(err => console.error("Geocoding failed:", err));
+                .catch((err) => console.error("Geocoding failed:", err));
         }
     }, [destination?.name]);
 
@@ -79,27 +88,42 @@ export default function WisataDetail({ slug, initialDestination }) {
         if (!MapComponents || !destination.lat || !destination.lng) return null;
         const map = MapComponents.useMap();
         return (
-            <MapComponents.Marker 
+            <MapComponents.Marker
                 position={[destination.lat, destination.lng]}
                 icon={customIcon || new MapComponents.L.Icon.Default()}
                 eventHandlers={{
-                    click: (e) => map.panTo(e.latlng)
+                    click: (e) => map.panTo(e.latlng),
                 }}
             >
-                <MapComponents.Popup className="custom-premium-popup" autoPan={true} autoPanPadding={[150, 150]} keepInView={true}>
+                <MapComponents.Popup
+                    className="custom-premium-popup"
+                    autoPan={true}
+                    autoPanPadding={[150, 150]}
+                    keepInView={true}
+                >
                     <div className="w-64 sm:w-72 overflow-hidden rounded-xl bg-white dark:bg-slate-900 shadow-2xl">
                         <div className="h-32 relative">
-                            <img src={destination.img || destination.defaultImg} alt={destination.name} className="w-full h-full object-cover" />
+                            <img
+                                src={destination.img || destination.defaultImg}
+                                alt={destination.name}
+                                className="w-full h-full object-cover"
+                            />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                            <span className="absolute bottom-2 left-3 text-white font-black text-xs uppercase tracking-widest">{destination.category}</span>
+                            <span className="absolute bottom-2 left-3 text-white font-black text-xs uppercase tracking-widest">
+                                {destination.category}
+                            </span>
                         </div>
                         <div className="p-4">
-                            <h4 className="font-black text-slate-900 dark:text-white text-base leading-tight mb-1">{destination.name}</h4>
+                            <h4 className="font-black text-slate-900 dark:text-white text-base leading-tight mb-1">
+                                {destination.name}
+                            </h4>
                             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-3 flex items-center gap-1">
-                                <span className="material-symbols-outlined text-xs">location_on</span>
+                                <span className="material-symbols-outlined text-xs">
+                                    location_on
+                                </span>
                                 {destination.location}
                             </p>
-                            <a 
+                            <a
                                 href={`https://www.google.com/maps/dir/?api=1&destination=${destination.lat},${destination.lng}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -119,6 +143,14 @@ export default function WisataDetail({ slug, initialDestination }) {
         return null;
     }
 
+    const categoryStyles = {
+        alam: "bg-green-100 text-green-800 border-green-300",
+        pantai: "bg-blue-100 text-blue-800 border-blue-300",
+        gunung: "bg-amber-100 text-amber-800 border-amber-300",
+        kota: "bg-purple-100 text-purple-800 border-purple-300",
+        default: "bg-slate-100 text-slate-800 border-slate-300",
+    };
+
     return (
         <div className="flex min-h-screen flex-col bg-background-light dark:bg-background-dark transition-colors duration-300 antialiased font-display">
             <Head title={`${destination.name} | Sinergi Nusa`} />
@@ -127,16 +159,21 @@ export default function WisataDetail({ slug, initialDestination }) {
             <main className="flex-grow pt-16">
                 {/* ── Hero Section ── */}
                 <div className="relative h-[60vh] md:h-[70vh] w-full overflow-hidden">
-                    <motion.div 
+                    <motion.div
                         initial={{ scale: 1.1, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ duration: 1.5 }}
                         className="absolute inset-0"
                     >
-                        <ImageWithFallback src={destination.defaultImg || destination.img} alt={destination.name} className="w-full h-full object-cover" fallbackIcon="landscape" />
+                        <ImageWithFallback
+                            src={destination.defaultImg || destination.img}
+                            alt={destination.name}
+                            className="w-full h-full object-cover"
+                            fallbackIcon="landscape"
+                        />
                         <div className="absolute inset-0 bg-gradient-to-b from-slate-900/40 via-transparent to-slate-900/90"></div>
                     </motion.div>
-                    
+
                     <div className="absolute inset-0 flex flex-col justify-end pb-12">
                         <div className="container mx-auto px-4 lg:px-10">
                             <motion.div
@@ -144,20 +181,37 @@ export default function WisataDetail({ slug, initialDestination }) {
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: 0.5 }}
                             >
-                                <span className="bg-primary/20 backdrop-blur-md border border-primary/30 text-primary px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest mb-4 inline-block shadow-xl shadow-primary/20">
-                                    {t(`wisata.${destination.category}`)}
+                                <span
+                                    className={`backdrop-blur-md px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest mb-4 inline-block shadow-xl border ${
+                                        categoryStyles[
+                                            (
+                                                destination.category || ""
+                                            ).toLowerCase()
+                                        ] || categoryStyles.default
+                                    }`}
+                                >
+                                    {destination.category?.toUpperCase()}
                                 </span>
                                 <h1 className="text-white text-5xl md:text-7xl font-black leading-tight mb-4 drop-shadow-2xl">
-                                    {loc(destination, 'name', lang) || destination.name}
+                                    {loc(destination, "name", lang) ||
+                                        destination.name}
                                 </h1>
                                 <div className="flex flex-wrap items-center gap-6 text-white/80">
                                     <div className="flex items-center gap-2">
-                                        <span className="material-symbols-outlined uppercase">explore</span>
-                                        <span className="font-bold tracking-widest text-xs uppercase">Destination</span>
+                                        <span className="material-symbols-outlined uppercase">
+                                            explore
+                                        </span>
+                                        <span className="font-bold tracking-widest text-xs uppercase">
+                                            Destination
+                                        </span>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <span className="material-symbols-outlined">location_on</span>
-                                        <span className="font-medium">{destination.location}</span>
+                                        <span className="material-symbols-outlined">
+                                            location_on
+                                        </span>
+                                        <span className="font-medium">
+                                            {destination.location}
+                                        </span>
                                     </div>
                                 </div>
                             </motion.div>
@@ -170,29 +224,49 @@ export default function WisataDetail({ slug, initialDestination }) {
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
                         {/* Main Info */}
                         <div className="lg:col-span-2">
-                            <motion.section initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeIn} className="mb-12">
+                            <motion.section
+                                initial="hidden"
+                                whileInView="visible"
+                                viewport={{ once: true }}
+                                variants={fadeIn}
+                                className="mb-12"
+                            >
                                 <h2 className="text-3xl font-black text-slate-900 dark:text-white mb-6 flex items-center gap-3">
                                     <span className="size-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
-                                        <span className="material-symbols-outlined uppercase">info</span>
+                                        <span className="material-symbols-outlined uppercase">
+                                            info
+                                        </span>
                                     </span>
-                                    {t('wisata.overview')}
+                                    {t("wisata.overview")}
                                 </h2>
                                 <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed mb-8 whitespace-pre-line">
-                                    {loc(destination, 'desc', lang) || destination.desc}
+                                    {loc(destination, "desc", lang) ||
+                                        destination.desc}
                                 </p>
                             </motion.section>
 
-                            <motion.section initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeIn} className="mb-12">
+                            <motion.section
+                                initial="hidden"
+                                whileInView="visible"
+                                viewport={{ once: true }}
+                                variants={fadeIn}
+                                className="mb-12"
+                            >
                                 <h2 className="text-3xl font-black text-slate-900 dark:text-white mb-6 flex items-center gap-3">
                                     <span className="size-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
-                                        <span className="material-symbols-outlined uppercase">explore</span>
+                                        <span className="material-symbols-outlined uppercase">
+                                            explore
+                                        </span>
                                     </span>
-                                    {t('wisata.location_title')}
+                                    {t("wisata.location_title")}
                                 </h2>
                                 <div className="rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden relative group shadow-2xl h-[450px]">
                                     {MapComponents ? (
                                         <MapComponents.MapContainer
-                                            center={[destination.lat || -2.5, destination.lng || 118]}
+                                            center={[
+                                                destination.lat || -2.5,
+                                                destination.lng || 118,
+                                            ]}
                                             zoom={destination.lat ? 13 : 5}
                                             scrollWheelZoom={false}
                                             className="w-full h-full z-10"
@@ -207,17 +281,31 @@ export default function WisataDetail({ slug, initialDestination }) {
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center bg-slate-100 dark:bg-slate-800 animate-pulse">
                                             <div className="flex flex-col items-center gap-2">
-                                                <span className="material-symbols-outlined text-4xl text-slate-400">map</span>
-                                                <p className="text-sm text-slate-500 font-bold uppercase tracking-widest">Loading Digital Map...</p>
+                                                <span className="material-symbols-outlined text-4xl text-slate-400">
+                                                    map
+                                                </span>
+                                                <p className="text-sm text-slate-500 font-bold uppercase tracking-widest">
+                                                    Loading Digital Map...
+                                                </p>
                                             </div>
                                         </div>
                                     )}
 
                                     <div className="absolute bottom-6 left-6 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl max-w-sm overflow-hidden">
-                                        <h4 className="font-bold text-slate-900 dark:text-white mb-2">Real-time Location Services</h4>
-                                        <p className="text-xs text-slate-500 mb-4 font-mono">Precision: High | Sync: Live</p>
-                                        <Link href="/peta-wisata" className="text-primary text-sm font-black hover:underline flex items-center gap-2">
-                                            Open Full Interactive Map <span className="material-symbols-outlined text-sm font-bold">arrow_outward</span>
+                                        <h4 className="font-bold text-slate-900 dark:text-white mb-2">
+                                            Real-time Location Services
+                                        </h4>
+                                        <p className="text-xs text-slate-500 mb-4 font-mono">
+                                            Precision: High | Sync: Live
+                                        </p>
+                                        <Link
+                                            href="/peta-wisata"
+                                            className="text-primary text-sm font-black hover:underline flex items-center gap-2"
+                                        >
+                                            Open Full Interactive Map{" "}
+                                            <span className="material-symbols-outlined text-sm font-bold">
+                                                arrow_outward
+                                            </span>
                                         </Link>
                                     </div>
                                 </div>
@@ -229,67 +317,130 @@ export default function WisataDetail({ slug, initialDestination }) {
                             {/* Contributor Card */}
                             {destination.contributor && (
                                 <div className="bg-white dark:bg-surface-dark rounded-3xl p-8 border border-slate-200 dark:border-slate-800 shadow-xl">
-                                    <h3 className="font-black text-slate-900 dark:text-white text-xl mb-6 uppercase tracking-tight">Kontributor</h3>
+                                    <h3 className="font-black text-slate-900 dark:text-white text-xl mb-6 uppercase tracking-tight">
+                                        Kontributor
+                                    </h3>
                                     <div className="flex items-center gap-4">
                                         <div className="size-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0 relative overflow-hidden">
-                                            <span className="material-symbols-outlined text-4xl">person</span>
+                                            <span className="material-symbols-outlined text-4xl">
+                                                person
+                                            </span>
                                             <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent"></div>
                                         </div>
                                         <div className="flex flex-col">
-                                            <p className="font-black text-slate-900 dark:text-white uppercase tracking-tight leading-tight mb-1">{destination.contributor}</p>
-                                            <p className="text-xs text-slate-500 font-bold uppercase tracking-wider">{destination.contributor_profession || '-'}</p>
+                                            <p className="font-black text-slate-900 dark:text-white uppercase tracking-tight leading-tight mb-1">
+                                                {destination.contributor}
+                                            </p>
+                                            <p className="text-xs text-slate-500 font-bold uppercase tracking-wider">
+                                                {destination.contributor_profession ||
+                                                    "-"}
+                                            </p>
                                         </div>
                                     </div>
                                     <div className="mt-6 pt-6 border-t border-slate-100 dark:border-slate-800">
                                         <div className="flex items-center gap-2 mb-3">
-                                            <span className="material-symbols-outlined text-sm font-bold" style={{ color: destination.contributor_badge_color || '#F59E0B' }}>
-                                                {destination.contributor_badge_icon || 'explore'}
+                                            <span
+                                                className="material-symbols-outlined text-sm font-bold"
+                                                style={{
+                                                    color:
+                                                        destination.contributor_badge_color ||
+                                                        "#F59E0B",
+                                                }}
+                                            >
+                                                {destination.contributor_badge_icon ||
+                                                    "explore"}
                                             </span>
-                                            <span className="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 bg-slate-50 dark:bg-slate-800 rounded-md border border-slate-100 dark:border-slate-700" style={{ color: destination.contributor_badge_color || '#F59E0B' }}>
-                                                {destination.contributor_badge || 'Perintis Sinergi'}
+                                            <span
+                                                className="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 bg-slate-50 dark:bg-slate-800 rounded-md border border-slate-100 dark:border-slate-700"
+                                                style={{
+                                                    color:
+                                                        destination.contributor_badge_color ||
+                                                        "#F59E0B",
+                                                }}
+                                            >
+                                                {destination.contributor_badge ||
+                                                    "Perintis Sinergi"}
                                             </span>
                                         </div>
-                                        <p className="text-[10px] text-slate-400 font-medium italic">Telah berkontribusi mendigitalisasi destinasi ini pada {destination.created_at ? new Date(destination.created_at).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }) : 'Maret 2024'}.</p>
+                                        <p className="text-[10px] text-slate-400 font-medium italic">
+                                            Telah berkontribusi mendigitalisasi
+                                            destinasi ini pada{" "}
+                                            {destination.created_at
+                                                ? new Date(
+                                                      destination.created_at,
+                                                  ).toLocaleDateString(
+                                                      "id-ID",
+                                                      {
+                                                          year: "numeric",
+                                                          month: "long",
+                                                          day: "numeric",
+                                                      },
+                                                  )
+                                                : "Maret 2024"}
+                                            .
+                                        </p>
                                     </div>
                                 </div>
                             )}
 
-                            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }} className="bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 rounded-3xl p-8 shadow-xl">
-                                <h3 className="text-xl font-black text-slate-900 dark:text-white mb-6">Visitor Information</h3>
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.8 }}
+                                className="bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 rounded-3xl p-8 shadow-xl"
+                            >
+                                <h3 className="text-xl font-black text-slate-900 dark:text-white mb-6">
+                                    Visitor Information
+                                </h3>
                                 <div className="space-y-6">
                                     <div className="flex gap-4">
                                         <div className="size-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center shrink-0">
-                                            <span className="material-symbols-outlined text-primary">location_on</span>
+                                            <span className="material-symbols-outlined text-primary">
+                                                location_on
+                                            </span>
                                         </div>
                                         <div>
-                                            <p className="text-xs text-slate-400 uppercase font-black tracking-widest">Region</p>
-                                            <p className="text-lg font-black text-slate-900 dark:text-white">{destination.location}</p>
+                                            <p className="text-xs text-slate-400 uppercase font-black tracking-widest">
+                                                Region
+                                            </p>
+                                            <p className="text-lg font-black text-slate-900 dark:text-white">
+                                                {destination.location}
+                                            </p>
                                         </div>
                                     </div>
                                     <div className="flex gap-4">
                                         <div className="size-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center shrink-0">
-                                            <span className="material-symbols-outlined text-primary">verified</span>
+                                            <span className="material-symbols-outlined text-primary">
+                                                verified
+                                            </span>
                                         </div>
                                         <div>
-                                            <p className="text-xs text-slate-400 uppercase font-black tracking-widest">Status</p>
-                                            <p className="text-lg font-black text-slate-900 dark:text-white">Digitalized</p>
+                                            <p className="text-xs text-slate-400 uppercase font-black tracking-widest">
+                                                Status
+                                            </p>
+                                            <p className="text-lg font-black text-slate-900 dark:text-white">
+                                                Digitalized
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
-                                <motion.button 
-                                    whileHover={{ scale: 1.05 }} 
-                                    whileTap={{ scale: 0.95 }} 
+                                <motion.button
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
                                     onClick={() => setIsGuideModalOpen(true)}
                                     className="w-full mt-8 bg-primary text-white py-4 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-primary/30 hover:bg-primary/90 transition-all"
                                 >
-                                    {t('wisata.book_guide')}
+                                    {t("wisata.book_guide")}
                                 </motion.button>
-
                             </motion.div>
 
                             <div className="bg-primary/5 border border-primary/10 rounded-3xl p-8">
-                                <h3 className="text-lg font-black text-slate-900 dark:text-white mb-4 italic">"Nature is the best digital architect."</h3>
-                                <p className="text-sm text-slate-500 italic">— Sinergi Nusa Explorer</p>
+                                <h3 className="text-lg font-black text-slate-900 dark:text-white mb-4 italic">
+                                    "Nature is the best digital architect."
+                                </h3>
+                                <p className="text-sm text-slate-500 italic">
+                                    — Sinergi Nusa Explorer
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -299,17 +450,31 @@ export default function WisataDetail({ slug, initialDestination }) {
                 <section className="bg-slate-900 py-20 text-center relative overflow-hidden">
                     <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
                     <div className="container mx-auto px-4 lg:px-10 relative z-10">
-                        <h2 className="text-white text-3xl md:text-5xl font-black mb-8 line-clamp-2 uppercase">Ready for your adventure?</h2>
+                        <h2 className="text-white text-3xl md:text-5xl font-black mb-8 line-clamp-2 uppercase">
+                            Ready for your adventure?
+                        </h2>
                         <div className="flex flex-wrap justify-center gap-4">
                             <Link href="/peta-wisata">
-                                <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="bg-white text-slate-900 px-10 py-5 rounded-2xl font-black uppercase tracking-widest hover:bg-slate-100 transition-all flex items-center gap-3">
-                                    <span className="material-symbols-outlined">explore</span>
+                                <motion.button
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    className="bg-white text-slate-900 px-10 py-5 rounded-2xl font-black uppercase tracking-widest hover:bg-slate-100 transition-all flex items-center gap-3"
+                                >
+                                    <span className="material-symbols-outlined">
+                                        explore
+                                    </span>
                                     Plan Journey
                                 </motion.button>
                             </Link>
                             <Link href="/daftar-wisata">
-                                <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-10 py-5 rounded-2xl font-black uppercase tracking-widest hover:bg-white/20 transition-all flex items-center gap-3">
-                                    <span className="material-symbols-outlined">menu_open</span>
+                                <motion.button
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-10 py-5 rounded-2xl font-black uppercase tracking-widest hover:bg-white/20 transition-all flex items-center gap-3"
+                                >
+                                    <span className="material-symbols-outlined">
+                                        menu_open
+                                    </span>
                                     Discover More
                                 </motion.button>
                             </Link>
@@ -320,57 +485,101 @@ export default function WisataDetail({ slug, initialDestination }) {
                 <AnimatePresence>
                     {isGuideModalOpen && (
                         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-                            <motion.div 
-                                initial={{ opacity: 0 }} 
-                                animate={{ opacity: 1 }} 
-                                exit={{ opacity: 0 }} 
-                                onClick={() => setIsGuideModalOpen(false)} 
-                                className="absolute inset-0 bg-slate-900/60 backdrop-blur-md" 
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                onClick={() => setIsGuideModalOpen(false)}
+                                className="absolute inset-0 bg-slate-900/60 backdrop-blur-md"
                             />
-                            <motion.div 
-                                initial={{ opacity: 0, scale: 0.9, y: 20 }} 
-                                animate={{ opacity: 1, scale: 1, y: 0 }} 
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                                animate={{ opacity: 1, scale: 1, y: 0 }}
                                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
                                 className="relative bg-white dark:bg-surface-dark w-full max-w-2xl rounded-[2.5rem] overflow-hidden shadow-2xl flex flex-col md:flex-row max-h-[90vh]"
                             >
                                 <div className="w-full md:w-2/5 h-64 md:h-auto overflow-hidden relative">
-                                    <ImageWithFallback src="https://images.unsplash.com/photo-1544717305-27a734ef1904?q=80&w=800" className="w-full h-full object-cover" alt="Local Guide" fallbackIcon="person" />
+                                    <ImageWithFallback
+                                        src="https://images.unsplash.com/photo-1544717305-27a734ef1904?q=80&w=800"
+                                        className="w-full h-full object-cover"
+                                        alt="Local Guide"
+                                        fallbackIcon="person"
+                                    />
                                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent"></div>
                                     <div className="absolute bottom-8 left-8 text-white">
                                         <div className="flex items-center gap-2 mb-2">
                                             <span className="size-2 bg-green-500 rounded-full animate-pulse"></span>
-                                            <span className="text-[10px] font-black uppercase tracking-widest text-green-400">Available Now</span>
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-green-400">
+                                                Available Now
+                                            </span>
                                         </div>
-                                        <h3 className="text-2xl font-black uppercase tracking-tight mb-1">Bli Wayan</h3>
-                                        <p className="text-xs font-bold text-white/60 tracking-widest uppercase">Senior Local Guide</p>
+                                        <h3 className="text-2xl font-black uppercase tracking-tight mb-1">
+                                            Bli Wayan
+                                        </h3>
+                                        <p className="text-xs font-bold text-white/60 tracking-widest uppercase">
+                                            Senior Local Guide
+                                        </p>
                                     </div>
                                 </div>
-                                
+
                                 <div className="w-full md:w-3/5 p-8 md:p-12 overflow-y-auto no-scrollbar relative flex flex-col">
-                                    <button onClick={() => setIsGuideModalOpen(false)} className="absolute top-6 right-6 size-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:text-primary transition-colors">
-                                        <span className="material-symbols-outlined">close</span>
+                                    <button
+                                        onClick={() =>
+                                            setIsGuideModalOpen(false)
+                                        }
+                                        className="absolute top-6 right-6 size-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:text-primary transition-colors"
+                                    >
+                                        <span className="material-symbols-outlined">
+                                            close
+                                        </span>
                                     </button>
 
                                     <div className="mb-8">
                                         <h4 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-4 flex items-center gap-2">
-                                            <span className="material-symbols-outlined text-primary">tips_and_updates</span> Local Insights
+                                            <span className="material-symbols-outlined text-primary">
+                                                tips_and_updates
+                                            </span>{" "}
+                                            Local Insights
                                         </h4>
                                         <div className="space-y-4">
                                             {[
-                                                { title: 'Waktu Terbaik', desc: 'Kunjungi antara jam 06:00 - 08:00 untuk menghindari keramaian dan mendapatkan cahaya terbaik.' },
-                                                { title: 'Akses Rahasia', desc: 'Ada jalur setapak di sisi timur yang jarang diketahui wisatawan, menawarkan pemandangan tanpa batas.' },
-                                                { title: 'Etika Lokal', desc: 'Pastikan mengenakan pakaian sopan dan menyapa penduduk setempat dengan senyuman.' }
+                                                {
+                                                    title: "Waktu Terbaik",
+                                                    desc: "Kunjungi antara jam 06:00 - 08:00 untuk menghindari keramaian dan mendapatkan cahaya terbaik.",
+                                                },
+                                                {
+                                                    title: "Akses Rahasia",
+                                                    desc: "Ada jalur setapak di sisi timur yang jarang diketahui wisatawan, menawarkan pemandangan tanpa batas.",
+                                                },
+                                                {
+                                                    title: "Etika Lokal",
+                                                    desc: "Pastikan mengenakan pakaian sopan dan menyapa penduduk setempat dengan senyuman.",
+                                                },
                                             ].map((tip, idx) => (
-                                                <motion.div 
+                                                <motion.div
                                                     key={idx}
-                                                    initial={{ opacity: 0, x: 20 }}
-                                                    animate={{ opacity: 1, x: 0 }}
-                                                    transition={{ delay: 0.3 + idx * 0.1 }}
-                                                    className={`p-4 rounded-2xl border transition-all cursor-pointer ${activeTip === idx ? 'bg-primary/5 border-primary/30' : 'bg-slate-50 dark:bg-slate-800/50 border-transparent hover:border-slate-200'}`}
-                                                    onClick={() => setActiveTip(idx)}
+                                                    initial={{
+                                                        opacity: 0,
+                                                        x: 20,
+                                                    }}
+                                                    animate={{
+                                                        opacity: 1,
+                                                        x: 0,
+                                                    }}
+                                                    transition={{
+                                                        delay: 0.3 + idx * 0.1,
+                                                    }}
+                                                    className={`p-4 rounded-2xl border transition-all cursor-pointer ${activeTip === idx ? "bg-primary/5 border-primary/30" : "bg-slate-50 dark:bg-slate-800/50 border-transparent hover:border-slate-200"}`}
+                                                    onClick={() =>
+                                                        setActiveTip(idx)
+                                                    }
                                                 >
-                                                    <h5 className="font-black text-xs uppercase tracking-widest text-primary mb-1">{tip.title}</h5>
-                                                    <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">{tip.desc}</p>
+                                                    <h5 className="font-black text-xs uppercase tracking-widest text-primary mb-1">
+                                                        {tip.title}
+                                                    </h5>
+                                                    <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                                                        {tip.desc}
+                                                    </p>
                                                 </motion.div>
                                             ))}
                                         </div>
@@ -381,16 +590,17 @@ export default function WisataDetail({ slug, initialDestination }) {
                                         whileTap={{ scale: 0.98 }}
                                         className="mt-auto bg-primary text-white py-5 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-primary/30 flex items-center justify-center gap-3"
                                     >
-                                        <span className="material-symbols-outlined">chat</span> Hubungi Wayan di WhatsApp
+                                        <span className="material-symbols-outlined">
+                                            chat
+                                        </span>{" "}
+                                        Hubungi Wayan di WhatsApp
                                     </motion.button>
                                 </div>
                             </motion.div>
                         </div>
                     )}
                 </AnimatePresence>
-
             </main>
-
 
             <Footer />
         </div>
