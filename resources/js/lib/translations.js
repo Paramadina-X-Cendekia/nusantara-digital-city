@@ -395,15 +395,15 @@ export const translations = {
             sent_success: 'Pesan Anda telah terkirim!',
         },
         dashboard: {
-        welcome_title: 'Selamat Datang Kembali!',
-        welcome_desc: 'Selamat datang kembali di pusat kontribusi digital Anda.',
-        all_processed: 'Semua pendaftaran telah diproses.',
-        status: 'Status',
-        pending: 'Menunggu',
-        approved: 'Disetujui',
-        rejected: 'Ditolak',
-    },
-    auth: {
+            welcome_title: 'Selamat Datang Kembali!',
+            welcome_desc: 'Selamat datang kembali di pusat kontribusi digital Anda.',
+            all_processed: 'Semua pendaftaran telah diproses.',
+            status: 'Status',
+            pending: 'Menunggu',
+            approved: 'Disetujui',
+            rejected: 'Ditolak',
+        },
+        auth: {
 
             back_to_home: 'Kembali ke Beranda',
             login_welcome: 'Selamat Datang Kembali!',

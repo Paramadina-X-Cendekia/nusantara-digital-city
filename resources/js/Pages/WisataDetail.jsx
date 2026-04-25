@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { useLanguage } from '../lib/LanguageContext';
+import { loc } from '../lib/localize';
 import { getBaseDestinations } from '../data/destinations';
 import ImageWithFallback from '../components/ImageWithFallback';
 
@@ -13,7 +14,7 @@ const fadeIn = {
 };
 
 export default function WisataDetail({ slug, initialDestination }) {
-    const { t } = useLanguage();
+    const { t, lang } = useLanguage();
     const [destination, setDestination] = useState(initialDestination);
     const [MapComponents, setMapComponents] = useState(null);
     const [customIcon, setCustomIcon] = useState(null);
@@ -147,7 +148,7 @@ export default function WisataDetail({ slug, initialDestination }) {
                                     {t(`wisata.${destination.category}`)}
                                 </span>
                                 <h1 className="text-white text-5xl md:text-7xl font-black leading-tight mb-4 drop-shadow-2xl">
-                                    {destination.name}
+                                    {loc(destination, 'name', lang) || destination.name}
                                 </h1>
                                 <div className="flex flex-wrap items-center gap-6 text-white/80">
                                     <div className="flex items-center gap-2">
@@ -177,7 +178,7 @@ export default function WisataDetail({ slug, initialDestination }) {
                                     {t('wisata.overview')}
                                 </h2>
                                 <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed mb-8 whitespace-pre-line">
-                                    {destination.desc}
+                                    {loc(destination, 'desc', lang) || destination.desc}
                                 </p>
                             </motion.section>
 

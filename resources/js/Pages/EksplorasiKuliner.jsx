@@ -1,10 +1,10 @@
-import { useState, useEffect, useRef } from 'react';
-
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { useLanguage } from '../lib/LanguageContext';
+import { useLanguage } from '@/lib/LanguageContext';
+import { loc } from '@/lib/localize';
 import { getCulinaryData } from '../data/culinary';
 import ImageWithFallback from '../components/ImageWithFallback';
 
@@ -23,15 +23,14 @@ const TABS = (t) => [
 ];
 
 export default function EksplorasiKuliner({ contributedDishes = [], contributedIngredients = [] }) {
-    const { t } = useLanguage();
+    const { t, lang } = useLanguage();
     const [activeTab, setActiveTab] = useState('menu');
     const [selectedDish, setSelectedDish] = useState(null);
     const [isScanning, setIsScanning] = useState(false);
     const [selectedIngredient, setSelectedIngredient] = useState(null);
     const [shareStatus, setShareStatus] = useState(null);
     const menuSectionRef = useRef(null);
-
-    const staticData = getCulinaryData(t);
+    const staticData = useMemo(() => getCulinaryData(t), [t]);
     const allDishes = [...contributedDishes, ...staticData.dishes];
     const allIngredients = [...contributedIngredients, ...staticData.ingredients];
     
@@ -214,8 +213,8 @@ export default function EksplorasiKuliner({ contributedDishes = [], contributedI
                                                     <span className="material-symbols-outlined text-base">location_on</span>
                                                     {dish.shopName ? `${dish.shopName}, ${dish.origin}` : dish.origin}
                                                 </div>
-                                                <h3 className="text-2xl font-black text-slate-900 dark:text-slate-100 mb-3 group-hover:text-primary transition-colors tracking-tight">{dish.name}</h3>
-                                                <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-6">{dish.desc}</p>
+                                                <h3 className="text-2xl font-black text-slate-900 dark:text-slate-100 mb-3 group-hover:text-primary transition-colors tracking-tight">{loc(dish, 'name', lang) || dish.name}</h3>
+                                                <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-6">{loc(dish, 'desc', lang) || dish.desc}</p>
                                                 <div className="flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-6">
                                                     {dish.contributor ? (
                                                         <div className="flex items-center gap-2">
@@ -271,8 +270,8 @@ export default function EksplorasiKuliner({ contributedDishes = [], contributedI
                                                 )}
                                             </div>
                                             <div className="p-8">
-                                                <h3 className="text-2xl font-black text-slate-900 dark:text-slate-100 mb-4 group-hover:text-primary transition-colors tracking-tight uppercase">{item.name}</h3>
-                                                <p className="text-sm text-slate-500 leading-relaxed mb-6 italic">"{item.story}"</p>
+                                                <h3 className="text-2xl font-black text-slate-900 dark:text-slate-100 mb-4 group-hover:text-primary transition-colors tracking-tight uppercase">{loc(item, 'name', lang) || item.name}</h3>
+                                                <p className="text-sm text-slate-500 leading-relaxed mb-6 italic">"{loc(item, 'story', lang) || item.story}"</p>
                                                 <div className="space-y-4 border-t border-slate-100 dark:border-slate-800 pt-6">
                                                     <div className="flex items-center gap-4">
                                                         <div className="size-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">

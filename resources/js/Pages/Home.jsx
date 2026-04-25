@@ -228,7 +228,7 @@ export default function Home({ leaderboard = [] }) {
 
                 {/* ── Leaderboard Section ── */}
                 <section className="py-20 bg-slate-50 dark:bg-slate-900/30 relative">
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.6, duration: 0.6 }}

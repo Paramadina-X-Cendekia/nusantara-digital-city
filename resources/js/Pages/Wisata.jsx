@@ -1,9 +1,10 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { useLanguage } from '@/lib/LanguageContext';
+import { loc } from '@/lib/localize';
 import { getBaseDestinations } from '../data/destinations';
 import ImageWithFallback from '../components/ImageWithFallback';
 
@@ -17,7 +18,7 @@ const stagger = {
 };
 
 export default function Wisata({ dynamicDestinations = [] }) {
-    const { t } = useLanguage();
+    const { t, lang } = useLanguage();
     const [activeTab, setActiveTab] = useState('destinasi');
     const [sortOrder, setSortOrder] = useState('default');
     const [isSortOpen, setIsSortOpen] = useState(false);
@@ -30,10 +31,10 @@ export default function Wisata({ dynamicDestinations = [] }) {
     const [isDownloading, setIsDownloading] = useState(false);
 
 
-    const [destinations, setDestinations] = useState(() => {
+    const destinations = useMemo(() => {
         const base = getBaseDestinations(t);
         return [...base, ...(dynamicDestinations || [])];
-    });
+    }, [t, dynamicDestinations]);
 
     useEffect(() => {
         if (destinations.length === 0) return;
@@ -240,10 +241,8 @@ export default function Wisata({ dynamicDestinations = [] }) {
                                                 <span className="material-symbols-outlined text-base">location_on</span>
                                                 {dest.location}
                                             </div>
-                                            <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2 group-hover:text-primary transition-colors">{dest.dynamicName || dest.name}</h3>
-                                            <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-6">
-                                                {dest.desc.split(' ').slice(0, 10).join(' ')}{dest.desc.split(' ').length > 10 ? '...' : ''}
-                                            </p>
+                                            <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2 group-hover:text-primary transition-colors">{loc(dest, 'name', lang) || dest.dynamicName || dest.name}</h3>
+                                            <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-6">{loc(dest, 'desc', lang) || dest.desc}</p>
                                              <div className="flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-6">
                                                  <div className="flex items-center gap-1.5 text-slate-400">
                                                      <span className="material-symbols-outlined text-sm">category</span>
