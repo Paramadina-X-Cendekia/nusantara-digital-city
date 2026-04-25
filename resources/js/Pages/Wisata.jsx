@@ -26,6 +26,9 @@ export default function Wisata({ dynamicDestinations = [] }) {
     const sortRef = useRef(null);
     const searchResultsRef = useRef(null);
     const [previewIndex, setPreviewIndex] = useState(0);
+    const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
+    const [isDownloading, setIsDownloading] = useState(false);
+
 
     const [destinations, setDestinations] = useState(() => {
         const base = getBaseDestinations(t);
@@ -72,40 +75,8 @@ export default function Wisata({ dynamicDestinations = [] }) {
 
 
 
-    useEffect(() => {
-        const fetchOSMData = async () => {
-            let updatedDestinations = [...destinations];
-            for (let i = 0; i < updatedDestinations.length; i++) {
-                const dest = updatedDestinations[i];
-                try {
-                    const searchParams = new URLSearchParams({
-                        q: dest.query, format: 'json', limit: 1, addressdetails: 1
-                    });
-                    const response = await fetch(`https://nominatim.openstreetmap.org/search?${searchParams}`, {
-                        method: 'GET',
-                        headers: { 'Accept-Language': t('lang') || 'id', 'User-Agent': 'NusantaraDigitalCity/1.0' }
-                    });
-                    if (response.ok) {
-                        const data = await response.json();
-                        if (data && data.length > 0) {
-                            const place = data[0];
-                            updatedDestinations[i] = {
-                                ...updatedDestinations[i],
-                                dynamicName: place.name || (place.display_name ? place.display_name.split(',')[0] : dest.name),
-                            };
-                            setDestinations([...updatedDestinations]);
-                        }
-                    }
-                } catch (error) {
-                    console.error("OSM API error:", error);
-                }
-                if (i < updatedDestinations.length - 1) await new Promise(r => setTimeout(r, 1000));
-            }
-        };
+    // Removed fetchOSMData as per user request to stick with seed data.
 
-        fetchOSMData();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
 
     // Filtered and sorted destinations
     const filteredDestinations = destinations.filter(dest => {
@@ -119,6 +90,13 @@ export default function Wisata({ dynamicDestinations = [] }) {
     const handleExplore = () => {
         searchResultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     };
+
+    const handleDownloadPdf = () => {
+        setIsPdfModalOpen(true);
+        setIsDownloading(true);
+        setTimeout(() => setIsDownloading(false), 3000);
+    };
+
 
     return (
         <div className="relative flex min-h-screen flex-col bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-300 transition-colors duration-300 antialiased">
@@ -226,35 +204,7 @@ export default function Wisata({ dynamicDestinations = [] }) {
                                 ))}
                             </div>
                             
-                            <div className="relative shrink-0 flex items-center" ref={sortRef}>
-                                <motion.button
-                                    whileHover={{ scale: 1.05 }}
-                                    whileTap={{ scale: 0.95 }}
-                                    onClick={() => setIsSortOpen(!isSortOpen)}
-                                    className="bg-primary/10 text-primary size-10 md:w-auto md:px-4 md:py-2 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-primary hover:text-white transition-all shadow-sm"
-                                >
-                                    <span className="material-symbols-outlined text-lg">filter_list</span>
-                                    <span className="hidden md:inline">{sortOrder === 'default' ? t('wisata.all') : `${t('wisata.all')}: ${sortOrder === 'desc' ? 'A-Z' : 'Default'}`}</span>
-                                </motion.button>
-                                
-                                <AnimatePresence>
-                                    {isSortOpen && (
-                                        <motion.div
-                                            initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                                            exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                                            className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xl z-50 overflow-hidden"
-                                        >
-                                            <button 
-                                                onClick={() => { setSortOrder('default'); setIsSortOpen(false); }}
-                                                className="w-full text-left px-4 py-3 text-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-2"
-                                            >
-                                                <span className="material-symbols-outlined text-sm">reorder</span> Default
-                                            </button>
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
-                            </div>
+
                         </motion.div>
                     </div>
                 </motion.div>
@@ -291,7 +241,9 @@ export default function Wisata({ dynamicDestinations = [] }) {
                                                 {dest.location}
                                             </div>
                                             <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2 group-hover:text-primary transition-colors">{dest.dynamicName || dest.name}</h3>
-                                            <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-6">{dest.desc}</p>
+                                            <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-6">
+                                                {dest.desc.split(' ').slice(0, 10).join(' ')}{dest.desc.split(' ').length > 10 ? '...' : ''}
+                                            </p>
                                              <div className="flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-6">
                                                  <div className="flex items-center gap-1.5 text-slate-400">
                                                      <span className="material-symbols-outlined text-sm">category</span>
@@ -422,9 +374,15 @@ export default function Wisata({ dynamicDestinations = [] }) {
                                                 {t('wisata.open_tourism_map')}
                                             </motion.button>
                                         </Link>
-                                        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-8 py-4 rounded-xl font-bold hover:bg-white/20 transition-all">
+                                        <motion.button 
+                                            whileHover={{ scale: 1.05 }} 
+                                            whileTap={{ scale: 0.95 }} 
+                                            onClick={handleDownloadPdf}
+                                            className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-8 py-4 rounded-xl font-bold hover:bg-white/20 transition-all"
+                                        >
                                             {t('wisata.download_pdf_guide')}
                                         </motion.button>
+
                                     </div>
                                 </div>
                                 <div className="flex-1 w-full min-h-[350px] bg-slate-900 rounded-3xl border border-slate-700/50 shadow-inner relative overflow-hidden flex flex-col group">
@@ -519,7 +477,77 @@ export default function Wisata({ dynamicDestinations = [] }) {
                     </motion.section>
 
                 </div>
+                {/* ── Modal: Digital Travel Kit ── */}
+                <AnimatePresence>
+                    {isPdfModalOpen && (
+                        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                            <motion.div 
+                                initial={{ opacity: 0 }} 
+                                animate={{ opacity: 1 }} 
+                                exit={{ opacity: 0 }} 
+                                onClick={() => setIsPdfModalOpen(false)} 
+                                className="absolute inset-0 bg-slate-900/60 backdrop-blur-md" 
+                            />
+                            <motion.div 
+                                initial={{ opacity: 0, scale: 0.9, y: 20 }} 
+                                animate={{ opacity: 1, scale: 1, y: 0 }} 
+                                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                                className="relative bg-white dark:bg-surface-dark w-full max-w-lg rounded-[2.5rem] overflow-hidden shadow-2xl p-8 text-center"
+                            >
+                                <div className="size-20 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-6">
+                                    <span className="material-symbols-outlined text-4xl text-primary">
+                                        {isDownloading ? 'sync' : 'picture_as_pdf'}
+                                    </span>
+                                </div>
+                                
+                                <h3 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-2">
+                                    {isDownloading ? 'Generating Your Guide...' : 'Nusantara Digital Travel Kit'}
+                                </h3>
+                                <p className="text-slate-500 dark:text-slate-400 mb-8 leading-relaxed">
+                                    {isDownloading 
+                                        ? 'Kami sedang merangkum data destinasi, peta interaktif, dan tips lokal untuk perjalanan Anda.' 
+                                        : 'Panduan PDF Anda telah siap! Kit ini berisi ringkasan destinasi populer, tips perjalanan aman, dan peta aksesibilitas digital.'}
+                                </p>
+
+                                {isDownloading ? (
+                                    <div className="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden mb-4">
+                                        <motion.div 
+                                            initial={{ width: '0%' }}
+                                            animate={{ width: '100%' }}
+                                            transition={{ duration: 3 }}
+                                            className="bg-primary h-full"
+                                        />
+                                    </div>
+                                ) : (
+                                    <div className="flex flex-col gap-3">
+                                        <motion.button
+                                            whileHover={{ scale: 1.02 }}
+                                            whileTap={{ scale: 0.98 }}
+                                            className="bg-primary text-white py-4 rounded-xl font-bold shadow-lg shadow-primary/30 flex items-center justify-center gap-2"
+                                        >
+                                            <span className="material-symbols-outlined">download</span> Download PDF Sekarang
+                                        </motion.button>
+                                        <button 
+                                            onClick={() => setIsPdfModalOpen(false)}
+                                            className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-sm font-bold uppercase tracking-widest pt-2"
+                                        >
+                                            Nanti Saja
+                                        </button>
+                                    </div>
+                                )}
+
+                                <div className="absolute top-4 right-4 flex gap-1">
+                                    {[1, 2, 3].map(i => (
+                                        <div key={i} className="size-1 rounded-full bg-primary/20 animate-pulse" style={{ animationDelay: `${i * 0.2}s` }} />
+                                    ))}
+                                </div>
+                            </motion.div>
+                        </div>
+                    )}
+                </AnimatePresence>
+
             </main>
+
 
             <Footer />
         </div>

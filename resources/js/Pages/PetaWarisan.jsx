@@ -134,6 +134,50 @@ function LeafletMap({ sites, activeSite, setActiveSite, t }) {
         });
     };
 
+    const Markers = () => {
+        const map = MapComponents.useMap();
+        return sites.filter(s => s.lat && s.lng).map((site) => (
+            <Marker
+                key={site.id}
+                position={[site.lat, site.lng]}
+                icon={customIcon(site, activeSite === site.id)}
+                eventHandlers={{
+                    click: (e) => {
+                        setActiveSite(activeSite === site.id ? null : site.id);
+                        map.panTo(e.latlng);
+                    },
+                }}
+            >
+                <Popup className="custom-popup" autoPan={true} autoPanPadding={[150, 150]} keepInView={true}>
+                    <div className="w-64 sm:w-72 overflow-hidden rounded-xl bg-white dark:bg-slate-900 shadow-2xl">
+                        <ImageWithFallback src={site.img} alt={site.name} className="w-full h-32 object-cover rounded-t-xl" fallbackIcon="account_balance" />
+                        <div className="p-4">
+                            <h3 className="font-black text-slate-900 dark:text-white text-sm mb-1 uppercase tracking-tight">{site.name}</h3>
+                            <p className="text-primary text-[10px] font-black uppercase tracking-widest mb-2 flex items-center gap-1">
+                                <span className="material-symbols-outlined text-xs">location_on</span>
+                                {site.location}
+                            </p>
+                            <p className="text-slate-500 dark:text-slate-400 text-[10px] leading-relaxed mb-4 line-clamp-2">{site.desc}</p>
+                            <div className="flex flex-wrap items-center gap-2 mb-4">
+                                <span className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded bg-primary/10 text-primary border border-primary/20">
+                                    {site.status}
+                                </span>
+                                <span className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 flex items-center gap-1">
+                                    <span className="material-symbols-outlined text-[10px]">history</span>
+                                    {site.year}
+                                </span>
+                            </div>
+                            <div className="flex items-center justify-between border-t border-slate-50 dark:border-slate-800 pt-3 mt-3">
+                                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">{t('peta_warisan.active_points')}</p>
+                                <span className="material-symbols-outlined text-primary text-sm font-bold">arrow_forward</span>
+                            </div>
+                        </div>
+                    </div>
+                </Popup>
+            </Marker>
+        ));
+    };
+
     return (
         <MapContainer
             center={[-2.5, 118]}
@@ -179,36 +223,11 @@ function LeafletMap({ sites, activeSite, setActiveSite, t }) {
                     opacity: 0.2
                 }}
             />
-            {sites.filter(s => s.lat && s.lng).map((site) => (
-                <Marker
-                    key={site.id}
-                    position={[site.lat, site.lng]}
-                    icon={customIcon(site, activeSite === site.id)}
-                    eventHandlers={{
-                        click: () => setActiveSite(activeSite === site.id ? null : site.id),
-                    }}
-                >
-                    <Popup className="custom-popup">
-                        <div style={{ minWidth: '220px' }}>
-                            <ImageWithFallback src={site.img} alt={site.name} style={{ width: '100%', height: '120px', objectFit: 'cover', borderRadius: '8px', marginBottom: '8px' }} fallbackIcon="account_balance" />
-                            <h3 style={{ margin: '0 0 4px', fontWeight: 800, fontSize: '14px' }}>{site.name}</h3>
-                            <p style={{ margin: '0 0 4px', color: '#368ce2', fontSize: '11px', fontWeight: 600 }}>{site.location}</p>
-                            <p style={{ margin: '0 0 4px', color: '#64748b', fontSize: '11px', lineHeight: 1.5 }}>{site.desc}</p>
-                            <p style={{ margin: '0 0 4px', color: '#368ce2', fontSize: '11px', fontWeight: 600 }}>{t('peta_warisan.click_marker')}</p>
-                            <div style={{ marginTop: '8px', display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                                <span style={{ background: '#368ce215', color: '#368ce2', padding: '2px 8px', borderRadius: '6px', fontSize: '10px', fontWeight: 700 }}>{site.status}</span>
-                                <span style={{ background: '#f1f5f9', color: '#475569', padding: '2px 8px', borderRadius: '6px', fontSize: '10px', fontWeight: 700 }}>
-                                    <span className="material-symbols-outlined" style={{ fontSize: '10px', verticalAlign: 'middle', marginRight: '4px' }}>history</span>
-                                    {site.year}
-                                </span>
-                            </div>
-                        </div>
-                    </Popup>
-                </Marker>
-            ))}
+            <Markers />
         </MapContainer>
     );
 }
+
 
 export default function PetaWarisan({ dynamicSites = [] }) {
     const { t } = useLanguage();

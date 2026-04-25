@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Head, Link } from '@inertiajs/react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { useLanguage } from '../lib/LanguageContext';
@@ -17,6 +17,9 @@ export default function WisataDetail({ slug, initialDestination }) {
     const [destination, setDestination] = useState(initialDestination);
     const [MapComponents, setMapComponents] = useState(null);
     const [customIcon, setCustomIcon] = useState(null);
+    const [isGuideModalOpen, setIsGuideModalOpen] = useState(false);
+    const [activeTip, setActiveTip] = useState(0);
+
 
     useEffect(() => {
         // Load Leaflet only in browser
@@ -69,6 +72,46 @@ export default function WisataDetail({ slug, initialDestination }) {
                 .catch(err => console.error("Geocoding failed:", err));
         }
     }, [destination?.name]);
+
+    // Map sub-component to handle map instance
+    const DetailMarker = () => {
+        if (!MapComponents || !destination.lat || !destination.lng) return null;
+        const map = MapComponents.useMap();
+        return (
+            <MapComponents.Marker 
+                position={[destination.lat, destination.lng]}
+                icon={customIcon || new MapComponents.L.Icon.Default()}
+                eventHandlers={{
+                    click: (e) => map.panTo(e.latlng)
+                }}
+            >
+                <MapComponents.Popup className="custom-premium-popup" autoPan={true} autoPanPadding={[150, 150]} keepInView={true}>
+                    <div className="w-64 sm:w-72 overflow-hidden rounded-xl bg-white dark:bg-slate-900 shadow-2xl">
+                        <div className="h-32 relative">
+                            <img src={destination.img || destination.defaultImg} alt={destination.name} className="w-full h-full object-cover" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                            <span className="absolute bottom-2 left-3 text-white font-black text-xs uppercase tracking-widest">{destination.category}</span>
+                        </div>
+                        <div className="p-4">
+                            <h4 className="font-black text-slate-900 dark:text-white text-base leading-tight mb-1">{destination.name}</h4>
+                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-3 flex items-center gap-1">
+                                <span className="material-symbols-outlined text-xs">location_on</span>
+                                {destination.location}
+                            </p>
+                            <a 
+                                href={`https://www.google.com/maps/dir/?api=1&destination=${destination.lat},${destination.lng}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="block w-full text-center bg-slate-900 dark:bg-primary text-white py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-800 dark:hover:bg-primary/90 transition-all shadow-xl shadow-slate-900/10 dark:shadow-primary/20"
+                            >
+                                Get Directions
+                            </a>
+                        </div>
+                    </div>
+                </MapComponents.Popup>
+            </MapComponents.Marker>
+        );
+    };
 
     if (!destination) {
         console.warn("WisataDetail: No destination found for slug:", slug);
@@ -145,7 +188,6 @@ export default function WisataDetail({ slug, initialDestination }) {
                                     </span>
                                     {t('wisata.location_title')}
                                 </h2>
-                                <div className="rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden relative group shadow-2xl">
                                 <div className="rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden relative group shadow-2xl h-[450px]">
                                     {MapComponents ? (
                                         <MapComponents.MapContainer
@@ -159,37 +201,7 @@ export default function WisataDetail({ slug, initialDestination }) {
                                                 url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
                                                 className="grayscale dark:invert transition-all group-hover:grayscale-0 dark:group-hover:invert-0 duration-700"
                                             />
-                                            {destination.lat && destination.lng && (
-                                                <MapComponents.Marker 
-                                                    position={[destination.lat, destination.lng]}
-                                                    icon={customIcon || new MapComponents.L.Icon.Default()}
-                                                >
-                                                    <MapComponents.Popup className="custom-premium-popup">
-                                                        <div className="w-64 overflow-hidden rounded-xl">
-                                                            <div className="h-32 relative">
-                                                                <img src={destination.img || destination.defaultImg} alt={destination.name} className="w-full h-full object-cover" />
-                                                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                                                                <span className="absolute bottom-2 left-3 text-white font-black text-xs uppercase tracking-widest">{destination.category}</span>
-                                                            </div>
-                                                            <div className="p-4 bg-white dark:bg-slate-900">
-                                                                <h4 className="font-black text-slate-900 dark:text-white text-base leading-tight mb-1">{destination.name}</h4>
-                                                                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-3 flex items-center gap-1">
-                                                                    <span className="material-symbols-outlined text-xs">location_on</span>
-                                                                    {destination.location}
-                                                                </p>
-                                                                <a 
-                                                                    href={`https://www.google.com/maps/dir/?api=1&destination=${destination.lat},${destination.lng}`}
-                                                                    target="_blank"
-                                                                    rel="noopener noreferrer"
-                                                                    className="block w-full text-center bg-slate-900 dark:bg-primary text-white py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-800 dark:hover:bg-primary/90 transition-all shadow-xl shadow-slate-900/10 dark:shadow-primary/20"
-                                                                >
-                                                                    Get Directions
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </MapComponents.Popup>
-                                                </MapComponents.Marker>
-                                            )}
+                                            <DetailMarker />
                                         </MapComponents.MapContainer>
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center bg-slate-100 dark:bg-slate-800 animate-pulse">
@@ -199,8 +211,8 @@ export default function WisataDetail({ slug, initialDestination }) {
                                             </div>
                                         </div>
                                     )}
-                                </div>
-                                    <div className="absolute bottom-6 left-6 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl max-w-sm">
+
+                                    <div className="absolute bottom-6 left-6 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl max-w-sm overflow-hidden">
                                         <h4 className="font-bold text-slate-900 dark:text-white mb-2">Real-time Location Services</h4>
                                         <p className="text-xs text-slate-500 mb-4 font-mono">Precision: High | Sync: Live</p>
                                         <Link href="/peta-wisata" className="text-primary text-sm font-black hover:underline flex items-center gap-2">
@@ -263,9 +275,15 @@ export default function WisataDetail({ slug, initialDestination }) {
                                         </div>
                                     </div>
                                 </div>
-                                <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full mt-8 bg-primary text-white py-4 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-primary/30 hover:bg-primary/90 transition-all">
+                                <motion.button 
+                                    whileHover={{ scale: 1.05 }} 
+                                    whileTap={{ scale: 0.95 }} 
+                                    onClick={() => setIsGuideModalOpen(true)}
+                                    className="w-full mt-8 bg-primary text-white py-4 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-primary/30 hover:bg-primary/90 transition-all"
+                                >
                                     {t('wisata.book_guide')}
                                 </motion.button>
+
                             </motion.div>
 
                             <div className="bg-primary/5 border border-primary/10 rounded-3xl p-8">
@@ -297,7 +315,81 @@ export default function WisataDetail({ slug, initialDestination }) {
                         </div>
                     </div>
                 </section>
+                {/* ── Modal: Local Guide Concierge ── */}
+                <AnimatePresence>
+                    {isGuideModalOpen && (
+                        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                            <motion.div 
+                                initial={{ opacity: 0 }} 
+                                animate={{ opacity: 1 }} 
+                                exit={{ opacity: 0 }} 
+                                onClick={() => setIsGuideModalOpen(false)} 
+                                className="absolute inset-0 bg-slate-900/60 backdrop-blur-md" 
+                            />
+                            <motion.div 
+                                initial={{ opacity: 0, scale: 0.9, y: 20 }} 
+                                animate={{ opacity: 1, scale: 1, y: 0 }} 
+                                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                                className="relative bg-white dark:bg-surface-dark w-full max-w-2xl rounded-[2.5rem] overflow-hidden shadow-2xl flex flex-col md:flex-row max-h-[90vh]"
+                            >
+                                <div className="w-full md:w-2/5 h-64 md:h-auto overflow-hidden relative">
+                                    <ImageWithFallback src="https://images.unsplash.com/photo-1544717305-27a734ef1904?q=80&w=800" className="w-full h-full object-cover" alt="Local Guide" fallbackIcon="person" />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent"></div>
+                                    <div className="absolute bottom-8 left-8 text-white">
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <span className="size-2 bg-green-500 rounded-full animate-pulse"></span>
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-green-400">Available Now</span>
+                                        </div>
+                                        <h3 className="text-2xl font-black uppercase tracking-tight mb-1">Bli Wayan</h3>
+                                        <p className="text-xs font-bold text-white/60 tracking-widest uppercase">Senior Local Guide</p>
+                                    </div>
+                                </div>
+                                
+                                <div className="w-full md:w-3/5 p-8 md:p-12 overflow-y-auto no-scrollbar relative flex flex-col">
+                                    <button onClick={() => setIsGuideModalOpen(false)} className="absolute top-6 right-6 size-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:text-primary transition-colors">
+                                        <span className="material-symbols-outlined">close</span>
+                                    </button>
+
+                                    <div className="mb-8">
+                                        <h4 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-4 flex items-center gap-2">
+                                            <span className="material-symbols-outlined text-primary">tips_and_updates</span> Local Insights
+                                        </h4>
+                                        <div className="space-y-4">
+                                            {[
+                                                { title: 'Waktu Terbaik', desc: 'Kunjungi antara jam 06:00 - 08:00 untuk menghindari keramaian dan mendapatkan cahaya terbaik.' },
+                                                { title: 'Akses Rahasia', desc: 'Ada jalur setapak di sisi timur yang jarang diketahui wisatawan, menawarkan pemandangan tanpa batas.' },
+                                                { title: 'Etika Lokal', desc: 'Pastikan mengenakan pakaian sopan dan menyapa penduduk setempat dengan senyuman.' }
+                                            ].map((tip, idx) => (
+                                                <motion.div 
+                                                    key={idx}
+                                                    initial={{ opacity: 0, x: 20 }}
+                                                    animate={{ opacity: 1, x: 0 }}
+                                                    transition={{ delay: 0.3 + idx * 0.1 }}
+                                                    className={`p-4 rounded-2xl border transition-all cursor-pointer ${activeTip === idx ? 'bg-primary/5 border-primary/30' : 'bg-slate-50 dark:bg-slate-800/50 border-transparent hover:border-slate-200'}`}
+                                                    onClick={() => setActiveTip(idx)}
+                                                >
+                                                    <h5 className="font-black text-xs uppercase tracking-widest text-primary mb-1">{tip.title}</h5>
+                                                    <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">{tip.desc}</p>
+                                                </motion.div>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <motion.button
+                                        whileHover={{ scale: 1.02 }}
+                                        whileTap={{ scale: 0.98 }}
+                                        className="mt-auto bg-primary text-white py-5 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-primary/30 flex items-center justify-center gap-3"
+                                    >
+                                        <span className="material-symbols-outlined">chat</span> Hubungi Wayan di WhatsApp
+                                    </motion.button>
+                                </div>
+                            </motion.div>
+                        </div>
+                    )}
+                </AnimatePresence>
+
             </main>
+
 
             <Footer />
         </div>

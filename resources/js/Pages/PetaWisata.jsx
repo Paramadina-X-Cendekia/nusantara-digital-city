@@ -132,6 +132,51 @@ function LeafletMap({ destinations, activeSite, setActiveSite, t }) {
         });
     };
 
+    const Markers = () => {
+        const map = MapComponents.useMap();
+        return destinations.filter(d => d.lat && d.lng).map((d) => (
+            <Marker
+                key={d.id}
+                position={[d.lat, d.lng]}
+                icon={makeIcon(d, CAT_COLORS[d.category] || '#368ce2', activeSite === d.id)}
+                eventHandlers={{
+                    click: (e) => {
+                        setActiveSite(activeSite === d.id ? null : d.id);
+                        map.panTo(e.latlng);
+                    },
+                }}
+            >
+                <Popup className="custom-popup" autoPan={true} autoPanPadding={[150, 150]} keepInView={true}>
+                    <div className="w-64 sm:w-72 overflow-hidden rounded-xl bg-white dark:bg-slate-900 shadow-2xl">
+                        <ImageWithFallback src={d.img} alt={d.name} className="w-full h-32 object-cover rounded-t-xl" fallbackIcon="landscape" />
+                        <div className="p-4">
+                            <h3 className="font-black text-slate-900 dark:text-white text-sm mb-1 uppercase tracking-tight">{d.name}</h3>
+                            <p className="text-primary text-[10px] font-black uppercase tracking-widest mb-2 flex items-center gap-1">
+                                <span className="material-symbols-outlined text-xs">location_on</span>
+                                {d.location}
+                            </p>
+                            <p className="text-slate-500 dark:text-slate-400 text-[10px] leading-relaxed mb-4 line-clamp-2">{d.desc}</p>
+                            <div className="flex items-center justify-between">
+                                <span 
+                                    className="text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-md"
+                                    style={{ color: CAT_COLORS[d.category], backgroundColor: `${CAT_COLORS[d.category]}15` }}
+                                >
+                                    {d.category}
+                                </span>
+                                <Link 
+                                    href={`/wisata/${d.slug || d.id}`}
+                                    className="text-primary text-[10px] font-black uppercase tracking-widest hover:underline flex items-center gap-1"
+                                >
+                                    Detail <span className="material-symbols-outlined text-xs">arrow_forward</span>
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+                </Popup>
+            </Marker>
+        ));
+    };
+
     return (
         <MapContainer
             center={[-2.5, 118]}
@@ -177,31 +222,11 @@ function LeafletMap({ destinations, activeSite, setActiveSite, t }) {
                     opacity: 0.2
                 }}
             />
-            {destinations.filter(d => d.lat && d.lng).map((d) => (
-                <Marker
-                    key={d.id}
-                    position={[d.lat, d.lng]}
-                    icon={makeIcon(d, CAT_COLORS[d.category], activeSite === d.id)}
-                    eventHandlers={{
-                        click: () => setActiveSite(activeSite === d.id ? null : d.id),
-                    }}
-                >
-                    <Popup className="custom-popup">
-                        <div style={{ minWidth: '220px' }}>
-                            <ImageWithFallback src={d.img} alt={d.name} style={{ width: '100%', height: '120px', objectFit: 'cover', borderRadius: '8px', marginBottom: '8px' }} fallbackIcon="landscape" />
-                            <h3 style={{ margin: '0 0 4px', fontWeight: 800, fontSize: '14px' }}>{d.name}</h3>
-                            <p style={{ margin: '0 0 4px', color: '#368ce2', fontSize: '11px', fontWeight: 600 }}>{d.location}</p>
-                            <p style={{ margin: '0 0 8px', color: '#64748b', fontSize: '11px', lineHeight: 1.5 }}>{d.desc}</p>
-                             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '4px' }}>
-                                 <span style={{ fontWeight: 800, fontSize: '11px', color: CAT_COLORS[d.category], backgroundColor: `${CAT_COLORS[d.category]}15`, padding: '2px 8px', borderRadius: '4px' }}>{d.category.toUpperCase()}</span>
-                             </div>
-                        </div>
-                    </Popup>
-                </Marker>
-            ))}
+            <Markers />
         </MapContainer>
     );
 }
+
 
 export default function PetaWisata({ dynamicDestinations = [] }) {
     const { t } = useLanguage();
