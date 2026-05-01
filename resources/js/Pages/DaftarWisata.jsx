@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { useLanguage } from '../lib/LanguageContext';
+import { loc } from '../lib/localize';
 import { getBaseDestinations } from '../data/destinations';
 import ImageWithFallback from '../components/ImageWithFallback';
 
@@ -21,15 +22,24 @@ const fadeIn = {
 };
 
 export default function DaftarWisata({ dynamicDestinations = [] }) {
-    const { t } = useLanguage();
+    const { t, lang } = useLanguage();
     const [search, setSearch] = useState('');
     const [filter, setFilter] = useState('semua');
     
-    // Dynamic data from shared database
+    // Dynamic data from shared database — reactive to language changes
     const [destinations, setDestinations] = useState(() => {
         const base = getBaseDestinations(t).map(d => ({ ...d, img: d.defaultImg }));
         return [...base, ...(dynamicDestinations || [])];
     });
+
+    // Re-sync base destinations when language changes
+    useEffect(() => {
+        setDestinations(prev => {
+            const base = getBaseDestinations(t).map(d => ({ ...d, img: d.defaultImg }));
+            const dynamicOnly = prev.filter(p => !base.some(b => b.slug === p.slug));
+            return [...base, ...dynamicOnly];
+        });
+    }, [t]);
 
     // Fetch live OpenStreetMap Nominatim Data on mount
     useEffect(() => {
@@ -169,8 +179,8 @@ export default function DaftarWisata({ dynamicDestinations = [] }) {
                                             </div>
                                             <div className="p-5">
                                                 <p className="text-[10px] font-bold text-primary uppercase tracking-widest mb-1">{t(`wisata.${dest.category}`)}</p>
-                                                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2 truncate group-hover:text-primary transition-colors">{dest.name}</h3>
-                                                <p className="text-xs text-slate-500 mb-4 line-clamp-2">{dest.desc}</p>
+                                                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2 truncate group-hover:text-primary transition-colors">{loc(dest, 'name', lang) || dest.name}</h3>
+                                                <p className="text-xs text-slate-500 mb-4 line-clamp-2">{loc(dest, 'desc', lang) || dest.desc}</p>
                                                 <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
                                                     <div className="flex items-center gap-1.5 text-slate-400">
                                                         <span className="material-symbols-outlined text-sm">location_on</span>

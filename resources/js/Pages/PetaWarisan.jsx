@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { useLanguage } from '../lib/LanguageContext';
+import { loc } from '../lib/localize';
 import ImageWithFallback from '../components/ImageWithFallback';
 
 const fadeIn = {
@@ -134,6 +135,50 @@ function LeafletMap({ sites, activeSite, setActiveSite, t }) {
         });
     };
 
+    const Markers = () => {
+        const map = MapComponents.useMap();
+        return sites.filter(s => s.lat && s.lng).map((site) => (
+            <Marker
+                key={site.id}
+                position={[site.lat, site.lng]}
+                icon={customIcon(site, activeSite === site.id)}
+                eventHandlers={{
+                    click: (e) => {
+                        setActiveSite(activeSite === site.id ? null : site.id);
+                        map.panTo(e.latlng);
+                    },
+                }}
+            >
+                <Popup className="custom-popup" autoPan={true} autoPanPadding={[150, 150]} keepInView={true}>
+                    <div className="w-64 sm:w-72 overflow-hidden rounded-xl bg-white dark:bg-slate-900 shadow-2xl">
+                        <ImageWithFallback src={site.img} alt={site.name} className="w-full h-32 object-cover rounded-t-xl" fallbackIcon="account_balance" />
+                        <div className="p-4">
+                            <h3 className="font-black text-slate-900 dark:text-white text-sm mb-1 uppercase tracking-tight">{site.name}</h3>
+                            <p className="text-primary text-[10px] font-black uppercase tracking-widest mb-2 flex items-center gap-1">
+                                <span className="material-symbols-outlined text-xs">location_on</span>
+                                {site.location}
+                            </p>
+                            <p className="text-slate-500 dark:text-slate-400 text-[10px] leading-relaxed mb-4 line-clamp-2">{site.desc}</p>
+                            <div className="flex flex-wrap items-center gap-2 mb-4">
+                                <span className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded bg-primary/10 text-primary border border-primary/20">
+                                    {site.status}
+                                </span>
+                                <span className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 flex items-center gap-1">
+                                    <span className="material-symbols-outlined text-[10px]">history</span>
+                                    {site.year}
+                                </span>
+                            </div>
+                            <div className="flex items-center justify-between border-t border-slate-50 dark:border-slate-800 pt-3 mt-3">
+                                <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">{t('peta_warisan.active_points')}</p>
+                                <span className="material-symbols-outlined text-primary text-sm font-bold">arrow_forward</span>
+                            </div>
+                        </div>
+                    </div>
+                </Popup>
+            </Marker>
+        ));
+    };
+
     return (
         <MapContainer
             center={[-2.5, 118]}
@@ -149,12 +194,12 @@ function LeafletMap({ sites, activeSite, setActiveSite, t }) {
                 attribution='&copy; <a href="https://carto.com/">CARTO</a>'
                 url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
             />
-            
+
             {/* Maritime Borders (Stylized) */}
             <MapComponents.Polyline
                 positions={[
-                    [[6,95], [6,105], [4,110], [6,118], [5,128], [3,141]],
-                    [[-11,94], [-12,105], [-11,115], [-11,125], [-10,141]]
+                    [[6, 95], [6, 105], [4, 110], [6, 118], [5, 128], [3, 141]],
+                    [[-11, 94], [-12, 105], [-11, 115], [-11, 125], [-10, 141]]
                 ]}
                 pathOptions={{
                     color: '#368ce2',
@@ -167,9 +212,9 @@ function LeafletMap({ sites, activeSite, setActiveSite, t }) {
             {/* Ocean Currents (Animated) */}
             <MapComponents.Polyline
                 positions={[
-                    [[2,118.5], [-2,119.5], [-5,118.5], [-8,115.5]],
-                    [[3,127.5], [-1,128.5], [-4,129.5], [-8,126.5]],
-                    [[5,100], [0,105], [-5,110], [-9,115]]
+                    [[2, 118.5], [-2, 119.5], [-5, 118.5], [-8, 115.5]],
+                    [[3, 127.5], [-1, 128.5], [-4, 129.5], [-8, 126.5]],
+                    [[5, 100], [0, 105], [-5, 110], [-9, 115]]
                 ]}
                 pathOptions={{
                     color: '#368ce2',
@@ -179,42 +224,27 @@ function LeafletMap({ sites, activeSite, setActiveSite, t }) {
                     opacity: 0.2
                 }}
             />
-            {sites.filter(s => s.lat && s.lng).map((site) => (
-                <Marker
-                    key={site.id}
-                    position={[site.lat, site.lng]}
-                    icon={customIcon(site, activeSite === site.id)}
-                    eventHandlers={{
-                        click: () => setActiveSite(activeSite === site.id ? null : site.id),
-                    }}
-                >
-                    <Popup className="custom-popup">
-                        <div style={{ minWidth: '220px' }}>
-                            <ImageWithFallback src={site.img} alt={site.name} style={{ width: '100%', height: '120px', objectFit: 'cover', borderRadius: '8px', marginBottom: '8px' }} fallbackIcon="account_balance" />
-                            <h3 style={{ margin: '0 0 4px', fontWeight: 800, fontSize: '14px' }}>{site.name}</h3>
-                            <p style={{ margin: '0 0 4px', color: '#368ce2', fontSize: '11px', fontWeight: 600 }}>{site.location}</p>
-                            <p style={{ margin: '0 0 4px', color: '#64748b', fontSize: '11px', lineHeight: 1.5 }}>{site.desc}</p>
-                            <p style={{ margin: '0 0 4px', color: '#368ce2', fontSize: '11px', fontWeight: 600 }}>{t('peta_warisan.click_marker')}</p>
-                            <div style={{ marginTop: '8px', display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                                <span style={{ background: '#368ce215', color: '#368ce2', padding: '2px 8px', borderRadius: '6px', fontSize: '10px', fontWeight: 700 }}>{site.status}</span>
-                                <span style={{ background: '#f1f5f9', color: '#475569', padding: '2px 8px', borderRadius: '6px', fontSize: '10px', fontWeight: 700 }}>
-                                    <span className="material-symbols-outlined" style={{ fontSize: '10px', verticalAlign: 'middle', marginRight: '4px' }}>history</span>
-                                    {site.year}
-                                </span>
-                            </div>
-                        </div>
-                    </Popup>
-                </Marker>
-            ))}
+            <Markers />
         </MapContainer>
     );
 }
 
+
 export default function PetaWarisan({ dynamicSites = [] }) {
-    const { t } = useLanguage();
+    const { t, lang } = useLanguage();
     const [allSites, setAllSites] = useState(() => SITES(t));
     const [activeSite, setActiveSite] = useState(null);
     const [isGeocoding, setIsGeocoding] = useState(false);
+
+    // Re-sync base sites when language changes
+    useEffect(() => {
+        setAllSites(prev => {
+            const base = SITES(t);
+            // Keep dynamic sites, replace base sites
+            const dynamicOnly = prev.filter(p => !base.some(b => b.id === p.id));
+            return [...base, ...dynamicOnly];
+        });
+    }, [t]);
 
     // Sync dynamic sites without resetting allSites every time
     useEffect(() => {
@@ -239,13 +269,13 @@ export default function PetaWarisan({ dynamicSites = [] }) {
     const autoGeocode = async (sites) => {
         setIsGeocoding(true);
         const updatedSites = [...allSites];
-        
+
         for (const site of sites) {
             try {
                 // Using Nominatim for free geocoding
                 const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(site.location + ', Indonesia')}&limit=1`);
                 const data = await res.json();
-                
+
                 if (data && data[0]) {
                     const idx = updatedSites.findIndex(s => s.id === site.id);
                     if (idx !== -1) {
@@ -262,7 +292,7 @@ export default function PetaWarisan({ dynamicSites = [] }) {
             // Add a small delay to avoid rate limits
             await new Promise(r => setTimeout(r, 1000));
         }
-        
+
         setAllSites([...updatedSites]);
         setIsGeocoding(false);
     };
@@ -350,10 +380,10 @@ export default function PetaWarisan({ dynamicSites = [] }) {
 
                 {/* ── Leaflet Map ── */}
                 <section id="peta-interaktif" className="container mx-auto px-4 lg:px-10 py-12 relative z-20">
-                    <motion.div 
-                        initial={{ opacity: 0, y: 30 }} 
-                        animate={{ opacity: 1, y: 0 }} 
-                        transition={{ delay: 0.6, duration: 0.6 }} 
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.6, duration: 0.6 }}
                         className="bg-slate-900 rounded-3xl overflow-hidden shadow-2xl border border-slate-800"
                     >
                         {/* Header */}
@@ -402,7 +432,7 @@ export default function PetaWarisan({ dynamicSites = [] }) {
                                             {selected.location}
                                         </div>
                                         <h2 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-slate-100 mb-4">{selected.name}</h2>
-                                        <p className="text-slate-600 dark:text-slate-400 leading-relaxed mb-6">{selected.desc}</p>
+                                        <p className="text-slate-600 dark:text-slate-400 leading-relaxed mb-6">{loc(selected, 'desc', lang) || selected.desc}</p>
                                         <div className="flex flex-wrap gap-3 mb-6">
                                             <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 text-xs font-bold text-primary border border-primary/20">
                                                 <span className="material-symbols-outlined text-sm">history</span> {selected.year}
@@ -437,11 +467,10 @@ export default function PetaWarisan({ dynamicSites = [] }) {
                                 variants={fadeIn}
                                 whileHover={{ y: -6 }}
                                 onClick={() => { setActiveSite(site.id); window.scrollTo({ top: 500, behavior: 'smooth' }); }}
-                                className={`text-left p-5 rounded-2xl border transition-all group ${
-                                    activeSite === site.id
+                                className={`text-left p-5 rounded-2xl border transition-all group ${activeSite === site.id
                                         ? 'border-primary bg-primary/5 dark:bg-primary/10 shadow-lg shadow-primary/10'
                                         : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-surface-dark hover:shadow-xl'
-                                }`}
+                                    }`}
                             >
                                 <div className="flex items-start gap-4">
                                     <div className="size-14 rounded-xl overflow-hidden shrink-0 border-2 border-slate-200 dark:border-slate-700 group-hover:border-primary transition-colors">

@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { useLanguage } from '../lib/LanguageContext';
+import { useLanguage } from '@/lib/LanguageContext';
+import { loc } from '@/lib/localize';
 import { getCulinaryData } from '../data/culinary';
 import ImageWithFallback from '../components/ImageWithFallback';
 
@@ -22,13 +23,14 @@ const TABS = (t) => [
 ];
 
 export default function EksplorasiKuliner({ contributedDishes = [], contributedIngredients = [] }) {
-    const { t } = useLanguage();
+    const { t, lang } = useLanguage();
     const [activeTab, setActiveTab] = useState('menu');
     const [selectedDish, setSelectedDish] = useState(null);
     const [isScanning, setIsScanning] = useState(false);
     const [selectedIngredient, setSelectedIngredient] = useState(null);
     const [shareStatus, setShareStatus] = useState(null);
-    const staticData = getCulinaryData(t);
+    const menuSectionRef = useRef(null);
+    const staticData = useMemo(() => getCulinaryData(t), [t]);
     const allDishes = [...contributedDishes, ...staticData.dishes];
     const allIngredients = [...contributedIngredients, ...staticData.ingredients];
     
@@ -55,6 +57,14 @@ export default function EksplorasiKuliner({ contributedDishes = [], contributedI
             console.error('Error sharing:', err);
         }
     };
+
+    const scrollToMenu = () => {
+        setActiveTab('menu');
+        setTimeout(() => {
+            menuSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
+    };
+
 
     useEffect(() => {
         if (selectedDish) {
@@ -105,10 +115,16 @@ export default function EksplorasiKuliner({ contributedDishes = [], contributedI
                                             {t('nav.new_contribution')}
                                         </motion.button>
                                     </Link>
-                                    <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="rounded-xl h-12 px-8 bg-slate-200/50 dark:bg-white/10 backdrop-blur-md text-slate-800 dark:text-white border border-slate-300 dark:border-white/20 text-sm font-bold hover:bg-slate-300/50 dark:hover:bg-white/20 transition-colors flex items-center gap-2">
+                                    <motion.button 
+                                        whileHover={{ scale: 1.05 }} 
+                                        whileTap={{ scale: 0.95 }} 
+                                        onClick={scrollToMenu}
+                                        className="rounded-xl h-12 px-8 bg-slate-200/50 dark:bg-white/10 backdrop-blur-md text-slate-800 dark:text-white border border-slate-300 dark:border-white/20 text-sm font-bold hover:bg-slate-300/50 dark:hover:bg-white/20 transition-colors flex items-center gap-2"
+                                    >
                                         <span className="material-symbols-outlined text-sm">restaurant_menu</span>
                                         {t('kuliner.tab_menu')}
                                     </motion.button>
+
                                 </motion.div>
                             </motion.div>
                         </div>
@@ -150,7 +166,8 @@ export default function EksplorasiKuliner({ contributedDishes = [], contributedI
                 </motion.div>
 
                 {/* ── Content Section ── */}
-                <section className="container mx-auto px-4 lg:px-10 py-12">
+                <section ref={menuSectionRef} className="container mx-auto px-4 lg:px-10 py-12 scroll-mt-24">
+
                     <AnimatePresence mode="wait">
                         {activeTab === 'menu' && (
                             <motion.div key="menu" initial="hidden" animate="visible" exit="hidden" variants={stagger}>
@@ -196,8 +213,8 @@ export default function EksplorasiKuliner({ contributedDishes = [], contributedI
                                                     <span className="material-symbols-outlined text-base">location_on</span>
                                                     {dish.shopName ? `${dish.shopName}, ${dish.origin}` : dish.origin}
                                                 </div>
-                                                <h3 className="text-2xl font-black text-slate-900 dark:text-slate-100 mb-3 group-hover:text-primary transition-colors tracking-tight">{dish.name}</h3>
-                                                <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-6">{dish.desc}</p>
+                                                <h3 className="text-2xl font-black text-slate-900 dark:text-slate-100 mb-3 group-hover:text-primary transition-colors tracking-tight">{loc(dish, 'name', lang) || dish.name}</h3>
+                                                <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-6">{loc(dish, 'desc', lang) || dish.desc}</p>
                                                 <div className="flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-6">
                                                     {dish.contributor ? (
                                                         <div className="flex items-center gap-2">
@@ -253,8 +270,8 @@ export default function EksplorasiKuliner({ contributedDishes = [], contributedI
                                                 )}
                                             </div>
                                             <div className="p-8">
-                                                <h3 className="text-2xl font-black text-slate-900 dark:text-slate-100 mb-4 group-hover:text-primary transition-colors tracking-tight uppercase">{item.name}</h3>
-                                                <p className="text-sm text-slate-500 leading-relaxed mb-6 italic">"{item.story}"</p>
+                                                <h3 className="text-2xl font-black text-slate-900 dark:text-slate-100 mb-4 group-hover:text-primary transition-colors tracking-tight uppercase">{loc(item, 'name', lang) || item.name}</h3>
+                                                <p className="text-sm text-slate-500 leading-relaxed mb-6 italic">"{loc(item, 'story', lang) || item.story}"</p>
                                                 <div className="space-y-4 border-t border-slate-100 dark:border-slate-800 pt-6">
                                                     <div className="flex items-center gap-4">
                                                         <div className="size-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
@@ -537,33 +554,44 @@ export default function EksplorasiKuliner({ contributedDishes = [], contributedI
                             whileInView={{ scale: 1, opacity: 1 }}
                             viewport={{ once: true, margin: '-80px' }}
                             transition={{ duration: 0.8 }}
-                            className="rounded-[3rem] bg-slate-900 border border-white/10 px-6 py-20 text-white overflow-hidden relative shadow-2xl"
+                            className="rounded-[3rem] bg-primary border border-white/10 px-6 py-20 text-white overflow-hidden relative shadow-2xl"
                         >
-                            <div className="absolute top-0 right-0 w-96 h-96 bg-primary/20 rounded-full blur-[100px] -mr-48 -mt-48"></div>
-                            <div className="absolute bottom-0 left-0 w-80 h-80 bg-primary/10 rounded-full blur-[80px] -ml-40 -mb-40"></div>
+                            <div className="absolute top-0 right-0 w-96 h-96 bg-white/20 rounded-full blur-[100px] -mr-48 -mt-48"></div>
+                            <div className="absolute bottom-0 left-0 w-80 h-80 bg-black/10 rounded-full blur-[80px] -ml-40 -mb-40"></div>
 
                             <div className="relative z-10 space-y-8 max-w-3xl mx-auto">
-                                <span className="material-symbols-outlined text-6xl text-primary animate-pulse">restaurant_menu</span>
+                                <span className="material-symbols-outlined text-6xl text-white/90 animate-pulse">restaurant_menu</span>
                                 <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tight drop-shadow-lg">{t('kuliner.cta_title')}</h2>
-                                <p className="text-lg text-slate-400 font-medium leading-relaxed">
+                                <p className="text-lg text-white/80 font-medium leading-relaxed">
                                     {t('kuliner.cta_desc')}
                                 </p>
                                 <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-6">
                                     <Link href="/kontribusi">
-                                        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="px-10 py-5 bg-primary text-white rounded-2xl font-black uppercase tracking-widest shadow-2xl shadow-primary/30 hover:bg-primary/90 transition-all">
+                                        <motion.button 
+                                            whileHover={{ scale: 1.05 }} 
+                                            whileTap={{ scale: 0.95 }} 
+                                            className="px-10 py-5 bg-white text-primary rounded-2xl font-black uppercase tracking-widest shadow-2xl hover:bg-slate-50 transition-all flex items-center gap-2"
+                                        >
+                                            <span className="material-symbols-outlined">add_circle</span>
                                             {t('nav.new_contribution')}
                                         </motion.button>
                                     </Link>
                                     <Link href="/wisata">
-                                        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="px-10 py-5 bg-white/5 backdrop-blur-md border border-white/10 text-white rounded-2xl font-black uppercase tracking-widest hover:bg-white/10 transition-all flex items-center gap-3">
+                                        <motion.button 
+                                            whileHover={{ scale: 1.05 }} 
+                                            whileTap={{ scale: 0.95 }} 
+                                            className="px-10 py-5 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-2xl font-black uppercase tracking-widest hover:bg-white/20 transition-all flex items-center gap-3"
+                                        >
                                             <span className="material-symbols-outlined">arrow_back</span> {t('peta_wisata.back_to_tourism')}
                                         </motion.button>
                                     </Link>
                                 </div>
+
                             </div>
                         </motion.div>
                     </div>
                 </section>
+
             </main>
 
             <Footer />

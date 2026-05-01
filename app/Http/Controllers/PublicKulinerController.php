@@ -29,11 +29,13 @@ class PublicKulinerController extends Controller
                         $contributedDishes[] = [
                             'id' => 'fb_dish_' . $key . '_' . $index,
                             'name' => $dish['name'],
+                            'name_en' => $dish['name_en'] ?? null,
                             'shopName' => $data['shopName'] ?? ($data['tourismName'] ?? null),
                             'shopImage' => $data['mainImageUrl'] ?? null,
                             'address' => $data['address'] ?? null,
                             'origin' => $data['cityName'] ?? ($data['city'] ?? 'Indonesia'),
                             'desc' => $dish['description'],
+                            'desc_en' => $dish['description_en'] ?? null,
                             'img' => $dish['imageUrl'] ?? null,
                             'status' => 'Verified Contributor',
                             'contributor' => $data['contributor'] ?? null,
@@ -47,6 +49,7 @@ class PublicKulinerController extends Controller
                                     'id' => $idx,
                                     'name' => $ing['name'] ?? 'Bahan',
                                     'desc' => $ing['desc'] ?? '',
+                                    'desc_en' => $ing['desc_en'] ?? null,
                                 ];
                             }, $dish['ingredients'] ?? [], array_keys($dish['ingredients'] ?? []))
                         ];
@@ -58,6 +61,7 @@ class PublicKulinerController extends Controller
                     $contributedIngredients[] = [
                         'id' => 'fb_ing_' . $key,
                         'name' => $data['ingredientName'],
+                        'name_en' => $data['ingredientName_en'] ?? null,
                         'shopName' => $data['shopName'] ?? ($data['tourismName'] ?? null),
                         'shopImage' => $data['mainImageUrl'] ?? null,
                         'address' => $data['address'] ?? null,
@@ -68,6 +72,7 @@ class PublicKulinerController extends Controller
                         'verified' => true,
                         'img' => $data['ingredientImageUrl'] ?? null,
                         'story' => $data['ingredientStory'] ?? '',
+                        'story_en' => $data['ingredientStory_en'] ?? null,
                         'lat' => $data['lat'] ?? 0,
                         'lng' => $data['lng'] ?? 0,
                         'contributor' => $data['contributor'] ?? null,

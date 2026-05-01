@@ -32,9 +32,11 @@ class PublicWisataController extends Controller
                             'id' => $id,
                             'slug' => $id,
                             'name' => $data['tourismName'] ?? ($data['shopName'] ?? 'Untitled'),
+                            'name_en' => $data['tourismName_en'] ?? ($data['shopName_en'] ?? null),
                             'location' => $data['city'] ?? ($data['province'] ?? ''),
                             'category' => $category,
                             'desc' => $data['tourismDescription'] ?? ($data['shortDesc'] ?? ($data['description'] ?? '')),
+                            'desc_en' => $data['tourismDescription_en'] ?? ($data['shortDesc_en'] ?? ($data['description_en'] ?? null)),
                             'img' => $data['mainImageUrl'] ?? ($data['imageUrl'] ?? ($data['dishImageUrl'] ?? '')),
                             'query' => ($data['tourismName'] ?? ($data['shopName'] ?? '')) . ' ' . ($data['city'] ?? ''),
                         ];
@@ -63,9 +65,11 @@ class PublicWisataController extends Controller
                         'id' => $id,
                         'slug' => $id,
                         'name' => $data['tourismName'] ?? ($data['shopName'] ?? 'Untitled'),
+                        'name_en' => $data['tourismName_en'] ?? ($data['shopName_en'] ?? null),
                         'location' => $data['city'] ?? ($data['province'] ?? ''),
                         'category' => $category,
                         'desc' => $data['tourismDescription'] ?? ($data['shortDesc'] ?? ($data['description'] ?? '')),
+                        'desc_en' => $data['tourismDescription_en'] ?? ($data['shortDesc_en'] ?? ($data['description_en'] ?? null)),
                         'img' => $data['mainImageUrl'] ?? ($data['imageUrl'] ?? ($data['dishImageUrl'] ?? '')),
                         'query' => ($data['tourismName'] ?? ($data['shopName'] ?? '')) . ' ' . ($data['city'] ?? ''),
                     ];
@@ -95,10 +99,12 @@ class PublicWisataController extends Controller
             // Map Firebase data to destination structure
             $destination = [
                 'name' => $data['tourismName'] ?? ($data['shopName'] ?? 'Untitled'),
+                'name_en' => $data['tourismName_en'] ?? ($data['shopName_en'] ?? null),
                 'slug' => $slug,
                 'location' => $data['city'] ?? ($data['province'] ?? ''),
                 'category' => $data['category'] ?? 'wisata',
                 'desc' => $data['tourismDescription'] ?? ($data['description'] ?? ''),
+                'desc_en' => $data['tourismDescription_en'] ?? ($data['description_en'] ?? null),
                 'img' => $data['mainImageUrl'] ?? ($data['imageUrl'] ?? ($data['dishImageUrl'] ?? '')),
                 'lat' => $data['lat'] ?? null,
                 'lng' => $data['lng'] ?? null,
@@ -149,6 +155,42 @@ class PublicWisataController extends Controller
                     'desc' => 'Surga bawah laut terakhir di dunia dengan keanekaragaman hayati yang tiada tanding.',
                     'img' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuCOk7eFXM8Z7djeW87pg0CemNhUYyqvVOTbTru4odSwbuliignpFMApDGhfNKlW6kKyQlCbzJ3ohIoFaRnWWDgvGfazHGAkAjHoSKngL3-wQdr1HcITBwNXh6s5QVGFLqfPkQo7SDDW_mY-6RcScGnPl4Ewr-Vg_6va3QV-h4tnOTTygXWWbXsrbtnnmk6_AzN-1zBFS-khioMRQ3qfwSeVgNhYKSFkLW9kkjlvFAKSOrwFbzI-SYHp13KInW70cdrV_8nUtZOKZ2BQ',
                 ],
+                'gunung-rinjani' => [
+                    'name' => 'Gunung Rinjani',
+                    'location' => 'Lombok, NTB',
+                    'category' => 'gunung',
+                    'desc' => 'Gunung berapi tertinggi kedua di Indonesia dengan pemandangan Danau Segara Anak yang magis.',
+                    'img' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuC0FVwiBcNLeL0Ect74iuTzIEMu4Ctu1txJ1hjjkUmcO2Lw2UXLQUbNWThHD10DWJvCcTR1n5fYVifSW04RoXkffrHqGsy2KS9Sy3yR4LsP_0QdIUz4km9YOjT2UKU8Sq7Uz37Udu6NYP6wD7F-OQYDl-6YjCnyGW-2vWUBPQWCdFFby1XTW-cd9aPvTftzfXyD3VuHgMoxnt-3ROirBkccx3b6jBCgSYb4aVZxeM92ma5_jqPpGTsXhlMBFtLbsT6pb5S0K_r4Y4Pz',
+                ],
+                'tanjung-puting' => [
+                    'name' => 'Tanjung Puting',
+                    'location' => 'Kalimantan Tengah',
+                    'category' => 'alam',
+                    'desc' => 'Taman nasional yang menjadi habitat asli Orangutan dan petualangan menyusuri sungai dengan Klotok.',
+                    'img' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuDDuSfqiJRkxODrddf-6RuvSwa01DTHoOUXdRKz2IR0jmKl3N8-UEPriuFB8PXZrIcLuDTsdqF1lYffYUP92PwhvcC8MnPKxJDMsS2QUtab1HMvnBSSy9AVXBCm8CYoTzRWfnPZd1Knj9tbbOnEKiMFndx9rZsXZzKufNUznJMvFwKnEAKzlawa4AljZQVO8K4EeS3i2pbCMSadufRenMCeah9onXIrmig6iiv3zhUVhq37UShohWH8StvAr58umrth1NQiUVOjaYhI',
+                ],
+                'banda-neira' => [
+                    'name' => 'Banda Neira',
+                    'location' => 'Maluku',
+                    'category' => 'pantai',
+                    'desc' => 'Kepulauan bersejarah yang pernah menjadi satu-satunya sumber pala di dunia dengan kekayaan laut luar biasa.',
+                    'img' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuCp0a0cSr56zKwoiH0unY6uIn_kWisHe6JKm4pJQNVCtbW0n-2kYvRQApHX_tGWmeoyvXqzvHOmvhhSq80OAxY8BFCFEMAqViU3shvZgYEy_ekJQUGeKGjVfuAD3egeTOJI7lBBspycUFeDnp-_Tg7jVonhEK_EgNfwYUY2pUNBtGEMPqxffwYi4feIkc6B9uHQSMy5hF_1Q0PRFtLfI_e_koAa3TDqZHDzPmME0wSO3Kxsm4xzKW-p1_zH2hpp8FHZk0iGFlv-SqLh',
+                ],
+                'yogyakarta' => [
+                    'name' => 'Yogyakarta',
+                    'location' => 'DI Yogyakarta',
+                    'category' => 'kota',
+                    'desc' => 'Kota budaya yang kental dengan tradisi kerajaan, seni jalanan, dan keramahan penduduknya.',
+                    'img' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuA0jeSakdv6nP10Lx12LKRiQNerivDknx-BZKVNP1-dY2xZ2fhj-s73LMz8DjaQWwYKWxR6FXfwb65BUUHaDgGH1VJN4C2LxAvAUR7OkaoZfZiZ2SInN_5ES0WQdzC5HbausLNI5hpYB9c-QNJyUR4agdXx_73N26Dn_9XI2OW25qKf-gjjzh_584EFA0Vzxvyyx4gW8GUqIwhaAmp6_7LJyGlq6Rru6PMVX-sD4QsGgBZHIwI4aA220TEW_Br8d5CpApYUZvCbzxhz',
+                ],
+                'wakatobi' => [
+                    'name' => 'Wakatobi',
+                    'location' => 'Sulawesi Tenggara',
+                    'category' => 'pantai',
+                    'desc' => 'Destinasi penyelaman kelas dunia di jantung Segitiga Terumbu Karang dunia.',
+                    'img' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuBM3X2wbsMSafomWICPVvP_WNw5zEjW3TBIMDHzByEl0abDkmrorgIc88jNL-v3v7JJF7upMacCUMz0vCkVGUDbGF3S339mQxZCR-wGIZwljTj3JCwK6G9i2OBw8ozhUSa6CQLYPJofJxaED0TmmvlmipRBI2Uh1P7Kp7l334tcqT0Azc3pd432k3TnmZqbNPrCUTXBPRlKmxpK3DIr2ciCYZIxest4-CrAjbI2mc056Rw23DXj_xBzswZPBtz62Q2bCxI-BQ84lKf6',
+                ],
+
             ];
 
             if (isset($staticData[$slug])) {
@@ -177,9 +219,11 @@ class PublicWisataController extends Controller
                     $destinations[] = [
                         'id' => $id,
                         'name' => $data['tourismName'] ?? ($data['shopName'] ?? 'Untitled'),
+                        'name_en' => $data['tourismName_en'] ?? ($data['shopName_en'] ?? null),
                         'location' => $data['city'] ?? ($data['province'] ?? ''),
                         'category' => $data['category'] ?? 'wisata',
                         'desc' => $data['tourismDescription'] ?? ($data['shortDesc'] ?? ($data['description'] ?? '')),
+                        'desc_en' => $data['tourismDescription_en'] ?? ($data['shortDesc_en'] ?? ($data['description_en'] ?? null)),
                         'img' => $data['mainImageUrl'] ?? ($data['imageUrl'] ?? ($data['dishImageUrl'] ?? '')),
                         'lat' => isset($data['lat']) ? (float)$data['lat'] : null,
                         'lng' => isset($data['lng']) ? (float)$data['lng'] : null,
