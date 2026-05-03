@@ -73,7 +73,7 @@ export default function Navbar() {
                 transition={{ duration: 0.5 }}
                 className={`${isHeroPage ? 'fixed' : 'sticky'} top-0 z-[100] w-full transition-all duration-300 ${
                     isScrolled || !isHeroPage
-                        ? 'border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md shadow-sm'
+                        ? 'border-b border-slate-200/40 dark:border-white/5 bg-slate-50/80 dark:bg-background-dark/80 backdrop-blur-xl shadow-xl shadow-slate-200/20 dark:shadow-black/40'
                         : 'bg-transparent border-transparent'
                 }`}
             >
@@ -81,7 +81,7 @@ export default function Navbar() {
                     <div className="flex h-16 items-center justify-between">
                         <Link href="/" className="flex items-center gap-3 group">
                             <img src="/sinusa.png" alt="Sinergi Nusa Logo" className="w-12 h-12 md:w-14 md:h-14 object-contain transition-transform group-hover:rotate-12" />
-                            <h2 className={`text-base md:text-lg font-black tracking-tighter italic uppercase transition-colors ${isTransparent ? 'text-white drop-shadow-md' : 'text-slate-900 dark:text-slate-100'}`}>Sinergi <span className="text-primary tracking-normal">Nusa</span></h2>
+                            <h2 className={`text-base md:text-lg font-black tracking-tighter italic uppercase transition-colors ${isTransparent ? (theme === 'dark' ? 'text-white' : 'text-slate-900') : 'text-slate-900 dark:text-slate-100'}`}>Sinergi <span className="text-primary tracking-normal">Nusa</span></h2>
                         </Link>
 
                         <nav className="hidden md:flex items-center gap-8">
@@ -111,7 +111,7 @@ export default function Navbar() {
                                             isActive 
                                                 ? 'text-primary' 
                                                 : isTransparent 
-                                                    ? 'text-white/90 hover:text-white drop-shadow-md'
+                                                    ? (theme === 'dark' ? 'text-white/90 hover:text-white' : 'text-slate-700 hover:text-primary')
                                                     : 'text-slate-600 dark:text-slate-300 hover:text-primary'
                                         }`}
                                     >
@@ -129,8 +129,8 @@ export default function Navbar() {
                                 onClick={toggleLang}
                                 className={`flex items-center gap-1.5 p-1.5 px-2 md:px-3 rounded-xl transition-all shadow-sm ${
                                     isTransparent
-                                        ? 'bg-white/10 text-white border border-white/20 hover:bg-white/20 backdrop-blur-md'
-                                        : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:border-primary/50'
+                                        ? (theme === 'dark' ? 'bg-white/10 text-white border border-white/20 hover:bg-white/20' : 'bg-slate-900/5 text-slate-800 border border-slate-900/10 hover:bg-slate-900/10') + ' backdrop-blur-md'
+                                        : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200/50 dark:border-slate-700 hover:border-primary/50'
                                 }`}
                             >
                                 <span className="material-symbols-outlined text-[18px] md:text-[20px] text-primary">translate</span>
@@ -141,10 +141,10 @@ export default function Navbar() {
                                 whileHover={{ scale: 1.1, rotate: 15 }}
                                 whileTap={{ scale: 0.9 }}
                                 onClick={toggleTheme}
-                                className={`p-2 rounded-xl transition-colors shadow-sm ${
+                                className={`p-2 rounded-xl transition-all duration-300 shadow-sm ${
                                     isTransparent
-                                        ? 'bg-white/10 text-white border border-white/20 hover:bg-white/20 backdrop-blur-md'
-                                        : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-amber-400 border border-slate-200 dark:border-slate-700'
+                                        ? (theme === 'dark' ? 'bg-white/10 text-white border border-white/20 hover:bg-white/20' : 'bg-slate-900/5 text-primary border border-slate-900/10 hover:bg-slate-900/10') + ' backdrop-blur-md'
+                                        : 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-500/20 hover:shadow-lg hover:shadow-indigo-500/10'
                                 }`}
                                 aria-label="Toggle Theme"
                             >
@@ -175,8 +175,8 @@ export default function Navbar() {
                                         onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                                     >
                                         <div className="hidden sm:block text-right">
-                                            <p className={`text-xs font-black leading-none ${isTransparent ? 'text-white' : 'text-slate-900 dark:text-white'}`}>{auth.user.name}</p>
-                                            <p className={`text-[10px] font-bold uppercase tracking-tighter ${isTransparent ? 'text-primary drop-shadow-md' : 'text-primary'}`}>{auth.user.role === 'admin' ? t('nav.admin') : t('nav.contributor')}</p>
+                                            <p className={`text-xs font-black leading-none ${isTransparent ? (theme === 'dark' ? 'text-white' : 'text-slate-900') : 'text-slate-900 dark:text-white'}`}>{auth.user.name}</p>
+                                            <p className={`text-[10px] font-bold uppercase tracking-tighter ${isTransparent ? (theme === 'dark' ? 'text-primary' : 'text-primary') : 'text-primary'}`}>{auth.user.role === 'admin' ? t('nav.admin') : t('nav.contributor')}</p>
                                         </div>
                                         <div className={`size-7 md:size-8 rounded-full bg-primary text-white flex items-center justify-center font-bold border-2 shadow-sm ${isTransparent ? 'border-primary/50' : 'border-white dark:border-slate-700'}`}>
                                             {auth.user.name.charAt(0)}

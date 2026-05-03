@@ -64,6 +64,10 @@ Route::post('/ask-sena', [SenaChatController::class, 'chat'])->name('sena.chat')
 
 
 // Public viewing routes (Keep accessible)
+Route::get('/tentang-kami', function () {
+    return Inertia::render('TentangKami');
+})->name('tentang-kami');
+
 
 Route::get('/daftarkan-kota', function () {
     return redirect()->route('kontribusi', ['type' => 'kota']);

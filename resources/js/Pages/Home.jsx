@@ -171,9 +171,9 @@ export default function Home({ leaderboard = [] }) {
                         style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuDPosYoLCnNw7zKsitCTwxKXjWF878_zb8mn4UrrqRW5Q-k2RNrFMb4iVgPu7aguuvf87GWI8eQOOq3kLlfMPgRukWlCE6Y_OewV2kDNhfg5Bjp5wrdmhgmVJZby5J6d1c7QeNdrZaX6FY9iN4Oh2Vl08N6dXfrrUSwy2J0HPJoS7LWmxX-a3O2ZrJSwoNDPviVs9TNvQ86kH3p65he-Lpo_uuWyOrKox7ti0sNVzTTdGFBI_VnfW49eNPiXpN2vk5Ja-QspLSVGeo1")' }}
                     />
                     {/* Shadow overlay */}
-                    <div className="absolute inset-0 bg-background-light/60 dark:bg-background-dark/70" />
+                    <div className="absolute inset-0 bg-background-light/30 dark:bg-background-dark/80" />
                     {/* Gradient to blend seamlessly */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-background-light from-5% via-background-light/60 to-transparent dark:from-background-dark dark:from-5% dark:via-background-dark/60 dark:to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-background-light from-0% via-background-light/20 to-transparent dark:from-background-dark dark:from-5% dark:via-background-dark/70 dark:to-transparent" />
 
                     {/* Content */}
                     <div className="relative z-10 flex-grow flex items-center justify-center text-center">

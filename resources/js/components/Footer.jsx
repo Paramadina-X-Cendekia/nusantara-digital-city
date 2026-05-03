@@ -1,4 +1,5 @@
 import { useLanguage } from '@/lib/LanguageContext';
+import { Link } from '@inertiajs/react';
 
 export default function Footer() {
     const { t } = useLanguage();
@@ -23,13 +24,6 @@ export default function Footer() {
                                 <span className="material-symbols-outlined text-xl">alternate_email</span>
                             </a>
                         </div>
-                        <div className="pt-2 flex items-center gap-2">
-                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{t('footer.powered_by')}</span>
-                            <div className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                                <span className="material-symbols-outlined text-[14px] text-primary">auto_awesome</span>
-                                <span className="text-[10px] font-bold text-slate-900 dark:text-white uppercase tracking-tighter">Gemini AI</span>
-                            </div>
-                        </div>
                     </div>
                     <div className="space-y-6">
                         <h3 className="font-bold text-slate-900 dark:text-white">{t('footer.navigation')}</h3>
@@ -42,7 +36,7 @@ export default function Footer() {
                     <div className="space-y-6">
                         <h3 className="font-bold text-slate-900 dark:text-white">{t('footer.information')}</h3>
                         <ul className="space-y-4 text-sm text-slate-600 dark:text-slate-400">
-                            <li><a className="hover:text-primary transition-colors hover:translate-x-1 inline-block transform" href="#">{t('footer.about_us')}</a></li>
+                            <li><Link className="hover:text-primary transition-colors hover:translate-x-1 inline-block transform" href="/tentang-kami">{t('footer.about_us')}</Link></li>
                             <li><a className="hover:text-primary transition-colors hover:translate-x-1 inline-block transform" href="#">{t('footer.help_center')}</a></li>
                             <li><a className="hover:text-primary transition-colors hover:translate-x-1 inline-block transform" href="#">{t('footer.privacy_policy')}</a></li>
                             <li><a className="hover:text-primary transition-colors hover:translate-x-1 inline-block transform" href="#">{t('footer.terms_conditions')}</a></li>
