@@ -144,7 +144,7 @@ export default function Navbar() {
                                 className={`p-2 rounded-xl transition-all duration-300 shadow-sm ${
                                     isTransparent
                                         ? (theme === 'dark' ? 'bg-white/10 text-white border border-white/20 hover:bg-white/20' : 'bg-slate-900/5 text-primary border border-slate-900/10 hover:bg-slate-900/10') + ' backdrop-blur-md'
-                                        : 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-500/20 hover:shadow-lg hover:shadow-indigo-500/10'
+                                        : 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-500/20 hover:shadow-lg hover:shadow-blue-500/10'
                                 }`}
                                 aria-label="Toggle Theme"
                             >
