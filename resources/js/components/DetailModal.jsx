@@ -2,6 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '@/lib/LanguageContext';
 import ImageWithFallback from './ImageWithFallback';
+import AITranslate from './AITranslate';
 
 export default function DetailModal({ isOpen, onClose, contribution, children }) {
     const { lang, t } = useLanguage();
@@ -21,7 +22,7 @@ export default function DetailModal({ isOpen, onClose, contribution, children })
                         <DetailItem label={t('modal.label_lat')} value={data.lat} />
                         <DetailItem label={t('modal.label_lng')} value={data.lng} />
                         <div className="col-span-2">
-                            <DetailItem label={t('modal.label_description')} value={data.description} />
+                            <DetailItem label={t('modal.label_description')} value={<AITranslate text={data.description} />} />
                         </div>
                     </div>
                 );
@@ -43,7 +44,7 @@ export default function DetailModal({ isOpen, onClose, contribution, children })
                             {data.lat && <DetailItem label={t('modal.label_lat')} value={data.lat} /> }
                             {data.lng && <DetailItem label={t('modal.label_lng')} value={data.lng} /> }
                             <div className="col-span-2">
-                                <DetailItem label={t('modal.label_description')} value={data.description} />
+                                <DetailItem label={t('modal.label_description')} value={<AITranslate text={data.description} />} />
                             </div>
                         </div>
                     </div>
@@ -71,8 +72,8 @@ export default function DetailModal({ isOpen, onClose, contribution, children })
                             <DetailItem label={t('modal.label_local_story')} value={(data.localStory === true || data.localStory === 1 || data.localStory === "1") ? t('modal.yes') : t('modal.no')} />
                         </div>
                         <div className="space-y-4">
-                            <DetailItem label="Deskripsi Singkat" value={data.shortDesc} />
-                            <DetailItem label="Deskripsi Lengkap" value={data.description} />
+                            <DetailItem label="Deskripsi Singkat" value={<AITranslate text={data.shortDesc} />} />
+                            <DetailItem label="Deskripsi Lengkap" value={<AITranslate text={data.description} />} />
                         </div>
                         {(data.digitalMenu === true || data.digitalMenu === 1 || data.digitalMenu === "1") && data.dishes && data.dishes.length > 0 && (
                             <div className="space-y-4 pt-6 border-t border-slate-100 dark:border-slate-800">
@@ -87,17 +88,23 @@ export default function DetailModal({ isOpen, onClose, contribution, children })
                                             )}
                                             <div className="flex-1 space-y-1">
                                                 <div className="flex items-center justify-between">
-                                                    <p className="font-bold text-sm text-slate-900 dark:text-slate-100">{dish.name}</p>
+                                                    <p className="font-bold text-sm text-slate-900 dark:text-slate-100">
+                                                        <AITranslate text={dish.name} />
+                                                    </p>
                                                     <span className="text-[9px] font-medium text-slate-400 italic">#{i+1}</span>
                                                 </div>
-                                                <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-relaxed italic line-clamp-2">{dish.description}</p>
+                                                <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-relaxed italic line-clamp-2">
+                                                    <AITranslate text={dish.description} />
+                                                </p>
                                                 {dish.ingredients && dish.ingredients.length > 0 && (
                                                     <div className="flex flex-wrap gap-1 mt-2">
                                                         {dish.ingredients.map((ing, j) => (
                                                             <div key={j} className="group relative">
-                                                                <span className="px-2 py-0.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-md text-[8px] font-bold text-slate-500 dark:text-slate-300 capitalize cursor-help">{ing.name}</span>
+                                                                <span className="px-2 py-0.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-md text-[8px] font-bold text-slate-500 dark:text-slate-300 capitalize cursor-help">
+                                                                    <AITranslate text={ing.name} />
+                                                                </span>
                                                                 <div className="absolute bottom-full left-0 mb-2 invisible group-hover:visible w-32 p-2 bg-slate-900 text-white text-[8px] rounded-lg shadow-xl z-50">
-                                                                    {ing.desc}
+                                                                    <AITranslate text={ing.desc} />
                                                                 </div>
                                                             </div>
                                                         ))}
@@ -125,7 +132,9 @@ export default function DetailModal({ isOpen, onClose, contribution, children })
                                     </div>
                                     <div className="space-y-1">
                                         <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">Kisah Bahan</p>
-                                        <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed italic">"{data.ingredientStory}"</p>
+                                        <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed italic">
+                                            "<AITranslate text={data.ingredientStory} />"
+                                        </p>
                                     </div>
                                 </div>
                             </div>

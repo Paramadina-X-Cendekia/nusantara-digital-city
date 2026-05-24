@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import AITranslate from '../components/AITranslate';
 import { Head, Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/Navbar';
@@ -114,8 +115,12 @@ export default function KisahRakyat({ kisah }) {
                                                 <span className="material-symbols-outlined text-base">location_on</span>
                                                 {item.origin}
                                             </div>
-                                            <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-2 group-hover:text-primary transition-colors">{item.title}</h3>
-                                            <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed line-clamp-3">{item.desc}</p>
+                                            <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-2 group-hover:text-primary transition-colors">
+                                                <AITranslate text={item.title} />
+                                            </h3>
+                                            <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed line-clamp-3">
+                                                <AITranslate text={item.desc} />
+                                            </p>
                                         </div>
                                     </motion.div>
                                 </Link>
