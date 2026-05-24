@@ -1,4 +1,5 @@
 import React, { useState, useRef, Suspense, useEffect } from 'react';
+import AITranslate from '../components/AITranslate';
 import { Head, Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Canvas, useFrame } from '@react-three/fiber';
@@ -325,7 +326,9 @@ function DetailSeni({ art }) {
                                             Bagikan Profil
                                         </button>
                                     </motion.div>
-                                    <motion.h1 variants={fadeIn} className="text-3xl md:text-5xl font-black text-white mb-2 drop-shadow-lg">{art.title}</motion.h1>
+                                    <motion.h1 variants={fadeIn} className="text-3xl md:text-5xl font-black text-white mb-2 drop-shadow-lg">
+                                        <AITranslate text={art.title} />
+                                    </motion.h1>
                                     <motion.div variants={fadeIn} className="flex items-center gap-2 text-white/80 text-sm">
                                         <span className="material-symbols-outlined text-base">location_on</span>
                                         {art.origin}
@@ -341,8 +344,12 @@ function DetailSeni({ art }) {
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeIn} className="lg:col-span-2 space-y-8">
                             <div>
-                                <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">{t('art_detail.about')} {art.title}</h2>
-                                <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm">{art.longDesc || art.desc}</p>
+                                <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4">
+                                    {t('art_detail.about')} <AITranslate text={art.title} />
+                                </h2>
+                                <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm">
+                                    <AITranslate text={art.longDesc || art.desc} />
+                                </p>
                             </div>
 
                             {art.makna && (
@@ -352,7 +359,7 @@ function DetailSeni({ art }) {
                                         Eksplorasi Makna & Filosofi
                                     </h3>
                                     <p className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed italic">
-                                        "{art.makna}"
+                                        "<AITranslate text={art.makna} />"
                                     </p>
                                 </div>
                             )}
@@ -364,7 +371,7 @@ function DetailSeni({ art }) {
                                         Nilai & Fakta Budaya
                                     </h3>
                                     <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
-                                        {art.fakta_budaya}
+                                        <AITranslate text={art.fakta_budaya} />
                                     </p>
                                 </div>
                             )}
@@ -408,7 +415,7 @@ function DetailSeni({ art }) {
                                     {(art.fakta_menarik && art.fakta_menarik.length > 0 ? art.fakta_menarik : (art.facts || [])).map((fact, i) => (
                                         <motion.li key={i} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="flex items-start gap-3 text-sm text-slate-600 dark:text-slate-400">
                                             <span className="size-6 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0 text-xs font-bold">{i + 1}</span>
-                                            {fact}
+                                            <AITranslate text={fact} />
                                         </motion.li>
                                     ))}
                                 </ul>

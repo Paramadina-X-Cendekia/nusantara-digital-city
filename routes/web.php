@@ -61,6 +61,7 @@ Route::get('/kontak', [ContactController::class, 'index'])->name('kontak');
 Route::post('/kontak', [ContactController::class, 'submit'])->name('kontak.submit');
 
 Route::post('/ask-sena', [SenaChatController::class, 'chat'])->name('sena.chat');
+Route::post('/translate', [\App\Http\Controllers\TranslateController::class, 'translate'])->name('api.translate');
 
 
 // Public viewing routes (Keep accessible)

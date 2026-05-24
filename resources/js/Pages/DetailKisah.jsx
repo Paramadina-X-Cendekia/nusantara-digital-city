@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import AITranslate from '../components/AITranslate';
 import { Head, Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/Navbar';
@@ -43,9 +44,11 @@ export default function DetailKisah({ story }) {
                                     <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-primary/90 text-white">{story.category}</span>
                                     <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/20 backdrop-blur-md text-white">{story.origin}</span>
                                 </motion.div>
-                                <motion.h1 variants={fadeIn} className="text-4xl md:text-6xl font-black text-white mb-4 drop-shadow-2xl">{story.title}</motion.h1>
+                                <motion.h1 variants={fadeIn} className="text-4xl md:text-6xl font-black text-white mb-4 drop-shadow-2xl">
+                                    <AITranslate text={story.title} />
+                                </motion.h1>
                                 <motion.p variants={fadeIn} className="text-white/90 text-lg max-w-2xl font-medium leading-relaxed drop-shadow-md">
-                                    {story.desc}
+                                    <AITranslate text={story.desc} />
                                 </motion.p>
                             </motion.div>
                         </div>
@@ -87,7 +90,7 @@ export default function DetailKisah({ story }) {
                                         <h2 className="text-3xl font-black text-slate-900 dark:text-slate-100 mb-8 border-b border-slate-100 dark:border-slate-800 pb-4">{t('kisah.story_content')}</h2>
                                         <div className="prose prose-slate dark:prose-invert max-w-none">
                                             <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-lg whitespace-pre-line first-letter:text-5xl first-letter:font-black first-letter:mr-3 first-letter:float-left first-letter:text-primary">
-                                                {story.longDesc}
+                                                <AITranslate text={story.longDesc} />
                                             </p>
                                         </div>
                                     </div>
@@ -128,7 +131,7 @@ export default function DetailKisah({ story }) {
                                             <span className="material-symbols-outlined">eco</span> {t('kisah.moral_value')}
                                         </h3>
                                         <p className="text-slate-700 dark:text-slate-300 italic font-medium">
-                                            "{story.moral}"
+                                            "<AITranslate text={story.moral} />"
                                         </p>
                                     </div>
 

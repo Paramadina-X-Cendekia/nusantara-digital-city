@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
+import AITranslate from '../components/AITranslate';
 import { Head, Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/Navbar';
@@ -384,13 +385,17 @@ export default function EksplorasiKuliner({ contributedDishes = [], contributedI
                                                                 <div className="flex justify-between items-start mb-2">
                                                                     <div className="flex items-center gap-2">
                                                                         <span className="size-2 bg-primary rounded-full"></span>
-                                                                        <h5 className="font-black text-slate-900 dark:text-white uppercase tracking-tight">{item.name}</h5>
+                                                                        <h5 className="font-black text-slate-900 dark:text-white uppercase tracking-tight">
+                                                                            <AITranslate text={item.name} />
+                                                                        </h5>
                                                                     </div>
                                                                     <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white dark:bg-slate-800 text-[9px] font-black uppercase tracking-widest text-slate-400 border border-slate-100 dark:border-slate-700 shadow-sm">
                                                                         Verified <span className="material-symbols-outlined text-[10px]">verified</span>
                                                                     </div>
                                                                 </div>
-                                                                <p className="text-xs text-slate-500 leading-relaxed mb-4 pl-4">{item.desc}</p>
+                                                                <p className="text-xs text-slate-500 leading-relaxed mb-4 pl-4">
+                                                                    <AITranslate text={item.desc} />
+                                                                </p>
                                                                 {hasStory && (
                                                                     <motion.button 
                                                                         whileHover={{ x: 5 }} whileTap={{ scale: 0.98 }}
@@ -477,7 +482,9 @@ export default function EksplorasiKuliner({ contributedDishes = [], contributedI
                                 <div className="p-8">
                                     <div className="flex justify-between items-start mb-6">
                                         <div>
-                                            <h3 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{selectedIngredient.name}</h3>
+                                            <h3 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">
+                                                <AITranslate text={selectedIngredient.name} />
+                                            </h3>
                                             <div className="flex items-center gap-2 mb-1">
                                                 <span className="material-symbols-outlined text-primary text-xs">storefront</span>
                                                 <p className="text-[10px] text-primary font-bold tracking-widest uppercase">{selectedIngredient.shopName || selectedIngredient.farmer}</p>
@@ -489,7 +496,7 @@ export default function EksplorasiKuliner({ contributedDishes = [], contributedI
                                         </button>
                                     </div>
                                     <p className="text-slate-600 dark:text-slate-400 leading-relaxed mb-8 font-medium italic">
-                                        "{selectedIngredient.story} Buka gerbang digital untuk melihat sertifikasi petani dan detail panen lengkap di jaringan blockchain kami."
+                                        "<AITranslate text={selectedIngredient.story} /> Buka gerbang digital untuk melihat sertifikasi petani dan detail panen lengkap di jaringan blockchain kami."
                                     </p>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700">
