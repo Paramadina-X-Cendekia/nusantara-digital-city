@@ -51,7 +51,7 @@ export default function Dashboard({ auth, contributions = [], stats = { total: 0
                     {/* Welcome Header */}
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                         <div className="space-y-2">
-                            <h1 className="text-4xl font-black italic tracking-tight">{t('dashboard.welcome_back').split(' ')[0]}, {auth.user.name}!</h1>
+                            <h1 className="text-4xl font-black italic tracking-tight">{t('dashboard.welcome_back')}, {auth.user.name}!</h1>
                             <p className="text-slate-500 dark:text-slate-400">{t('dashboard.welcome_desc')}</p>
                         </div>
                         <div className="flex flex-wrap gap-2">
