@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useMemo } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import gsap from 'gsap';
@@ -10,12 +10,305 @@ import { useLanguage } from '@/lib/LanguageContext';
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
+function NusantaraBackground() {
+    const auroraRef = useRef(null);
+    const beamsRef = useRef(null);
+    const particlesRef = useRef(null);
+    const compassRef = useRef(null);
+    const batikRef = useRef(null);
+    const archipelagoRef = useRef(null);
+
+    useEffect(() => {
+        const prefersReduced = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (prefersReduced) return;
+        const auroraTl = gsap.to(auroraRef.current?.children || [], {
+            xPercent: (i) => (i % 2 === 0 ? 20 : -20),
+            yPercent: (i) => (i % 2 === 0 ? -15 : 15),
+            duration: 16,
+            ease: 'sine.inOut',
+            repeat: -1,
+            yoyo: true,
+            stagger: { each: 1.2, from: 'random' },
+        });
+
+        const beamTl = gsap.to(beamsRef.current?.children || [], {
+            opacity: 0.55,
+            duration: 3.5,
+            ease: 'sine.inOut',
+            repeat: -1,
+            yoyo: true,
+            stagger: { each: 0.7, from: 'random' },
+        });
+
+        const compassTl = compassRef.current
+            ? gsap.to(compassRef.current, { rotate: 360, duration: 90, ease: 'none', repeat: -1, transformOrigin: '50% 50%' })
+            : null;
+
+        const batikTl = batikRef.current
+            ? gsap.to(batikRef.current, { rotate: -360, duration: 120, ease: 'none', repeat: -1, transformOrigin: '50% 50%' })
+            : null;
+
+        const archipelagoTl = gsap.to(
+            archipelagoRef.current?.querySelectorAll('.island-dot') || [],
+            {
+                opacity: 0.9,
+                scale: 1.6,
+                duration: 2.4,
+                ease: 'sine.inOut',
+                repeat: -1,
+                yoyo: true,
+                stagger: { each: 0.2, from: 'random' },
+                transformOrigin: '50% 50%',
+            }
+        );
+
+        const particles = particlesRef.current?.querySelectorAll('.particle') || [];
+        particles.forEach((p) => {
+            gsap.to(p, {
+                y: `+=${gsap.utils.random(-80, 80)}`,
+                x: `+=${gsap.utils.random(-60, 60)}`,
+                opacity: gsap.utils.random(0.3, 0.9),
+                duration: gsap.utils.random(4, 9),
+                ease: 'sine.inOut',
+                repeat: -1,
+                yoyo: true,
+                delay: gsap.utils.random(0, 3),
+            });
+        });
+
+        return () => {
+            auroraTl?.kill();
+            beamTl?.kill();
+            compassTl?.kill();
+            batikTl?.kill();
+            archipelagoTl?.kill();
+            gsap.killTweensOf(particles);
+        };
+    }, []);
+
+    const particles = useMemo(() => Array.from({ length: 18 }).map((_, i) => ({
+        id: i,
+        top: `${Math.random() * 100}%`,
+        left: `${Math.random() * 100}%`,
+        size: 1 + Math.random() * 3,
+        opacity: 0.2 + Math.random() * 0.6,
+    })), []);
+
+    // Simplified Indonesian archipelago — approximate positions (% of bg)
+    const islands = useMemo(() => [
+        { x: 14, y: 38, s: 4 }, { x: 16, y: 42, s: 3 }, { x: 18, y: 46, s: 3.5 },
+        { x: 20, y: 50, s: 3 }, { x: 22, y: 54, s: 4 }, { x: 24, y: 58, s: 3 },
+        { x: 30, y: 64, s: 2.5 }, { x: 34, y: 65, s: 3 }, { x: 38, y: 66, s: 2.5 },
+        { x: 42, y: 66, s: 2.5 }, { x: 46, y: 66, s: 2 },
+        { x: 50, y: 67, s: 2 }, { x: 54, y: 68, s: 2 }, { x: 58, y: 68, s: 2 },
+        { x: 62, y: 69, s: 2 }, { x: 66, y: 69, s: 2 },
+        { x: 42, y: 42, s: 5 }, { x: 45, y: 46, s: 4.5 }, { x: 48, y: 50, s: 4 },
+        { x: 51, y: 46, s: 3.5 },
+        { x: 60, y: 44, s: 3 }, { x: 62, y: 48, s: 3.5 }, { x: 64, y: 52, s: 3 },
+        { x: 66, y: 48, s: 2.5 },
+        { x: 74, y: 50, s: 2.5 }, { x: 76, y: 54, s: 2 }, { x: 78, y: 48, s: 2 },
+        { x: 82, y: 52, s: 5 }, { x: 86, y: 54, s: 4.5 }, { x: 90, y: 56, s: 4 },
+        { x: 88, y: 50, s: 3.5 },
+    ], []);
+
+    return (
+        <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ contain: 'paint', transform: 'translateZ(0)', willChange: 'transform' }}>
+            {/* Base gradient */}
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/20 via-background-light to-background-light dark:from-primary/30 dark:via-slate-950 dark:to-background-dark" />
+
+            {/* Aurora blobs */}
+            <div ref={auroraRef} className="absolute inset-0">
+                <div className="absolute top-[-20%] left-[-10%] w-[55vw] h-[55vw] rounded-full bg-primary/40 blur-[70px]" />
+                <div className="absolute top-[10%] right-[-15%] w-[50vw] h-[50vw] rounded-full bg-yellow-500/30 blur-[80px]" />
+                <div className="absolute bottom-[-25%] left-[20%] w-[60vw] h-[60vw] rounded-full bg-cyan-400/30 blur-[90px]" />
+                <div className="absolute top-[30%] left-[30%] w-[35vw] h-[35vw] rounded-full bg-orange-500/25 blur-[70px]" />
+            </div>
+
+            {/* Animated light beams */}
+            <div ref={beamsRef} className="absolute inset-0 pointer-events-none">
+                {[...Array(7)].map((_, i) => {
+                    const palette = [
+                        'via-primary/80',
+                        'via-fuchsia-400/80',
+                        'via-cyan-300/80',
+                        'via-violet-400/80',
+                        'via-sky-300/80',
+                        'via-pink-300/80',
+                        'via-emerald-300/80',
+                    ];
+                    return (
+                        <div
+                            key={i}
+                            className={`absolute top-[-20%] h-[140%] w-[3px] bg-gradient-to-b from-transparent ${palette[i]} to-transparent`}
+                            style={{
+                                left: `${8 + i * 13}%`,
+                                transform: `rotate(${-10 + i * 3}deg)`,
+                                filter: 'blur(2px) drop-shadow(0 0 12px currentColor)',
+                                opacity: 0.9,
+                            }}
+                        />
+                    );
+                })}
+            </div>
+
+            {/* Peta Kepulauan Nusantara — archipelago dots */}
+            <div ref={archipelagoRef} className="absolute inset-0 opacity-60 dark:opacity-50">
+                {islands.map((isl, i) => (
+                    <span
+                        key={i}
+                        className="island-dot absolute rounded-full bg-primary shadow-[0_0_12px_rgba(59,130,246,0.7)]"
+                        style={{
+                            top: `${isl.y}%`,
+                            left: `${isl.x}%`,
+                            width: `${isl.s * 2}px`,
+                            height: `${isl.s * 2}px`,
+                            opacity: 0.5,
+                        }}
+                    />
+                ))}
+                <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 100">
+                    <defs>
+                        <linearGradient id="line-grad" x1="0" x2="1">
+                            <stop offset="0%" stopColor="currentColor" stopOpacity="0" />
+                            <stop offset="50%" stopColor="currentColor" stopOpacity="0.5" />
+                            <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
+                        </linearGradient>
+                    </defs>
+                    <g className="text-primary" stroke="url(#line-grad)" strokeWidth="0.15" fill="none">
+                        <path d="M14,38 Q25,55 30,64" />
+                        <path d="M30,64 Q45,65 66,69" />
+                        <path d="M22,54 Q35,50 45,46" />
+                        <path d="M48,50 Q55,46 60,44" />
+                        <path d="M64,52 Q70,52 74,50" />
+                        <path d="M78,48 Q82,50 88,50" />
+                        <path d="M66,69 Q75,60 82,52" />
+                    </g>
+                </svg>
+            </div>
+
+            {/* Kompas Mata Angin — top right */}
+            <div className="absolute top-[8%] right-[6%] w-[260px] h-[260px] opacity-[0.10] dark:opacity-[0.14] hidden md:block">
+                <svg ref={compassRef} viewBox="0 0 200 200" className="w-full h-full text-primary">
+                    <g fill="none" stroke="currentColor" strokeWidth="0.8">
+                        <circle cx="100" cy="100" r="95" />
+                        <circle cx="100" cy="100" r="78" />
+                        <circle cx="100" cy="100" r="55" strokeDasharray="2 3" />
+                        <circle cx="100" cy="100" r="30" />
+                    </g>
+                    {Array.from({ length: 16 }).map((_, i) => {
+                        const a = (i * 360) / 16;
+                        const long = i % 4 === 0;
+                        return (
+                            <line key={i} x1="100" y1={long ? 8 : 18} x2="100" y2={long ? 30 : 26}
+                                stroke="currentColor" strokeWidth={long ? 1.2 : 0.6}
+                                transform={`rotate(${a} 100 100)`} />
+                        );
+                    })}
+                    <polygon points="100,15 95,100 100,90 105,100" fill="currentColor" opacity="0.6" />
+                    <polygon points="100,185 95,100 100,110 105,100" fill="currentColor" opacity="0.3" />
+                    <text x="100" y="50" textAnchor="middle" fontSize="10" fontWeight="900" fill="currentColor">U</text>
+                    <text x="100" y="158" textAnchor="middle" fontSize="8" fontWeight="900" fill="currentColor" opacity="0.5">S</text>
+                    <text x="48" y="104" textAnchor="middle" fontSize="8" fontWeight="900" fill="currentColor" opacity="0.5">B</text>
+                    <text x="152" y="104" textAnchor="middle" fontSize="8" fontWeight="900" fill="currentColor" opacity="0.5">T</text>
+                </svg>
+            </div>
+
+            {/* Batik Mandala — bottom left */}
+            <div className="absolute bottom-[6%] left-[4%] w-[320px] h-[320px] opacity-[0.08] dark:opacity-[0.12] hidden md:block">
+                <svg ref={batikRef} viewBox="0 0 200 200" className="w-full h-full text-fuchsia-500 dark:text-fuchsia-300">
+                    <g fill="none" stroke="currentColor" strokeWidth="0.6">
+                        {Array.from({ length: 12 }).map((_, i) => {
+                            const a = (i * 360) / 12;
+                            return (
+                                <g key={i} transform={`rotate(${a} 100 100)`}>
+                                    <path d="M100,15 Q108,40 100,60 Q92,40 100,15 Z" />
+                                    <circle cx="100" cy="30" r="2" fill="currentColor" />
+                                </g>
+                            );
+                        })}
+                        {Array.from({ length: 8 }).map((_, i) => {
+                            const a = (i * 360) / 8;
+                            return (
+                                <g key={i} transform={`rotate(${a} 100 100)`}>
+                                    <ellipse cx="100" cy="60" rx="6" ry="10" />
+                                </g>
+                            );
+                        })}
+                        <circle cx="100" cy="100" r="85" />
+                        <circle cx="100" cy="100" r="70" strokeDasharray="1 2" />
+                        <circle cx="100" cy="100" r="45" />
+                        <circle cx="100" cy="100" r="20" />
+                        <circle cx="100" cy="100" r="6" fill="currentColor" />
+                    </g>
+                </svg>
+            </div>
+
+            {/* Siluet Candi — center bottom */}
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] max-w-[80vw] h-[180px] opacity-[0.08] dark:opacity-[0.12] pointer-events-none">
+                <svg viewBox="0 0 600 180" preserveAspectRatio="xMidYEnd meet" className="w-full h-full text-primary">
+                    <g fill="currentColor">
+                        <path d="M0,180 L0,140 L60,140 L60,120 L100,120 L100,100 L150,100 L150,80 L200,80 L200,60 L260,60 L260,40 L300,10 L340,40 L340,60 L400,60 L400,80 L450,80 L450,100 L500,100 L500,120 L540,120 L540,140 L600,140 L600,180 Z" />
+                        <circle cx="300" cy="6" r="6" />
+                    </g>
+                </svg>
+            </div>
+
+            {/* Gunungan Wayang — right middle */}
+            <div className="absolute top-[45%] right-[2%] w-[180px] h-[260px] opacity-[0.07] dark:opacity-[0.1] hidden lg:block">
+                <svg viewBox="0 0 100 160" className="w-full h-full text-amber-500 dark:text-amber-300">
+                    <g fill="none" stroke="currentColor" strokeWidth="0.6">
+                        <path d="M50,5 L20,50 L15,150 L85,150 L80,50 Z" />
+                        <path d="M50,15 L28,55 L25,140 L75,140 L72,55 Z" />
+                        <path d="M50,30 L35,60 L33,130 L67,130 L65,60 Z" />
+                        <circle cx="50" cy="90" r="14" />
+                        <circle cx="50" cy="90" r="6" fill="currentColor" opacity="0.4" />
+                        <path d="M30,80 Q50,70 70,80" />
+                        <path d="M30,100 Q50,110 70,100" />
+                    </g>
+                </svg>
+            </div>
+
+            {/* Grid overlay */}
+            <div
+                className="absolute inset-0 opacity-[0.08] dark:opacity-[0.12]"
+                style={{
+                    backgroundImage:
+                        'linear-gradient(rgba(255,255,255,.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.5) 1px, transparent 1px)',
+                    backgroundSize: '64px 64px',
+                    maskImage: 'radial-gradient(ellipse at center, black 40%, transparent 75%)',
+                    WebkitMaskImage: 'radial-gradient(ellipse at center, black 40%, transparent 75%)',
+                }}
+            />
+
+            {/* Floating particles */}
+            <div ref={particlesRef} className="absolute inset-0">
+                {particles.map((p) => (
+                    <span
+                        key={p.id}
+                        className="particle absolute rounded-full bg-white dark:bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]"
+                        style={{
+                            top: p.top,
+                            left: p.left,
+                            width: `${p.size}px`,
+                            height: `${p.size}px`,
+                            opacity: p.opacity,
+                        }}
+                    />
+                ))}
+            </div>
+        </div>
+    );
+}
+
 export default function Home({ leaderboard = [] }) {
     const { t } = useLanguage();
     const sectionRef = useRef(null);
     const triggerRef = useRef(null);
     const timelineRef = useRef(null);
     const lineRef = useRef(null);
+    const heroRef = useRef(null);
+    const heroContentRef = useRef(null);
+    const heroBgRef = useRef(null);
     const [openFaq, setOpenFaq] = useState(null);
     const [activeFeature, setActiveFeature] = useState(0);
 
@@ -129,6 +422,51 @@ export default function Home({ leaderboard = [] }) {
                 return tl;
             });
 
+            // ── HERO Scroll Animation (parallax + fade + scale + blur) ──
+            let heroBgScroll, heroContentScroll;
+            if (heroRef.current) {
+                if (heroBgRef.current) {
+                    gsap.set(heroBgRef.current, { willChange: 'transform', force3D: true });
+                    heroBgScroll = gsap.to(heroBgRef.current, {
+                        yPercent: 15,
+                        ease: 'none',
+                        scrollTrigger: {
+                            trigger: heroRef.current,
+                            start: 'top top',
+                            end: 'bottom top',
+                            scrub: 0.8,
+                            invalidateOnRefresh: true,
+                        },
+                    });
+                }
+
+                if (heroContentRef.current) {
+                    gsap.set(heroContentRef.current, { willChange: 'transform, opacity', force3D: true });
+                    heroContentScroll = gsap.to(heroContentRef.current, {
+                        yPercent: -15,
+                        opacity: 0,
+                        ease: 'none',
+                        scrollTrigger: {
+                            trigger: heroRef.current,
+                            start: 'top top',
+                            end: 'bottom 30%',
+                            scrub: 0.8,
+                            invalidateOnRefresh: true,
+                        },
+                    });
+
+                    // Initial reveal: stagger children
+                    gsap.from(heroContentRef.current.querySelectorAll('[data-hero-stagger]'), {
+                        y: 40,
+                        opacity: 0,
+                        duration: 1,
+                        stagger: 0.15,
+                        ease: 'power3.out',
+                        delay: 0.2,
+                    });
+                }
+            }
+
             // Wait for any animations/renders to settle and refresh again
             const timer = setTimeout(() => ScrollTrigger.refresh(), 500);
             const timer2 = setTimeout(() => ScrollTrigger.refresh(), 2000); // Robust fallback
@@ -158,47 +496,59 @@ export default function Home({ leaderboard = [] }) {
     };
 
     return (
-        <div className="relative flex min-h-screen flex-col bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-300 transition-colors duration-300 antialiased">
+        <div className="relative flex min-h-screen flex-col font-display text-slate-900 dark:text-slate-300 transition-colors duration-300 antialiased">
             <Head title={t('nav.home') + " | Sinergi Nusa"} />
             <Navbar />
 
             <main className="flex-grow">
-                {/* Hero Section — full-width, left-aligned */}
-                <section className="relative min-h-screen flex flex-col justify-end overflow-hidden">
-                    {/* Background Image */}
-                    <div
-                        className="absolute inset-0 bg-cover bg-center"
-                        style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuDPosYoLCnNw7zKsitCTwxKXjWF878_zb8mn4UrrqRW5Q-k2RNrFMb4iVgPu7aguuvf87GWI8eQOOq3kLlfMPgRukWlCE6Y_OewV2kDNhfg5Bjp5wrdmhgmVJZby5J6d1c7QeNdrZaX6FY9iN4Oh2Vl08N6dXfrrUSwy2J0HPJoS7LWmxX-a3O2ZrJSwoNDPviVs9TNvQ86kH3p65he-Lpo_uuWyOrKox7ti0sNVzTTdGFBI_VnfW49eNPiXpN2vk5Ja-QspLSVGeo1")' }}
-                    />
-                    {/* Shadow overlay */}
-                    <div className="absolute inset-0 bg-background-light/30 dark:bg-background-dark/80" />
-                    {/* Gradient to blend seamlessly */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-background-light from-0% via-background-light/20 to-transparent dark:from-background-dark dark:from-5% dark:via-background-dark/70 dark:to-transparent" />
+                {/* Hero Section — GSAP scroll content reveal */}
+                <section
+                    ref={heroRef}
+                    className="relative min-h-screen flex flex-col justify-end overflow-hidden"
+                >
+                    {/* Hero-only Nusantara background */}
+                    <div ref={heroBgRef} className="absolute inset-0 pointer-events-none">
+                        <NusantaraBackground />
+                    </div>
+
 
                     {/* Content */}
-                    <div className="relative z-10 flex-grow flex items-center justify-center text-center">
+                    <div
+                        ref={heroContentRef}
+                        className="relative z-10 flex-grow flex items-center justify-center text-center will-change-transform"
+                    >
                         <div className="w-full px-4 sm:px-10 lg:px-20 py-24 md:py-32 flex flex-col items-center">
-                            <motion.div
-                                initial="hidden"
-                                animate="visible"
-                                variants={staggerContainer}
-                                className="max-w-4xl flex flex-col items-center space-y-6"
-                            >
+                            <div className="max-w-4xl flex flex-col items-center space-y-6">
                                 {/* Badge */}
-                                <motion.div variants={fadeIn} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/5 dark:bg-white/10 backdrop-blur-md border border-primary/20 dark:border-white/20 text-primary dark:text-white/90 text-xs font-bold uppercase tracking-widest">
+                                <div
+                                    data-hero-stagger
+                                    className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/5 dark:bg-white/10 backdrop-blur-md border border-primary/20 dark:border-white/20 text-primary dark:text-white/90 text-xs font-bold uppercase tracking-widest shadow-sm"
+                                >
                                     <span className="size-1.5 rounded-full bg-primary animate-pulse" />
                                     Sinergi Nusa — Platform Warisan Digital
-                                </motion.div>
+                                </div>
 
-                                <motion.h1 variants={fadeIn} className="text-5xl sm:text-6xl lg:text-7xl font-black text-slate-900 dark:text-white leading-[1.05] tracking-tight text-center max-w-4xl mx-auto">
-                                    {t('home.hero_title')}{' '}<span className="text-primary italic">{t('home.digital_city')}</span>
-                                </motion.h1>
+                                <h1
+                                    data-hero-stagger
+                                    className="text-5xl sm:text-6xl lg:text-7xl font-black text-slate-900 dark:text-white leading-[1.05] tracking-tight text-center max-w-4xl mx-auto drop-shadow-sm"
+                                >
+                                    {t('home.hero_title')}{' '}
+                                    <span className="text-primary italic drop-shadow-md">
+                                        {t('home.digital_city')}
+                                    </span>
+                                </h1>
 
-                                <motion.p variants={fadeIn} className="text-base sm:text-lg text-slate-600 dark:text-slate-300 font-medium leading-relaxed max-w-2xl text-center mx-auto">
+                                <p
+                                    data-hero-stagger
+                                    className="text-base sm:text-lg lg:text-xl text-slate-700 dark:text-slate-300 font-medium leading-relaxed max-w-2xl text-center mx-auto drop-shadow-sm"
+                                >
                                     {t('home.hero_subtitle')}
-                                </motion.p>
+                                </p>
 
-                                <motion.div variants={fadeIn} className="flex flex-col sm:flex-row gap-4 pt-6 justify-center w-full">
+                                <div
+                                    data-hero-stagger
+                                    className="flex flex-col sm:flex-row gap-4 pt-6 justify-center w-full"
+                                >
                                     <Link href="/kontribusi">
                                         <motion.button
                                             whileHover={{ scale: 1.05 }}
@@ -218,16 +568,22 @@ export default function Home({ leaderboard = [] }) {
                                     >
                                         {t('home.cta_learn')}
                                     </motion.button>
-                                </motion.div>
-                            </motion.div>
+                                </div>
+
+                                {/* Scroll indicator */}
+                                <div data-hero-stagger className="pt-12">
+                                    <div className="flex flex-col items-center gap-2 text-slate-500 dark:text-slate-400">
+                                        <span className="text-[10px] font-bold uppercase tracking-[0.3em]">Scroll</span>
+                                        <div className="w-[1px] h-10 bg-gradient-to-b from-primary to-transparent animate-pulse" />
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-
-
                 </section>
 
                 {/* ── Leaderboard Section ── */}
-                <section className="py-20 bg-slate-50 dark:bg-slate-900/30 relative">
+                <section className="py-20 bg-white/40 dark:bg-slate-900/30  relative">
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -295,7 +651,7 @@ export default function Home({ leaderboard = [] }) {
                         </div>
                     </motion.div>
                 </section>
-                <section ref={triggerRef} className="overflow-hidden bg-white dark:bg-slate-950">
+                <section ref={triggerRef} className="overflow-hidden bg-white/50 dark:bg-slate-950/50 ">
                     <div ref={sectionRef} className="flex h-[90vh] items-center px-10 md:px-24 gap-16 md:gap-32 w-max">
                         {/* Title Card */}
                         <div className="flex flex-col justify-center space-y-6 min-w-[300px] md:min-w-[500px]">
@@ -313,7 +669,7 @@ export default function Home({ leaderboard = [] }) {
                         {/* Pilar Cards */}
                         <div className="flex gap-8 md:gap-12 items-center pr-24">
                             {PILARS.map((role, idx) => (
-                                <div key={idx} className="min-w-[300px] md:min-w-[380px] h-[380px] md:h-[420px] group relative p-8 rounded-[3rem] border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30 backdrop-blur-sm transition-all duration-500 hover:shadow-2xl hover:shadow-primary/5 hover:-translate-y-2 cursor-pointer flex flex-col justify-between overflow-hidden">
+                                <div key={idx} className="min-w-[300px] md:min-w-[380px] h-[380px] md:h-[420px] group relative p-8 rounded-[3rem] border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30  transition-all duration-500 hover:shadow-2xl hover:shadow-primary/5 hover:-translate-y-2 cursor-pointer flex flex-col justify-between overflow-hidden">
                                     <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-3xl group-hover:bg-primary/10 transition-colors"></div>
 
                                     <div>
@@ -338,7 +694,7 @@ export default function Home({ leaderboard = [] }) {
                 </section>
 
                 {/* How It Works Section */}
-                <section className="py-24 px-4 bg-slate-50 dark:bg-slate-900/20 overflow-hidden">
+                <section className="py-24 px-4 bg-white/30 dark:bg-slate-900/20  overflow-hidden">
                     <div className="container mx-auto max-w-6xl">
                         <div className="flex flex-col md:flex-row items-center justify-between mb-20 gap-10">
                             <div className="max-w-xl">
@@ -405,7 +761,7 @@ export default function Home({ leaderboard = [] }) {
                 </section>
 
                 {/* Why Choose Us Section */}
-                <section className="py-24 px-4 relative overflow-hidden bg-white dark:bg-slate-950">
+                <section className="py-24 px-4 relative overflow-hidden bg-white/40 dark:bg-slate-950/40 ">
                     <div className="container mx-auto max-w-6xl relative z-10">
                         <div className="text-center mb-20 space-y-4">
                             <motion.div
@@ -456,22 +812,22 @@ export default function Home({ leaderboard = [] }) {
                 </section>
 
                 {/* Powerful Features Section (GSAP Focused) */}
-                <section className="py-24 px-4 bg-slate-900 text-white overflow-hidden relative">
-                    <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[120px] -translate-x-1/2 -translate-y-1/2"></div>
-                    <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-[120px] translate-x-1/2 translate-y-1/2"></div>
+                <section className="py-24 px-4 bg-white/40 dark:bg-slate-900/50  text-slate-900 dark:text-white overflow-hidden relative transition-colors duration-300">
+                    <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/10 dark:bg-primary/20 rounded-full blur-[120px] -translate-x-1/2 -translate-y-1/2"></div>
+                    <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary/5 dark:bg-primary/10 rounded-full blur-[120px] translate-x-1/2 translate-y-1/2"></div>
 
                     <div className="container mx-auto max-w-7xl relative z-10">
                         <div className="flex flex-col lg:flex-row items-end justify-between mb-20 gap-8">
                             <div className="space-y-4">
-                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-white text-xs font-bold uppercase tracking-widest">
+                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 dark:bg-white/10 border border-primary/20 dark:border-white/20 text-primary dark:text-white text-xs font-bold uppercase tracking-widest">
                                     Cutting Edge
                                 </div>
-                                <h2 className="text-4xl md:text-7xl font-black italic leading-none uppercase">
+                                <h2 className="text-4xl md:text-7xl font-black italic leading-none uppercase text-slate-900 dark:text-white">
                                     {t('home.feat_title')} <br />
                                     <span className="text-primary">{t('home.feat_subtitle')}</span>
                                 </h2>
                             </div>
-                            <p className="text-xl text-slate-400 max-w-md font-medium lg:text-right border-l-2 lg:border-l-0 lg:border-r-2 border-primary pl-6 lg:pl-0 lg:pr-6 py-2">
+                            <p className="text-xl text-slate-500 dark:text-slate-400 max-w-md font-medium lg:text-right border-l-2 lg:border-l-0 lg:border-r-2 border-primary pl-6 lg:pl-0 lg:pr-6 py-2">
                                 {t('home.feat_desc')}
                             </p>
                         </div>
@@ -496,18 +852,18 @@ export default function Home({ leaderboard = [] }) {
                                         variants={fadeIn}
                                         onClick={() => setActiveFeature(feat.id)}
                                         className={`feat-item flex gap-4 md:gap-6 p-5 md:p-6 rounded-[2rem] border transition-all duration-300 cursor-pointer group ${activeFeature === feat.id
-                                            ? 'bg-white/15 border-primary shadow-2xl shadow-primary/20 scale-[1.02] md:scale-105'
-                                            : 'bg-white/5 border-white/10 hover:bg-white/10'
+                                            ? 'bg-primary/5 dark:bg-white/15 border-primary shadow-2xl shadow-primary/20 scale-[1.02] md:scale-105'
+                                            : 'bg-white dark:bg-white/5 border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/10'
                                             }`}
                                     >
-                                        <div className={`size-14 shrink-0 rounded-2xl flex items-center justify-center shadow-lg transition-transform duration-500 group-hover:scale-110 ${activeFeature === feat.id ? feat.color : 'bg-white/10'
+                                        <div className={`size-14 shrink-0 rounded-2xl flex items-center justify-center shadow-lg transition-transform duration-500 group-hover:scale-110 ${activeFeature === feat.id ? feat.color + ' text-white' : 'bg-slate-100 dark:bg-white/10 text-slate-500 dark:text-white'
                                             }`}>
                                             <span className="material-symbols-outlined text-2xl">{feat.icon}</span>
                                         </div>
                                         <div>
-                                            <h3 className={`text-xl font-black mb-2 italic uppercase transition-colors ${activeFeature === feat.id ? 'text-primary' : 'text-white'
+                                            <h3 className={`text-xl font-black mb-2 italic uppercase transition-colors ${activeFeature === feat.id ? 'text-primary' : 'text-slate-800 dark:text-white'
                                                 }`}>{feat.title}</h3>
-                                            <p className="text-slate-400 text-sm font-medium leading-relaxed line-clamp-2">
+                                            <p className="text-slate-500 dark:text-slate-400 text-sm font-medium leading-relaxed line-clamp-2">
                                                 {feat.desc}
                                             </p>
                                         </div>
@@ -524,16 +880,16 @@ export default function Home({ leaderboard = [] }) {
                                         animate={{ opacity: 1, scale: 1, y: 0 }}
                                         exit={{ opacity: 0, scale: 1.1, y: -20 }}
                                         transition={{ duration: 0.5, ease: "circOut" }}
-                                        className="absolute inset-0 bg-slate-800/50 backdrop-blur-xl rounded-[3rem] border border-white/10 shadow-2xl overflow-hidden ring-1 ring-white/20"
+                                        className="absolute inset-0 bg-white/50 dark:bg-slate-800/50 backdrop-blur-xl rounded-[3rem] border border-slate-200 dark:border-white/10 shadow-2xl overflow-hidden ring-1 ring-slate-200 dark:ring-white/20"
                                     >
                                         {/* Browser Header Mockup */}
-                                        <div className="h-10 border-b border-white/10 bg-white/5 flex items-center px-6 gap-2">
+                                        <div className="h-10 border-b border-slate-200 dark:border-white/10 bg-slate-50/50 dark:bg-white/5 flex items-center px-6 gap-2">
                                             <div className="flex gap-1.5">
                                                 <div className="size-2.5 rounded-full bg-rose-500/50"></div>
                                                 <div className="size-2.5 rounded-full bg-amber-500/50"></div>
                                                 <div className="size-2.5 rounded-full bg-emerald-500/50"></div>
                                             </div>
-                                            <div className="flex-1 max-w-sm h-6 bg-white/10 rounded-full mx-auto flex items-center px-3 justify-center">
+                                            <div className="flex-1 max-w-sm h-6 bg-slate-200/50 dark:bg-white/10 rounded-full mx-auto flex items-center px-3 justify-center">
                                                 <span className="text-[10px] text-slate-500 font-bold tracking-tight">nusantara-digital.city/{activeFeature === 0 ? 'ar-view' : activeFeature === 1 ? 'gallery' : activeFeature === 2 ? 'interactive-map' : 'contribute'}</span>
                                             </div>
                                         </div>
@@ -546,21 +902,21 @@ export default function Home({ leaderboard = [] }) {
                                                         <motion.div
                                                             animate={{ rotateY: 360 }}
                                                             transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                                                            className="size-48 md:size-56 bg-gradient-to-tr from-primary to-primary-light rounded-3xl shadow-2xl flex items-center justify-center ring-4 ring-white/10 relative z-10"
+                                                            className="size-48 md:size-56 bg-gradient-to-tr from-primary to-primary-light rounded-3xl shadow-2xl flex items-center justify-center ring-4 ring-white/10 dark:ring-white/10 relative z-10"
                                                         >
                                                             <span className="material-symbols-outlined text-white text-8xl" style={{ fontVariationSettings: "'FILL' 1" }}>temple_buddhist</span>
                                                         </motion.div>
                                                         <div className="absolute inset-0 bg-primary/20 rounded-full blur-[60px] animate-pulse"></div>
-                                                        <div className="absolute top-0 right-0 p-4 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 animate-bounce">
+                                                        <div className="absolute top-0 right-0 p-4 bg-white/50 dark:bg-white/10 backdrop-blur-md rounded-2xl border border-white/50 dark:border-white/20 animate-bounce">
                                                             <span className="material-symbols-outlined text-primary">view_in_ar</span>
                                                         </div>
                                                     </div>
                                                     <div className="space-y-4">
-                                                        <div className="inline-flex gap-2 p-1 bg-white/5 rounded-full border border-white/10">
-                                                            <button className="px-4 py-1.5 bg-primary rounded-full text-[10px] font-black uppercase">Model 3D</button>
-                                                            <button className="px-4 py-1.5 text-slate-400 text-[10px] font-black uppercase">AR Mode</button>
+                                                        <div className="inline-flex gap-2 p-1 bg-slate-200/50 dark:bg-white/5 rounded-full border border-slate-300 dark:border-white/10">
+                                                            <button className="px-4 py-1.5 bg-primary text-white rounded-full text-[10px] font-black uppercase">Model 3D</button>
+                                                            <button className="px-4 py-1.5 text-slate-600 dark:text-slate-400 text-[10px] font-black uppercase">AR Mode</button>
                                                         </div>
-                                                        <p className="text-slate-400 text-xs font-bold uppercase tracking-widest text-primary">Deteksi Bidang Datar Selesai</p>
+                                                        <p className="text-xs font-bold uppercase tracking-widest text-primary">Deteksi Bidang Datar Selesai</p>
                                                     </div>
                                                 </div>
                                             )}
@@ -570,15 +926,15 @@ export default function Home({ leaderboard = [] }) {
                                                     {/* Search Bar Mockup */}
                                                     <div className="relative">
                                                         <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 material-symbols-outlined text-sm">search</div>
-                                                        <div className="w-full h-10 bg-white/5 border border-white/10 rounded-xl px-10 flex items-center">
-                                                            <span className="text-[10px] text-slate-400 font-medium">Cari warisan, seni, atau sejarah...</span>
+                                                        <div className="w-full h-10 bg-slate-200/50 dark:bg-white/5 border border-slate-300 dark:border-white/10 rounded-xl px-10 flex items-center">
+                                                            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Cari warisan, seni, atau sejarah...</span>
                                                         </div>
                                                     </div>
 
                                                     {/* Categories Chip Mockup */}
                                                     <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
                                                         {['Semua', 'Situs', 'Seni', 'Cerita'].map((cat, i) => (
-                                                            <div key={i} className={`px-3 py-1 rounded-full text-[9px] font-black uppercase border whitespace-nowrap cursor-default ${i === 0 ? 'bg-primary border-primary text-white' : 'bg-white/5 border-white/10 text-slate-500'}`}>
+                                                            <div key={i} className={`px-3 py-1 rounded-full text-[9px] font-black uppercase border whitespace-nowrap cursor-default ${i === 0 ? 'bg-primary border-primary text-white' : 'bg-slate-200/50 dark:bg-white/5 border-slate-300 dark:border-white/10 text-slate-600 dark:text-slate-400'}`}>
                                                                 {cat}
                                                             </div>
                                                         ))}
@@ -596,15 +952,15 @@ export default function Home({ leaderboard = [] }) {
                                                                 initial={{ opacity: 0, y: 10 }}
                                                                 animate={{ opacity: 1, y: 0 }}
                                                                 transition={{ delay: i * 0.1 }}
-                                                                className="group rounded-2xl bg-white/5 border border-white/10 overflow-hidden hover:border-primary/50 transition-colors"
+                                                                className="group rounded-2xl bg-slate-100/50 dark:bg-white/5 border border-slate-200 dark:border-white/10 overflow-hidden hover:border-primary/50 transition-colors"
                                                             >
-                                                                <div className={`aspect-[4/3] bg-gradient-to-br ${item.color} to-slate-900/50 flex items-center justify-center relative`}>
-                                                                    <span className="material-symbols-outlined text-3xl text-white/20 group-hover:scale-110 transition-transform">{item.icon}</span>
-                                                                    <div className="absolute top-2 right-2 px-1.5 py-0.5 rounded-md bg-white/10 backdrop-blur-md text-[7px] font-black uppercase tracking-widest text-white/50">{item.cat}</div>
+                                                                <div className={`aspect-[4/3] bg-gradient-to-br ${item.color} to-slate-200/50 dark:to-slate-900/50 flex items-center justify-center relative`}>
+                                                                    <span className="material-symbols-outlined text-3xl text-slate-400 dark:text-white/20 group-hover:scale-110 transition-transform">{item.icon}</span>
+                                                                    <div className="absolute top-2 right-2 px-1.5 py-0.5 rounded-md bg-white/50 dark:bg-white/10 backdrop-blur-md text-[7px] font-black uppercase tracking-widest text-slate-600 dark:text-white/50">{item.cat}</div>
                                                                 </div>
                                                                 <div className="p-3 space-y-1">
-                                                                    <div className="h-2 w-full bg-white/10 rounded group-hover:bg-primary/20 transition-colors"></div>
-                                                                    <p className="text-[9px] font-black uppercase truncate text-slate-300 group-hover:text-primary transition-colors">{item.title}</p>
+                                                                    <div className="h-2 w-full bg-slate-200 dark:bg-white/10 rounded group-hover:bg-primary/20 transition-colors"></div>
+                                                                    <p className="text-[9px] font-black uppercase truncate text-slate-700 dark:text-slate-300 group-hover:text-primary transition-colors">{item.title}</p>
                                                                 </div>
                                                             </motion.div>
                                                         ))}
@@ -613,10 +969,10 @@ export default function Home({ leaderboard = [] }) {
                                             )}
 
                                             {activeFeature === 2 && (
-                                                <div className="relative h-full pb-12 rounded-2xl overflow-hidden bg-slate-900 border border-white/10">
-                                                    <div className="absolute inset-0 bg-slate-900 grid grid-cols-12 grid-rows-12 opacity-30">
+                                                <div className="relative h-full pb-12 rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-white/10">
+                                                    <div className="absolute inset-0 bg-slate-100 dark:bg-slate-900 grid grid-cols-12 grid-rows-12 opacity-30">
                                                         {Array.from({ length: 144 }).map((_, i) => (
-                                                            <div key={i} className="border-[0.5px] border-white/5"></div>
+                                                            <div key={i} className="border-[0.5px] border-slate-300 dark:border-white/5"></div>
                                                         ))}
                                                     </div>
                                                     <div className="absolute inset-0 flex items-center justify-center">
@@ -626,20 +982,20 @@ export default function Home({ leaderboard = [] }) {
                                                                 transition={{ duration: 2, repeat: Infinity }}
                                                                 className="absolute -inset-8 bg-primary/30 rounded-full blur-xl"
                                                             ></motion.div>
-                                                            <div className="size-4 bg-primary rounded-full ring-4 ring-white/20 shadow-xl shadow-primary/50 relative z-10"></div>
-                                                            <div className="absolute -top-16 -left-1/2 min-w-[120px] p-2 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 text-center animate-bounce">
+                                                            <div className="size-4 bg-primary rounded-full ring-4 ring-primary/20 dark:ring-white/20 shadow-xl shadow-primary/50 relative z-10"></div>
+                                                            <div className="absolute -top-16 -left-1/2 min-w-[120px] p-2 bg-white/50 dark:bg-white/10 backdrop-blur-md rounded-xl border border-slate-200 dark:border-white/20 text-center animate-bounce">
                                                                 <p className="text-[9px] font-black uppercase tracking-widest text-primary">Candi Borobudur</p>
-                                                                <p className="text-[8px] text-slate-400">Jawa Tengah</p>
+                                                                <p className="text-[8px] text-slate-500 dark:text-slate-400">Jawa Tengah</p>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div className="absolute bottom-4 left-4 right-4 h-16 bg-white/5 backdrop-blur-md rounded-xl border border-white/10 flex items-center px-4 gap-4">
+                                                    <div className="absolute bottom-4 left-4 right-4 h-16 bg-white/50 dark:bg-white/5 backdrop-blur-md rounded-xl border border-slate-200 dark:border-white/10 flex items-center px-4 gap-4">
                                                         <div className="size-10 rounded-lg bg-primary/20 flex items-center justify-center">
                                                             <span className="material-symbols-outlined text-primary">near_me</span>
                                                         </div>
                                                         <div className="flex-1 space-y-1">
-                                                            <div className="h-2 w-2/3 bg-white/20 rounded"></div>
-                                                            <div className="h-1 w-1/2 bg-white/10 rounded"></div>
+                                                            <div className="h-2 w-2/3 bg-slate-300 dark:bg-white/20 rounded"></div>
+                                                            <div className="h-1 w-1/2 bg-slate-200 dark:bg-white/10 rounded"></div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -647,18 +1003,18 @@ export default function Home({ leaderboard = [] }) {
 
                                             {activeFeature === 3 && (
                                                 <div className="h-full flex flex-col items-center justify-center space-y-6 pb-20">
-                                                    <div className="w-full max-w-sm space-y-4 p-6 bg-white/5 rounded-3xl border border-white/10">
+                                                    <div className="w-full max-w-sm space-y-4 p-6 bg-slate-100/50 dark:bg-white/5 rounded-3xl border border-slate-200 dark:border-white/10">
                                                         <div className="space-y-2">
-                                                            <div className="h-3 w-1/2 bg-white/10 rounded"></div>
-                                                            <div className="h-10 w-full bg-white/5 rounded-xl border border-white/10"></div>
+                                                            <div className="h-3 w-1/2 bg-slate-300 dark:bg-white/10 rounded"></div>
+                                                            <div className="h-10 w-full bg-slate-200/50 dark:bg-white/5 rounded-xl border border-slate-200 dark:border-white/10"></div>
                                                         </div>
                                                         <div className="space-y-2">
-                                                            <div className="h-3 w-2/3 bg-white/10 rounded"></div>
-                                                            <div className="h-24 w-full bg-white/5 rounded-xl border border-white/10"></div>
+                                                            <div className="h-3 w-2/3 bg-slate-300 dark:bg-white/10 rounded"></div>
+                                                            <div className="h-24 w-full bg-slate-200/50 dark:bg-white/5 rounded-xl border border-slate-200 dark:border-white/10"></div>
                                                         </div>
                                                         <motion.button
                                                             whileTap={{ scale: 0.95 }}
-                                                            className="w-full h-12 bg-primary rounded-xl font-black uppercase tracking-widest text-[10px] shadow-lg shadow-primary/20"
+                                                            className="w-full h-12 bg-primary text-white rounded-xl font-black uppercase tracking-widest text-[10px] shadow-lg shadow-primary/20"
                                                         >
                                                             Kirim Kontribusi
                                                         </motion.button>
@@ -666,10 +1022,10 @@ export default function Home({ leaderboard = [] }) {
                                                     <div className="flex items-center gap-3">
                                                         <div className="flex -space-x-3">
                                                             {[1, 2, 3].map(i => (
-                                                                <div key={i} className="size-8 rounded-full border-2 border-slate-900 bg-slate-700"></div>
+                                                                <div key={i} className="size-8 rounded-full border-2 border-white dark:border-slate-900 bg-slate-300 dark:bg-slate-700"></div>
                                                             ))}
                                                         </div>
-                                                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">+120 Kontributor Aktif</span>
+                                                        <span className="text-[10px] font-bold text-slate-600 dark:text-slate-500 uppercase tracking-widest">+120 Kontributor Aktif</span>
                                                     </div>
                                                 </div>
                                             )}
@@ -677,11 +1033,11 @@ export default function Home({ leaderboard = [] }) {
                                     </motion.div>
                                 </AnimatePresence>
                                 {/* Floating Badges Layer */}
-                                <div className="absolute -bottom-6 -right-6 p-6 bg-primary rounded-3xl shadow-2xl rotate-3 flex items-center gap-4 border-4 border-slate-900 animate-pulse hidden md:flex">
-                                    <span className="material-symbols-outlined text-3xl">verified</span>
+                                <div className="absolute -bottom-6 -right-6 p-6 bg-primary rounded-3xl shadow-2xl rotate-3 flex items-center gap-4 border-4 border-white dark:border-slate-900 animate-pulse hidden md:flex">
+                                    <span className="material-symbols-outlined text-3xl text-white">verified</span>
                                     <div>
-                                        <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-80">System Status</p>
-                                        <p className="text-xl font-black italic">FULLY SYNCED</p>
+                                        <p className="text-[10px] font-black text-white uppercase tracking-[0.2em] opacity-80">System Status</p>
+                                        <p className="text-xl font-black text-white italic">FULLY SYNCED</p>
                                     </div>
                                 </div>
                             </div>
@@ -690,7 +1046,7 @@ export default function Home({ leaderboard = [] }) {
                 </section>
 
                 {/* Contributor Badge Section with GSAP */}
-                <section className="py-24 px-4 bg-white dark:bg-slate-950 overflow-hidden">
+                <section className="py-24 px-4 bg-white/40 dark:bg-slate-950/40  overflow-hidden">
                     <div className="container mx-auto max-w-6xl">
                         <div className="text-center mb-20 space-y-4">
                             <motion.div
@@ -766,7 +1122,7 @@ export default function Home({ leaderboard = [] }) {
                 </section>
 
                 {/* FAQ Section */}
-                <section className="py-20 px-4 bg-white dark:bg-slate-950">
+                <section className="py-20 px-4 bg-white/40 dark:bg-slate-950/40 ">
                     <div className="container mx-auto max-w-4xl">
                         <motion.div
                             initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeIn}
