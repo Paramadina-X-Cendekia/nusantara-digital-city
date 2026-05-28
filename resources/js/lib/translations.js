@@ -432,7 +432,6 @@ export const translations = {
             rejected: 'Ditolak',
         },
         auth: {
-
             back_to_home: 'Kembali ke Beranda',
             login_welcome: 'Selamat Datang Kembali!',
             login_subtitle: 'Masuk untuk mengelola kontribusi digital Anda dan jelajahi warisan nusantara.',
@@ -615,7 +614,7 @@ export const translations = {
         },
         dashboard: {
             welcome_title: 'Selamat Datang!',
-            welcome_back: 'Selamat Datang Kembali!',
+            welcome_back: 'Selamat Datang',
             welcome_desc: 'Selamat datang kembali di pusat kontribusi digital Anda.',
             total_contributions: 'Total Kontribusi',
             approved_contributions: 'Telah Disetujui',
@@ -1260,7 +1259,7 @@ export const translations = {
         },
         dashboard: {
             welcome_title: 'Welcome!',
-            welcome_back: 'Welcome Back!',
+            welcome_back: 'Welcome',
             welcome_desc: 'Welcome back to your digital contribution center.',
             total_contributions: 'Total Contributions',
             approved_contributions: 'Approved',
