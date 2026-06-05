@@ -24,12 +24,7 @@ export default function Navbar() {
         { label: t('nav.contact'), href: '/kontak', icon: 'mail' },
     ];
 
-    const [theme, setTheme] = useState(() => {
-        if (typeof window !== 'undefined') {
-            return document.documentElement.classList.contains('dark') ? 'dark' : 'light';
-        }
-        return 'light';
-    });
+    const theme = 'dark';
 
     useEffect(() => {
         const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -48,18 +43,6 @@ export default function Navbar() {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, []);
-
-    const toggleTheme = () => {
-        const newTheme = theme === 'light' ? 'dark' : 'light';
-        setTheme(newTheme);
-        if (newTheme === 'dark') {
-            document.documentElement.classList.add('dark');
-            localStorage.setItem('theme', 'dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-            localStorage.setItem('theme', 'light');
-        }
-    };
 
     const handleLogout = () => {
         router.post('/logout');
@@ -135,32 +118,6 @@ export default function Navbar() {
                             >
                                 <span className="material-symbols-outlined text-[18px] md:text-[20px] text-primary">translate</span>
                                 <span className="text-[10px] md:text-xs font-black uppercase tracking-widest">{lang}</span>
-                            </motion.button>
-
-                            <motion.button
-                                whileHover={{ scale: 1.1, rotate: 15 }}
-                                whileTap={{ scale: 0.9 }}
-                                onClick={toggleTheme}
-                                className={`p-2 rounded-xl transition-all duration-300 shadow-sm ${
-                                    isTransparent
-                                        ? (theme === 'dark' ? 'bg-white/10 text-white border border-white/20 hover:bg-white/20' : 'bg-slate-900/5 text-primary border border-slate-900/10 hover:bg-slate-900/10') + ' backdrop-blur-md'
-                                        : 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-500/20 hover:shadow-lg hover:shadow-blue-500/10'
-                                }`}
-                                aria-label="Toggle Theme"
-                            >
-                                <AnimatePresence mode="wait">
-                                    <motion.span
-                                        key={theme}
-                                        initial={{ opacity: 0, scale: 0.5, rotate: -45 }}
-                                        animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                                        exit={{ opacity: 0, scale: 0.5, rotate: 45 }}
-                                        transition={{ duration: 0.3 }}
-                                        className="material-symbols-outlined block text-[20px] md:text-[24px]"
-                                        style={{ fontVariationSettings: "'FILL' 1" }}
-                                    >
-                                        {theme === 'light' ? 'light_mode' : 'dark_mode'}
-                                    </motion.span>
-                                </AnimatePresence>
                             </motion.button>
 
                             <div className="relative" ref={userMenuRef}>
