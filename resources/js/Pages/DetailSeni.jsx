@@ -116,6 +116,30 @@ const TAB_MAP = (t) => [
     { id: 'video', label: t('art_detail.documentary_video'), icon: 'video_library' },
 ];
 
+const getEmbedUrl = (url) => {
+    if (!url) return '';
+    let videoId = '';
+    
+    if (url.includes('youtube.com/watch')) {
+        try {
+            const urlParams = new URLSearchParams(new URL(url).search);
+            videoId = urlParams.get('v');
+        } catch (e) {
+            const matches = url.match(/[?&]v=([^&#]+)/);
+            if (matches) videoId = matches[1];
+        }
+    } else if (url.includes('youtu.be/')) {
+        videoId = url.split('youtu.be/')[1]?.split(/[?#]/)[0];
+    } else if (url.includes('youtube.com/embed/')) {
+        return url;
+    }
+    
+    if (videoId) {
+        return `https://www.youtube.com/embed/${videoId}`;
+    }
+    return url;
+};
+
 export default function DetailSeniWrapper(props) {
     return (
         <ErrorBoundary>
@@ -142,6 +166,56 @@ function DetailSeni({ art }) {
     const barsContainerRef = useRef(null);
     const [previewIndex, setPreviewIndex] = useState(0);
     const [selectedInstrument, setSelectedInstrument] = useState(null);
+
+    const getArtFacts = () => {
+        if (art.fakta_menarik) {
+            if (Array.isArray(art.fakta_menarik) && art.fakta_menarik.length > 0) {
+                return art.fakta_menarik;
+            }
+            if (typeof art.fakta_menarik === 'string' && art.fakta_menarik.trim() !== '') {
+                try {
+                    const parsed = JSON.parse(art.fakta_menarik);
+                    if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+                } catch (e) {}
+                const lines = art.fakta_menarik.split(/[;\n\r]+/).map(s => s.trim().replace(/^[-*\d.\s]+/, '')).filter(Boolean);
+                if (lines.length > 0) return lines;
+            }
+        }
+        if (art.facts && Array.isArray(art.facts) && art.facts.length > 0) {
+            return art.facts;
+        }
+        const cat = art.category?.toLowerCase() || '';
+        if (cat === 'batik') {
+            return [
+                'Warisan budaya takbenda asli Indonesia yang diakui oleh UNESCO sejak tahun 2009.',
+                'Setiap goresan motif batik mengandung doa, harapan, dan nilai filosofis mendalam.',
+                'Dibuat menggunakan malam (lilin) panas sebagai perintang warna dengan canting tulis atau cap.'
+            ];
+        } else if (cat === 'gamelan') {
+            return [
+                'Ansambel musik tradisional Indonesia yang sebagian besar instrumennya terbuat dari perunggu.',
+                'Memiliki struktur nada khas (Slendro dan Pelog) yang menciptakan harmoni magis.',
+                'Dimainkan secara gotong royong, melambangkan kebersamaan dan keselarasan hidup.'
+            ];
+        } else if (cat === 'tari') {
+            return [
+                'Gerak tari tradisional yang sarat akan nilai estetika, sejarah, dan makna ritual.',
+                'Menggunakan busana adat khas daerah yang melambangkan keagungan budaya setempat.',
+                'Sering kali dipentaskan dalam upacara adat penting maupun penyambutan tamu agung.'
+            ];
+        } else if (cat === 'ukir') {
+            return [
+                'Seni pahat kayu tradisional dengan tingkat kerumitan tinggi dan motif sulur yang khas.',
+                'Dikerjakan oleh pengrajin lokal yang mewarisi keahlian memahat turun-temurun.',
+                'Menggunakan bahan kayu berkualitas tinggi seperti jati untuk menjamin ketahanan karya.'
+            ];
+        }
+        return [
+            'Merupakan bagian dari cagar budaya dan warisan sejarah luhur Nusantara.',
+            'Dilestarikan untuk memperkuat identitas kebudayaan bangsa di tengah era modern.',
+            'Didokumentasikan secara digital agar tetap lestari dan dapat dipelajari generasi masa depan.'
+        ];
+    };
 
     if (!art) {
         console.warn("DetailSeni: No art object provided");
@@ -412,8 +486,8 @@ function DetailSeni({ art }) {
                                     {t('art_detail.interesting_facts')}
                                 </h3>
                                 <ul className="space-y-3">
-                                    {(art.fakta_menarik && art.fakta_menarik.length > 0 ? art.fakta_menarik : (art.facts || [])).map((fact, i) => (
-                                        <motion.li key={i} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="flex items-start gap-3 text-sm text-slate-600 dark:text-slate-400">
+                                    {getArtFacts().map((fact, i) => (
+                                        <motion.li key={i} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.15 }} className="flex items-start gap-3 text-sm text-slate-600 dark:text-slate-400">
                                             <span className="size-6 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0 text-xs font-bold">{i + 1}</span>
                                             <AITranslate text={fact} />
                                         </motion.li>
@@ -697,7 +771,7 @@ function DetailSeni({ art }) {
                                         {art.videoUrl ? (
                                             <iframe
                                                 className="absolute inset-0 w-full h-full"
-                                                src={art.videoUrl}
+                                                src={getEmbedUrl(art.videoUrl)}
                                                 title={art.videoTitle || 'Video Dokumenter'}
                                                 frameBorder="0"
                                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

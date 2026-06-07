@@ -10,7 +10,7 @@ export default function DetailModal({ isOpen, onClose, contribution, children })
 
     const renderDetails = () => {
         const { type, data } = contribution;
-        
+
         switch (type) {
             case 'kota':
                 return (
@@ -38,11 +38,11 @@ export default function DetailModal({ isOpen, onClose, contribution, children })
                         <div className="grid grid-cols-2 gap-6">
                             <DetailItem label={t('modal.label_art_name')} value={data.artName} />
                             <DetailItem label={t('modal.label_category')} value={data.artCategory} />
-                            {data.artCategory === 'seni' && <DetailItem label={t('modal.label_art_type')} value={data.artSubCategory} /> }
+                            {data.artCategory === 'seni' && <DetailItem label={t('modal.label_art_type')} value={data.artSubCategory} />}
                             <DetailItem label={t('modal.label_origin')} value={data.origin || data.cityName} />
                             <DetailItem label={t('modal.label_province')} value={data.province} />
-                            {data.lat && <DetailItem label={t('modal.label_lat')} value={data.lat} /> }
-                            {data.lng && <DetailItem label={t('modal.label_lng')} value={data.lng} /> }
+                            {data.lat && <DetailItem label={t('modal.label_lat')} value={data.lat} />}
+                            {data.lng && <DetailItem label={t('modal.label_lng')} value={data.lng} />}
                             <div className="col-span-2">
                                 <DetailItem label={t('modal.label_description')} value={<AITranslate text={data.description} />} />
                             </div>
@@ -91,7 +91,7 @@ export default function DetailModal({ isOpen, onClose, contribution, children })
                                                     <p className="font-bold text-sm text-slate-900 dark:text-slate-100">
                                                         <AITranslate text={dish.name} />
                                                     </p>
-                                                    <span className="text-[9px] font-medium text-slate-400 italic">#{i+1}</span>
+                                                    <span className="text-[9px] font-medium text-slate-400 italic">#{i + 1}</span>
                                                 </div>
                                                 <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-relaxed italic line-clamp-2">
                                                     <AITranslate text={dish.description} />
@@ -150,14 +150,14 @@ export default function DetailModal({ isOpen, onClose, contribution, children })
         <AnimatePresence>
             {isOpen && (
                 <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={onClose}
                         className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm"
                     />
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0, scale: 0.95, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -172,14 +172,14 @@ export default function DetailModal({ isOpen, onClose, contribution, children })
                                 <span className="material-symbols-outlined">close</span>
                             </button>
                         </div>
-                        
+
                         <div className="p-8 max-h-[70vh] overflow-y-auto">
                             {renderDetails()}
                             {children}
                         </div>
 
                         <div className="p-8 bg-slate-50 dark:bg-slate-800/50 flex justify-end">
-                            <button 
+                            <button
                                 onClick={onClose}
                                 className="px-8 py-3 bg-slate-900 dark:bg-white dark:text-slate-950 text-white rounded-2xl font-black italic shadow-xl transition-all hover:scale-105"
                             >

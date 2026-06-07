@@ -12,7 +12,7 @@ class OpenRouterService
     public function __construct()
     {
         $this->apiKey = env('OPENROUTER_API_KEY');
-        $this->model = env('OPENROUTER_MODEL', 'google/gemini-2.0-flash-001');
+        $this->model = env('OPENROUTER_MODEL', 'google/gemini-2.5-flash');
     }
 
     public function generateDescription($type, $name)
@@ -34,7 +34,8 @@ class OpenRouterService
                 'messages' => [
                     ['role' => 'user', 'content' => $prompt]
                 ],
-                'response_format' => ['type' => 'json_object']
+                'response_format' => ['type' => 'json_object'],
+                'max_tokens' => 1000
             ]);
 
             if ($response->successful()) {
@@ -162,7 +163,8 @@ class OpenRouterService
                         ]
                     ]
                 ],
-                'response_format' => ['type' => 'json_object']
+                'response_format' => ['type' => 'json_object'],
+                'max_tokens' => 2000
             ]);
 
             if ($response->successful()) {
@@ -214,6 +216,7 @@ class OpenRouterService
                 'messages' => [
                     ['role' => 'user', 'content' => $prompt]
                 ],
+                'max_tokens' => 1000
             ]);
 
             if ($response->successful()) {

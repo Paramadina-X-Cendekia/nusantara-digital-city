@@ -63,6 +63,86 @@ class ModerationController extends Controller
         ]);
     }
 
+    public function destroy($id)
+    {
+        $contribution = Contribution::findOrFail($id);
+
+        try {
+            // Delete from Firebase if status is approved (it has been synced)
+            if ($contribution->status === 'approved') {
+                $type = $contribution->type;
+                $data = $contribution->data;
+
+                // 1. Try to delete using stored firebase keys
+                if (isset($data['firebase_keys']) && is_array($data['firebase_keys'])) {
+                    foreach ($data['firebase_keys'] as $node => $key) {
+                        $this->database->getReference($node . '/' . $key)->remove();
+                    }
+                } else {
+                    // 2. Fallback: Search and delete based on type and fields
+                    $slug = null;
+                    if ($type === 'budaya' || $type === 'kota_budaya') {
+                        $slug = \Illuminate\Support\Str::slug($data['artName'] ?? 'untitled');
+                        $this->database->getReference('seni_budaya/' . $slug)->remove();
+
+                        $artName = $data['artName'] ?? null;
+                        if ($artName) {
+                            $seniRef = $this->database->getReference('seni_budaya');
+                            $seniData = $seniRef->getValue();
+                            if (is_array($seniData)) {
+                                foreach ($seniData as $key => $itemVal) {
+                                    $nameVal = $itemVal['artName'] ?? $itemVal['title'] ?? '';
+                                    if (strcasecmp($nameVal, $artName) === 0) {
+                                        $this->database->getReference('seni_budaya/' . $key)->remove();
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if ($type === 'kota' || $type === 'kota_budaya' || $type === 'kota_kuliner') {
+                        $cityName = $data['cityName'] ?? '';
+                        if ($cityName) {
+                            $citiesRef = $this->database->getReference('cities');
+                            $cities = $citiesRef->getValue();
+                            if (is_array($cities)) {
+                                foreach ($cities as $key => $cityVal) {
+                                    $nameVal = $cityVal['name'] ?? $cityVal['cityName'] ?? '';
+                                    if (strcasecmp($nameVal, $cityName) === 0) {
+                                        $this->database->getReference('cities/' . $key)->remove();
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if ($type === 'wisata' || $type === 'kuliner' || $type === 'kota_kuliner') {
+                        $targetName = $data['tourismName'] ?? $data['shopName'] ?? '';
+                        if ($targetName) {
+                            $wisataRef = $this->database->getReference('wisata_kuliner');
+                            $wisataData = $wisataRef->getValue();
+                            if (is_array($wisataData)) {
+                                foreach ($wisataData as $key => $itemVal) {
+                                    $nameVal = $itemVal['tourismName'] ?? $itemVal['shopName'] ?? '';
+                                    if (strcasecmp($nameVal, $targetName) === 0) {
+                                        $this->database->getReference('wisata_kuliner/' . $key)->remove();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            \Log::error('Gagal menghapus kontribusi dari Firebase: ' . $e->getMessage());
+        }
+
+        // Delete from local database
+        $contribution->delete();
+
+        return back()->with('success', 'Kontribusi berhasil dihapus sepenuhnya!');
+    }
+
     protected function syncToFirebase($contribution)
     {
         $type = $contribution->type;
@@ -98,6 +178,22 @@ class ModerationController extends Controller
             // Continue without translation — data will still be saved in Indonesian
         }
 
+        // Generate slug and set attributes for budaya / kota_budaya
+        $slug = null;
+        if ($type === 'budaya' || $type === 'kota_budaya') {
+            $slug = \Illuminate\Support\Str::slug($data['artName'] ?? 'untitled');
+            $data['slug'] = $slug;
+            
+            if (($data['artCategory'] ?? '') === 'batik' || ($data['artSubCategory'] ?? '') === 'batik') {
+                $data['hasAR'] = true;
+                $data['status'] = 'UNESCO';
+            } else {
+                $data['status'] = 'Kontribusi';
+            }
+        }
+
+        $firebaseKeys = [];
+
         // Handle composite types: split and push to both nodes
         if ($type === 'kota_budaya' || $type === 'kota_kuliner') {
             $kotaData = [
@@ -113,15 +209,22 @@ class ModerationController extends Controller
                 'created_at' => $data['created_at'],
             ];
             // Push logic for city
-            $this->database->getReference('cities')->push($kotaData);
+            $cityRef = $this->database->getReference('cities')->push($kotaData);
+            $firebaseKeys['cities'] = $cityRef->getKey();
 
             // Push specific sub-category data
             if ($type === 'kota_budaya') {
                 if (isset($data['era'])) $data['year'] = $data['era'];
-                $this->database->getReference('seni_budaya')->push($data);
+                $this->database->getReference('seni_budaya/' . $slug)->set($data);
+                $firebaseKeys['seni_budaya'] = $slug;
             } else {
-                $this->database->getReference('wisata_kuliner')->push($data);
+                $wisataRef = $this->database->getReference('wisata_kuliner')->push($data);
+                $firebaseKeys['wisata_kuliner'] = $wisataRef->getKey();
             }
+            
+            $contribution->update([
+                'data' => array_merge($contribution->data, ['firebase_keys' => $firebaseKeys])
+            ]);
             return;
         }
 
@@ -140,7 +243,17 @@ class ModerationController extends Controller
             $data['year'] = $data['era'];
         }
 
-        $this->database->getReference($node)->push($data);
+        if ($type === 'budaya') {
+            $this->database->getReference('seni_budaya/' . $slug)->set($data);
+            $firebaseKeys['seni_budaya'] = $slug;
+        } else {
+            $ref = $this->database->getReference($node)->push($data);
+            $firebaseKeys[$node] = $ref->getKey();
+        }
+
+        $contribution->update([
+            'data' => array_merge($contribution->data, ['firebase_keys' => $firebaseKeys])
+        ]);
     }
 
     /**

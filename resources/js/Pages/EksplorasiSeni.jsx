@@ -40,11 +40,30 @@ const FEATURES = (t) => [
     { icon: 'video_library', title: t('seni.feature4_title'), desc: t('seni.feature4_desc') },
 ];
 
-export default function EksplorasiSeni() {
+export default function EksplorasiSeni({ artworks: initialArtworks }) {
     const { t } = useLanguage();
     const [activeCategory, setActiveCategory] = useState('semua');
 
-    const artworks = ARTWORKS(t);
+    const staticArtworks = ARTWORKS(t);
+    const incoming = initialArtworks || [];
+
+    // Combine both: prioritize static list for translations, append new dynamic ones
+    const mergedMap = new Map();
+    staticArtworks.forEach(item => mergedMap.set(item.slug, item));
+    incoming.forEach(item => {
+        if (!mergedMap.has(item.slug)) {
+            mergedMap.set(item.slug, item);
+        } else {
+            // Merge dynamic properties on top of static, keeping static translations/priority
+            mergedMap.set(item.slug, { ...item, ...mergedMap.get(item.slug) });
+        }
+    });
+
+    const artworks = Array.from(mergedMap.values()).map((art, idx) => ({
+        ...art,
+        id: art.id || idx + 1
+    }));
+
     const filtered = activeCategory === 'semua'
         ? artworks
         : artworks.filter((a) => a.category === activeCategory);

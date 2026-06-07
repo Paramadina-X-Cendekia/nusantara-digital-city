@@ -24,7 +24,10 @@ export default function DetailKisah({ story }) {
     const tabs = (t) => [
         { id: 'cerita', label: t('kisah.read_story'), icon: 'menu_book' },
         { id: 'video', label: t('kisah.animated_video'), icon: 'movie' },
-    ];
+    ].filter(tab => {
+        if (tab.id === 'video' && !story.videoUrl) return false;
+        return true;
+    });
 
     return (
         <div className="relative flex min-h-screen flex-col bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-300 transition-colors duration-300 antialiased">

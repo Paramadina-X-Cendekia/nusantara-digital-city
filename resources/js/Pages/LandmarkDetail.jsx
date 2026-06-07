@@ -6,6 +6,7 @@ import Footer from '../components/Footer';
 import { useLanguage } from '@/lib/LanguageContext';
 import { loc } from '@/lib/localize';
 import ImageWithFallback from '../components/ImageWithFallback';
+import { getYoutubeEmbedUrl } from '@/lib/utils';
 
 const fadeIn = {
     hidden: { opacity: 0, y: 30 },
@@ -16,10 +17,68 @@ const stagger = {
     visible: { opacity: 1, transition: { staggerChildren: 0.12 } }
 };
 
+const getVirtualTourUrl = (landmark) => {
+    if (!landmark) return 'https://indonesiavirtualtour.com/vr-tourism';
+    if (landmark.virtualTourUrl) return landmark.virtualTourUrl;
+
+    const slug = landmark.slug;
+    if (slug === 'candi-borobudur') {
+        return 'https://indonesiavirtualtour.com/storage/destination/candi-borobudur/src/index.htm';
+    }
+    if (slug === 'candi-prambanan') {
+        return 'https://indonesiavirtualtour.com/storage/destination/candi-prambanan/src/index.htm';
+    }
+    if (slug === 'kota-tua-jakarta' || slug === 'museum-sejarah-jakarta' || slug === 'taman-fatahillah') {
+        return 'https://indonesiavirtualtour.com/storage/destination/taman-fatahillah/src/index.htm';
+    }
+
+    const locLower = (landmark.location || '').toLowerCase();
+    if (locLower.includes('jakarta') || locLower.includes('dki')) {
+        return 'https://indonesiavirtualtour.com/vr-tourism/explore-province/dki-jakarta';
+    }
+    if (locLower.includes('jawa tengah') || locLower.includes('magelang') || locLower.includes('semarang')) {
+        return 'https://indonesiavirtualtour.com/vr-tourism/explore-province/jawa-tengah';
+    }
+    if (locLower.includes('yogyakarta') || locLower.includes('jogja') || locLower.includes('sleman')) {
+        return 'https://indonesiavirtualtour.com/vr-tourism/explore-province/di-yogyakarta';
+    }
+    if (locLower.includes('sumatera barat') || locLower.includes('sumatra barat') || locLower.includes('padang') || locLower.includes('pariaman')) {
+        return 'https://indonesiavirtualtour.com/vr-tourism/explore-province/sumatera-barat';
+    }
+    if (locLower.includes('sumatera selatan') || locLower.includes('sumatra selatan') || locLower.includes('palembang')) {
+        return 'https://indonesiavirtualtour.com/vr-tourism/explore-province/sumatera-selatan';
+    }
+    if (locLower.includes('jawa barat') || locLower.includes('bandung') || locLower.includes('bogor')) {
+        return 'https://indonesiavirtualtour.com/vr-tourism/explore-province/jawa-barat';
+    }
+    if (locLower.includes('jawa timur') || locLower.includes('surabaya') || locLower.includes('malang')) {
+        return 'https://indonesiavirtualtour.com/vr-tourism/explore-province/jawa-timur';
+    }
+    if (locLower.includes('sulawesi selatan') || locLower.includes('makassar')) {
+        return 'https://indonesiavirtualtour.com/vr-tourism/explore-province/sulawesi-selatan';
+    }
+    if (locLower.includes('bali')) {
+        return 'https://indonesiavirtualtour.com/vr-tourism/explore-province/bali';
+    }
+    if (locLower.includes('bangka belitung')) {
+        return 'https://indonesiavirtualtour.com/vr-tourism/explore-province/kepulauan-bangka-belitung';
+    }
+    if (locLower.includes('kalimantan timur') || locLower.includes('samarinda')) {
+        return 'https://indonesiavirtualtour.com/vr-tourism/explore-province/kalimantan-timur';
+    }
+    if (locLower.includes('lampung')) {
+        return 'https://indonesiavirtualtour.com/vr-tourism/explore-province/lampung';
+    }
+
+    return 'https://indonesiavirtualtour.com/vr-tourism';
+};
+
 export default function LandmarkDetail({ landmark }) {
     const { t, lang } = useLanguage();
     const [activeTab, setActiveTab] = useState('profil');
     const [showArchive, setShowArchive] = useState(false);
+
+    const tourUrl = getVirtualTourUrl(landmark);
 
     const handleShare = async () => {
         if (navigator.share) {
@@ -40,7 +99,7 @@ export default function LandmarkDetail({ landmark }) {
 
     const tabs = [
         { id: 'profil', label: t('landmark_detail.digital_profile'), icon: 'account_balance' },
-        { id: 'video', label: t('landmark_detail.exploration_video'), icon: 'movie' },
+        { id: 'tour360', label: t('landmark_detail.exploration_video'), icon: '3d_rotation' },
     ];
 
     return (
@@ -189,11 +248,11 @@ export default function LandmarkDetail({ landmark }) {
                                             <motion.li
                                                 whileHover={{ scale: 1.02, x: 5 }}
                                                 whileTap={{ scale: 0.98 }}
-                                                onClick={() => setActiveTab('video')}
+                                                onClick={() => setActiveTab('tour360')}
                                                 className="flex items-center gap-4 cursor-pointer p-3 rounded-xl hover:bg-primary/5 border border-transparent hover:border-primary/20 transition-all"
                                             >
                                                 <div className="size-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-primary transition-colors">
-                                                    <span className="material-symbols-outlined">campaign</span>
+                                                    <span className="material-symbols-outlined">3d_rotation</span>
                                                 </div>
                                                 <div className="flex flex-col">
                                                     <span className="font-bold text-slate-700 dark:text-slate-300">{t('landmark_detail.promotion_media')}</span>
@@ -221,28 +280,44 @@ export default function LandmarkDetail({ landmark }) {
                             </motion.div>
                         )}
 
-                        {activeTab === 'video' && (
+                        {activeTab === 'tour360' && (
                             <motion.div
-                                key="video"
+                                key="tour360"
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -20 }}
                                 transition={{ duration: 0.4 }}
                                 className="bg-white dark:bg-surface-dark rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-2xl max-w-5xl mx-auto"
                             >
-                                <div className="aspect-video relative">
+                                <div className="h-[500px] md:h-[650px] w-full relative overflow-hidden">
                                     <iframe
-                                        className="absolute inset-0 w-full h-full"
-                                        src={landmark.videoUrl}
+                                        className="absolute border-0"
+                                        style={{
+                                            top: '-80px',
+                                            left: 0,
+                                            width: '100%',
+                                            height: 'calc(100% + 80px)'
+                                        }}
+                                        src={tourUrl}
                                         title={landmark.name}
-                                        frameBorder="0"
-                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                         allowFullScreen
+                                        allow="gyroscope; accelerometer; magnetometer; vr"
                                     />
                                 </div>
-                                <div className="p-8 text-center">
+                                <div className="p-8 text-center bg-slate-50 dark:bg-slate-900/40 border-t border-slate-100 dark:border-slate-800">
                                     <h3 className="text-2xl font-black text-slate-900 dark:text-slate-100 mb-2">{t('landmark_detail.virtual_exploration')}</h3>
-                                    <p className="text-slate-500 dark:text-slate-400">{t('landmark_detail.virtual_exploration_desc')}</p>
+                                    <p className="text-slate-500 dark:text-slate-400 mb-6">{t('landmark_detail.virtual_exploration_desc')}</p>
+                                    <div className="flex justify-center gap-4">
+                                        <a
+                                            href={tourUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-white font-bold text-sm shadow-md hover:bg-primary/95 transition-all"
+                                        >
+                                            <span className="material-symbols-outlined text-lg">open_in_new</span>
+                                            {t('landmark_detail.open_fullscreen')}
+                                        </a>
+                                    </div>
                                 </div>
                             </motion.div>
                         )}

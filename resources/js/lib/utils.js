@@ -6,23 +6,26 @@
 export function getYoutubeEmbedUrl(url) {
     if (!url) return '';
     
+    // Trim url
+    url = url.trim();
+    
     // If it's already an embed URL, return it
-    if (url.includes('youtube.com/embed/')) return url;
+    if (url.toLowerCase().includes('youtube.com/embed/')) return url;
     
     let videoId = '';
     
     // Handle youtube.com/watch?v=ID
-    const watchMatch = url.match(/[?&]v=([^&#]+)/);
+    const watchMatch = url.match(/[?&]v=([^&#]+)/i);
     if (watchMatch) {
         videoId = watchMatch[1];
     } else {
         // Handle youtu.be/ID
-        const shortMatch = url.match(/youtu\.be\/([^&#?]+)/);
+        const shortMatch = url.match(/youtu\.be\/([^&#?]+)/i);
         if (shortMatch) {
             videoId = shortMatch[1];
         } else {
             // Handle youtube.com/shorts/ID
-            const shortsMatch = url.match(/youtube\.com\/shorts\/([^&#?]+)/);
+            const shortsMatch = url.match(/youtube\.com\/shorts\/([^&#?]+)/i);
             if (shortsMatch) {
                 videoId = shortsMatch[1];
             }

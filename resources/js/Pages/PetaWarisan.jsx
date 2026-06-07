@@ -27,16 +27,140 @@ const SITES = (t) => [
     { id: 8, name: 'Raja Ampat', location: 'Papua Barat', desc: t('seni_data.raja_ampat_desc'), year: 'Prasejarah', status: 'UNESCO Tentative', category: 'Alam & Budaya', lat: -0.2344, lng: 130.5165, img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCOk7eFXM8Z7djeW87pg0CemNhUYyqvVOTbTru4odSwbuliignpFMApDGhfNKlW6kKyQlCbzJ3ohIoFaRnWWDgvGfazHGAkAjHoSKngL3-wQdr1HcITBwNXh6s5QVGFLqfPkQo7SDDW_mY-6RcScGnPl4Ewr-Vg_6va3QV-h4tnOTTygXWWbXsrbtnnmk6_AzN-1zBFS-khioMRQ3qfwSeVgNhYKSFkLW9kkjlvFAKSOrwFbzI-SYHp13KInW70cdrV_8nUtZOKZ2BQ' },
 ];
 
-const STATS = (t) => [
-    { icon: 'account_balance', value: '12.000+', label: t('peta_warisan.stat_sites') },
-    { icon: 'map', value: '34', label: t('peta_warisan.stat_provinces') },
-    { icon: 'star', value: '9', label: t('peta_warisan.stat_unesco') },
-    { icon: 'groups', value: '1.300+', label: t('peta_warisan.stat_ethnic') },
-];
+const LEGEND_ITEMS = {
+    id: [
+        { icon: 'temple_hindu', label: 'Candi & Situs Hindu/Buddha', desc: 'Situs keagamaan bersejarah berupa candi bercorak Hindu atau Buddha.' },
+        { icon: 'location_city', label: 'Cagar Perkotaan & Kolonial', desc: 'Kawasan perkotaan lama bersejarah dan bangunan peninggalan era kolonial.' },
+        { icon: 'temple_buddhist', label: 'Pura & Pusat Keagamaan Hindu', desc: 'Pura, tempat pemujaan, dan kompleks keagamaan Hindu Bali.' },
+        { icon: 'account_balance', label: 'Istana & Pusat Kerajaan', desc: 'Kompleks istana dan pusat pemerintahan adat daerah.' },
+        { icon: 'sailing', label: 'Situs Maritim & Benteng', desc: 'Peninggalan pertahanan sejarah laut dan peradaban maritim.' },
+        { icon: 'terrain', label: 'Pegunungan & Adat', desc: 'Wilayah adat dataran tinggi, pegunungan, dan ekosistem unik.' },
+        { icon: 'landscape', label: 'Bentang Alam & Kepulauan', desc: 'Keindahan alam berupa perbukitan, sabana, dan kepulauan.' },
+        { icon: 'volcano', label: 'Situs Gunung Api & Sejarah', desc: 'Gunung berapi aktif bersejarah dan situs budaya di sekitarnya.' },
+        { icon: 'location_on', label: 'Situs Warisan Umum', desc: 'Berbagai situs cagar budaya dan warisan sejarah lainnya.' },
+    ],
+    en: [
+        { icon: 'temple_hindu', label: 'Hindu/Buddhist Temples & Sites', desc: 'Historical religious sanctuaries of Hindu or Buddhist heritage.' },
+        { icon: 'location_city', label: 'Urban & Colonial Heritage', desc: 'Old historic urban quarters and structures from the colonial era.' },
+        { icon: 'temple_buddhist', label: 'Hindu Temples & Balinese Shrines', desc: 'Balinese Hindu temples, shrines, and sacred religious compounds.' },
+        { icon: 'account_balance', label: 'Palaces & Royal Centers', desc: 'Palace complexes and historic regional royal seats.' },
+        { icon: 'sailing', label: 'Maritime & Fortification Sites', desc: 'Historic naval fortifications and maritime civilization remnants.' },
+        { icon: 'terrain', label: 'Mountains & Indigenous Areas', desc: 'Highland indigenous territories, mountains, and unique ecosystems.' },
+        { icon: 'landscape', label: 'Landscapes & Archipelagos', desc: 'Natural landforms comprising hills, savannas, and archipelagos.' },
+        { icon: 'volcano', label: 'Volcanic & Sacred Sites', desc: 'Historic active volcanoes and surrounding cultural heritage.' },
+        { icon: 'location_on', label: 'General Heritage Sites', desc: 'Various cultural preservation areas and other historical heritage.' },
+    ]
+};
+
+const REGION_BOUNDARIES = {
+    // DKI Jakarta
+    jakarta: [
+        [-6.088, 106.697],
+        [-6.085, 106.973],
+        [-6.370, 106.973],
+        [-6.370, 106.697]
+    ],
+    // Jawa Tengah & Yogyakarta
+    jawa_tengah_yogyakarta: [
+        [-6.40, 108.60],
+        [-6.40, 110.00],
+        [-6.35, 110.75],
+        [-6.55, 111.45],
+        [-6.75, 111.65],
+        [-7.15, 111.55],
+        [-8.25, 111.50],
+        [-8.25, 110.05],
+        [-7.75, 108.85],
+        [-6.90, 108.80]
+    ],
+    // Bali
+    bali: [
+        [-8.10, 114.40],
+        [-8.05, 114.60],
+        [-8.12, 115.15],
+        [-8.25, 115.70],
+        [-8.75, 115.70],
+        [-8.85, 115.55],
+        [-8.85, 115.20],
+        [-8.60, 114.45]
+    ],
+    // Sulawesi Selatan
+    sulawesi_selatan: [
+        [-1.90, 119.30],
+        [-1.85, 120.35],
+        [-2.50, 120.80],
+        [-3.60, 120.40],
+        [-5.65, 120.45],
+        [-5.75, 120.20],
+        [-5.60, 119.45],
+        [-3.90, 119.55],
+        [-2.95, 119.20]
+    ],
+    // Sumatera Utara
+    sumatera_utara: [
+        [4.30, 98.00],
+        [4.25, 98.50],
+        [3.85, 99.70],
+        [2.75, 100.20],
+        [2.10, 100.10],
+        [1.70, 99.30],
+        [0.85, 99.40],
+        [0.60, 98.95],
+        [1.25, 97.80],
+        [2.60, 97.10],
+        [3.70, 97.45]
+    ],
+    // Papua Barat (Bird's head / Raja Ampat area)
+    papua_barat: [
+        [0.60, 129.50],
+        [0.85, 131.30],
+        [-0.85, 131.30],
+        [-2.20, 130.50],
+        [-2.20, 129.80],
+        [-0.80, 129.35]
+    ],
+    // Jawa Barat
+    jawa_barat: [
+        [-5.95, 106.35],
+        [-5.90, 107.00],
+        [-6.25, 108.40],
+        [-6.80, 108.75],
+        [-7.75, 108.60],
+        [-7.70, 106.30],
+        [-6.85, 106.35]
+    ],
+    // Sumatera Barat
+    sumatera_barat: [
+        [0.90, 98.90],
+        [0.85, 100.20],
+        [0.15, 100.80],
+        [-0.60, 101.55],
+        [-2.35, 101.40],
+        [-2.30, 100.80],
+        [-1.00, 100.10],
+        [-0.55, 99.80],
+        [0.20, 98.90]
+    ]
+};
+
+const getRegionKey = (location) => {
+    const loc = location?.toLowerCase() || '';
+    if (loc.includes('jakarta')) return 'jakarta';
+    if (loc.includes('jawa tengah') || loc.includes('yogyakarta')) return 'jawa_tengah_yogyakarta';
+    if (loc.includes('bali')) return 'bali';
+    if (loc.includes('sulawesi')) return 'sulawesi_selatan';
+    if (loc.includes('sumatera utara') || loc.includes('medan')) return 'sumatera_utara';
+    if (loc.includes('papua')) return 'papua_barat';
+    if (loc.includes('bogor') || loc.includes('jawa barat')) return 'jawa_barat';
+    if (loc.includes('pariaman') || loc.includes('sumatera barat')) return 'sumatera_barat';
+    if (loc.includes('sumatera')) return 'sumatera_utara';
+    return null;
+};
 
 /* Leaflet map rendered only client-side */
-function LeafletMap({ sites, activeSite, setActiveSite, t }) {
+function LeafletMap({ sites, activeSite, setActiveSite, t, lang }) {
     const [MapComponents, setMapComponents] = useState(null);
+    const [legendOpen, setLegendOpen] = useState(false);
 
     useEffect(() => {
         // Dynamic import so Leaflet only loads in browser (no SSR window error)
@@ -66,7 +190,7 @@ function LeafletMap({ sites, activeSite, setActiveSite, t }) {
         );
     }
 
-    const { MapContainer, TileLayer, Marker, Popup } = MapComponents;
+    const { MapContainer, TileLayer, Marker, Popup, Polygon } = MapComponents;
 
     const getRegionalIcon = (location) => {
         const loc = location?.toLowerCase() || '';
@@ -82,7 +206,13 @@ function LeafletMap({ sites, activeSite, setActiveSite, t }) {
     };
 
     const customIcon = (site, isActive) => {
-        const iconName = getRegionalIcon(site.location);
+        let iconName = getRegionalIcon(site.location);
+        const isBatik = site.category?.toLowerCase() === 'batik' || 
+                        site.name?.toLowerCase().includes('batik') ||
+                        site.desc?.toLowerCase().includes('batik');
+        if (isBatik) {
+            iconName = 'location_on';
+        }
         const size = isActive ? 36 : 28;
         const iconSize = isActive ? 20 : 16;
 
@@ -135,8 +265,24 @@ function LeafletMap({ sites, activeSite, setActiveSite, t }) {
         });
     };
 
+    const activeSiteObj = sites.find(s => s.id === activeSite);
+    const activeRegionKey = activeSiteObj ? getRegionKey(activeSiteObj.location) : null;
+    const activeRegionCoords = activeRegionKey ? REGION_BOUNDARIES[activeRegionKey] : null;
+
     const Markers = () => {
         const map = MapComponents.useMap();
+
+        useEffect(() => {
+            if (activeSite) {
+                const site = sites.find(s => s.id === activeSite);
+                if (site && site.lat && site.lng) {
+                    map.setView([site.lat, site.lng], 7, { animate: true, duration: 1.0 });
+                }
+            } else {
+                map.setView([-2.5, 118], 5, { animate: true, duration: 1.0 });
+            }
+        }, [activeSite, sites, map]);
+
         return sites.filter(s => s.lat && s.lng).map((site) => (
             <Marker
                 key={site.id}
@@ -145,7 +291,6 @@ function LeafletMap({ sites, activeSite, setActiveSite, t }) {
                 eventHandlers={{
                     click: (e) => {
                         setActiveSite(activeSite === site.id ? null : site.id);
-                        map.panTo(e.latlng);
                     },
                 }}
             >
@@ -180,52 +325,109 @@ function LeafletMap({ sites, activeSite, setActiveSite, t }) {
     };
 
     return (
-        <MapContainer
-            center={[-2.5, 118]}
-            zoom={5}
-            minZoom={5}
-            maxBounds={[[-15, 90], [10, 145]]}
-            maxBoundsViscosity={1.0}
-            scrollWheelZoom={true}
-            className="w-full h-[500px] rounded-2xl z-0"
-            style={{ background: '#0f172a' }}
-        >
-            <TileLayer
-                attribution='&copy; <a href="https://carto.com/">CARTO</a>'
-                url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-            />
+        <div className="relative w-full h-[500px] rounded-2xl overflow-hidden shadow-inner" style={{ background: '#0f172a' }}>
+            <MapContainer
+                center={[-2.5, 118]}
+                zoom={5}
+                minZoom={5}
+                maxBounds={[[-15, 90], [10, 145]]}
+                maxBoundsViscosity={1.0}
+                scrollWheelZoom={true}
+                className="w-full h-full z-0"
+            >
+                <TileLayer
+                    attribution='&copy; <a href="https://carto.com/">CARTO</a>'
+                    url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+                />
 
-            {/* Maritime Borders (Stylized) */}
-            <MapComponents.Polyline
-                positions={[
-                    [[6, 95], [6, 105], [4, 110], [6, 118], [5, 128], [3, 141]],
-                    [[-11, 94], [-12, 105], [-11, 115], [-11, 125], [-10, 141]]
-                ]}
-                pathOptions={{
-                    color: '#368ce2',
-                    weight: 1,
-                    dashArray: '5, 10',
-                    opacity: 0.3
-                }}
-            />
+                {/* Maritime Borders (Stylized) */}
+                <MapComponents.Polyline
+                    positions={[
+                        [[6, 95], [6, 105], [4, 110], [6, 118], [5, 128], [3, 141]],
+                        [[-11, 94], [-12, 105], [-11, 115], [-11, 125], [-10, 141]]
+                    ]}
+                    pathOptions={{
+                        color: '#368ce2',
+                        weight: 1,
+                        dashArray: '5, 10',
+                        opacity: 0.3
+                    }}
+                />
 
-            {/* Ocean Currents (Animated) */}
-            <MapComponents.Polyline
-                positions={[
-                    [[2, 118.5], [-2, 119.5], [-5, 118.5], [-8, 115.5]],
-                    [[3, 127.5], [-1, 128.5], [-4, 129.5], [-8, 126.5]],
-                    [[5, 100], [0, 105], [-5, 110], [-9, 115]]
-                ]}
-                pathOptions={{
-                    color: '#368ce2',
-                    weight: 2,
-                    dashArray: '10, 20',
-                    className: 'ocean-current-line',
-                    opacity: 0.2
-                }}
-            />
-            <Markers />
-        </MapContainer>
+                {/* Ocean Currents (Animated) */}
+                <MapComponents.Polyline
+                    positions={[
+                        [[2, 118.5], [-2, 119.5], [-5, 118.5], [-8, 115.5]],
+                        [[3, 127.5], [-1, 128.5], [-4, 129.5], [-8, 126.5]],
+                        [[5, 100], [0, 105], [-5, 110], [-9, 115]]
+                    ]}
+                    pathOptions={{
+                        color: '#368ce2',
+                        weight: 2,
+                        dashArray: '10, 20',
+                        className: 'ocean-current-line',
+                        opacity: 0.2
+                    }}
+                />
+
+                {activeRegionCoords && (
+                    <Polygon
+                        positions={activeRegionCoords}
+                        pathOptions={{
+                            color: '#60a5fa',
+                            fillColor: '#3b82f6',
+                            fillOpacity: 0.3,
+                            weight: 2.5,
+                            lineCap: 'round',
+                            lineJoin: 'round'
+                        }}
+                    />
+                )}
+
+                <Markers />
+            </MapContainer>
+
+            {/* Icon Legend Overlay */}
+            <div className="absolute bottom-4 right-4 z-[1000] flex flex-col items-end gap-2">
+                {!legendOpen ? (
+                    <button
+                        onClick={() => setLegendOpen(true)}
+                        className="flex items-center gap-2 px-4 py-2.5 bg-slate-950/90 hover:bg-slate-900 border border-slate-800 rounded-xl text-white text-xs font-bold transition-all shadow-2xl pointer-events-auto hover:scale-105 active:scale-95 duration-200"
+                    >
+                        <span className="material-symbols-outlined text-sm text-primary">info</span>
+                        <span>{lang === 'id' ? 'Legenda Icon' : 'Icon Legend'}</span>
+                    </button>
+                ) : (
+                    <div className="w-72 md:w-80 bg-slate-950/95 backdrop-blur-md border border-slate-800 rounded-xl p-4 shadow-2xl text-white pointer-events-auto max-h-[300px] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-800 transition-all duration-300">
+                        <div className="flex items-center justify-between pb-2 border-b border-slate-800 mb-3">
+                            <div className="flex items-center gap-2 font-bold text-xs text-primary uppercase tracking-wider">
+                                <span className="material-symbols-outlined text-sm">map</span>
+                                <span>{lang === 'id' ? 'Keterangan Penanda' : 'Map Icon Legend'}</span>
+                            </div>
+                            <button
+                                onClick={() => setLegendOpen(false)}
+                                className="text-slate-400 hover:text-white transition-colors p-0.5"
+                            >
+                                <span className="material-symbols-outlined text-base">close</span>
+                            </button>
+                        </div>
+                        <div className="space-y-2">
+                            {(lang === 'id' ? LEGEND_ITEMS.id : LEGEND_ITEMS.en).map((item, idx) => (
+                                <div key={idx} className="flex gap-2.5 items-start hover:bg-slate-900/40 p-1.5 rounded-lg transition-colors">
+                                    <div className="size-6 rounded-full bg-primary flex items-center justify-center border border-white/20 shrink-0 shadow-md shadow-primary/20">
+                                        <span className="material-symbols-outlined text-[12px] text-white font-bold">{item.icon}</span>
+                                    </div>
+                                    <div>
+                                        <h5 className="font-bold text-slate-200 text-[11px] leading-normal">{item.label}</h5>
+                                        <p className="text-[9px] text-slate-400 leading-tight mt-0.5">{item.desc}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+            </div>
+        </div>
     );
 }
 
@@ -400,7 +602,7 @@ export default function PetaWarisan({ dynamicSites = [] }) {
                             </div>
                         </div>
                         {/* Map */}
-                        <LeafletMap sites={allSites} activeSite={activeSite} setActiveSite={setActiveSite} t={t} />
+                        <LeafletMap sites={allSites} activeSite={activeSite} setActiveSite={setActiveSite} t={t} lang={lang} />
                         {/* Footer */}
                         <div className="px-6 py-3 border-t border-slate-800 flex items-center gap-4 text-[10px] text-slate-500 font-mono uppercase tracking-wider">
                             <span className="flex items-center gap-1.5"><span className="size-2 bg-primary rounded-full"></span> {t('peta_warisan.click_marker')}</span>

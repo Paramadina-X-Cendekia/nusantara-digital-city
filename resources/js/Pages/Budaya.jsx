@@ -78,7 +78,7 @@ export default function Budaya({ landmarks, budayaData }) {
     const folkloreItems = useMemo(() => {
         let items = [];
         if (Array.isArray(budayaData)) {
-            items = budayaData.filter(b => (b.artCategory === 'cerita' || b.type === 'budaya') && (!b.status || b.status === 'approved'));
+            items = budayaData.filter(b => (b.artCategory === 'cerita' || b.type === 'budaya') && (!b.status || ['approved', 'Kontribusi', 'UNESCO', 'Warisan Nasional'].includes(b.status)));
         }
         return items.slice(0, 4);
     }, [budayaData]);

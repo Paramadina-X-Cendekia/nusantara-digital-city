@@ -12,7 +12,7 @@ export default function ContributorProfiles({ auth, profiles = [] }) {
 
             <div className="space-y-8">
                 <div className="space-y-1">
-                    <h1 className="text-3xl font-black italic tracking-tight">{t('dashboard.contributor_profiles_title')}</h1>
+                    <h1 className="text-3xl font-black tracking-tight">{t('dashboard.contributor_profiles_title')}</h1>
                     <p className="text-slate-500 dark:text-slate-400 text-sm">{t('dashboard.contributor_profiles_desc')}</p>
                 </div>
 

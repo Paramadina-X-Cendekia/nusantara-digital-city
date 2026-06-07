@@ -1,335 +1,325 @@
-import { useRef, useEffect } from "react";
+import { useEffect, useRef } from "react";
 
-export default function NusantaraDigitalBackground({ mouseX, mouseY }) {
-    const canvasRef = useRef(null);
-    const mouseRef = useRef({ x: -9999, y: -9999 });
-    const particlesRef = useRef([]);
-    const rafRef = useRef(null);
-    const tRef = useRef(0);
+/**
+ * NusantaraDigitalBackground (STATIC / NO-LAG VERSION)
+ *
+ * Versi ini sengaja dibuat "kaku" (tidak ada animasi frame-by-frame,
+ * tidak ada mouse tracking, tidak ada requestAnimationFrame) supaya
+ * scroll hero section tetap mulus 60fps di device low-end.
+ *
+ * Pattern di-render SEKALI ke <canvas> saat mount, dan hanya
+ * di-render ulang ketika ukuran container / theme berubah.
+ *
+ * Motif Nusantara yang dipakai:
+ *  - Kawung (Yogyakarta/Solo) sebagai node grid
+ *  - Mega Mendung (Cirebon) sebagai awan latar
+ *  - Parang sebagai garis diagonal
+ *  - Tumpal (segitiga emas) di tepi atas & bawah
+ *  - Skyline: Candi Borobudur + Joglo + gedung modern
+ *  - Songket diamond di pusat Kawung
+ */
+export default function NusantaraDigitalBackground({ className = "" }) {
+  const canvasRef = useRef(null);
+  const wrapRef = useRef(null);
 
-    useEffect(() => {
-        mouseRef.current = { x: mouseX, y: mouseY };
-    }, [mouseX, mouseY]);
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const wrap = wrapRef.current;
+    if (!canvas || !wrap) return;
 
-    useEffect(() => {
-        const canvas = canvasRef.current;
-        if (!canvas) return;
-        const ctx = canvas.getContext("2d");
-        const DPR = Math.min(window.devicePixelRatio || 1, 2);
-        const CELL = 110; // diperbesar supaya motif Kawung jelas terlihat
+    const isDark = () =>
+      document.documentElement.classList.contains("dark") ||
+      window.matchMedia?.("(prefers-color-scheme: dark)").matches;
 
-        let cols = 0;
-        let rows = 0;
+    const draw = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const w = wrap.clientWidth;
+      const h = wrap.clientHeight;
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+      canvas.style.width = w + "px";
+      canvas.style.height = h + "px";
+      const ctx = canvas.getContext("2d");
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, w, h);
 
-        function resize() {
-            const w = canvas.offsetWidth;
-            const h = canvas.offsetHeight;
-            canvas.width = w * DPR;
-            canvas.height = h * DPR;
-            ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-            cols = Math.ceil(w / CELL) + 1;
-            rows = Math.ceil(h / CELL) + 1;
+      const dark = isDark();
 
-            particlesRef.current = Array.from({ length: 32 }, () => ({
-                x: Math.random() * w,
-                y: Math.random() * h,
-                vx: (Math.random() - 0.5) * 0.4,
-                vy: (Math.random() - 0.5) * 0.4,
-                life: Math.random(),
-            }));
+      // Palette Nusantara — base agak kebiruan (indigo batik)
+      const C = {
+        bg: dark ? "#0a0f1a" : "#eaf0f8",
+        bg2: dark ? "#0f1830" : "#d6e2f0",
+        gold: dark ? "#d4a64a" : "#b8862c",
+        goldSoft: dark ? "rgba(212,166,74,0.32)" : "rgba(184,134,44,0.4)",
+        copper: dark ? "#b87333" : "#a05a1f",
+        maroon: dark ? "#7a1f1f" : "#6b1717",
+        indigo: dark ? "#3a4a80" : "#3b4680",
+        line: dark ? "rgba(150,180,220,0.10)" : "rgba(60,90,150,0.10)",
+        cloud: dark ? "rgba(120,150,200,0.12)" : "rgba(60,90,150,0.10)",
+        ink: dark ? "#dfe6f2" : "#1a2540",
+      };
+
+      // 1) Base gradient
+      const bg = ctx.createLinearGradient(0, 0, 0, h);
+      bg.addColorStop(0, C.bg);
+      bg.addColorStop(1, C.bg2);
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, w, h);
+
+      // 2) Mega Mendung (awan berlapis) — bentuk gelombang sederhana
+      const drawMendung = (cx, cy, scale, alpha) => {
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.scale(scale, scale);
+        ctx.globalAlpha = alpha;
+        ctx.strokeStyle = C.indigo;
+        ctx.lineWidth = 2;
+        for (let layer = 0; layer < 4; layer++) {
+          ctx.beginPath();
+          const r = 30 + layer * 14;
+          for (let a = Math.PI; a <= Math.PI * 2 + 0.01; a += 0.05) {
+            const wob = Math.sin(a * 6) * 3;
+            const x = Math.cos(a) * (r + wob);
+            const y = Math.sin(a) * (r + wob) * 0.45;
+            if (a === Math.PI) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          }
+          ctx.stroke();
         }
+        ctx.restore();
+      };
+      drawMendung(w * 0.15, h * 0.25, 1.2, 0.7);
+      drawMendung(w * 0.78, h * 0.18, 1.5, 0.6);
+      drawMendung(w * 0.45, h * 0.55, 1.0, 0.5);
+      drawMendung(w * 0.9, h * 0.65, 1.3, 0.55);
 
-        function isDark() {
-            return document.documentElement.classList.contains("dark");
-        }
+      // 3) Parang diagonal lines
+      ctx.save();
+      ctx.strokeStyle = C.goldSoft;
+      ctx.lineWidth = 1;
+      const step = 90;
+      for (let i = -h; i < w + h; i += step) {
+        ctx.beginPath();
+        ctx.moveTo(i, 0);
+        ctx.lineTo(i + h, h);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.globalAlpha = 0.5;
+        ctx.moveTo(i + 20, 0);
+        ctx.lineTo(i + 20 + h, h);
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+      }
+      ctx.restore();
 
-        // ============ PALET NUSANTARA ============
-        // Emas kunyit, copper, indigo batik, merah maroon
-        const palette = (dark) => ({
-            gold: dark ? "250,204,21" : "180,83,9",      // emas / copper
-            indigo: dark ? "96,165,250" : "30,58,138",   // indigo batik
-            maroon: dark ? "248,113,113" : "153,27,27",  // merah tua
-            cream: dark ? "254,243,199" : "120,53,15",   // krem / coklat
+      // 4) Grid tipis
+      const CELL = 130;
+      ctx.strokeStyle = C.line;
+      ctx.lineWidth = 1;
+      for (let x = 0; x <= w; x += CELL) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, h);
+        ctx.stroke();
+      }
+      for (let y = 0; y <= h; y += CELL) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(w, y);
+        ctx.stroke();
+      }
+
+      // 5) Kawung di setiap intersection
+      const drawKawung = (cx, cy, r) => {
+        ctx.save();
+        ctx.translate(cx, cy);
+        // 4 ellips utama
+        ctx.strokeStyle = C.gold;
+        ctx.lineWidth = 1.2;
+        const positions = [
+          [0, -r * 0.55],
+          [0, r * 0.55],
+          [-r * 0.55, 0],
+          [r * 0.55, 0],
+        ];
+        positions.forEach(([dx, dy]) => {
+          ctx.beginPath();
+          ctx.ellipse(dx, dy, r * 0.5, r * 0.75, dx !== 0 ? Math.PI / 2 : 0, 0, Math.PI * 2);
+          ctx.stroke();
+          // inner maroon
+          ctx.beginPath();
+          ctx.fillStyle = dark ? "rgba(122,31,31,0.35)" : "rgba(107,23,23,0.18)";
+          ctx.ellipse(dx, dy, r * 0.28, r * 0.45, dx !== 0 ? Math.PI / 2 : 0, 0, Math.PI * 2);
+          ctx.fill();
         });
-
-        // ============ MOTIF: KAWUNG BESAR ============
-        function drawKawung(cx, cy, r, alpha, p) {
-            ctx.save();
-            ctx.strokeStyle = `rgba(${p.gold},${alpha})`;
-            ctx.lineWidth = 1.2;
-            const off = r * 0.6;
-            const positions = [
-                [-off, 0], [off, 0], [0, -off], [0, off],
-            ];
-            positions.forEach(([dx, dy], idx) => {
-                // elips luar
-                ctx.beginPath();
-                ctx.ellipse(cx + dx, cy + dy, r * 0.55, r * 0.78, 0, 0, Math.PI * 2);
-                ctx.stroke();
-                // elips dalam (detail batik)
-                ctx.strokeStyle = `rgba(${p.maroon},${alpha * 0.7})`;
-                ctx.lineWidth = 0.6;
-                ctx.beginPath();
-                ctx.ellipse(cx + dx, cy + dy, r * 0.32, r * 0.5, 0, 0, Math.PI * 2);
-                ctx.stroke();
-                ctx.strokeStyle = `rgba(${p.gold},${alpha})`;
-                ctx.lineWidth = 1.2;
-            });
-            // Belah ketupat tengah (Songket)
-            ctx.fillStyle = `rgba(${p.gold},${alpha * 0.9})`;
-            ctx.beginPath();
-            ctx.moveTo(cx, cy - 3.5);
-            ctx.lineTo(cx + 3.5, cy);
-            ctx.lineTo(cx, cy + 3.5);
-            ctx.lineTo(cx - 3.5, cy);
-            ctx.closePath();
-            ctx.fill();
-            // Titik2 kecil di antara kelopak (biji kawung)
-            ctx.fillStyle = `rgba(${p.maroon},${alpha * 0.8})`;
-            [[off, off], [-off, off], [off, -off], [-off, -off]].forEach(([dx, dy]) => {
-                ctx.beginPath();
-                ctx.arc(cx + dx * 0.7, cy + dy * 0.7, 1.3, 0, Math.PI * 2);
-                ctx.fill();
-            });
-            ctx.restore();
+        // songket diamond center
+        ctx.beginPath();
+        ctx.fillStyle = C.gold;
+        ctx.moveTo(0, -6);
+        ctx.lineTo(6, 0);
+        ctx.lineTo(0, 6);
+        ctx.lineTo(-6, 0);
+        ctx.closePath();
+        ctx.fill();
+        // node center
+        ctx.beginPath();
+        ctx.fillStyle = C.copper;
+        ctx.arc(0, 0, 2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      };
+      for (let x = CELL; x < w; x += CELL) {
+        for (let y = CELL; y < h - 120; y += CELL) {
+          drawKawung(x, y, 22);
         }
+      }
 
-        // ============ MOTIF: PARANG (diagonal lereng) ============
-        function drawParang(w, h, p, dark) {
-            ctx.save();
-            const gap = 44;
-            for (let i = -h; i < w + h; i += gap) {
-                // garis utama Parang
-                ctx.strokeStyle = `rgba(${p.indigo},${dark ? 0.09 : 0.08})`;
-                ctx.lineWidth = 1.4;
-                ctx.beginPath();
-                ctx.moveTo(i, 0);
-                ctx.lineTo(i + h, h);
-                ctx.stroke();
-                // garis pasangan (lereng ganda)
-                ctx.strokeStyle = `rgba(${p.gold},${dark ? 0.06 : 0.05})`;
-                ctx.lineWidth = 0.8;
-                ctx.beginPath();
-                ctx.moveTo(i + 10, 0);
-                ctx.lineTo(i + h + 10, h);
-                ctx.stroke();
-            }
-            ctx.restore();
+      // 6) Tumpal segitiga atas & bawah
+      const drawTumpal = (yBase, flip) => {
+        ctx.save();
+        ctx.fillStyle = C.gold;
+        ctx.globalAlpha = 0.55;
+        const tw = 28;
+        const th = 18;
+        for (let x = 0; x < w; x += tw) {
+          ctx.beginPath();
+          if (flip) {
+            ctx.moveTo(x, yBase);
+            ctx.lineTo(x + tw, yBase);
+            ctx.lineTo(x + tw / 2, yBase - th);
+          } else {
+            ctx.moveTo(x, yBase);
+            ctx.lineTo(x + tw, yBase);
+            ctx.lineTo(x + tw / 2, yBase + th);
+          }
+          ctx.closePath();
+          ctx.fill();
         }
+        ctx.restore();
+      };
+      drawTumpal(0, false);
+      // (tumpal bawah dihapus supaya skyline nempel ke dasar canvas)
 
-        // ============ MOTIF: MEGA MENDUNG (awan Cirebon) ============
-        function drawMegaMendung(cx, cy, scale, alpha, p) {
-            ctx.save();
-            ctx.strokeStyle = `rgba(${p.indigo},${alpha})`;
-            ctx.lineWidth = 1.1;
-            // 4 lapis awan bergelombang
-            for (let layer = 0; layer < 4; layer++) {
-                const r = scale * (1 + layer * 0.35);
-                ctx.beginPath();
-                for (let a = 0; a <= Math.PI * 2; a += 0.05) {
-                    // bentuk awan: gelombang sinus
-                    const wob = r + Math.sin(a * 6) * scale * 0.18;
-                    const x = cx + Math.cos(a) * wob;
-                    const y = cy + Math.sin(a) * wob * 0.55; // pipih horisontal
-                    if (a === 0) ctx.moveTo(x, y);
-                    else ctx.lineTo(x, y);
-                }
-                ctx.closePath();
-                ctx.stroke();
-            }
-            ctx.restore();
+      // 7) Skyline: Borobudur + Joglo + gedung modern — NEMPEL ke bottom
+      const skyY = h; // base garis tanah = paling bawah canvas
+      // siluet tanah gelap supaya kota tampak berdiri di atasnya
+      ctx.fillStyle = dark ? "rgba(10,8,5,0.9)" : "rgba(60,40,15,0.18)";
+      ctx.fillRect(0, skyY - 6, w, 6);
+      ctx.save();
+      ctx.fillStyle = dark ? "rgba(212,166,74,0.18)" : "rgba(120,80,20,0.18)";
+      ctx.strokeStyle = C.gold;
+      ctx.lineWidth = 1;
+
+      // Borobudur (kiri)
+      const bx = w * 0.1;
+      ctx.beginPath();
+      ctx.moveTo(bx - 80, skyY);
+      for (let i = -80; i <= 80; i += 4) {
+        const y = skyY - 50 + Math.abs(i) * 0.3 - Math.cos(i / 12) * 6;
+        ctx.lineTo(bx + i, y);
+      }
+      ctx.lineTo(bx + 80, skyY);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+      // stupa atas
+      ctx.beginPath();
+      ctx.arc(bx, skyY - 60, 8, Math.PI, 0);
+      ctx.fill();
+      ctx.stroke();
+
+      // Joglo (tengah)
+      const jx = w * 0.4;
+      ctx.beginPath();
+      ctx.moveTo(jx - 60, skyY);
+      ctx.lineTo(jx - 40, skyY - 25);
+      ctx.lineTo(jx - 25, skyY - 30);
+      ctx.lineTo(jx, skyY - 55);
+      ctx.lineTo(jx + 25, skyY - 30);
+      ctx.lineTo(jx + 40, skyY - 25);
+      ctx.lineTo(jx + 60, skyY);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // Modern buildings (kanan)
+      let mx = w * 0.6;
+      const heights = [70, 110, 50, 95, 65, 130, 80, 45, 100];
+      heights.forEach((bh) => {
+        const bw = 28;
+        ctx.fillRect(mx, skyY - bh, bw, bh);
+        ctx.strokeRect(mx, skyY - bh, bw, bh);
+        // antenna
+        if (bh > 90) {
+          ctx.beginPath();
+          ctx.moveTo(mx + bw / 2, skyY - bh);
+          ctx.lineTo(mx + bw / 2, skyY - bh - 15);
+          ctx.stroke();
         }
-
-        // ============ MOTIF: TUMPAL (border segitiga songket) ============
-        function drawTumpal(w, h, p, dark) {
-            ctx.save();
-            const tw = 22; // lebar segitiga
-            const th = 14; // tinggi
-            ctx.fillStyle = `rgba(${p.gold},${dark ? 0.18 : 0.14})`;
-            ctx.strokeStyle = `rgba(${p.maroon},${dark ? 0.25 : 0.22})`;
-            ctx.lineWidth = 0.8;
-            // atas (menghadap ke bawah)
-            for (let x = 0; x < w; x += tw) {
-                ctx.beginPath();
-                ctx.moveTo(x, 0);
-                ctx.lineTo(x + tw / 2, th);
-                ctx.lineTo(x + tw, 0);
-                ctx.closePath();
-                ctx.fill();
-                ctx.stroke();
-            }
-            // bawah (di atas skyline, menghadap ke atas)
-            const yb = h - 6;
-            for (let x = 0; x < w; x += tw) {
-                ctx.beginPath();
-                ctx.moveTo(x, yb);
-                ctx.lineTo(x + tw / 2, yb - th);
-                ctx.lineTo(x + tw, yb);
-                ctx.closePath();
-                ctx.fill();
-                ctx.stroke();
-            }
-            ctx.restore();
+        // windows
+        ctx.save();
+        ctx.fillStyle = C.goldSoft;
+        for (let wy = skyY - bh + 6; wy < skyY - 6; wy += 8) {
+          for (let wx = mx + 4; wx < mx + bw - 4; wx += 6) {
+            ctx.fillRect(wx, wy, 3, 3);
+          }
         }
+        ctx.restore();
+        mx += bw + 6;
+        if (mx > w) return;
+      });
 
-        // ============ SKYLINE: KOTA DIGITAL + CANDI ============
-        function drawSkyline(w, h, p, dark) {
-            const baseY = h - 8;
-            ctx.save();
-            const grad = ctx.createLinearGradient(0, h - 220, 0, h);
-            grad.addColorStop(0, `rgba(${p.indigo},0)`);
-            grad.addColorStop(1, `rgba(${p.indigo},${dark ? 0.28 : 0.22})`);
-            ctx.fillStyle = grad;
+      // garis tanah
+      ctx.beginPath();
+      ctx.strokeStyle = C.gold;
+      ctx.lineWidth = 1;
+      ctx.moveTo(0, skyY);
+      ctx.lineTo(w, skyY);
+      ctx.stroke();
+      ctx.restore();
 
-            ctx.beginPath();
-            ctx.moveTo(0, baseY);
-            let x = 0;
-            const seed = (i) => Math.abs((Math.sin(i * 12.9898) * 43758.5453) % 1);
-            let i = 0;
-            while (x < w) {
-                const kind = i % 7;
-                if (kind === 2) {
-                    // CANDI BOROBUDUR — stupa berundak
-                    const cw = 90;
-                    const ch = 70;
-                    // dasar berundak (3 tingkat)
-                    ctx.lineTo(x, baseY - ch * 0.35);
-                    ctx.lineTo(x + cw * 0.1, baseY - ch * 0.35);
-                    ctx.lineTo(x + cw * 0.1, baseY - ch * 0.55);
-                    ctx.lineTo(x + cw * 0.22, baseY - ch * 0.55);
-                    ctx.lineTo(x + cw * 0.22, baseY - ch * 0.7);
-                    // stupa puncak (kubah)
-                    ctx.lineTo(x + cw * 0.35, baseY - ch * 0.7);
-                    ctx.lineTo(x + cw * 0.5, baseY - ch);     // puncak
-                    ctx.lineTo(x + cw * 0.65, baseY - ch * 0.7);
-                    ctx.lineTo(x + cw * 0.78, baseY - ch * 0.7);
-                    ctx.lineTo(x + cw * 0.78, baseY - ch * 0.55);
-                    ctx.lineTo(x + cw * 0.9, baseY - ch * 0.55);
-                    ctx.lineTo(x + cw * 0.9, baseY - ch * 0.35);
-                    ctx.lineTo(x + cw, baseY - ch * 0.35);
-                    x += cw;
-                } else if (kind === 5) {
-                    // JOGLO — atap limasan
-                    const jw = 60;
-                    const jh = 45;
-                    ctx.lineTo(x, baseY - jh * 0.45);
-                    ctx.lineTo(x + jw * 0.18, baseY - jh * 0.45);
-                    ctx.lineTo(x + jw * 0.32, baseY - jh * 0.8);
-                    ctx.lineTo(x + jw * 0.5, baseY - jh);
-                    ctx.lineTo(x + jw * 0.68, baseY - jh * 0.8);
-                    ctx.lineTo(x + jw * 0.82, baseY - jh * 0.45);
-                    ctx.lineTo(x + jw, baseY - jh * 0.45);
-                    x += jw;
-                } else {
-                    // Gedung modern
-                    const bw = 28 + seed(i) * 50;
-                    const bh = 40 + seed(i + 7) * 140;
-                    ctx.lineTo(x, baseY - bh);
-                    if (i % 3 === 0) {
-                        ctx.lineTo(x + bw * 0.5, baseY - bh - 18);
-                        ctx.lineTo(x + bw * 0.5 + 1.5, baseY - bh - 18);
-                        ctx.lineTo(x + bw * 0.5 + 1.5, baseY - bh);
-                    }
-                    ctx.lineTo(x + bw, baseY - bh);
-                    x += bw;
-                }
-                i++;
-            }
-            ctx.lineTo(w, baseY);
-            ctx.closePath();
-            ctx.fill();
-            ctx.restore();
-        }
+      // 8) Veil lembut — meredam semua motif supaya teks hero mudah dibaca
+      //    (warna mengikuti bg, jadi palette tidak berubah)
+      ctx.fillStyle = dark ? "rgba(10,15,26,0.55)" : "rgba(234,240,248,0.55)";
+      ctx.fillRect(0, 0, w, h);
 
-        function draw() {
-            const w = canvas.offsetWidth;
-            const h = canvas.offsetHeight;
-            ctx.clearRect(0, 0, w, h);
-            const dark = isDark();
-            const p = palette(dark);
-            tRef.current += 1;
+      // 9) Vignette halus
+      const vg = ctx.createRadialGradient(w / 2, h / 2, Math.min(w, h) * 0.25, w / 2, h / 2, Math.max(w, h) * 0.8);
+      vg.addColorStop(0, "rgba(0,0,0,0)");
+      vg.addColorStop(1, dark ? "rgba(0,0,0,0.45)" : "rgba(30,50,90,0.14)");
+      ctx.fillStyle = vg;
+      ctx.fillRect(0, 0, w, h);
 
-            // Lapis 1: Mega Mendung (awan latar) — 3 awan tersebar
-            drawMegaMendung(w * 0.18, h * 0.25, 38, dark ? 0.12 : 0.1, p);
-            drawMegaMendung(w * 0.72, h * 0.18, 46, dark ? 0.1 : 0.09, p);
-            drawMegaMendung(w * 0.5, h * 0.55, 32, dark ? 0.08 : 0.07, p);
+      // 10) Top fade
+      const tg = ctx.createLinearGradient(0, 0, 0, h * 0.55);
+      tg.addColorStop(0, dark ? "rgba(10,15,26,0.55)" : "rgba(234,240,248,0.6)");
+      tg.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = tg;
+      ctx.fillRect(0, 0, w, h * 0.55);
+    };
 
-            // Lapis 2: Parang diagonal
-            drawParang(w, h, p, dark);
+    draw();
 
-            // Lapis 3: Grid + Kawung besar di tiap titik silang
-            const rect = canvas.getBoundingClientRect();
-            const mx = mouseRef.current.x - rect.left;
-            const my = mouseRef.current.y - rect.top;
+    // Redraw hanya saat resize / theme change — TIDAK ada animasi loop
+    const ro = new ResizeObserver(() => draw());
+    ro.observe(wrap);
 
-            for (let r = 0; r < rows; r++) {
-                for (let c = 0; c < cols; c++) {
-                    const cx = c * CELL;
-                    const cy = r * CELL;
-                    const dx = mx - cx;
-                    const dy = my - cy;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-                    const lit = Math.max(0, 1 - dist / 280);
+    const mo = new MutationObserver(() => draw());
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
 
-                    // Grid sangat tipis (biar motif yg dominan)
-                    ctx.strokeStyle = `rgba(${p.indigo},${0.04 + lit * 0.18})`;
-                    ctx.lineWidth = 0.5;
-                    ctx.strokeRect(cx, cy, CELL, CELL);
+    return () => {
+      ro.disconnect();
+      mo.disconnect();
+    };
+  }, []);
 
-                    // KAWUNG BESAR di setiap titik silang
-                    const baseAlpha = 0.18 + lit * 0.55;
-                    drawKawung(cx, cy, 22, baseAlpha, p);
-
-                    if (lit > 0.1) {
-                        ctx.fillStyle = `rgba(${p.gold},${lit * 0.06})`;
-                        ctx.fillRect(cx, cy, CELL, CELL);
-                    }
-                }
-            }
-
-            // Lapis 4: Tumpal border atas & bawah
-            drawTumpal(w, h, p, dark);
-
-            // Lapis 5: Partikel data emas
-            particlesRef.current.forEach((q) => {
-                q.x += q.vx;
-                q.y += q.vy;
-                q.life += 0.005;
-                if (q.x < 0 || q.x > w) q.vx *= -1;
-                if (q.y < 0 || q.y > h) q.vy *= -1;
-                const a = 0.45 + Math.sin(q.life * 6) * 0.3;
-                ctx.fillStyle = `rgba(${p.gold},${a})`;
-                ctx.beginPath();
-                ctx.arc(q.x, q.y, 1.6, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.strokeStyle = `rgba(${p.gold},${a * 0.3})`;
-                ctx.lineWidth = 0.6;
-                ctx.beginPath();
-                ctx.moveTo(q.x, q.y);
-                ctx.lineTo(q.x - q.vx * 14, q.y - q.vy * 14);
-                ctx.stroke();
-            });
-
-            // Lapis 6: Skyline (candi + joglo + gedung)
-            drawSkyline(w, h, p, dark);
-
-            rafRef.current = requestAnimationFrame(draw);
-        }
-
-        resize();
-        draw();
-        window.addEventListener("resize", resize);
-        return () => {
-            window.removeEventListener("resize", resize);
-            if (rafRef.current) cancelAnimationFrame(rafRef.current);
-        };
-    }, []);
-
-    return (
-        <canvas
-            ref={canvasRef}
-            className="absolute inset-0 w-full h-full"
-            style={{ display: "block" }}
-        />
-    );
+  return (
+    <div
+      ref={wrapRef}
+      className={`absolute inset-0 overflow-hidden pointer-events-none ${className}`}
+      aria-hidden="true"
+    >
+      <canvas ref={canvasRef} className="block w-full h-full" />
+    </div>
+  );
 }

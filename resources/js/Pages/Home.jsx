@@ -611,18 +611,17 @@ export default function Home({ leaderboard = [] }) {
                                                         >
                                                             <td className="px-8 py-6">
                                                                 <div
-                                                                    className={`size-10 rounded-xl flex items-center justify-center font-black ${
-                                                                        index ===
-                                                                        0
+                                                                    className={`size-10 rounded-xl flex items-center justify-center font-black ${index ===
+                                                                            0
                                                                             ? "bg-amber-400 text-white shadow-md shadow-amber-200"
                                                                             : index ===
                                                                                 1
-                                                                              ? "bg-slate-300 text-white shadow-md shadow-slate-200"
-                                                                              : index ===
-                                                                                  2
-                                                                                ? "bg-orange-400 text-white shadow-md shadow-orange-200"
-                                                                                : "bg-slate-100 dark:bg-slate-800 text-slate-500"
-                                                                    }`}
+                                                                                ? "bg-slate-300 text-white shadow-md shadow-slate-200"
+                                                                                : index ===
+                                                                                    2
+                                                                                    ? "bg-orange-400 text-white shadow-md shadow-orange-200"
+                                                                                    : "bg-slate-100 dark:bg-slate-800 text-slate-500"
+                                                                        }`}
                                                                 >
                                                                     {index + 1}
                                                                 </div>
@@ -1008,18 +1007,16 @@ export default function Home({ leaderboard = [] }) {
                                         onClick={() =>
                                             setActiveFeature(feat.id)
                                         }
-                                        className={`feat-item flex gap-4 md:gap-6 p-5 md:p-6 rounded-[2rem] border transition-all duration-300 cursor-pointer group ${
-                                            activeFeature === feat.id
+                                        className={`feat-item flex gap-4 md:gap-6 p-5 md:p-6 rounded-[2rem] border transition-all duration-300 cursor-pointer group ${activeFeature === feat.id
                                                 ? "bg-primary/5 dark:bg-white/15 border-primary shadow-2xl shadow-primary/20 scale-[1.02] md:scale-105"
                                                 : "bg-white dark:bg-white/5 border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/10"
-                                        }`}
+                                            }`}
                                     >
                                         <div
-                                            className={`size-14 shrink-0 rounded-2xl flex items-center justify-center shadow-lg transition-transform duration-500 group-hover:scale-110 ${
-                                                activeFeature === feat.id
+                                            className={`size-14 shrink-0 rounded-2xl flex items-center justify-center shadow-lg transition-transform duration-500 group-hover:scale-110 ${activeFeature === feat.id
                                                     ? feat.color + " text-white"
                                                     : "bg-slate-100 dark:bg-white/10 text-slate-500 dark:text-white"
-                                            }`}
+                                                }`}
                                         >
                                             <span className="material-symbols-outlined text-2xl">
                                                 {feat.icon}
@@ -1027,11 +1024,10 @@ export default function Home({ leaderboard = [] }) {
                                         </div>
                                         <div>
                                             <h3
-                                                className={`text-xl font-black mb-2 italic uppercase transition-colors ${
-                                                    activeFeature === feat.id
+                                                className={`text-xl font-black mb-2 italic uppercase transition-colors ${activeFeature === feat.id
                                                         ? "text-primary"
                                                         : "text-slate-800 dark:text-white"
-                                                }`}
+                                                    }`}
                                             >
                                                 {feat.title}
                                             </h3>
@@ -1078,10 +1074,10 @@ export default function Home({ leaderboard = [] }) {
                                                     {activeFeature === 0
                                                         ? "ar-view"
                                                         : activeFeature === 1
-                                                          ? "gallery"
-                                                          : activeFeature === 2
-                                                            ? "interactive-map"
-                                                            : "contribute"}
+                                                            ? "gallery"
+                                                            : activeFeature === 2
+                                                                ? "interactive-map"
+                                                                : "contribute"}
                                                 </span>
                                             </div>
                                         </div>
@@ -1188,12 +1184,6 @@ export default function Home({ leaderboard = [] }) {
                                                                 cat: "Seni",
                                                                 icon: "groups",
                                                                 color: "from-emerald-500/20",
-                                                            },
-                                                            {
-                                                                title: "Lutung Kasarung",
-                                                                cat: "Cerita",
-                                                                icon: "auto_stories",
-                                                                color: "from-purple-500/20",
                                                             },
                                                         ].map((item, i) => (
                                                             <motion.div

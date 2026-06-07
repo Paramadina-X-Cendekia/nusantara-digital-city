@@ -67,7 +67,7 @@ class PublicBudayaController extends Controller
         if ($snapshot->hasChildren()) {
             foreach ($snapshot->getValue() as $id => $data) {
                 $status = $data['status'] ?? 'approved';
-                if ($status === 'approved') {
+                if (in_array($status, ['approved', 'Kontribusi', 'UNESCO', 'Warisan Nasional'])) {
                     $budayaData[] = array_merge(['id' => $id], $data);
                     
                     if (isset($data['artCategory']) && $data['artCategory'] === 'sejarah') {
@@ -110,7 +110,7 @@ class PublicBudayaController extends Controller
         if ($snapshot->hasChildren()) {
             foreach ($snapshot->getValue() as $id => $data) {
                 $status = $data['status'] ?? 'approved';
-                if ($status === 'approved' && isset($data['artCategory']) && $data['artCategory'] === 'sejarah') {
+                if (in_array($status, ['approved', 'Kontribusi', 'UNESCO', 'Warisan Nasional']) && isset($data['artCategory']) && $data['artCategory'] === 'sejarah') {
                     $landmarks[] = [
                         'name' => $data['artName'] ?? 'Untitled',
                         'name_en' => $data['artName_en'] ?? null,
@@ -205,7 +205,7 @@ class PublicBudayaController extends Controller
         if ($budayaSnapshot->hasChildren()) {
             foreach ($budayaSnapshot->getValue() as $id => $data) {
                 $status = $data['status'] ?? 'approved';
-                if ($status === 'approved') {
+                if (in_array($status, ['approved', 'Kontribusi', 'UNESCO', 'Warisan Nasional'])) {
                     $mapSites[] = [
                         'id' => $id,
                         'name' => $data['artName'] ?? 'Untitled',

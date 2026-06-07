@@ -41,6 +41,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware([\App\Http\Middleware\AdminAuth::class])->group(function () {
         Route::post('/admin/contributions/{id}/approve', [\App\Http\Controllers\ModerationController::class, 'approve'])->name('admin.contributions.approve');
         Route::post('/admin/contributions/{id}/reject', [\App\Http\Controllers\ModerationController::class, 'reject'])->name('admin.contributions.reject');
+        Route::delete('/admin/contributions/{id}', [\App\Http\Controllers\ModerationController::class, 'destroy'])->name('admin.contributions.destroy');
         Route::get('/admin/contributor-profiles', [\App\Http\Controllers\ModerationController::class, 'contributorProfiles'])->name('admin.contributor_profiles');
     });
 });
@@ -81,9 +82,7 @@ Route::middleware([\App\Http\Middleware\AdminAuth::class])->group(function () {
     Route::delete('/admin/registrations/{id}', [\App\Http\Controllers\CityController::class, 'deleteRegistration'])->name('admin.delete');
 });
 
-Route::get('/eksplorasi-seni', function () {
-    return Inertia::render('EksplorasiSeni');
-})->name('eksplorasi-seni');
+Route::get('/eksplorasi-seni', [SeniController::class, 'index'])->name('eksplorasi-seni');
 
 Route::get('/eksplorasi-seni/{slug}', [SeniController::class, 'show'])->name('detail-seni');
 

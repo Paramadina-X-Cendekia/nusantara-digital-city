@@ -208,33 +208,121 @@ class SeniController extends Controller
     }
 
     /**
+     * Display a listing of the art pieces (static + dynamic contributions).
+     */
+    public function index()
+    {
+        $allArt = $this->getArtData();
+
+        try {
+            $database = $this->getFirebaseDatabase();
+            $reference = $database->getReference('seni_budaya');
+            $snapshot = $reference->getSnapshot();
+
+            if ($snapshot->hasChildren()) {
+                foreach ($snapshot->getValue() as $key => $value) {
+                    if (isset($value['artCategory']) && $value['artCategory'] === 'seni') {
+                        $status = $value['status'] ?? 'approved';
+                        if ($status === 'approved' || $status === 'Kontribusi' || $status === 'UNESCO' || $status === 'Warisan Nasional') {
+                            $slug = $value['slug'] ?? $key;
+                            
+                            $mapped = [
+                                'slug' => $slug,
+                                'title' => $value['artName'] ?? $value['title'] ?? 'Untitled',
+                                'category' => $value['artSubCategory'] ?? $value['category'] ?? 'batik',
+                                'origin' => $value['origin'] ?? 'Indonesia',
+                                'desc' => $value['shortDesc'] ?? $value['description'] ?? $value['desc'] ?? '',
+                                'img' => $value['mainImageUrl'] ?? $value['imageUrl'] ?? $value['img'] ?? '',
+                                'status' => $value['status'] ?? 'Kontribusi',
+                            ];
+                            
+                            if (strtolower($mapped['category']) === 'batik') {
+                                $mapped['hasAR'] = true;
+                            } else {
+                                $mapped['hasAR'] = $value['hasAR'] ?? false;
+                            }
+                            
+                            if (isset($allArt[$slug])) {
+                                $allArt[$slug] = array_merge($mapped, $allArt[$slug]);
+                            } else {
+                                $allArt[$slug] = $mapped;
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            // Silently ignore or log
+        }
+
+        $artworks = array_values($allArt);
+        foreach ($artworks as $idx => &$art) {
+            $art['id'] = $art['id'] ?? ($idx + 1);
+        }
+
+        return Inertia::render('EksplorasiSeni', [
+            'artworks' => $artworks,
+        ]);
+    }
+
+    /**
      * Show detail page for a specific art piece.
      */
     public function show($slug)
     {
         $allArt = $this->getArtData();
+        $art = null;
 
-        if (!isset($allArt[$slug])) {
-            abort(404, 'Karya seni tidak ditemukan');
+        if (isset($allArt[$slug])) {
+            $art = $allArt[$slug];
         }
 
-        $art = $allArt[$slug];
-
-        // Try to enrich data from Firebase
+        // Try to enrich data or fetch from Firebase
         try {
             $database = $this->getFirebaseDatabase();
-
             $reference = $database->getReference('seni_budaya/' . $slug);
             $snapshot = $reference->getSnapshot();
 
+            // Fallback: search by 'slug' field in case the key is a random push ID
+            if (!$snapshot->exists()) {
+                $allBudayaRef = $database->getReference('seni_budaya');
+                $allBudayaSnapshot = $allBudayaRef->getSnapshot();
+                if ($allBudayaSnapshot->hasChildren()) {
+                    foreach ($allBudayaSnapshot->getValue() as $key => $value) {
+                        if (isset($value['slug']) && $value['slug'] === $slug) {
+                            $snapshot = $allBudayaRef->getChild($key)->getSnapshot();
+                            break;
+                        }
+                    }
+                }
+            }
+
             if ($snapshot->exists()) {
                 $firebaseData = $snapshot->getValue();
+                
                 // Ensure consistency in field names and merge
                 if (isset($firebaseData['artName'])) $firebaseData['title'] = $firebaseData['artName'];
                 if (isset($firebaseData['description'])) $firebaseData['desc'] = $firebaseData['description'];
                 if (isset($firebaseData['mainImageUrl'])) $firebaseData['img'] = $firebaseData['mainImageUrl'];
                 if (isset($firebaseData['imageUrl']) && !isset($firebaseData['mainImageUrl'])) $firebaseData['img'] = $firebaseData['imageUrl'];
-                
+                if (isset($firebaseData['artSubCategory'])) $firebaseData['category'] = $firebaseData['artSubCategory'];
+                if (isset($firebaseData['videoLink'])) $firebaseData['videoUrl'] = $firebaseData['videoLink'];
+
+                if (!$art) {
+                    $art = [
+                        'slug' => $slug,
+                        'title' => $firebaseData['title'] ?? 'Untitled',
+                        'category' => $firebaseData['category'] ?? 'batik',
+                        'origin' => $firebaseData['origin'] ?? 'Indonesia',
+                        'status' => 'Kontribusi',
+                        'desc' => $firebaseData['shortDesc'] ?? $firebaseData['desc'] ?? '',
+                        'longDesc' => $firebaseData['description'] ?? '',
+                        'img' => $firebaseData['img'] ?? '',
+                        'hasAudio' => false,
+                        'videoUrl' => $firebaseData['videoLink'] ?? null,
+                    ];
+                }
+
                 $art = array_merge($art, $firebaseData);
 
                 // Fetch current badge info
@@ -253,6 +341,39 @@ class SeniController extends Controller
             }
         } catch (\Exception $e) {
             // Firebase not configured — use local data silently
+        }
+
+        if (!$art) {
+            abort(404, 'Karya seni tidak ditemukan');
+        }
+
+        // Force 3D AR settings and default hotspots if category is batik
+        if (strtolower($art['category'] ?? '') === 'batik' || strtolower($art['artSubCategory'] ?? '') === 'batik') {
+            $art['hasAR'] = true;
+            $art['category'] = 'batik';
+            
+            if (empty($art['hotspots'])) {
+                $art['hotspots'] = [
+                    [
+                        'x' => 50,
+                        'y' => 50,
+                        'title' => 'Detail Canting',
+                        'desc' => 'Ketelitian goresan lilin malam menggunakan canting tulis tradisional.'
+                    ],
+                    [
+                        'x' => 35,
+                        'y' => 40,
+                        'title' => 'Zat Pewarna Alami',
+                        'desc' => 'Warna klasik yang dihasilkan dari ekstrak tumbuhan soga dan nila alami.'
+                    ],
+                    [
+                        'x' => 65,
+                        'y' => 60,
+                        'title' => 'Filosofi Harapan',
+                        'desc' => 'Setiap pola mengandung doa dan harapan pembuat untuk sang pemakai.'
+                    ]
+                ];
+            }
         }
 
         return Inertia::render('DetailSeni', [

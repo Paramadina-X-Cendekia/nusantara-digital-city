@@ -35,18 +35,6 @@ class KisahController extends Controller
                 'characters' => ['Barong', 'Rangda', 'Para Pengikut Barong'],
                 'videoUrl' => 'https://www.youtube.com/embed/dQw4w9WgXcQ',
             ],
-            'lutung-kasarung' => [
-                'slug' => 'lutung-kasarung',
-                'title' => 'Lutung Kasarung',
-                'category' => 'Cerita Rakyat',
-                'origin' => 'Jawa Barat',
-                'desc' => 'Kisah cinta tulus antara Purbasari dan seekor kera jelmaan dewa.',
-                'longDesc' => 'Lutung Kasarung menceritakan tentang Purbasari yang diusir dari istana oleh kakaknya, Purbararang. Di hutan, ia bertemu dengan seekor lutung (kera hitam) bernama Lutung Kasarung. Lutung tersebut sebenarnya adalah dewa bernama Sanghyang Guruminda yang sedang turun ke bumi. Berkat bantuan Lutung Kasarung, Purbasari berhasil kembali ke istana dan menjadi ratu yang bijaksana.',
-                'img' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuCOk7eFXM8Z7djeW87pg0CemNhUYyqvVOTbTru4odSwbuliignpFMApDGhfNKlW6kKyQlCbzJ3ohIoFaRnWWDgvQfazHGAkAjHoSKngL3-wQdr1HcITBwNXh6s5QVGFLqfPkQo7SDDW_mY-6RcScGnPl4Ewr-Vg_6va3QV-h4tnOTTygXWWbXsrbtnnmk6_AzN-1zBFS-khioMRQ3qfwSeVgNhYKSFkLW9kkjlvFAKSOrwFbzI-SYHp13KInW70cdrV_8nUtZOKZ2BQ',
-                'moral' => 'Kebaikan hati akan mengalahkan kejahatan, dan jangan menilai seseorang hanya dari fisiknya.',
-                'characters' => ['Purbasari', 'Purbararang', 'Lutung Kasarung (Sanghyang Guruminda)'],
-                'videoUrl' => 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-            ],
             'nyi-roro-kidul' => [
                 'slug' => 'nyi-roro-kidul',
                 'title' => 'Legenda Nyi Roro Kidul',
@@ -72,7 +60,7 @@ class KisahController extends Controller
 
             if ($snapshot->hasChildren()) {
                 foreach ($snapshot->getValue() as $id => $data) {
-                    if (isset($data['artCategory']) && $data['artCategory'] === 'cerita' && (!isset($data['status']) || $data['status'] === 'approved')) {
+                    if (isset($data['artCategory']) && $data['artCategory'] === 'cerita' && (!isset($data['status']) || in_array($data['status'], ['approved', 'Kontribusi', 'UNESCO', 'Warisan Nasional']))) {
                         $allKisah[$id] = [
                             'slug' => $id,
                             'title' => $data['artName'] ?? 'Untitled',
@@ -83,7 +71,7 @@ class KisahController extends Controller
                             'img' => $data['mainImageUrl'] ?? ($data['imageUrl'] ?? ''),
                             'moral' => $data['moral'] ?? '',
                             'characters' => $data['characters'] ?? [],
-                            'videoUrl' => $data['videoLink'] ?? '',
+                            'videoUrl' => $data['videoLink'] ?? ($data['videoUrl'] ?? ''),
                         ];
                     }
                 }
@@ -108,7 +96,7 @@ class KisahController extends Controller
             
             if ($snapshot->exists()) {
                 $data = $snapshot->getValue();
-                if (isset($data['artCategory']) && $data['artCategory'] === 'cerita' && (!isset($data['status']) || $data['status'] === 'approved')) {
+                if (isset($data['artCategory']) && $data['artCategory'] === 'cerita' && (!isset($data['status']) || in_array($data['status'], ['approved', 'Kontribusi', 'UNESCO', 'Warisan Nasional']))) {
                 $contributorInfo = $this->getContributorInfo(
                     $data['contributor_id'] ?? null,
                     $data['contributor'] ?? null,
@@ -126,7 +114,7 @@ class KisahController extends Controller
                     'img' => $data['mainImageUrl'] ?? ($data['imageUrl'] ?? ''),
                     'moral' => $data['moral'] ?? '',
                     'characters' => $data['characters'] ?? [],
-                    'videoUrl' => $data['videoLink'] ?? '',
+                    'videoUrl' => $data['videoLink'] ?? ($data['videoUrl'] ?? ''),
                     'contributor' => $contributorInfo['name'],
                     'contributor_id' => $data['contributor_id'] ?? null,
                     'contributor_profession' => $contributorInfo['profession'],

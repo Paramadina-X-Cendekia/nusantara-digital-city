@@ -23,7 +23,7 @@ class PublicWisataController extends Controller
         if ($snapshot->hasChildren()) {
             foreach ($snapshot->getValue() as $id => $data) {
                 $status = $data['status'] ?? 'approved';
-                if ($status === 'approved') {
+                if (in_array($status, ['approved', 'Kontribusi', 'UNESCO', 'Warisan Nasional'])) {
                     $category = $data['category'] ?? 'wisata';
                     
                     // Include items appropriate for the tourism landing page tabs
@@ -58,7 +58,7 @@ class PublicWisataController extends Controller
         if ($snapshot->hasChildren()) {
             foreach ($snapshot->getValue() as $id => $data) {
                 $status = $data['status'] ?? 'approved';
-                if ($status === 'approved') {
+                if (in_array($status, ['approved', 'Kontribusi', 'UNESCO', 'Warisan Nasional'])) {
                     $category = $data['category'] ?? 'wisata';
                     
                     $destinations[] = [
@@ -215,7 +215,7 @@ class PublicWisataController extends Controller
         if ($snapshot->hasChildren()) {
             foreach ($snapshot->getValue() as $id => $data) {
                 $status = $data['status'] ?? 'approved';
-                if ($status === 'approved') {
+                if (in_array($status, ['approved', 'Kontribusi', 'UNESCO', 'Warisan Nasional'])) {
                     $destinations[] = [
                         'id' => $id,
                         'name' => $data['tourismName'] ?? ($data['shopName'] ?? 'Untitled'),

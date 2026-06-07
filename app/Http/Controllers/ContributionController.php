@@ -50,6 +50,9 @@ class ContributionController extends Controller
             'videoLink' => 'nullable|url',
             'moral' => 'nullable|string|required_if:artCategory,cerita',
             'characters' => 'nullable|string|required_if:artCategory,cerita',
+            'makna' => 'nullable|string',
+            'fakta_menarik' => 'nullable|array',
+            'fakta_budaya' => 'nullable|string',
         ];
 
         $wisataRules = [
