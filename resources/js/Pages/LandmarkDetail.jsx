@@ -307,17 +307,6 @@ export default function LandmarkDetail({ landmark }) {
                                 <div className="p-8 text-center bg-slate-50 dark:bg-slate-900/40 border-t border-slate-100 dark:border-slate-800">
                                     <h3 className="text-2xl font-black text-slate-900 dark:text-slate-100 mb-2">{t('landmark_detail.virtual_exploration')}</h3>
                                     <p className="text-slate-500 dark:text-slate-400 mb-6">{t('landmark_detail.virtual_exploration_desc')}</p>
-                                    <div className="flex justify-center gap-4">
-                                        <a
-                                            href={tourUrl}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-white font-bold text-sm shadow-md hover:bg-primary/95 transition-all"
-                                        >
-                                            <span className="material-symbols-outlined text-lg">open_in_new</span>
-                                            {t('landmark_detail.open_fullscreen')}
-                                        </a>
-                                    </div>
                                 </div>
                             </motion.div>
                         )}
@@ -380,9 +369,9 @@ export default function LandmarkDetail({ landmark }) {
                                 </div>
                                 <div className="flex gap-4 pt-4">
                                     {landmark.archiveUrl ? (
-                                        <a 
-                                            href={landmark.archiveUrl} 
-                                            download 
+                                        <a
+                                            href={landmark.archiveUrl}
+                                            download
                                             className="flex-1 bg-primary text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-primary/25 hover:bg-primary/90 transition-all text-sm"
                                         >
                                             <span className="material-symbols-outlined">download</span> {t('landmark_detail.download_pdf')}
