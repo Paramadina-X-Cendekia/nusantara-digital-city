@@ -21,6 +21,13 @@ const stagger = {
     visible: { opacity: 1, transition: { staggerChildren: 0.15 } },
 };
 
+const CATEGORY_MAP = {
+    alam: "nature",
+    pantai: "beach",
+    gunung: "mountain",
+    kota: "city",
+};
+
 export default function Wisata({ dynamicDestinations = [] }) {
     const { t, lang } = useLanguage();
     const [activeTab, setActiveTab] = useState("destinasi");
@@ -373,7 +380,7 @@ export default function Wisata({ dynamicDestinations = [] }) {
                                                         category
                                                     </span>
                                                     <span className="text-[10px] font-bold uppercase tracking-widest">
-                                                        {dest.category}
+                                                        {t(`wisata.${CATEGORY_MAP[dest.category?.toLowerCase()] || dest.category}`)}
                                                     </span>
                                                 </div>
                                                 <Link

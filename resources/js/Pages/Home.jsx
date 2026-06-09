@@ -562,140 +562,169 @@ export default function Home({ leaderboard = [] }) {
                     </div>
                 </section>
 
-                {/* ── Leaderboard Section ── */}
-                <section className="py-20 bg-white/40 dark:bg-slate-900/30  relative">
-                    <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.6, duration: 0.6 }}
-                        className="container mx-auto px-4 lg:px-10 relative z-20"
-                    >
-                        <div className="text-center mb-16">
-                            <h2 className="text-4xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-4">
-                                Papan Peringkat Kontributor
-                            </h2>
-                            <p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">
-                                Apresiasi bagi para penjaga warisan budaya yang
-                                telah berkontribusi mendigitalisasi kekayaan
-                                Nusantara.
-                            </p>
-                        </div>
+                {/* ── Tentang Sinergi Nusa Section ── */}
+                <section className="py-24 bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-950 relative overflow-hidden about-sn-trigger">
+                    {/* Background glow effects */}
+                    <div className="absolute top-1/4 left-1/4 w-80 h-80 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
+                    <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl pointer-events-none"></div>
 
-                        <div className="max-w-4xl mx-auto">
-                            <div className="bg-white dark:bg-surface-dark rounded-[2.5rem] shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden">
-                                <div className="overflow-x-auto">
-                                    <table className="w-full text-left border-collapse min-w-[600px]">
-                                        <thead>
-                                            <tr className="bg-primary/5 text-primary text-[10px] uppercase font-black tracking-widest border-b border-primary/10">
-                                                <th className="px-8 py-5">
-                                                    Peringkat
-                                                </th>
-                                                <th className="px-8 py-5">
-                                                    Kontributor
-                                                </th>
-                                                <th className="px-8 py-5">
-                                                    Badge
-                                                </th>
-                                                <th className="px-8 py-5 text-right">
-                                                    Poin
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                                            {leaderboard.length > 0 ? (
-                                                leaderboard.map(
-                                                    (user, index) => (
-                                                        <tr
-                                                            key={user.name}
-                                                            className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group"
-                                                        >
-                                                            <td className="px-8 py-6">
-                                                                <div
-                                                                    className={`size-10 rounded-xl flex items-center justify-center font-black ${index ===
-                                                                            0
-                                                                            ? "bg-amber-400 text-white shadow-md shadow-amber-200"
-                                                                            : index ===
-                                                                                1
-                                                                                ? "bg-slate-300 text-white shadow-md shadow-slate-200"
-                                                                                : index ===
-                                                                                    2
-                                                                                    ? "bg-orange-400 text-white shadow-md shadow-orange-200"
-                                                                                    : "bg-slate-100 dark:bg-slate-800 text-slate-500"
-                                                                        }`}
-                                                                >
-                                                                    {index + 1}
-                                                                </div>
-                                                            </td>
-                                                            <td className="px-8 py-6">
-                                                                <p className="font-black text-slate-900 dark:text-white group-hover:text-primary transition-colors">
-                                                                    {user.name}
-                                                                </p>
-                                                            </td>
-                                                            <td className="px-8 py-6">
-                                                                <div className="flex items-center gap-2">
-                                                                    {user.badge_info && (
-                                                                        <div
-                                                                            className="size-8 rounded-xl flex items-center justify-center bg-slate-100 dark:bg-slate-800"
-                                                                            style={{
-                                                                                color: user
-                                                                                    .badge_info
-                                                                                    .color,
-                                                                            }}
-                                                                        >
-                                                                            <span
-                                                                                className="material-symbols-outlined text-[18px]"
-                                                                                style={{
-                                                                                    fontVariationSettings:
-                                                                                        "'FILL' 1",
-                                                                                }}
-                                                                            >
-                                                                                {
-                                                                                    user
-                                                                                        .badge_info
-                                                                                        .icon
-                                                                                }
-                                                                            </span>
-                                                                        </div>
-                                                                    )}
-                                                                    <span className="px-3 py-1 bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest rounded-lg border border-primary/20">
-                                                                        {
-                                                                            user.badge
-                                                                        }
-                                                                    </span>
-                                                                </div>
-                                                            </td>
-                                                            <td className="px-8 py-6 text-right">
-                                                                <p className="text-xl font-black text-primary">
-                                                                    {
-                                                                        user.points
-                                                                    }
-                                                                </p>
-                                                                <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest">
-                                                                    {user.count}{" "}
-                                                                    Kontribusi
-                                                                </p>
-                                                            </td>
-                                                        </tr>
-                                                    ),
-                                                )
-                                            ) : (
-                                                <tr>
-                                                    <td
-                                                        colSpan="4"
-                                                        className="px-8 py-12 text-center text-slate-400 font-medium italic"
-                                                    >
-                                                        Belum ada kontributor di
-                                                        papan peringkat.
-                                                    </td>
-                                                </tr>
-                                            )}
-                                        </tbody>
-                                    </table>
+                    <div className="container mx-auto px-4 lg:px-10 relative z-10">
+                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+                            
+                            {/* Left Column: Interactive Visual Node Graphics */}
+                            <div className="lg:col-span-5 flex justify-center items-center relative h-[350px] md:h-[450px]">
+                                {/* Central Pulsing Core */}
+                                <motion.div 
+                                    animate={{ scale: [1, 1.05, 1], opacity: [0.8, 1, 0.8] }}
+                                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                                    className="absolute w-32 h-32 md:w-40 md:h-40 rounded-full bg-primary/10 dark:bg-primary/20 border-2 border-primary/30 flex flex-col items-center justify-center text-center shadow-[0_0_50px_rgba(14,165,233,0.15)] z-20 backdrop-blur-md"
+                                >
+                                    <span className="material-symbols-outlined text-4xl text-primary mb-1">hub</span>
+                                    <span className="text-[11px] font-black uppercase tracking-widest text-slate-800 dark:text-white">Sinergi Nusa</span>
+                                    <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Digital Hub</span>
+                                </motion.div>
+
+                                {/* Orbit ring 1 */}
+                                <div className="absolute w-64 h-64 md:w-80 md:h-80 rounded-full border border-slate-200/50 dark:border-slate-800/50 pointer-events-none"></div>
+                                {/* Orbit ring 2 */}
+                                <div className="absolute w-[320px] h-[320px] md:w-[400px] md:h-[400px] rounded-full border border-dashed border-slate-200/30 dark:border-slate-800/30 pointer-events-none"></div>
+
+                                {/* Floating Node 1: Historical Sites (Top Left) */}
+                                <motion.div 
+                                    animate={{ y: [0, -12, 0], x: [0, 8, 0] }}
+                                    transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+                                    className="absolute left-6 top-10 md:left-12 md:top-16 flex items-center gap-3 bg-white dark:bg-slate-800 p-3.5 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 z-10"
+                                >
+                                    <div className="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center">
+                                        <span className="material-symbols-outlined text-xl">castle</span>
+                                    </div>
+                                    <div className="text-left">
+                                        <h4 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-tight">Situs Sejarah</h4>
+                                        <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Arsip 3D & Digital</p>
+                                    </div>
+                                </motion.div>
+
+                                {/* Floating Node 2: Traditional Art (Top Right) */}
+                                <motion.div 
+                                    animate={{ y: [0, 10, 0], x: [0, -12, 0] }}
+                                    transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                                    className="absolute right-6 top-6 md:right-16 md:top-12 flex items-center gap-3 bg-white dark:bg-slate-800 p-3.5 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 z-10"
+                                >
+                                    <div className="w-9 h-9 rounded-xl bg-purple-500/10 text-purple-500 flex items-center justify-center">
+                                        <span className="material-symbols-outlined text-xl">palette</span>
+                                    </div>
+                                    <div className="text-left">
+                                        <h4 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-tight">Seni & Budaya</h4>
+                                        <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Interaktif & Filosofi</p>
+                                    </div>
+                                </motion.div>
+
+                                {/* Floating Node 3: Tourism Map (Bottom Left) */}
+                                <motion.div 
+                                    animate={{ y: [0, 15, 0], x: [0, 10, 0] }}
+                                    transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+                                    className="absolute left-4 bottom-8 md:left-8 md:bottom-16 flex items-center gap-3 bg-white dark:bg-slate-800 p-3.5 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 z-10"
+                                >
+                                    <div className="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
+                                        <span className="material-symbols-outlined text-xl">map</span>
+                                    </div>
+                                    <div className="text-left">
+                                        <h4 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-tight">Peta Wisata</h4>
+                                        <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Panduan Real-time</p>
+                                    </div>
+                                </motion.div>
+
+                                {/* Floating Node 4: Contributor Badges (Bottom Right) */}
+                                <motion.div 
+                                    animate={{ y: [0, -10, 0], x: [0, -8, 0] }}
+                                    transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
+                                    className="absolute right-4 bottom-12 md:right-10 md:bottom-20 flex items-center gap-3 bg-white dark:bg-slate-800 p-3.5 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 z-10"
+                                >
+                                    <div className="w-9 h-9 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center">
+                                        <span className="material-symbols-outlined text-xl">military_tech</span>
+                                    </div>
+                                    <div className="text-left">
+                                        <h4 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-tight">Sistem Lencana</h4>
+                                        <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Apresiasi Kontributor</p>
+                                    </div>
+                                </motion.div>
+                            </div>
+
+                            {/* Right Column: Explanatory Content Cards */}
+                            <div className="lg:col-span-7 space-y-8 text-left">
+                                <div className="space-y-4">
+                                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-widest">
+                                        Mengenal Platform Kami
+                                    </div>
+                                    <h2 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white leading-tight uppercase tracking-tight">
+                                        Sinergi Nusantara, <br />
+                                        <span className="text-primary italic">Pusat Ekosistem</span> Warisan Digital
+                                    </h2>
+                                    <p className="text-slate-500 dark:text-slate-400 text-sm md:text-base leading-relaxed font-medium">
+                                        Sinergi Nusa adalah platform inovatif yang dirancang untuk mendigitalisasi kearifan lokal Nusantara. Kami menggabungkan kekayaan warisan budaya, sejarah, dan destinasi pariwisata Indonesia ke dalam ekosistem digital terintegrasi yang interaktif, edukatif, dan mudah diakses oleh dunia.
+                                    </p>
+                                </div>
+
+                                {/* Cards Grid */}
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
+                                    {/* Card 1 */}
+                                    <motion.div 
+                                        initial={{ opacity: 0, y: 40, scale: 0.95 }}
+                                        whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                                        viewport={{ once: true, margin: "-50px" }}
+                                        transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
+                                        className="bg-white dark:bg-surface-dark p-6 rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-md flex flex-col justify-between hover:shadow-xl hover:border-primary/30 transition-all duration-300"
+                                    >
+                                        <div className="w-11 h-11 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center mb-6">
+                                            <span className="material-symbols-outlined text-2xl">history_edu</span>
+                                        </div>
+                                        <div>
+                                            <h3 className="text-base font-black text-slate-900 dark:text-white uppercase tracking-tight mb-2">Preservasi Budaya</h3>
+                                            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-medium">Mencegah kepunahan informasi sejarah dan seni adat melalui digitalisasi 3D, audio, dan storytelling interaktif.</p>
+                                        </div>
+                                    </motion.div>
+
+                                    {/* Card 2 */}
+                                    <motion.div 
+                                        initial={{ opacity: 0, y: 40, scale: 0.95 }}
+                                        whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                                        viewport={{ once: true, margin: "-50px" }}
+                                        transition={{ duration: 0.6, delay: 0.25, ease: "easeOut" }}
+                                        className="bg-white dark:bg-surface-dark p-6 rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-md flex flex-col justify-between hover:shadow-xl hover:border-primary/30 transition-all duration-300"
+                                    >
+                                        <div className="w-11 h-11 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center mb-6">
+                                            <span className="material-symbols-outlined text-2xl">travel_explore</span>
+                                        </div>
+                                        <div>
+                                            <h3 className="text-base font-black text-slate-900 dark:text-white uppercase tracking-tight mb-2">Branding Pariwisata</h3>
+                                            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-medium">Memajukan sektor wisata dan kuliner daerah dengan menghubungkan UMKM lokal ke pasar yang lebih luas.</p>
+                                        </div>
+                                    </motion.div>
+
+                                    {/* Card 3 */}
+                                    <motion.div 
+                                        initial={{ opacity: 0, y: 40, scale: 0.95 }}
+                                        whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                                        viewport={{ once: true, margin: "-50px" }}
+                                        transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
+                                        className="bg-white dark:bg-surface-dark p-6 rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-md flex flex-col justify-between hover:shadow-xl hover:border-primary/30 transition-all duration-300"
+                                    >
+                                        <div className="w-11 h-11 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center mb-6">
+                                            <span className="material-symbols-outlined text-2xl">diversity_3</span>
+                                        </div>
+                                        <div>
+                                            <h3 className="text-base font-black text-slate-900 dark:text-white uppercase tracking-tight mb-2">Sinergi Komunitas</h3>
+                                            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-medium">Mendorong masyarakat ikut serta menyumbangkan data dan mendokumentasikan potensi daerah mereka sendiri.</p>
+                                        </div>
+                                    </motion.div>
                                 </div>
                             </div>
+
                         </div>
-                    </motion.div>
+                    </div>
                 </section>
+
+
                 <section
                     ref={triggerRef}
                     className="overflow-hidden bg-white/50 dark:bg-slate-950/50 "
@@ -733,7 +762,7 @@ export default function Home({ leaderboard = [] }) {
 
                                     <div>
                                         <div className="text-[10px] font-black text-primary mb-6 uppercase tracking-[0.3em] flex items-center gap-2">
-                                            <span className="size-1.5 rounded-full bg-primary animate-pulse"></span>
+                                            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
                                             Pilar 0{idx + 1}
                                         </div>
                                         <h3 className="text-xl md:text-2xl font-black text-slate-900 dark:text-slate-100 italic uppercase tracking-tight leading-tight mb-4 group-hover:text-primary transition-colors">
@@ -748,7 +777,7 @@ export default function Home({ leaderboard = [] }) {
                                         <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 group-hover:text-primary transition-colors italic">
                                             Digital Ecosystem
                                         </span>
-                                        <div className="size-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all duration-500 group-hover:scale-110 shadow-lg shadow-primary/5 group-hover:shadow-primary/20">
+                                        <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all duration-500 group-hover:scale-110 shadow-lg shadow-primary/5 group-hover:shadow-primary/20">
                                             <span className="material-symbols-outlined text-2xl transition-transform duration-500 group-hover:rotate-[360deg]">
                                                 {role.icon}
                                             </span>
@@ -836,7 +865,7 @@ export default function Home({ leaderboard = [] }) {
                                     className="relative z-10 group"
                                 >
                                     <div className="bg-white dark:bg-slate-800 p-8 rounded-[2rem] border border-slate-100 dark:border-slate-700 shadow-xl shadow-slate-200/50 dark:shadow-none hover:shadow-2xl hover:shadow-primary/10 transition-all duration-500 hover:-translate-y-2">
-                                        <div className="size-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-all duration-500">
+                                        <div className="w-16 h-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-all duration-500">
                                             <span className="material-symbols-outlined text-3xl">
                                                 {step.icon}
                                             </span>
@@ -919,7 +948,7 @@ export default function Home({ leaderboard = [] }) {
                                     className="p-8 rounded-[2.5rem] bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 hover:shadow-2xl hover:shadow-primary/10 transition-all duration-500 group"
                                 >
                                     <div
-                                        className={`size-14 rounded-2xl ${item.color} text-white flex items-center justify-center mb-6 shadow-lg rotate-3 group-hover:rotate-0 transition-transform duration-500`}
+                                        className={`w-14 h-14 rounded-2xl ${item.color} text-white flex items-center justify-center mb-6 shadow-lg rotate-3 group-hover:rotate-0 transition-transform duration-500`}
                                     >
                                         <span className="material-symbols-outlined text-2xl">
                                             {item.icon}
@@ -1468,6 +1497,142 @@ export default function Home({ leaderboard = [] }) {
                             </div>
                         </div>
                     </div>
+                </section>
+
+                {/* ── Leaderboard Section ── */}
+                <section className="py-20 bg-white/40 dark:bg-slate-900/30  relative">
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: "-100px" }}
+                        transition={{ duration: 0.6 }}
+                        className="container mx-auto px-4 lg:px-10 relative z-20"
+                    >
+                        <div className="text-center mb-16">
+                            <h2 className="text-4xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-4">
+                                Papan Peringkat Kontributor
+                            </h2>
+                            <p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">
+                                Apresiasi bagi para penjaga warisan budaya yang
+                                telah berkontribusi mendigitalisasi kekayaan
+                                Nusantara.
+                            </p>
+                        </div>
+
+                        <div className="max-w-4xl mx-auto">
+                            <div className="bg-white dark:bg-surface-dark rounded-[2.5rem] shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden">
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-left border-collapse min-w-[600px]">
+                                        <thead>
+                                            <tr className="bg-primary/5 text-primary text-[10px] uppercase font-black tracking-widest border-b border-primary/10">
+                                                <th className="px-8 py-5">
+                                                    Peringkat
+                                                </th>
+                                                <th className="px-8 py-5">
+                                                    Kontributor
+                                                </th>
+                                                <th className="px-8 py-5">
+                                                    Badge
+                                                </th>
+                                                <th className="px-8 py-5 text-right">
+                                                    Poin
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                                            {leaderboard.length > 0 ? (
+                                                leaderboard.map(
+                                                    (user, index) => (
+                                                        <tr
+                                                            key={user.name}
+                                                            className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group"
+                                                        >
+                                                            <td className="px-8 py-6">
+                                                                <div
+                                                                    className={`w-10 h-10 rounded-xl flex items-center justify-center font-black ${index ===
+                                                                            0
+                                                                            ? "bg-amber-400 text-white shadow-md shadow-amber-200"
+                                                                            : index ===
+                                                                                1
+                                                                                ? "bg-slate-300 text-white shadow-md shadow-slate-200"
+                                                                                : index ===
+                                                                                    2
+                                                                                    ? "bg-orange-400 text-white shadow-md shadow-orange-200"
+                                                                                    : "bg-slate-100 dark:bg-slate-800 text-slate-500"
+                                                                        }`}
+                                                                >
+                                                                    {index + 1}
+                                                                </div>
+                                                            </td>
+                                                            <td className="px-8 py-6">
+                                                                <p className="font-black text-slate-900 dark:text-white group-hover:text-primary transition-colors">
+                                                                    {user.name}
+                                                                </p>
+                                                            </td>
+                                                            <td className="px-8 py-6">
+                                                                <div className="flex items-center gap-2">
+                                                                    {user.badge_info && (
+                                                                        <div
+                                                                            className="w-8 h-8 rounded-xl flex items-center justify-center bg-slate-100 dark:bg-slate-800"
+                                                                            style={{
+                                                                                color: user
+                                                                                    .badge_info
+                                                                                    .color,
+                                                                            }}
+                                                                        >
+                                                                            <span
+                                                                                className="material-symbols-outlined text-[18px]"
+                                                                                style={{
+                                                                                    fontVariationSettings:
+                                                                                        "'FILL' 1",
+                                                                                }}
+                                                                            >
+                                                                                {
+                                                                                    user
+                                                                                        .badge_info
+                                                                                        .icon
+                                                                                }
+                                                                            </span>
+                                                                        </div>
+                                                                    )}
+                                                                    <span className="px-3 py-1 bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest rounded-lg border border-primary/20">
+                                                                        {
+                                                                            user.badge
+                                                                        }
+                                                                    </span>
+                                                                </div>
+                                                            </td>
+                                                            <td className="px-8 py-6 text-right">
+                                                                <p className="text-xl font-black text-primary">
+                                                                    {
+                                                                        user.points
+                                                                    }
+                                                                </p>
+                                                                <p className="text-[10px] text-slate-400 uppercase font-bold tracking-widest">
+                                                                    {user.count}{" "}
+                                                                    Kontribusi
+                                                                </p>
+                                                            </td>
+                                                        </tr>
+                                                    ),
+                                                )
+                                            ) : (
+                                                <tr>
+                                                    <td
+                                                        colSpan="4"
+                                                        className="px-8 py-12 text-center text-slate-400 font-medium italic"
+                                                    >
+                                                        Belum ada kontributor di
+                                                        papan peringkat.
+                                                    </td>
+                                                </tr>
+                                            )}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </motion.div>
                 </section>
 
                 {/* FAQ Section */}

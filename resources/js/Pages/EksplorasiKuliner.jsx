@@ -30,11 +30,50 @@ export default function EksplorasiKuliner({ contributedDishes = [], contributedI
     const [isScanning, setIsScanning] = useState(false);
     const [selectedIngredient, setSelectedIngredient] = useState(null);
     const [shareStatus, setShareStatus] = useState(null);
+    const [userLocation, setUserLocation] = useState(null);
     const menuSectionRef = useRef(null);
     const staticData = useMemo(() => getCulinaryData(t), [t]);
+
+    useEffect(() => {
+        if (typeof window !== 'undefined' && navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    setUserLocation({
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    });
+                },
+                (error) => {
+                    console.error('Error getting location:', error);
+                },
+                { enableHighAccuracy: true }
+            );
+        }
+    }, []);
+
+    const getDynamicDistance = (item) => {
+        if (userLocation && item && item.lat && item.lng && item.lat !== 0 && item.lng !== 0) {
+            const lat1 = userLocation.lat;
+            const lon1 = userLocation.lng;
+            const lat2 = item.lat;
+            const lon2 = item.lng;
+            
+            const R = 6371; // km
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = 
+                Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            const d = R * c;
+            return `${d.toFixed(1)} km`;
+        }
+        return item?.dist || 'Lokal';
+    };
     const allDishes = [...contributedDishes, ...staticData.dishes];
     const allIngredients = [...contributedIngredients, ...staticData.ingredients];
-    
+
     // Debug
     console.log('Contributed Dishes:', contributedDishes);
     console.log('Contributed Ingredients:', contributedIngredients);
@@ -116,9 +155,9 @@ export default function EksplorasiKuliner({ contributedDishes = [], contributedI
                                             {t('nav.new_contribution')}
                                         </motion.button>
                                     </Link>
-                                    <motion.button 
-                                        whileHover={{ scale: 1.05 }} 
-                                        whileTap={{ scale: 0.95 }} 
+                                    <motion.button
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
                                         onClick={scrollToMenu}
                                         className="rounded-xl h-12 px-8 bg-slate-200/50 dark:bg-white/10 backdrop-blur-md text-slate-800 dark:text-white border border-slate-300 dark:border-white/20 text-sm font-bold hover:bg-slate-300/50 dark:hover:bg-white/20 transition-colors flex items-center gap-2"
                                     >
@@ -135,7 +174,7 @@ export default function EksplorasiKuliner({ contributedDishes = [], contributedI
                 </section>
 
                 {/* ── Category Filter Tabs (Sticky Wrapper) ── */}
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.6, duration: 0.6 }}
@@ -151,11 +190,10 @@ export default function EksplorasiKuliner({ contributedDishes = [], contributedI
                                     <button
                                         key={tab.id}
                                         onClick={() => setActiveTab(tab.id)}
-                                        className={`flex items-center justify-center px-6 py-2 whitespace-nowrap transition-all rounded-xl ${
-                                            activeTab === tab.id
+                                        className={`flex items-center justify-center px-6 py-2 whitespace-nowrap transition-all rounded-xl ${activeTab === tab.id
                                                 ? 'bg-primary text-white shadow-lg shadow-primary/25'
                                                 : 'text-slate-500 hover:text-primary hover:bg-primary/5'
-                                        }`}
+                                            }`}
                                     >
                                         <span className={`material-symbols-outlined mr-2 text-xl ${activeTab === tab.id ? 'text-white' : ''}`}>{tab.icon}</span>
                                         <p className="text-sm font-bold">{tab.label}</p>
@@ -175,7 +213,7 @@ export default function EksplorasiKuliner({ contributedDishes = [], contributedI
                                 <motion.div variants={fadeIn} className="text-center mb-16">
                                     <h2 className="text-4xl font-black text-slate-900 dark:text-slate-100 mb-4 uppercase tracking-tight">{t('kuliner.digital_menu_title')}</h2>
                                     <p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto mb-8">{t('kuliner.digital_menu_desc')}</p>
-                                    
+
                                     <div className="max-w-3xl mx-auto p-6 bg-primary/5 rounded-[2rem] border border-primary/20 flex flex-col md:flex-row items-center gap-6 text-left">
                                         <div className="size-16 rounded-2xl bg-white dark:bg-slate-800 shadow-xl flex items-center justify-center shrink-0">
                                             <span className="material-symbols-outlined text-3xl text-primary">qr_code_2</span>
@@ -262,15 +300,12 @@ export default function EksplorasiKuliner({ contributedDishes = [], contributedI
                                             whileHover={{ y: -8 }}
                                             className="group bg-white dark:bg-surface-dark rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all border border-slate-200 dark:border-slate-800"
                                         >
-                                            <div className="h-56 overflow-hidden relative">
-                                                <ImageWithFallback className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={item.name} src={item.img} fallbackIcon="agriculture" />
+                                            <div className="p-8">
                                                 {item.verified && (
-                                                    <div className="absolute top-4 left-4 bg-green-600/90 backdrop-blur-md text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 shadow-xl shadow-green-900/20">
+                                                    <div className="inline-flex items-center gap-1.5 mb-3 px-2.5 py-1 rounded-lg bg-green-500/10 dark:bg-green-500/20 text-green-600 dark:text-green-400 text-[9px] font-black uppercase tracking-widest border border-green-500/20">
                                                         <span className="material-symbols-outlined text-xs font-bold">verified</span> {t('kuliner.verified')}
                                                     </div>
                                                 )}
-                                            </div>
-                                            <div className="p-8">
                                                 <h3 className="text-2xl font-black text-slate-900 dark:text-slate-100 mb-4 group-hover:text-primary transition-colors tracking-tight uppercase">{loc(item, 'name', lang) || item.name}</h3>
                                                 <p className="text-sm text-slate-500 leading-relaxed mb-6 italic">"{loc(item, 'story', lang) || item.story}"</p>
                                                 <div className="space-y-4 border-t border-slate-100 dark:border-slate-800 pt-6">
@@ -289,11 +324,11 @@ export default function EksplorasiKuliner({ contributedDishes = [], contributedI
                                                         </div>
                                                         <div>
                                                             <p className="text-[10px] text-slate-400 uppercase font-black tracking-widest">{t('kuliner.source_dist')}</p>
-                                                            <p className="font-bold text-slate-900 dark:text-slate-100 text-sm">{item.dist}</p>
+                                                            <p className="font-bold text-slate-900 dark:text-slate-100 text-sm">{getDynamicDistance(item)}</p>
                                                         </div>
                                                     </div>
-                                                    <motion.button 
-                                                        whileHover={{ scale: 1.02 }} 
+                                                    <motion.button
+                                                        whileHover={{ scale: 1.02 }}
                                                         whileTap={{ scale: 0.98 }}
                                                         onClick={() => setSelectedIngredient(item)}
                                                         className="w-full mt-4 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-primary hover:text-white transition-all flex items-center justify-center gap-2"
@@ -316,11 +351,11 @@ export default function EksplorasiKuliner({ contributedDishes = [], contributedI
                     {selectedDish && (
                         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
                             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setSelectedDish(null)} className="absolute inset-0 bg-slate-900/60 backdrop-blur-md"></motion.div>
-                            <motion.div 
+                            <motion.div
                                 initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }}
                                 className="relative bg-white dark:bg-surface-dark w-full max-w-4xl rounded-[2.5rem] overflow-hidden shadow-2xl flex flex-col md:flex-row max-h-[90vh]"
                             >
-                                <div className="w-full md:w-2/5 h-64 md:h-auto overflow-hidden relative">
+                                <div className="w-full md:w-2/5 h-64 md:h-auto shrink-0 overflow-hidden relative">
                                     <ImageWithFallback src={selectedDish.img} className="w-full h-full object-cover" alt={selectedDish.name} fallbackIcon="restaurant" />
                                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
                                     <div className="absolute bottom-8 left-8 text-white">
@@ -335,16 +370,16 @@ export default function EksplorasiKuliner({ contributedDishes = [], contributedI
                                         <span className="material-symbols-outlined">close</span>
                                     </button>
                                 </div>
-                                <div className="w-full md:w-3/5 p-8 md:p-12 overflow-y-auto no-scrollbar relative">
+                                <div className="w-full md:w-3/5 p-8 md:p-12 overflow-y-auto custom-scrollbar relative flex-1 min-h-0">
                                     <AnimatePresence mode="wait">
                                         {isScanning ? (
-                                            <motion.div 
+                                            <motion.div
                                                 key="scanning"
                                                 initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                                                 className="h-full flex flex-col items-center justify-center py-12"
                                             >
                                                 <div className="relative size-32 mb-8">
-                                                    <motion.div 
+                                                    <motion.div
                                                         animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.6, 0.3] }}
                                                         transition={{ duration: 2, repeat: Infinity }}
                                                         className="absolute inset-0 bg-primary/20 rounded-3xl"
@@ -353,7 +388,7 @@ export default function EksplorasiKuliner({ contributedDishes = [], contributedI
                                                     <div className="h-full w-full flex items-center justify-center">
                                                         <span className="material-symbols-outlined text-primary text-6xl">qr_code_scanner</span>
                                                     </div>
-                                                    <motion.div 
+                                                    <motion.div
                                                         animate={{ top: ['10%', '90%', '10%'] }}
                                                         transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
                                                         className="absolute left-4 right-4 h-0.5 bg-primary z-10 shadow-[0_0_15px_rgba(var(--color-primary),1)]"
@@ -363,7 +398,7 @@ export default function EksplorasiKuliner({ contributedDishes = [], contributedI
                                                 <p className="text-sm text-slate-500 mt-2 font-mono">Decrypting Digital Menu...</p>
                                             </motion.div>
                                         ) : (
-                                            <motion.div 
+                                            <motion.div
                                                 key="menu-content"
                                                 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
                                             >
@@ -379,7 +414,7 @@ export default function EksplorasiKuliner({ contributedDishes = [], contributedI
                                                 <div className="grid grid-cols-1 gap-4">
                                                     {selectedDish.ingredients?.map((item, idx) => {
                                                         const hasStory = staticData.ingredients.find(ing => ing.name === item.name);
-                                                        
+
                                                         return (
                                                             <div key={item.id || idx} className="group p-6 rounded-3xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 hover:border-primary/30 hover:bg-primary/5 transition-all">
                                                                 <div className="flex justify-between items-start mb-2">
@@ -397,7 +432,7 @@ export default function EksplorasiKuliner({ contributedDishes = [], contributedI
                                                                     <AITranslate text={item.desc} />
                                                                 </p>
                                                                 {hasStory && (
-                                                                    <motion.button 
+                                                                    <motion.button
                                                                         whileHover={{ x: 5 }} whileTap={{ scale: 0.98 }}
                                                                         onClick={() => setSelectedIngredient(hasStory)}
                                                                         className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-1.5 pl-4 transition-all hover:underline"
@@ -432,15 +467,14 @@ export default function EksplorasiKuliner({ contributedDishes = [], contributedI
                                                             </div>
                                                         </div>
                                                     )}
-                                                    
-                                                    <motion.button 
-                                                        whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} 
+
+                                                    <motion.button
+                                                        whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
                                                         onClick={() => handleShare(selectedDish)}
-                                                        className={`w-full text-white py-5 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl flex items-center justify-center gap-3 transition-all duration-300 ${
-                                                            shareStatus === 'success' ? 'bg-green-600 shadow-green-900/20' : 'bg-primary shadow-primary/30'
-                                                        }`}
+                                                        className={`w-full text-white py-5 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl flex items-center justify-center gap-3 transition-all duration-300 ${shareStatus === 'success' ? 'bg-green-600 shadow-green-900/20' : 'bg-primary shadow-primary/30'
+                                                            }`}
                                                     >
-                                                        <span className="material-symbols-outlined">{shareStatus === 'success' ? 'check_circle' : 'share'}</span> 
+                                                        <span className="material-symbols-outlined">{shareStatus === 'success' ? 'check_circle' : 'share'}</span>
                                                         {shareStatus === 'success' ? t('kuliner.share_success') : 'Bagikan Kisah Kuliner'}
                                                     </motion.button>
                                                 </div>
@@ -458,7 +492,7 @@ export default function EksplorasiKuliner({ contributedDishes = [], contributedI
                     {selectedIngredient && (
                         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
                             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setSelectedIngredient(null)} className="absolute inset-0 bg-slate-900/60 backdrop-blur-md"></motion.div>
-                            <motion.div 
+                            <motion.div
                                 initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }}
                                 className="relative bg-white dark:bg-surface-dark w-full max-w-2xl rounded-[2.5rem] overflow-hidden shadow-2xl p-4 flex flex-col"
                             >
@@ -468,7 +502,7 @@ export default function EksplorasiKuliner({ contributedDishes = [], contributedI
                                         height="100%"
                                         frameBorder="0"
                                         scrolling="no"
-                                        src={`https://www.openstreetmap.org/export/embed.html?bbox=${selectedIngredient.lng-0.01},${selectedIngredient.lat-0.01},${selectedIngredient.lng+0.01},${selectedIngredient.lat+0.01}&layer=mapnik&marker=${selectedIngredient.lat},${selectedIngredient.lng}`}
+                                        src={`https://www.openstreetmap.org/export/embed.html?bbox=${selectedIngredient.lng - 0.01},${selectedIngredient.lat - 0.01},${selectedIngredient.lng + 0.01},${selectedIngredient.lat + 0.01}&layer=mapnik&marker=${selectedIngredient.lat},${selectedIngredient.lng}`}
                                         className="grayscale dark:invert"
                                     ></iframe>
                                     <div className="absolute top-4 left-4 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-3 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xl">
@@ -505,7 +539,7 @@ export default function EksplorasiKuliner({ contributedDishes = [], contributedI
                                         </div>
                                         <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700">
                                             <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-1">Carbon Footprint</p>
-                                            <p className="text-sm font-bold text-slate-900 dark:text-white">{selectedIngredient.dist} Travel</p>
+                                            <p className="text-sm font-bold text-slate-900 dark:text-white">{getDynamicDistance(selectedIngredient)} Travel</p>
                                         </div>
                                     </div>
                                     {selectedIngredient.contributor && (
@@ -574,9 +608,9 @@ export default function EksplorasiKuliner({ contributedDishes = [], contributedI
                                 </p>
                                 <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-6">
                                     <Link href="/kontribusi">
-                                        <motion.button 
-                                            whileHover={{ scale: 1.05 }} 
-                                            whileTap={{ scale: 0.95 }} 
+                                        <motion.button
+                                            whileHover={{ scale: 1.05 }}
+                                            whileTap={{ scale: 0.95 }}
                                             className="px-10 py-5 bg-white text-primary rounded-2xl font-black uppercase tracking-widest shadow-2xl hover:bg-slate-50 transition-all flex items-center gap-2"
                                         >
                                             <span className="material-symbols-outlined">add_circle</span>
@@ -584,9 +618,9 @@ export default function EksplorasiKuliner({ contributedDishes = [], contributedI
                                         </motion.button>
                                     </Link>
                                     <Link href="/wisata">
-                                        <motion.button 
-                                            whileHover={{ scale: 1.05 }} 
-                                            whileTap={{ scale: 0.95 }} 
+                                        <motion.button
+                                            whileHover={{ scale: 1.05 }}
+                                            whileTap={{ scale: 0.95 }}
                                             className="px-10 py-5 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-2xl font-black uppercase tracking-widest hover:bg-white/20 transition-all flex items-center gap-3"
                                         >
                                             <span className="material-symbols-outlined">arrow_back</span> {t('peta_wisata.back_to_tourism')}

@@ -17,6 +17,13 @@ const fadeIn = {
     },
 };
 
+const CATEGORY_MAP = {
+    alam: "nature",
+    pantai: "beach",
+    gunung: "mountain",
+    kota: "city",
+};
+
 export default function WisataDetail({ slug, initialDestination }) {
     const { t, lang } = useLanguage();
     const [destination, setDestination] = useState(initialDestination);
@@ -110,11 +117,11 @@ export default function WisataDetail({ slug, initialDestination }) {
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                             <span className="absolute bottom-2 left-3 text-white font-black text-xs uppercase tracking-widest">
-                                {destination.category}
+                                {t(`wisata.${CATEGORY_MAP[destination.category?.toLowerCase()] || destination.category}`)}
                             </span>
                         </div>
                         <div className="p-4">
-                            <h4 className="font-black text-slate-900 dark:text-white text-base leading-tight mb-1">
+                            <h4 className="font-black text-slate-900 dark:text-white leading-tight mb-1">
                                 {destination.name}
                             </h4>
                             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-3 flex items-center gap-1">
@@ -127,7 +134,7 @@ export default function WisataDetail({ slug, initialDestination }) {
                                 href={`https://www.google.com/maps/dir/?api=1&destination=${destination.lat},${destination.lng}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="block w-full text-center bg-slate-900 dark:bg-primary text-white py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-800 dark:hover:bg-primary/90 transition-all shadow-xl shadow-slate-900/10 dark:shadow-primary/20"
+                                className="block w-full text-center bg-slate-900 dark:bg-white text-white py-2.5 rounded-xl text-[10px] font-black uppercase hover:bg-slate-800 dark:hover:bg-white/90 transition-all shadow-xl shadow-slate-900/10 dark:shadow-primary/20"
                             >
                                 Get Directions
                             </a>
@@ -182,15 +189,14 @@ export default function WisataDetail({ slug, initialDestination }) {
                                 transition={{ delay: 0.5 }}
                             >
                                 <span
-                                    className={`backdrop-blur-md px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest mb-4 inline-block shadow-xl border ${
-                                        categoryStyles[
-                                            (
-                                                destination.category || ""
-                                            ).toLowerCase()
-                                        ] || categoryStyles.default
-                                    }`}
+                                    className={`backdrop-blur-md px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest mb-4 inline-block shadow-xl border ${categoryStyles[
+                                        (
+                                            destination.category || ""
+                                        ).toLowerCase()
+                                    ] || categoryStyles.default
+                                        }`}
                                 >
-                                    {destination.category?.toUpperCase()}
+                                    {t(`wisata.${CATEGORY_MAP[destination.category?.toLowerCase()] || destination.category}`)?.toUpperCase()}
                                 </span>
                                 <h1 className="text-white text-5xl md:text-7xl font-black leading-tight mb-4 drop-shadow-2xl">
                                     {loc(destination, "name", lang) ||
@@ -367,15 +373,15 @@ export default function WisataDetail({ slug, initialDestination }) {
                                             destinasi ini pada{" "}
                                             {destination.created_at
                                                 ? new Date(
-                                                      destination.created_at,
-                                                  ).toLocaleDateString(
-                                                      "id-ID",
-                                                      {
-                                                          year: "numeric",
-                                                          month: "long",
-                                                          day: "numeric",
-                                                      },
-                                                  )
+                                                    destination.created_at,
+                                                ).toLocaleDateString(
+                                                    "id-ID",
+                                                    {
+                                                        year: "numeric",
+                                                        month: "long",
+                                                        day: "numeric",
+                                                    },
+                                                )
                                                 : "Maret 2024"}
                                             .
                                         </p>

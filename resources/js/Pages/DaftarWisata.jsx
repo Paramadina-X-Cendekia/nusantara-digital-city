@@ -7,6 +7,12 @@ import { useLanguage } from '../lib/LanguageContext';
 import { loc } from '../lib/localize';
 import { getBaseDestinations } from '../data/destinations';
 import ImageWithFallback from '../components/ImageWithFallback';
+const CATEGORY_MAP = {
+    alam: 'nature',
+    pantai: 'beach',
+    gunung: 'mountain',
+    kota: 'city'
+};
 
 const CATEGORIES = (t) => [
     { id: 'semua', label: t('wisata.all'), icon: 'apps' },
@@ -41,53 +47,7 @@ export default function DaftarWisata({ dynamicDestinations = [] }) {
         });
     }, [t]);
 
-    // Fetch live OpenStreetMap Nominatim Data on mount
-    useEffect(() => {
-        const fetchOSMData = async () => {
-            let updatedDestinations = [...destinations];
-            
-            for (let i = 0; i < updatedDestinations.length; i++) {
-                const dest = updatedDestinations[i];
-                try {
-                    const searchParams = new URLSearchParams({
-                        q: dest.query,
-                        format: 'json',
-                        limit: 1,
-                        addressdetails: 1
-                    });
-                    
-                    const response = await fetch(`https://nominatim.openstreetmap.org/search?${searchParams}`, {
-                        method: 'GET',
-                        headers: {
-                            'Accept-Language': 'id',
-                            'User-Agent': 'NusantaraDigitalCity/1.0'
-                        }
-                    });
-                    
-                    if (response.ok) {
-                        const data = await response.json();
-                        if (data && data.length > 0) {
-                            const place = data[0];
-                            updatedDestinations[i] = {
-                                ...updatedDestinations[i],
-                                name: place.name || (place.display_name ? place.display_name.split(',')[0] : dest.name),
-                            };
-                            setDestinations([...updatedDestinations]);
-                        }
-                    }
-                } catch (error) {
-                    console.error(`Error fetching OSM data for ${dest.name}:`, error);
-                }
-                
-                if (i < updatedDestinations.length - 1) {
-                    await new Promise(r => setTimeout(r, 1000));
-                }
-            }
-        };
-
-        fetchOSMData();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    // Removed fetchOSMData as per user request to stick with seed data.
 
     const filtered = destinations.filter(d => {
         const matchesSearch = d.name.toLowerCase().includes(search.toLowerCase()) || 
@@ -178,8 +138,8 @@ export default function DaftarWisata({ dynamicDestinations = [] }) {
                                                 <ImageWithFallback src={dest.img} alt={dest.name} className="w-full h-full object-cover transition-transform group-hover:scale-110" fallbackIcon="landscape" />
                                             </div>
                                             <div className="p-5">
-                                                <p className="text-[10px] font-bold text-primary uppercase tracking-widest mb-1">{t(`wisata.${dest.category}`)}</p>
-                                                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2 truncate group-hover:text-primary transition-colors">{loc(dest, 'name', lang) || dest.name}</h3>
+                                                <p className="text-[10px] font-bold text-primary uppercase tracking-widest mb-1">{t(`wisata.${CATEGORY_MAP[dest.category?.toLowerCase()] || dest.category}`)}</p>
+                                                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2 truncate group-hover:text-primary transition-colors">{loc(dest, 'name', lang) || dest.dynamicName || dest.name}</h3>
                                                 <p className="text-xs text-slate-500 mb-4 line-clamp-2">{loc(dest, 'desc', lang) || dest.desc}</p>
                                                 <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
                                                     <div className="flex items-center gap-1.5 text-slate-400">
