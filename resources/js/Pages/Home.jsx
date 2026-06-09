@@ -570,16 +570,17 @@ export default function Home({ leaderboard = [] }) {
 
                     <div className="container mx-auto px-4 lg:px-10 relative z-10">
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
-                            
+
                             {/* Left Column: Interactive Visual Node Graphics */}
                             <div className="lg:col-span-5 flex justify-center items-center relative h-[350px] md:h-[450px]">
                                 {/* Central Pulsing Core */}
-                                <motion.div 
+                                <motion.div
                                     animate={{ scale: [1, 1.05, 1], opacity: [0.8, 1, 0.8] }}
                                     transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                                     className="absolute w-32 h-32 md:w-40 md:h-40 rounded-full bg-primary/10 dark:bg-primary/20 border-2 border-primary/30 flex flex-col items-center justify-center text-center shadow-[0_0_50px_rgba(14,165,233,0.15)] z-20 backdrop-blur-md"
                                 >
-                                    <span className="material-symbols-outlined text-4xl text-primary mb-1">hub</span>
+                                    <img src="/sinusa.png" alt="Sinergi Nusa Logo" className="w-12 h-12 md:w-14 md:h-14 object-contain transition-transform group-hover:rotate-12" />
+
                                     <span className="text-[11px] font-black uppercase tracking-widest text-slate-800 dark:text-white">Sinergi Nusa</span>
                                     <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Digital Hub</span>
                                 </motion.div>
@@ -590,7 +591,7 @@ export default function Home({ leaderboard = [] }) {
                                 <div className="absolute w-[320px] h-[320px] md:w-[400px] md:h-[400px] rounded-full border border-dashed border-slate-200/30 dark:border-slate-800/30 pointer-events-none"></div>
 
                                 {/* Floating Node 1: Historical Sites (Top Left) */}
-                                <motion.div 
+                                <motion.div
                                     animate={{ y: [0, -12, 0], x: [0, 8, 0] }}
                                     transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
                                     className="absolute left-6 top-10 md:left-12 md:top-16 flex items-center gap-3 bg-white dark:bg-slate-800 p-3.5 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 z-10"
@@ -605,7 +606,7 @@ export default function Home({ leaderboard = [] }) {
                                 </motion.div>
 
                                 {/* Floating Node 2: Traditional Art (Top Right) */}
-                                <motion.div 
+                                <motion.div
                                     animate={{ y: [0, 10, 0], x: [0, -12, 0] }}
                                     transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
                                     className="absolute right-6 top-6 md:right-16 md:top-12 flex items-center gap-3 bg-white dark:bg-slate-800 p-3.5 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 z-10"
@@ -620,7 +621,7 @@ export default function Home({ leaderboard = [] }) {
                                 </motion.div>
 
                                 {/* Floating Node 3: Tourism Map (Bottom Left) */}
-                                <motion.div 
+                                <motion.div
                                     animate={{ y: [0, 15, 0], x: [0, 10, 0] }}
                                     transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
                                     className="absolute left-4 bottom-8 md:left-8 md:bottom-16 flex items-center gap-3 bg-white dark:bg-slate-800 p-3.5 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 z-10"
@@ -635,7 +636,7 @@ export default function Home({ leaderboard = [] }) {
                                 </motion.div>
 
                                 {/* Floating Node 4: Contributor Badges (Bottom Right) */}
-                                <motion.div 
+                                <motion.div
                                     animate={{ y: [0, -10, 0], x: [0, -8, 0] }}
                                     transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
                                     className="absolute right-4 bottom-12 md:right-10 md:bottom-20 flex items-center gap-3 bg-white dark:bg-slate-800 p-3.5 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 z-10"
@@ -668,7 +669,7 @@ export default function Home({ leaderboard = [] }) {
                                 {/* Cards Grid */}
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
                                     {/* Card 1 */}
-                                    <motion.div 
+                                    <motion.div
                                         initial={{ opacity: 0, y: 40, scale: 0.95 }}
                                         whileInView={{ opacity: 1, y: 0, scale: 1 }}
                                         viewport={{ once: true, margin: "-50px" }}
@@ -685,7 +686,7 @@ export default function Home({ leaderboard = [] }) {
                                     </motion.div>
 
                                     {/* Card 2 */}
-                                    <motion.div 
+                                    <motion.div
                                         initial={{ opacity: 0, y: 40, scale: 0.95 }}
                                         whileInView={{ opacity: 1, y: 0, scale: 1 }}
                                         viewport={{ once: true, margin: "-50px" }}
@@ -702,7 +703,7 @@ export default function Home({ leaderboard = [] }) {
                                     </motion.div>
 
                                     {/* Card 3 */}
-                                    <motion.div 
+                                    <motion.div
                                         initial={{ opacity: 0, y: 40, scale: 0.95 }}
                                         whileInView={{ opacity: 1, y: 0, scale: 1 }}
                                         viewport={{ once: true, margin: "-50px" }}
@@ -1037,14 +1038,14 @@ export default function Home({ leaderboard = [] }) {
                                             setActiveFeature(feat.id)
                                         }
                                         className={`feat-item flex gap-4 md:gap-6 p-5 md:p-6 rounded-[2rem] border transition-all duration-300 cursor-pointer group ${activeFeature === feat.id
-                                                ? "bg-primary/5 dark:bg-white/15 border-primary shadow-2xl shadow-primary/20 scale-[1.02] md:scale-105"
-                                                : "bg-white dark:bg-white/5 border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/10"
+                                            ? "bg-primary/5 dark:bg-white/15 border-primary shadow-2xl shadow-primary/20 scale-[1.02] md:scale-105"
+                                            : "bg-white dark:bg-white/5 border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/10"
                                             }`}
                                     >
                                         <div
                                             className={`size-14 shrink-0 rounded-2xl flex items-center justify-center shadow-lg transition-transform duration-500 group-hover:scale-110 ${activeFeature === feat.id
-                                                    ? feat.color + " text-white"
-                                                    : "bg-slate-100 dark:bg-white/10 text-slate-500 dark:text-white"
+                                                ? feat.color + " text-white"
+                                                : "bg-slate-100 dark:bg-white/10 text-slate-500 dark:text-white"
                                                 }`}
                                         >
                                             <span className="material-symbols-outlined text-2xl">
@@ -1054,8 +1055,8 @@ export default function Home({ leaderboard = [] }) {
                                         <div>
                                             <h3
                                                 className={`text-xl font-black mb-2 italic uppercase transition-colors ${activeFeature === feat.id
-                                                        ? "text-primary"
-                                                        : "text-slate-800 dark:text-white"
+                                                    ? "text-primary"
+                                                    : "text-slate-800 dark:text-white"
                                                     }`}
                                             >
                                                 {feat.title}
@@ -1550,15 +1551,15 @@ export default function Home({ leaderboard = [] }) {
                                                             <td className="px-8 py-6">
                                                                 <div
                                                                     className={`w-10 h-10 rounded-xl flex items-center justify-center font-black ${index ===
-                                                                            0
-                                                                            ? "bg-amber-400 text-white shadow-md shadow-amber-200"
+                                                                        0
+                                                                        ? "bg-amber-400 text-white shadow-md shadow-amber-200"
+                                                                        : index ===
+                                                                            1
+                                                                            ? "bg-slate-300 text-white shadow-md shadow-slate-200"
                                                                             : index ===
-                                                                                1
-                                                                                ? "bg-slate-300 text-white shadow-md shadow-slate-200"
-                                                                                : index ===
-                                                                                    2
-                                                                                    ? "bg-orange-400 text-white shadow-md shadow-orange-200"
-                                                                                    : "bg-slate-100 dark:bg-slate-800 text-slate-500"
+                                                                                2
+                                                                                ? "bg-orange-400 text-white shadow-md shadow-orange-200"
+                                                                                : "bg-slate-100 dark:bg-slate-800 text-slate-500"
                                                                         }`}
                                                                 >
                                                                     {index + 1}
