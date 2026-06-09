@@ -453,7 +453,7 @@ export default function Wisata({ dynamicDestinations = [] }) {
                                         <ImageWithFallback
                                             alt="Local Traditional Food"
                                             className="w-full h-full object-cover"
-                                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAv_ltKBeh7xx7xlev2-yXctsKVKFGGhCEFOga2B4xdOAx8Vm7TeDtLJSaLUEyZlHfq2qvwEM7tivFGTHR3c3yKJ2kIOsqdNurIdOP6Hp8CrOqnRTkF0Li4Luj1RAkWiM7Dq1jXQb035bh71T_w5ozHCPtlWYpy_kZI3K4YRyM5zlnMvaxjotFFrZyMpFKiQGK_IMN12il5LH6gf9kTUYeN233QEYkfIIaVKepUOEI9nG9wpXxXNh9g3yQ8FeL5I7Lfp2YeAGTGRx3"
+                                            src="/images/kuliner/rendang_padang.png"
                                             fallbackIcon="restaurant"
                                         />
                                     </motion.div>
@@ -474,7 +474,7 @@ export default function Wisata({ dynamicDestinations = [] }) {
                                         <ImageWithFallback
                                             alt="Traditional Sate"
                                             className="w-full h-full object-cover"
-                                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAU-vWNOQzD80OgXv38CD0s5NF26JbK4pSh9Jg7AT8vMNvozSNs9gNS51DGbBsLrrmWfcX2U9Gepf2eA4PfDDeVg65oJKCLwBSaVu9HQ9KFoFLJhpumlmWsd_NVPhEvDMCC7nwpHk96tyo4HdR-J1RqgbANkD0OYQ1cuofxJpj8Ieas9CJnU1rd5eRbHkoX6DwFSSe2xR7PaZae-aewjdz6Bdq1blyfmzniyCujBm-VWXPjNlXTIBM0jISVRpJtTOUbCaUFknlW9Atj"
+                                            src="/images/kuliner/sate_madura.png"
                                             fallbackIcon="dining"
                                         />
                                     </motion.div>

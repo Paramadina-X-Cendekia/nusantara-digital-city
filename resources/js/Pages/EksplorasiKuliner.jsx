@@ -300,6 +300,9 @@ export default function EksplorasiKuliner({ contributedDishes = [], contributedI
                                             whileHover={{ y: -8 }}
                                             className="group bg-white dark:bg-surface-dark rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all border border-slate-200 dark:border-slate-800"
                                         >
+                                            <div className="h-64 overflow-hidden relative">
+                                                <ImageWithFallback className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={loc(item, 'name', lang) || item.name} src={item.img} fallbackIcon="eco" />
+                                            </div>
                                             <div className="p-8">
                                                 {item.verified && (
                                                     <div className="inline-flex items-center gap-1.5 mb-3 px-2.5 py-1 rounded-lg bg-green-500/10 dark:bg-green-500/20 text-green-600 dark:text-green-400 text-[9px] font-black uppercase tracking-widest border border-green-500/20">
