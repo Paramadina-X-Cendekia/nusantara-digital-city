@@ -276,17 +276,21 @@ export default function Home({ leaderboard = [] }) {
         let iconAnim;
 
         if (sectionRef.current && triggerRef.current) {
+            const getMaxScroll = () => {
+                if (!sectionRef.current) return 0;
+                return Math.max(0, sectionRef.current.scrollWidth - window.innerWidth);
+            };
+
             pin = gsap.fromTo(
                 sectionRef.current,
                 { x: 0 },
                 {
-                    x: () =>
-                        -(sectionRef.current.scrollWidth - window.innerWidth),
+                    x: () => -getMaxScroll(),
                     ease: "none",
                     scrollTrigger: {
                         trigger: triggerRef.current,
                         start: "top top",
-                        end: () => `+=${sectionRef.current.scrollWidth}`,
+                        end: () => `+=${getMaxScroll()}`,
                         scrub: 1,
                         pin: true,
                         anticipatePin: 1,
@@ -428,7 +432,7 @@ export default function Home({ leaderboard = [] }) {
     };
 
     return (
-        <div className="relative flex min-h-screen flex-col font-display text-slate-900 dark:text-slate-300 transition-colors duration-300 antialiased">
+        <div className="relative flex min-h-screen flex-col overflow-x-hidden font-display text-slate-900 dark:text-slate-300 transition-colors duration-300 antialiased">
             <Head title={t("nav.home") + " | Sinergi Nusa"} />
             <Navbar />
 
@@ -658,8 +662,7 @@ export default function Home({ leaderboard = [] }) {
                                         Mengenal Platform Kami
                                     </div>
                                     <h2 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white leading-tight uppercase tracking-tight">
-                                        Sinergi Nusantara, <br />
-                                        <span className="text-primary italic">Pusat Ekosistem</span> Warisan Digital
+                                        <span className="text-primary">Pusat Ekosistem</span> <br /> Warisan Digital
                                     </h2>
                                     <p className="text-slate-500 dark:text-slate-400 text-sm md:text-base leading-relaxed font-medium">
                                         Sinergi Nusa adalah platform inovatif yang dirancang untuk mendigitalisasi kearifan lokal Nusantara. Kami menggabungkan kekayaan warisan budaya, sejarah, dan destinasi pariwisata Indonesia ke dalam ekosistem digital terintegrasi yang interaktif, edukatif, dan mudah diakses oleh dunia.

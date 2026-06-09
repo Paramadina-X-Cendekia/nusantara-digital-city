@@ -545,7 +545,7 @@ export const translations = {
         },
         peta_wisata: {
             title: 'Eksplorasi Peta Wisata',
-            subtitle: 'Temukan rute terbaik dan destinasi tersembunyi dengan panduan real-time.',
+            subtitle: 'Jelajahi keindahan tersembunyi Nusantara melalui visualisasi rute interaktif. Temukan petualangan terbaik Anda, dari puncak gunung berapi yang megah hingga surga bawah laut yang eksotis dengan panduan digital terintegrasi.',
             loading: 'Menghubungkan ke Satelit Wisata...',
             marker_detail: 'Klik penanda untuk detail destinasi',
             back_to_tourism: 'Kembali ke Wisata',
@@ -1192,7 +1192,7 @@ export const translations = {
         },
         peta_wisata: {
             title: 'Explore Tourism Map',
-            subtitle: 'Find the best routes and hidden destinations with real-time guidance.',
+            subtitle: 'Explore the hidden gems of the archipelago through interactive route visualization. Discover your ultimate journey, from majestic volcanic peaks to exotic marine sanctuaries with integrated digital navigation.',
             loading: 'Connecting to Tourism Satellite...',
             marker_detail: 'Click marker for destination details',
             back_to_tourism: 'Back to Tourism',

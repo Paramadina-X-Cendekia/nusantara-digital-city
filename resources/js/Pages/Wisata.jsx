@@ -779,16 +779,22 @@ export default function Wisata({ dynamicDestinations = [] }) {
                                     </div>
                                 ) : (
                                     <div className="flex flex-col gap-3">
-                                        <motion.button
-                                            whileHover={{ scale: 1.02 }}
-                                            whileTap={{ scale: 0.98 }}
-                                            className="bg-primary text-white py-4 rounded-xl font-bold shadow-lg shadow-primary/30 flex items-center justify-center gap-2"
+                                        <a
+                                            href="/panduan-rute-wisata.pdf"
+                                            download="Panduan Rute Wisata Sinergi Nusa.pdf"
+                                            className="w-full block"
                                         >
-                                            <span className="material-symbols-outlined">
-                                                download
-                                            </span>{" "}
-                                            Download PDF Sekarang
-                                        </motion.button>
+                                            <motion.button
+                                                whileHover={{ scale: 1.02 }}
+                                                whileTap={{ scale: 0.98 }}
+                                                className="w-full bg-primary text-white py-4 rounded-xl font-bold shadow-lg shadow-primary/30 flex items-center justify-center gap-2 cursor-pointer"
+                                            >
+                                                <span className="material-symbols-outlined">
+                                                    download
+                                                </span>{" "}
+                                                Download PDF Sekarang
+                                            </motion.button>
+                                        </a>
                                         <button
                                             onClick={() =>
                                                 setIsPdfModalOpen(false)
