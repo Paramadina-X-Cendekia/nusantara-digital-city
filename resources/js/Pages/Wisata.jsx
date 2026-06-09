@@ -347,7 +347,7 @@ export default function Wisata({ dynamicDestinations = [] }) {
                                             <ImageWithFallback
                                                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                                                 alt={dest.name}
-                                                src={dest.img}
+                                                src={dest.img || dest.defaultImg}
                                                 fallbackIcon="landscape"
                                             />
                                         </div>
