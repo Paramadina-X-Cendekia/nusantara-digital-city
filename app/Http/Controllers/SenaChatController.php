@@ -23,7 +23,7 @@ class SenaChatController extends Controller
         $model = env('OPENROUTER_MODEL', 'google/gemini-2.0-flash-001');
 
         try {
-            $response = Http::withHeaders([
+            $response = Http::timeout(120)->withHeaders([
                 'Authorization' => 'Bearer ' . $apiKey,
                 'HTTP-Referer' => env('APP_URL', 'http://localhost'),
                 'X-Title' => env('APP_NAME', 'Sinergi Nusa')
