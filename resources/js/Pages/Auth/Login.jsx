@@ -18,16 +18,16 @@ export default function Login() {
     return (
         <div className="min-h-screen bg-white dark:bg-slate-950 font-display text-slate-900 dark:text-slate-100 antialiased flex overflow-hidden">
             <Head title={`${t('nav.login')} | Sinergi Nusa`} />
-            
+
             {/* Left Side: Form */}
             <div className="w-full lg:w-1/2 flex flex-col justify-center px-6 md:px-12 lg:px-20 py-12 relative z-10 bg-white dark:bg-slate-950 overflow-y-auto">
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     className="max-w-md w-full mx-auto space-y-10"
                 >
-                    <Link 
-                        href="/" 
+                    <Link
+                        href="/"
                         className="inline-flex items-center gap-2 text-slate-500 hover:text-primary transition-colors font-bold group"
                     >
                         <span className="material-symbols-outlined transition-transform group-hover:-translate-x-1">arrow_back</span>
@@ -48,10 +48,10 @@ export default function Login() {
                     <form onSubmit={submit} className="space-y-6">
                         <div className="space-y-2">
                             <label className="text-sm font-bold uppercase tracking-wider text-slate-400">{t('auth.email_label')}</label>
-                            <input 
-                                type="email" 
-                                value={data.email} 
-                                onChange={e => setData('email', e.target.value)} 
+                            <input
+                                type="email"
+                                value={data.email}
+                                onChange={e => setData('email', e.target.value)}
                                 className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                                 placeholder={t('auth.placeholder_email')}
                                 required
@@ -61,17 +61,17 @@ export default function Login() {
 
                         <div className="space-y-2">
                             <label className="text-sm font-bold uppercase tracking-wider text-slate-400">{t('auth.password_label')}</label>
-                            <input 
-                                type="password" 
-                                value={data.password} 
-                                onChange={e => setData('password', e.target.value)} 
+                            <input
+                                type="password"
+                                value={data.password}
+                                onChange={e => setData('password', e.target.value)}
                                 className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                                 placeholder="••••••••"
                                 required
                             />
                         </div>
 
-                        <button 
+                        <button
                             disabled={processing}
                             type="submit"
                             className="w-full py-4 bg-primary hover:bg-primary/90 text-white rounded-2xl font-black text-lg shadow-xl shadow-primary/20 transition-all flex items-center justify-center gap-2"
@@ -101,15 +101,15 @@ export default function Login() {
             {/* Right Side: Visual Content */}
             <div className="hidden lg:block lg:w-1/2 relative bg-primary overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/60 mix-blend-multiply z-10" />
-                <ImageWithFallback 
-                    src="/images/auth/login_visual.png" 
-                    alt="Sinergi Nusa Visual" 
+                <ImageWithFallback
+                    src="/images/auth/login_visual.jpg"
+                    alt="Sinergi Nusa Visual"
                     className="absolute inset-0 w-full h-full object-cover grayscale-[20%] hover:grayscale-0 transition-all duration-700 hover:scale-105"
                     fallbackIcon="login"
                 />
-                
+
                 {/* Floating Card Info */}
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0, y: 40 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.5 }}

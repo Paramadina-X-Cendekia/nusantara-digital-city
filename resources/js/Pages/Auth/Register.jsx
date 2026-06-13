@@ -246,7 +246,7 @@ export default function Register() {
             <div className="hidden lg:block lg:w-1/2 relative bg-primary overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/60 mix-blend-multiply z-10" />
                 <ImageWithFallback
-                    src="/images/auth/register_visual.png"
+                    src="/images/auth/register_visual.jpg"
                     alt="Sinergi Nusa Register Visual"
                     className="absolute inset-0 w-full h-full object-cover grayscale-[20%] hover:grayscale-0 transition-all duration-700 hover:scale-105"
                     fallbackIcon="person_add"
