@@ -101,32 +101,32 @@ function BatikCloth({ imgUrl, gender }) {
         canvas.width = 512;
         canvas.height = 512;
         const ctx = canvas.getContext('2d');
-        
+
         // Fill canvas with neutral gray
         ctx.fillStyle = '#808080';
         ctx.fillRect(0, 0, 512, 512);
-        
+
         // Draw soft, smooth, vertical drapery folds
         const numFolds = 4;
         for (let i = 0; i < numFolds; i++) {
             const x = (i / numFolds) * 512 + 64;
             const width = 120;
-            
-            const grad = ctx.createLinearGradient(x - width/2, 0, x + width/2, 0);
+
+            const grad = ctx.createLinearGradient(x - width / 2, 0, x + width / 2, 0);
             grad.addColorStop(0, '#808080');
             grad.addColorStop(0.35, '#606060'); // soft shadow crease
             grad.addColorStop(0.5, '#989898');  // soft highlight
             grad.addColorStop(0.65, '#9d9d9d'); // soft highlight
             grad.addColorStop(1, '#808080');
-            
+
             ctx.fillStyle = grad;
-            ctx.fillRect(x - width/2, 0, width, 512);
+            ctx.fillRect(x - width / 2, 0, width, 512);
         }
-        
+
         // Smoothly blur the canvas to create soft, natural lighting gradients
         ctx.filter = 'blur(20px)';
         ctx.drawImage(canvas, 0, 0);
-        
+
         const tex = new THREE.CanvasTexture(canvas);
         tex.wrapS = THREE.RepeatWrapping;
         tex.wrapT = THREE.RepeatWrapping;
@@ -161,29 +161,27 @@ function Auto3DViewer({ imgUrl, t }) {
             <div className="absolute top-4 left-4 z-30 flex items-center gap-2">
                 <button
                     onClick={() => setGender('pria')}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-md ${
-                        gender === 'pria'
+                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-md ${gender === 'pria'
                             ? 'bg-primary text-white shadow-primary/20'
                             : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700'
-                    }`}
+                        }`}
                 >
                     <span className="material-symbols-outlined text-sm">man</span>
                     Pria
                 </button>
                 <button
                     onClick={() => setGender('wanita')}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-md ${
-                        gender === 'wanita'
+                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-md ${gender === 'wanita'
                             ? 'bg-primary text-white shadow-primary/20'
                             : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700'
-                    }`}
+                        }`}
                 >
                     <span className="material-symbols-outlined text-sm">woman</span>
                     Wanita
                 </button>
             </div>
 
-            <ThreeErrorHandler fallback={<div className="w-full h-full flex items-center justify-center bg-slate-100 dark:bg-slate-900 text-slate-500 text-xs italic">Gagal memuat viewer 3D</div>}>
+            <ThreeErrorHandler fallback={<div className="w-full h-full flex items-center justify-center bg-slate-100 dark:bg-slate-900 text-slate-500 text-xs ">Gagal memuat viewer 3D</div>}>
                 <Canvas camera={{ position: [0, 0, 8], fov: 50 }}>
                     <ambientLight intensity={0.5} />
                     <directionalLight position={[10, 10, 10]} intensity={1.5} castShadow />
@@ -220,7 +218,7 @@ const TAB_MAP = (t) => [
 const getEmbedUrl = (url) => {
     if (!url) return '';
     let videoId = '';
-    
+
     if (url.includes('youtube.com/watch')) {
         try {
             const urlParams = new URLSearchParams(new URL(url).search);
@@ -234,7 +232,7 @@ const getEmbedUrl = (url) => {
     } else if (url.includes('youtube.com/embed/')) {
         return url;
     }
-    
+
     if (videoId) {
         return `https://www.youtube.com/embed/${videoId}`;
     }
@@ -277,7 +275,7 @@ function DetailSeni({ art }) {
                 try {
                     const parsed = JSON.parse(art.fakta_menarik);
                     if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-                } catch (e) {}
+                } catch (e) { }
                 const lines = art.fakta_menarik.split(/[;\n\r]+/).map(s => s.trim().replace(/^[-*\d.\s]+/, '')).filter(Boolean);
                 if (lines.length > 0) return lines;
             }
@@ -358,15 +356,15 @@ function DetailSeni({ art }) {
             audioEl.loop = true;
 
             const source = audioCtxRef.current.createMediaElementSource(audioEl);
-            
+
             source.connect(analyserNodeRef.current);
             analyserNodeRef.current.connect(gainNodeRef.current);
             analyserNodeRef.current.connect(delayNodeRef.current);
-            
+
             delayNodeRef.current.connect(feedbackNodeRef.current);
             feedbackNodeRef.current.connect(delayNodeRef.current);
             delayNodeRef.current.connect(gainNodeRef.current);
-            
+
             gainNodeRef.current.connect(audioCtxRef.current.destination);
 
             audioSourceRef.current = audioEl;
@@ -399,23 +397,23 @@ function DetailSeni({ art }) {
 
     const updateVisualizer = () => {
         if (!analyserNodeRef.current || !barsContainerRef.current) return;
-        
+
         const dataArray = new Uint8Array(analyserNodeRef.current.frequencyBinCount);
         analyserNodeRef.current.getByteFrequencyData(dataArray);
-        
+
         const bars = barsContainerRef.current.children;
         const step = Math.max(1, Math.floor(dataArray.length / bars.length));
-        
+
         for (let i = 0; i < bars.length; i++) {
             let sum = 0;
-            for(let j = 0; j < step; j++) {
+            for (let j = 0; j < step; j++) {
                 sum += dataArray[i * step + j] || 0;
             }
             const average = sum / step;
             const height = 10 + (average / 255) * 86;
             if (bars[i]) bars[i].style.height = `${height}px`;
         }
-        
+
         animationFrameRef.current = requestAnimationFrame(updateVisualizer);
     };
 
@@ -533,7 +531,7 @@ function DetailSeni({ art }) {
                                         <span className="material-symbols-outlined text-base">psychology</span>
                                         Eksplorasi Makna & Filosofi
                                     </h3>
-                                    <p className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed italic">
+                                    <p className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed ">
                                         "<AITranslate text={art.makna} />"
                                     </p>
                                 </div>
@@ -576,7 +574,7 @@ function DetailSeni({ art }) {
                                                 {art.contributor_badge || 'Nusantara Pioneer'}
                                             </span>
                                         </div>
-                                        <p className="text-[9px] text-slate-400 font-medium italic">Berkontribusi pada {art.created_at ? new Date(art.created_at).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }) : 'Maret 2024'}.</p>
+                                        <p className="text-[9px] text-slate-400 font-medium ">Berkontribusi pada {art.created_at ? new Date(art.created_at).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }) : 'Maret 2024'}.</p>
                                     </div>
                                 </div>
                             )}
@@ -608,8 +606,8 @@ function DetailSeni({ art }) {
                                 whileTap={{ scale: 0.95 }}
                                 onClick={() => setActiveTab(tab.id)}
                                 className={`flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-semibold transition-all duration-300 ${activeTab === tab.id
-                                        ? 'bg-primary text-white shadow-lg shadow-primary/30'
-                                        : 'bg-white dark:bg-surface-dark text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:border-primary/50 hover:text-primary'
+                                    ? 'bg-primary text-white shadow-lg shadow-primary/30'
+                                    : 'bg-white dark:bg-surface-dark text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:border-primary/50 hover:text-primary'
                                     }`}
                             >
                                 <span className="material-symbols-outlined text-xl">{tab.icon}</span>
@@ -686,7 +684,7 @@ function DetailSeni({ art }) {
                                                 <span className="material-symbols-outlined font-bold">lightbulb</span>
                                                 <span className="text-xs font-black tracking-wider uppercase">{t('art_detail.cultural_insight')}</span>
                                             </div>
-                                            <p className="text-[11px] text-slate-600 dark:text-slate-400 italic leading-relaxed">
+                                            <p className="text-[11px] text-slate-600 dark:text-slate-400  leading-relaxed">
                                                 "{t('art_detail.cultural_insight_quote')}"
                                             </p>
                                         </div>
@@ -952,7 +950,7 @@ function DetailSeni({ art }) {
                                         <span className="material-symbols-outlined text-sm font-bold">psychology</span>
                                         <p className="text-[10px] font-black uppercase tracking-widest">Filosofi Budaya</p>
                                     </div>
-                                    <p className="text-sm text-slate-700 dark:text-slate-300 italic">
+                                    <p className="text-sm text-slate-700 dark:text-slate-300 ">
                                         "{INSTRUMENT_DETAILS[selectedInstrument].philosophy}"
                                     </p>
                                 </div>

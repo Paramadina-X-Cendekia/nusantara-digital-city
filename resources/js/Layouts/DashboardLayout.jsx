@@ -31,12 +31,12 @@ export default function DashboardLayout({ children }) {
             <aside className={`bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 transition-all duration-300 flex flex-col ${isSidebarOpen ? 'w-64' : 'w-20'}`}>
                 <div className="p-6 flex items-center gap-3 overflow-hidden">
                     <img src="/sinusa.png" alt="Sinergi Nusa" className="w-12 h-12 object-contain shrink-0" />
-                    {isSidebarOpen && <span className="font-black italic text-lg whitespace-nowrap">Sinergi <span className="text-primary">Nusa</span></span>}
+                    {isSidebarOpen && <span className="font-black  text-lg whitespace-nowrap">Sinergi <span className="text-primary">Nusa</span></span>}
                 </div>
 
                 <nav className="flex-1 px-4 space-y-2 mt-4">
                     {menuItems.map((item) => (
-                        <Link 
+                        <Link
                             key={item.label}
                             href={item.href}
                             className={`flex items-center gap-4 p-3 rounded-2xl transition-all group overflow-hidden ${usePage().url === item.href ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
@@ -48,7 +48,7 @@ export default function DashboardLayout({ children }) {
                 </nav>
 
                 <div className="p-4 mt-auto">
-                    <button 
+                    <button
                         onClick={handleLogout}
                         className="w-full flex items-center gap-4 p-3 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-2xl transition-all overflow-hidden"
                     >
@@ -62,7 +62,7 @@ export default function DashboardLayout({ children }) {
             <div className="flex-1 flex flex-col">
                 {/* Header */}
                 <header className="h-16 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-8">
-                    <button 
+                    <button
                         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                         className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all"
                     >

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Head, useForm, Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '@/lib/LanguageContext';
@@ -5,6 +6,7 @@ import ImageWithFallback from '../../components/ImageWithFallback';
 
 export default function Login() {
     const { t } = useLanguage();
+    const [showPassword, setShowPassword] = useState(false);
     const { data, setData, post, processing, errors } = useForm({
         email: '',
         password: '',
@@ -37,10 +39,10 @@ export default function Login() {
                     <div className="space-y-4">
                         <div className="flex items-center gap-3">
                             <img src="/sinusa.png" alt="Logo" className="h-20 w-auto" />
-                            <h2 className="text-xl font-black italic tracking-tighter text-slate-900 dark:text-white">Sinergi <span className="text-primary">Nusa</span></h2>
+                            <h2 className="text-xl font-black  tracking-tighter text-slate-900 dark:text-white">Sinergi <span className="text-primary">Nusa</span></h2>
                         </div>
                         <div className="space-y-2">
-                            <h1 className="text-4xl font-black tracking-tight leading-tight">{t('auth.login_welcome').split(' ')[0]} <span className="text-primary italic">{t('auth.login_welcome').split(' ').slice(1).join(' ')}</span></h1>
+                            <h1 className="text-4xl font-black tracking-tight leading-tight">{t('auth.login_welcome').split(' ')[0]} <span className="text-primary ">{t('auth.login_welcome').split(' ').slice(1).join(' ')}</span></h1>
                             <p className="text-slate-500 dark:text-slate-400 text-lg">{t('auth.login_subtitle')}</p>
                         </div>
                     </div>
@@ -61,14 +63,25 @@ export default function Login() {
 
                         <div className="space-y-2">
                             <label className="text-sm font-bold uppercase tracking-wider text-slate-400">{t('auth.password_label')}</label>
-                            <input
-                                type="password"
-                                value={data.password}
-                                onChange={e => setData('password', e.target.value)}
-                                className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-                                placeholder="••••••••"
-                                required
-                            />
+                            <div className="relative">
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    value={data.password}
+                                    onChange={e => setData('password', e.target.value)}
+                                    className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 pr-12 outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                                    placeholder="••••••••"
+                                    required
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 focus:outline-none flex items-center"
+                                >
+                                    <span className="material-symbols-outlined">
+                                        {showPassword ? 'visibility_off' : 'visibility'}
+                                    </span>
+                                </button>
+                            </div>
                         </div>
 
                         <button
@@ -119,7 +132,7 @@ export default function Login() {
                         <span className="material-symbols-outlined text-white">explore</span>
                     </div>
                     <div className="space-y-2">
-                        <h3 className="text-2xl font-black italic">{t('auth.auth_visual_title')}</h3>
+                        <h3 className="text-2xl font-black ">{t('auth.auth_visual_title')}</h3>
                         <p className="text-white/80 leading-relaxed font-medium">{t('auth.auth_visual_desc')}</p>
                     </div>
                 </motion.div>
@@ -127,7 +140,7 @@ export default function Login() {
                 {/* Decorative Elements */}
                 <div className="absolute top-0 right-0 p-12 z-20">
                     <div className="text-right">
-                        <p className="text-white/60 font-black text-6xl italic opacity-20 select-none">{t('auth.join_network')}</p>
+                        <p className="text-white/60 font-black text-6xl  opacity-20 select-none">{t('auth.join_network')}</p>
                     </div>
                 </div>
             </div>

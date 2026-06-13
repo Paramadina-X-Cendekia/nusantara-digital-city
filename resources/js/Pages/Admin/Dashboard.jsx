@@ -196,7 +196,7 @@ export default function AdminDashboard({ auth, allContributions = [], pendingCou
                                             <p className="font-bold text-slate-900 dark:text-slate-100">{c.data.shopName || c.data.artName || c.data.cityName || 'Unnamed'}</p>
                                             <button
                                                 onClick={() => openDetails(c)}
-                                                className="text-[10px] font-black italic text-primary hover:underline mt-1"
+                                                className="text-[10px] font-black  text-primary hover:underline mt-1"
                                             >
                                                 {t('dashboard.view_details')} &rarr;
                                             </button>
@@ -234,7 +234,7 @@ export default function AdminDashboard({ auth, allContributions = [], pendingCou
                                             ) : (
                                                 <div className="flex items-center gap-3">
                                                     <div className="flex flex-col gap-1">
-                                                        <span className="text-[10px] font-bold text-slate-400 italic">{t('dashboard.processed')}</span>
+                                                        <span className="text-[10px] font-bold text-slate-400 ">{t('dashboard.processed')}</span>
                                                         {c.admin_rating > 0 && <span className="text-[9px] text-orange-400 flex items-center gap-0.5 font-bold"><span className="material-symbols-outlined text-[12px]">star</span> {c.admin_rating}</span>}
                                                     </div>
                                                     <button
@@ -254,12 +254,12 @@ export default function AdminDashboard({ auth, allContributions = [], pendingCou
                                             {tabContributions.length > 0 ? (
                                                 <div className="text-slate-400 flex flex-col items-center gap-3">
                                                     <span className="material-symbols-outlined text-5xl">search_off</span>
-                                                    <p className="font-bold italic">Tidak ada kontribusi yang cocok dengan pencarian Anda.</p>
+                                                    <p className="font-bold ">Tidak ada kontribusi yang cocok dengan pencarian Anda.</p>
                                                 </div>
                                             ) : (
                                                 <div className="text-slate-400 flex flex-col items-center gap-3">
                                                     <span className="material-symbols-outlined text-5xl">inventory_2</span>
-                                                    <p className="font-bold italic">{t('dashboard.no_queue')}</p>
+                                                    <p className="font-bold ">{t('dashboard.no_queue')}</p>
                                                 </div>
                                             )}
                                         </td>
@@ -273,7 +273,7 @@ export default function AdminDashboard({ auth, allContributions = [], pendingCou
                     {totalPages > 1 && (
                         <div className="px-8 py-5 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/30 dark:bg-slate-800/10">
                             <p className="text-xs text-slate-500 font-bold">
-                                Menampilkan { (currentPage - 1) * itemsPerPage + 1 } - { Math.min(currentPage * itemsPerPage, filteredContributions.length) } dari { filteredContributions.length } data
+                                Menampilkan {(currentPage - 1) * itemsPerPage + 1} - {Math.min(currentPage * itemsPerPage, filteredContributions.length)} dari {filteredContributions.length} data
                             </p>
                             <div className="flex items-center gap-1.5 flex-wrap">
                                 <button
@@ -284,7 +284,7 @@ export default function AdminDashboard({ auth, allContributions = [], pendingCou
                                     <span className="material-symbols-outlined text-sm">chevron_left</span>
                                     Prev
                                 </button>
-                                
+
                                 {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
                                     <button
                                         key={p}
@@ -346,7 +346,7 @@ export default function AdminDashboard({ auth, allContributions = [], pendingCou
                         <div className="flex items-center gap-3 pt-4">
                             <button
                                 onClick={() => handleAction(selectedContribution.id, 'approve', { admin_rating: adminRating, is_duplicate: isDuplicate })}
-                                className="flex-1 py-4 bg-emerald-500 text-white rounded-2xl font-black italic shadow-xl shadow-emerald-500/20 hover:bg-emerald-600 transition-all flex items-center justify-center gap-3"
+                                className="flex-1 py-4 bg-emerald-500 text-white rounded-2xl font-black  shadow-xl shadow-emerald-500/20 hover:bg-emerald-600 transition-all flex items-center justify-center gap-3"
                             >
                                 <span className="material-symbols-outlined text-lg">verified</span>
                                 {t('modal.confirm_approve')}
@@ -369,7 +369,7 @@ export default function AdminDashboard({ auth, allContributions = [], pendingCou
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsRejectModalOpen(false)} className="absolute inset-0 bg-slate-950/40 backdrop-blur-sm" />
                         <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-[2rem] shadow-2xl p-8 space-y-6">
                             <div className="space-y-2">
-                                <h3 className="text-2xl font-black italic">{t('modal.rejection_title')}</h3>
+                                <h3 className="text-2xl font-black ">{t('modal.rejection_title')}</h3>
                                 <p className="text-sm text-slate-500">{t('modal.rejection_desc')}</p>
                             </div>
                             <textarea
@@ -383,7 +383,7 @@ export default function AdminDashboard({ auth, allContributions = [], pendingCou
                                 <button onClick={() => setIsRejectModalOpen(false)} className="flex-1 py-3 font-bold text-slate-500 hover:text-slate-700 transition-colors text-sm">{t('modal.close')}</button>
                                 <button
                                     onClick={() => handleAction(targetId, 'reject', { rejection_note: rejectionNote })}
-                                    className="flex-[2] py-4 bg-rose-500 text-white rounded-xl font-black italic shadow-xl shadow-rose-500/20 hover:bg-rose-600 transition-all flex items-center justify-center gap-2"
+                                    className="flex-[2] py-4 bg-rose-500 text-white rounded-xl font-black  shadow-xl shadow-rose-500/20 hover:bg-rose-600 transition-all flex items-center justify-center gap-2"
                                 >
                                     <span className="material-symbols-outlined text-sm">cancel</span>
                                     {t('modal.confirm_reject')}
@@ -401,7 +401,7 @@ export default function AdminDashboard({ auth, allContributions = [], pendingCou
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsDeleteModalOpen(false)} className="absolute inset-0 bg-slate-950/40 backdrop-blur-sm" />
                         <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-[2rem] shadow-2xl p-8 space-y-6">
                             <div className="space-y-2">
-                                <h3 className="text-2xl font-black italic text-rose-500 flex items-center gap-2">
+                                <h3 className="text-2xl font-black  text-rose-500 flex items-center gap-2">
                                     <span className="material-symbols-outlined text-3xl">warning</span>
                                     {t('dashboard.delete')}
                                 </h3>
@@ -411,7 +411,7 @@ export default function AdminDashboard({ auth, allContributions = [], pendingCou
                                 <button onClick={() => setIsDeleteModalOpen(false)} className="flex-1 py-3 font-bold text-slate-500 hover:text-slate-700 transition-colors text-sm">{t('modal.close')}</button>
                                 <button
                                     onClick={() => handleDelete(deleteTargetId)}
-                                    className="flex-[2] py-4 bg-rose-500 text-white rounded-xl font-black italic shadow-xl shadow-rose-500/20 hover:bg-rose-600 transition-all flex items-center justify-center gap-2"
+                                    className="flex-[2] py-4 bg-rose-500 text-white rounded-xl font-black  shadow-xl shadow-rose-500/20 hover:bg-rose-600 transition-all flex items-center justify-center gap-2"
                                 >
                                     <span className="material-symbols-outlined text-sm">delete</span>
                                     {t('dashboard.delete')}

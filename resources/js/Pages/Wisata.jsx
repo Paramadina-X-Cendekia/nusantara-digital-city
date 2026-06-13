@@ -160,7 +160,7 @@ export default function Wisata({ dynamicDestinations = [] }) {
                                     className="text-5xl sm:text-6xl lg:text-7xl font-black text-slate-900 dark:text-white leading-[1.05] tracking-tight text-center max-w-4xl mx-auto"
                                 >
                                     {t("wisata.hero_title")}{" "}
-                                    <span className="text-primary italic">
+                                    <span className="text-primary ">
                                         {t("wisata.hero_subtitle")}
                                     </span>
                                 </motion.h1>
@@ -274,11 +274,10 @@ export default function Wisata({ dynamicDestinations = [] }) {
                                     <button
                                         key={tab.id}
                                         onClick={() => handleTabClick(tab.id)}
-                                        className={`flex items-center justify-center px-5 py-2 whitespace-nowrap transition-all rounded-xl ${
-                                            activeTab === tab.id
+                                        className={`flex items-center justify-center px-5 py-2 whitespace-nowrap transition-all rounded-xl ${activeTab === tab.id
                                                 ? "bg-primary text-white shadow-lg shadow-primary/25"
                                                 : "text-slate-500 hover:text-primary hover:bg-primary/5"
-                                        }`}
+                                            }`}
                                     >
                                         <span
                                             className={`material-symbols-outlined mr-2 text-xl ${activeTab === tab.id ? "text-white" : ""}`}

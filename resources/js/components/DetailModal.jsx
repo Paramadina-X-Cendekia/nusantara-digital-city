@@ -77,7 +77,7 @@ export default function DetailModal({ isOpen, onClose, contribution, children })
                         </div>
                         {(data.digitalMenu === true || data.digitalMenu === 1 || data.digitalMenu === "1") && data.dishes && data.dishes.length > 0 && (
                             <div className="space-y-4 pt-6 border-t border-slate-100 dark:border-slate-800">
-                                <h4 className="text-xs font-black uppercase tracking-widest text-primary italic">Hidangan Unggulan</h4>
+                                <h4 className="text-xs font-black uppercase tracking-widest text-primary ">Hidangan Unggulan</h4>
                                 <div className="grid gap-4">
                                     {data.dishes.map((dish, i) => (
                                         <div key={i} className="flex gap-4 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700">
@@ -91,9 +91,9 @@ export default function DetailModal({ isOpen, onClose, contribution, children })
                                                     <p className="font-bold text-sm text-slate-900 dark:text-slate-100">
                                                         <AITranslate text={dish.name} />
                                                     </p>
-                                                    <span className="text-[9px] font-medium text-slate-400 italic">#{i + 1}</span>
+                                                    <span className="text-[9px] font-medium text-slate-400 ">#{i + 1}</span>
                                                 </div>
-                                                <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-relaxed italic line-clamp-2">
+                                                <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-relaxed  line-clamp-2">
                                                     <AITranslate text={dish.description} />
                                                 </p>
                                                 {dish.ingredients && dish.ingredients.length > 0 && (
@@ -118,7 +118,7 @@ export default function DetailModal({ isOpen, onClose, contribution, children })
                         )}
                         {(data.localStory === true || data.localStory === 1 || data.localStory === "1") && (
                             <div className="space-y-4 pt-6 border-t border-slate-100 dark:border-slate-800">
-                                <h4 className="text-xs font-black uppercase tracking-widest text-primary italic">Cerita Bahan Lokal</h4>
+                                <h4 className="text-xs font-black uppercase tracking-widest text-primary ">Cerita Bahan Lokal</h4>
                                 <div className="p-6 bg-emerald-50/50 dark:bg-emerald-900/10 rounded-3xl border border-emerald-100 dark:border-emerald-800/50 space-y-4">
                                     {data.ingredientImageUrl && (
                                         <div className="w-full h-32 rounded-2xl overflow-hidden border border-emerald-100 dark:border-emerald-800/50 mb-4">
@@ -132,7 +132,7 @@ export default function DetailModal({ isOpen, onClose, contribution, children })
                                     </div>
                                     <div className="space-y-1">
                                         <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">Kisah Bahan</p>
-                                        <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed italic">
+                                        <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed ">
                                             "<AITranslate text={data.ingredientStory} />"
                                         </p>
                                     </div>
@@ -165,7 +165,7 @@ export default function DetailModal({ isOpen, onClose, contribution, children })
                     >
                         <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
                             <div>
-                                <h3 className="text-2xl font-black italic">{t('modal.detail_title')}</h3>
+                                <h3 className="text-2xl font-black ">{t('modal.detail_title')}</h3>
                                 <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">ID: #{contribution.id} • {contribution.type}</p>
                             </div>
                             <button onClick={onClose} className="size-10 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center transition-all">
@@ -181,7 +181,7 @@ export default function DetailModal({ isOpen, onClose, contribution, children })
                         <div className="p-8 bg-slate-50 dark:bg-slate-800/50 flex justify-end">
                             <button
                                 onClick={onClose}
-                                className="px-8 py-3 bg-slate-900 dark:bg-white dark:text-slate-950 text-white rounded-2xl font-black italic shadow-xl transition-all hover:scale-105"
+                                className="px-8 py-3 bg-slate-900 dark:bg-white dark:text-slate-950 text-white rounded-2xl font-black  shadow-xl transition-all hover:scale-105"
                             >
                                 {t('modal.close')}
                             </button>

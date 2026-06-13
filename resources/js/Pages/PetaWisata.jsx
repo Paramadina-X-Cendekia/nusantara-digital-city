@@ -307,10 +307,10 @@ export default function PetaWisata({ dynamicDestinations = [] }) {
     
     // Base destinations data
     const BASE_DESTINATIONS = [
-        { id: 'dt', slug: 'danau-toba', name: 'Danau Toba', query: 'Danau Toba, Sumatera Utara', location: 'Sumatera Utara', category: 'alam', desc: t('wisata.dest1_desc'), lat: 2.6845, lng: 98.8588, defaultImg: 'https://lh3.googleusercontent.com/aida-public/AB6AXuABI-jZrAZvVvJvZH6KZBhH8ojB0S_qUfOa3DqgUaYGz6Z-8Av2l7SKksdPxULUMLQ2PPt0tedxQ5UzxZ8uxsWJ4309Ml6QTEqk05VJtG3GCPG67J_9zS8pvI_Z3Jj38w0A9AUb' },
-        { id: 'lbj', slug: 'labuan-bajo', name: 'Labuan Bajo', query: 'Labuan Bajo, Taman Nasional Komodo', location: 'NTT', category: 'pantai', desc: t('wisata.dest2_desc'), lat: -8.4539, lng: 119.8892, defaultImg: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDG4EFxcBpgXIgCaq7MmUNfwNpEWPDL3nUlyPfXBMnGRqQpwaJXYW_-W5esyNgXuX2khxDfJDRgLB9wEhAF' },
-        { id: 'ubd', slug: 'ubd-bali', name: 'Ubud, Bali', query: 'Ubud, Bali', location: 'Bali', category: 'kota', desc: t('wisata.dest3_desc'), lat: -8.5069, lng: 115.2624, defaultImg: 'https://lh3.googleusercontent.com/aida-public/AB6AXuArUqDFHdGl6aYFb1l3aFc88-RwLg1EzHYhbsxTjneL2idpROpUoDwZg_JBBETD2rPOAn9OmiG' },
-        { id: 'brm', slug: 'gunung-bromo', name: 'Gunung Bromo', query: 'Gunung Bromo, Jawa Timur', location: 'Jawa Timur', category: 'gunung', desc: t('wisata.dest4_desc'), lat: -7.9425, lng: 112.953, defaultImg: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBMGTCFCaDtjpe7yrqfTzA8iN1OmWnIKYRRWrcVY8J7JO_wNsntxW3cVs8kldslW2HSs6RtUMhE2T' },
+        { id: 'dt', slug: 'danau-toba', name: 'Danau Toba', query: 'Danau Toba, Sumatera Utara', location: 'Sumatera Utara', category: 'alam', desc: t('wisata.dest1_desc'), lat: 2.6845, lng: 98.8588, defaultImg: 'https://lh3.googleusercontent.com/aida-public/AB6AXuABI-jZrAZvVvJvZH6KZBhH8ojB0S_qUfOa3DqgUaYGz6Z-8Av2l7SKksdPxULUMLQ2PPt0tedxQ5UzxZ8uxsWJ4309Ml6QTEqk05VJtG3GCPG67J_9zS8pvI_Z3Jj38w0A9AUBowVvCR6FCfJwoKcb6PZMC9L6sMLHqdxuAwf6sFjbO5p2T6chSgX_xOWisIGvJ9x-hwt82JPV2ErNwDb6h0_ZFsufnN14gPAo_fuMeESUTBYGy6djCPrWniloWLTPdf-xI3S_AdGa' },
+        { id: 'lbj', slug: 'labuan-bajo', name: 'Labuan Bajo', query: 'Labuan Bajo, Taman Nasional Komodo', location: 'NTT', category: 'pantai', desc: t('wisata.dest2_desc'), lat: -8.4539, lng: 119.8892, defaultImg: '/images/wisata/labuan-bajo.jpeg' },
+        { id: 'ubd', slug: 'ubud-bali', name: 'Ubud, Bali', query: 'Ubud, Bali', location: 'Bali', category: 'kota', desc: t('wisata.dest3_desc'), lat: -8.5069, lng: 115.2624, defaultImg: '/images/wisata/ubud-bali.jpeg' },
+        { id: 'brm', slug: 'gunung-bromo', name: 'Gunung Bromo', query: 'Gunung Bromo, Jawa Timur', location: 'Jawa Timur', category: 'gunung', desc: t('wisata.dest4_desc'), lat: -7.9425, lng: 112.953, defaultImg: '/images/wisata/gunung-bromo.jpeg' },
     ];
 
     const ROUTE_STOP_IDS = ['dt', 'brm', 'ubd', 'lbj'];

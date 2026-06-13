@@ -173,7 +173,7 @@ export default function WisataDetail({ slug, initialDestination }) {
                         className="absolute inset-0"
                     >
                         <ImageWithFallback
-                            src={destination.defaultImg || destination.img}
+                            src={destination.img || destination.defaultImg}
                             alt={destination.name}
                             className="w-full h-full object-cover"
                             fallbackIcon="landscape"
@@ -368,7 +368,7 @@ export default function WisataDetail({ slug, initialDestination }) {
                                                     "Perintis Sinergi"}
                                             </span>
                                         </div>
-                                        <p className="text-[10px] text-slate-400 font-medium italic">
+                                        <p className="text-[10px] text-slate-400 font-medium ">
                                             Telah berkontribusi mendigitalisasi
                                             destinasi ini pada{" "}
                                             {destination.created_at
@@ -441,10 +441,10 @@ export default function WisataDetail({ slug, initialDestination }) {
                             </motion.div>
 
                             <div className="bg-primary/5 border border-primary/10 rounded-3xl p-8">
-                                <h3 className="text-lg font-black text-slate-900 dark:text-white mb-4 italic">
+                                <h3 className="text-lg font-black text-slate-900 dark:text-white mb-4 ">
                                     "Nature is the best digital architect."
                                 </h3>
-                                <p className="text-sm text-slate-500 italic">
+                                <p className="text-sm text-slate-500 ">
                                     — Sinergi Nusa Explorer
                                 </p>
                             </div>

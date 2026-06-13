@@ -24,16 +24,16 @@ const CATEGORIES = (t) => [
 const SearchableSelect = ({ label, value, onChange, options, placeholder, icon = 'location_on' }) => {
     const [searchTerm, setSearchTerm] = useState(value || '');
     const [isOpen, setIsOpen] = useState(false);
-    
+
     useEffect(() => {
         setSearchTerm(value || '');
     }, [value]);
 
-    const filteredOptions = options.filter(opt => 
+    const filteredOptions = options.filter(opt =>
         opt.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    const exactMatch = options.find(opt => 
+    const exactMatch = options.find(opt =>
         opt.name.toLowerCase() === searchTerm.toLowerCase()
     );
 
@@ -41,7 +41,7 @@ const SearchableSelect = ({ label, value, onChange, options, placeholder, icon =
         <div className="space-y-2 relative">
             <label className="text-sm font-medium">{label}</label>
             <div className="relative group/select z-50">
-                <input 
+                <input
                     value={searchTerm}
                     onChange={(e) => {
                         setSearchTerm(e.target.value);
@@ -52,14 +52,14 @@ const SearchableSelect = ({ label, value, onChange, options, placeholder, icon =
                     placeholder={placeholder}
                 />
                 <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within/select:text-primary transition-colors text-xl">{icon}</span>
-                
+
                 {isOpen && (
                     <AnimatePresence>
-                        <motion.div 
+                        <motion.div
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: 10 }}
-                        className="absolute z-[60] top-full left-0 w-full mt-2 bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl max-h-72 overflow-hidden flex flex-col"
+                            className="absolute z-[60] top-full left-0 w-full mt-2 bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl max-h-72 overflow-hidden flex flex-col"
                         >
                             <div className="overflow-y-auto flex-grow custom-scrollbar py-2">
                                 {filteredOptions.map((opt) => (
@@ -212,7 +212,7 @@ export default function Kontribusi({ cities = [], spots = [], initialType = 'kot
         const resolvedType = (selectedType === 'kota' && kotaSubCategory) ? kotaSubCategory : selectedType;
         const selectedTypeForAI = customType || resolvedType;
         let name = customName;
-        
+
         if (!name) {
             const currentCategory = (selectedType === 'kota' && kotaSubCategory) ? kotaSubCategory : selectedType;
             if (currentCategory === 'budaya') {
@@ -223,7 +223,7 @@ export default function Kontribusi({ cities = [], spots = [], initialType = 'kot
                 name = data.cityName;
             }
         }
-        
+
         if (!name) {
             alert(t('kontribusi.fill_name_first'));
             return;
@@ -232,7 +232,7 @@ export default function Kontribusi({ cities = [], spots = [], initialType = 'kot
         setIsGenerating(true);
         try {
             const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-            
+
             const response = await fetch('/kontribusi/generate-description', {
                 method: 'POST',
                 headers: {
@@ -273,7 +273,7 @@ export default function Kontribusi({ cities = [], spots = [], initialType = 'kot
                             const generatedIngredients = result.ingredients || [];
                             newDishes[index].ingredients = Array.isArray(generatedIngredients) ? generatedIngredients : [];
                             // Also update the visible textarea for backward compatibility/manual edit
-                            newDishes[index].spices = Array.isArray(generatedIngredients) 
+                            newDishes[index].spices = Array.isArray(generatedIngredients)
                                 ? generatedIngredients.map(i => i.name).join(', ')
                                 : (result.spices || prev.dishes[index].spices);
                             return { ...prev, dishes: newDishes };
@@ -415,7 +415,7 @@ export default function Kontribusi({ cities = [], spots = [], initialType = 'kot
                 )}
 
                 <div className="space-y-6">
-                    <SearchableSelect 
+                    <SearchableSelect
                         label={t('kontribusi.label_art_origin')}
                         value={data.origin}
                         placeholder={t('kontribusi.opt_city_select')}
@@ -457,7 +457,7 @@ export default function Kontribusi({ cities = [], spots = [], initialType = 'kot
                     <div className="flex items-center justify-between">
                         <label className="text-sm font-medium">File Arsip / Materi Pendukung (PDF/Gambar)</label>
                         {data.archiveFile && (
-                            <button 
+                            <button
                                 type="button"
                                 onClick={handleAnalyzeArchive}
                                 disabled={isAnalyzing}
@@ -471,11 +471,11 @@ export default function Kontribusi({ cities = [], spots = [], initialType = 'kot
                         )}
                     </div>
                     <div className="relative group/upload h-20 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800 hover:border-primary transition-all flex flex-col items-center justify-center bg-slate-50/50 dark:bg-slate-900/50">
-                        <input 
-                            type="file" 
+                        <input
+                            type="file"
                             accept=".pdf,.jpg,.jpeg,.png"
                             onChange={e => setData('archiveFile', e.target.files[0])}
-                            className="absolute inset-0 opacity-0 cursor-pointer z-10" 
+                            className="absolute inset-0 opacity-0 cursor-pointer z-10"
                         />
                         <div className="flex items-center gap-3">
                             <span className="material-symbols-outlined text-2xl text-slate-400 group-hover/upload:text-primary transition-colors">history_edu</span>
@@ -499,8 +499,8 @@ export default function Kontribusi({ cities = [], spots = [], initialType = 'kot
                                 {data.characters ? data.characters.split(',').filter(Boolean).map((char, index) => (
                                     <div key={index} className="flex items-center gap-1 bg-primary/10 text-primary px-3 py-1.5 rounded-full text-xs font-bold">
                                         <span>{char.trim()}</span>
-                                        <button 
-                                            type="button" 
+                                        <button
+                                            type="button"
                                             onClick={() => {
                                                 const newChars = data.characters.split(',').filter(Boolean).map(s => s.trim());
                                                 newChars.splice(index, 1);
@@ -512,9 +512,9 @@ export default function Kontribusi({ cities = [], spots = [], initialType = 'kot
                                         </button>
                                     </div>
                                 )) : null}
-                                <input 
-                                    type="text" 
-                                    className="flex-1 bg-transparent border-none outline-none text-sm p-1 min-w-[150px] dark:text-slate-100" 
+                                <input
+                                    type="text"
+                                    className="flex-1 bg-transparent border-none outline-none text-sm p-1 min-w-[150px] dark:text-slate-100"
                                     placeholder={!data.characters ? "Ketik nama, lalu Enter (,)" : ""}
                                     required={!data.characters}
                                     onKeyDown={(e) => {
@@ -545,7 +545,7 @@ export default function Kontribusi({ cities = [], spots = [], initialType = 'kot
                                     }}
                                 />
                             </div>
-                            <p className="text-[10px] text-slate-500 font-medium italic">Tekan Enter atau koma (,) untuk menambah tokoh.</p>
+                            <p className="text-[10px] text-slate-500 font-medium ">Tekan Enter atau koma (,) untuk menambah tokoh.</p>
                         </div>
                         <div className="space-y-2">
                             <label className="text-xs font-bold uppercase tracking-widest text-slate-400">Nilai Moral</label>
@@ -557,11 +557,11 @@ export default function Kontribusi({ cities = [], spots = [], initialType = 'kot
                 <div className="space-y-2">
                     <label className="text-sm font-medium">{t('kontribusi.label_art_upload')}</label>
                     <div className="relative group/upload h-32 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800 hover:border-primary transition-all flex flex-col items-center justify-center bg-slate-50/50 dark:bg-slate-900/50">
-                        <input 
-                            type="file" 
+                        <input
+                            type="file"
                             accept="image/*"
                             onChange={e => setData('imageFile', e.target.files[0])}
-                            className="absolute inset-0 opacity-0 cursor-pointer z-10" 
+                            className="absolute inset-0 opacity-0 cursor-pointer z-10"
                         />
                         <div className="text-center">
                             <span className="material-symbols-outlined text-3xl text-slate-400 group-hover/upload:text-primary transition-colors">add_photo_alternate</span>
@@ -576,7 +576,7 @@ export default function Kontribusi({ cities = [], spots = [], initialType = 'kot
                 <div className="space-y-2">
                     <div className="flex items-center justify-between">
                         <label className="text-sm font-medium">Deskripsi Singkat (Maks 15 Kata)</label>
-                        <button 
+                        <button
                             type="button"
                             onClick={() => handleGenerateAI('budaya', data.artName)}
                             disabled={isGenerating}
@@ -588,19 +588,19 @@ export default function Kontribusi({ cities = [], spots = [], initialType = 'kot
                             {isGenerating ? t('kontribusi.generating') : t('kontribusi.generate_ai')}
                         </button>
                     </div>
-                    <input 
-                        value={data.shortDesc} 
+                    <input
+                        value={data.shortDesc}
                         onChange={e => {
                             const words = e.target.value.trim().split(/\s+/).filter(Boolean);
                             if (e.target.value === '' || words.length <= 15) {
                                 setData('shortDesc', e.target.value);
                             }
-                        }} 
-                        required 
-                        className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none focus:ring-2 focus:ring-primary transition-all" 
-                        placeholder="Tuliskan deskripsi singkat..." 
+                        }}
+                        required
+                        className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none focus:ring-2 focus:ring-primary transition-all"
+                        placeholder="Tuliskan deskripsi singkat..."
                     />
-                    <p className="text-[10px] text-slate-500 font-medium italic">
+                    <p className="text-[10px] text-slate-500 font-medium ">
                         {data.shortDesc ? data.shortDesc.trim().split(/\s+/).filter(Boolean).length : 0} / 15 kata
                     </p>
                 </div>
@@ -608,7 +608,7 @@ export default function Kontribusi({ cities = [], spots = [], initialType = 'kot
                 <div className="space-y-2">
                     <div className="flex items-center justify-between">
                         <label className="text-sm font-medium">{t('kontribusi.description_label')}</label>
-                        <button 
+                        <button
                             type="button"
                             onClick={() => handleGenerateAI()}
                             disabled={isGenerating}
@@ -620,12 +620,12 @@ export default function Kontribusi({ cities = [], spots = [], initialType = 'kot
                             {isGenerating ? t('kontribusi.generating') : t('kontribusi.generate_ai')}
                         </button>
                     </div>
-                    <textarea 
-                        value={data.description} 
-                        onChange={e => setData('description', e.target.value)} 
-                        required 
-                        className={`w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none focus:ring-2 focus:ring-primary resize-none transition-all ${isGenerating ? 'animate-pulse opacity-50' : ''}`} 
-                        rows="4" 
+                    <textarea
+                        value={data.description}
+                        onChange={e => setData('description', e.target.value)}
+                        required
+                        className={`w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none focus:ring-2 focus:ring-primary resize-none transition-all ${isGenerating ? 'animate-pulse opacity-50' : ''}`}
+                        rows="4"
                         placeholder={t('kontribusi.description_placeholder')}
                     ></textarea>
                 </div>
@@ -656,7 +656,7 @@ export default function Kontribusi({ cities = [], spots = [], initialType = 'kot
                         placeholder="Nama Warung / Tempat Wisata..."
                         icon="storefront"
                     />
-                    <SearchableSelect 
+                    <SearchableSelect
                         label="Kota *"
                         value={data.city}
                         placeholder="-- Pilih Kota --"
@@ -678,11 +678,11 @@ export default function Kontribusi({ cities = [], spots = [], initialType = 'kot
                 <div className="space-y-2">
                     <label className="text-sm font-medium">Foto Utama Tempat / Warung</label>
                     <div className="relative group/upload h-32 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-800 hover:border-primary transition-all flex flex-col items-center justify-center bg-slate-50/50 dark:bg-slate-900/50">
-                        <input 
-                            type="file" 
+                        <input
+                            type="file"
                             accept="image/*"
                             onChange={e => setData('mainImage', e.target.files[0])}
-                            className="absolute inset-0 opacity-0 cursor-pointer z-10" 
+                            className="absolute inset-0 opacity-0 cursor-pointer z-10"
                         />
                         <div className="text-center">
                             <span className="material-symbols-outlined text-3xl text-slate-400 group-hover/upload:text-primary transition-colors">add_a_photo</span>
@@ -697,7 +697,7 @@ export default function Kontribusi({ cities = [], spots = [], initialType = 'kot
                 <div className="space-y-2">
                     <div className="flex items-center justify-between">
                         <label className="text-sm font-medium">Deskripsi Singkat (Maks 15 Kata)</label>
-                        <button 
+                        <button
                             type="button"
                             onClick={() => handleGenerateAI('kuliner', data.shopName)}
                             disabled={isGenerating}
@@ -709,33 +709,33 @@ export default function Kontribusi({ cities = [], spots = [], initialType = 'kot
                             {isGenerating ? t('kontribusi.generating') : t('kontribusi.generate_ai')}
                         </button>
                     </div>
-                    <input 
-                        value={data.shortDesc} 
+                    <input
+                        value={data.shortDesc}
                         onChange={e => {
                             const words = e.target.value.trim().split(/\s+/).filter(Boolean);
                             if (e.target.value === '' || words.length <= 15) {
                                 setData('shortDesc', e.target.value);
                             }
-                        }} 
-                        required 
-                        className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none focus:ring-2 focus:ring-primary transition-all" 
-                        placeholder="Tuliskan deskripsi singkat..." 
+                        }}
+                        required
+                        className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none focus:ring-2 focus:ring-primary transition-all"
+                        placeholder="Tuliskan deskripsi singkat..."
                     />
-                    <p className="text-[10px] text-slate-500 font-medium italic">
+                    <p className="text-[10px] text-slate-500 font-medium ">
                         {data.shortDesc ? data.shortDesc.trim().split(/\s+/).filter(Boolean).length : 0} / 15 kata
                     </p>
                 </div>
                 <div className="space-y-2">
                     <div className="flex items-center justify-between">
                         <label className="text-xs font-bold uppercase tracking-widest text-slate-400">{t('kontribusi.label_tourism_desc')}</label>
-                        <button 
+                        <button
                             type="button"
                             onClick={() => handleGenerateAI('kuliner', data.shopName)}
                             disabled={isGenerating}
                             className="flex items-center gap-1.5 text-xs font-bold text-primary hover:text-primary/80 transition-all disabled:opacity-50"
                         >
                             <span className={`material-symbols-outlined text-sm ${isGenerating ? 'animate-spin' : ''}`}>
-                                    {isGenerating ? 'sync' : 'auto_awesome'}
+                                {isGenerating ? 'sync' : 'auto_awesome'}
                             </span>
                             {isGenerating ? t('kontribusi.generating') : t('kontribusi.generate_ai')}
                         </button>
@@ -762,12 +762,12 @@ export default function Kontribusi({ cities = [], spots = [], initialType = 'kot
                                 {data.dishes.map((dish, index) => (
                                     <motion.div key={index} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="relative group p-6 bg-slate-50/50 dark:bg-slate-900/50 rounded-[2rem] border border-slate-200 dark:border-slate-800 space-y-4">
                                         {data.dishes.length > 1 && (
-                                            <button 
-                                                type="button" 
+                                            <button
+                                                type="button"
                                                 onClick={() => {
                                                     const newDishes = data.dishes.filter((_, i) => i !== index);
                                                     setData('dishes', newDishes);
-                                                }} 
+                                                }}
                                                 className="absolute -top-2 -right-2 size-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center hover:bg-red-200 transition-colors shadow-sm z-10"
                                             >
                                                 <span className="material-symbols-outlined text-lg">close</span>
@@ -775,27 +775,27 @@ export default function Kontribusi({ cities = [], spots = [], initialType = 'kot
                                         )}
                                         <div className="space-y-2">
                                             <label className="text-xs font-bold uppercase tracking-widest text-slate-400">{t('kontribusi.label_dish_name')}</label>
-                                            <input 
-                                                value={dish.name} 
+                                            <input
+                                                value={dish.name}
                                                 onChange={e => {
                                                     const newDishes = [...data.dishes];
                                                     newDishes[index].name = e.target.value;
                                                     setData('dishes', newDishes);
-                                                }} 
-                                                required 
-                                                className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-primary" 
-                                                placeholder="Rendang Padang / Sate Madura" 
+                                                }}
+                                                required
+                                                className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-primary"
+                                                placeholder="Rendang Padang / Sate Madura"
                                             />
                                         </div>
                                         <div className="space-y-2">
                                             <div className="flex items-center justify-between">
                                                 <label className="text-xs font-bold uppercase tracking-widest text-slate-400">{t('kontribusi.label_dish_desc')}</label>
-                                                <p className="text-[10px] text-slate-500 font-medium italic">
+                                                <p className="text-[10px] text-slate-500 font-medium ">
                                                     {dish.description ? dish.description.trim().split(/\s+/).filter(Boolean).length : 0} / 15 kata
                                                 </p>
                                             </div>
-                                            <textarea 
-                                                value={dish.description} 
+                                            <textarea
+                                                value={dish.description}
                                                 onChange={e => {
                                                     const words = e.target.value.trim().split(/\s+/).filter(Boolean);
                                                     if (e.target.value === '' || words.length <= 15) {
@@ -803,17 +803,17 @@ export default function Kontribusi({ cities = [], spots = [], initialType = 'kot
                                                         newDishes[index].description = e.target.value;
                                                         setData('dishes', newDishes);
                                                     }
-                                                }} 
-                                                required 
-                                                className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-primary resize-none" 
-                                                rows="2" 
+                                                }}
+                                                required
+                                                className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-primary resize-none"
+                                                rows="2"
                                                 placeholder="Deskripsi singkat hidangan (Maks 15 Kata)..."
                                             ></textarea>
                                         </div>
                                         <div className="space-y-2">
                                             <div className="flex items-center justify-between">
                                                 <label className="text-xs font-bold uppercase tracking-widest text-slate-400">{t('kontribusi.label_spices')}</label>
-                                                <button 
+                                                <button
                                                     type="button"
                                                     onClick={() => handleGenerateAI('spices', dish.name, index)}
                                                     disabled={isGenerating || !dish.name}
@@ -825,15 +825,15 @@ export default function Kontribusi({ cities = [], spots = [], initialType = 'kot
                                                     Generate AI
                                                 </button>
                                             </div>
-                                            <textarea 
-                                                value={dish.spices} 
+                                            <textarea
+                                                value={dish.spices}
                                                 onChange={e => {
                                                     const newDishes = [...data.dishes];
                                                     newDishes[index].spices = e.target.value;
                                                     setData('dishes', newDishes);
-                                                }} 
-                                                required 
-                                                className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-primary" 
+                                                }}
+                                                required
+                                                className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-primary"
                                                 placeholder="Bawang merah, Bawang putih, Cabai, dll..."
                                             ></textarea>
                                             {dish.ingredients && dish.ingredients.length > 0 && (
@@ -854,20 +854,20 @@ export default function Kontribusi({ cities = [], spots = [], initialType = 'kot
                                         </div>
                                         <div className="space-y-2">
                                             <label className="text-xs font-bold uppercase tracking-widest text-slate-400">{t('kontribusi.label_dish_image')}</label>
-                                            <input 
-                                                type="file" 
-                                                accept="image/*" 
+                                            <input
+                                                type="file"
+                                                accept="image/*"
                                                 onChange={e => {
                                                     const newDishes = [...data.dishes];
                                                     newDishes[index].image = e.target.files[0];
                                                     setData('dishes', newDishes);
-                                                }} 
-                                                className="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer" 
+                                                }}
+                                                className="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer"
                                             />
                                         </div>
                                     </motion.div>
                                 ))}
-                                
+
                                 <button
                                     type="button"
                                     onClick={() => setData('dishes', [...data.dishes, { name: '', description: '', spices: '', image: null }])}
@@ -911,7 +911,7 @@ export default function Kontribusi({ cities = [], spots = [], initialType = 'kot
                                 <div className="space-y-2">
                                     <div className="flex items-center justify-between">
                                         <label className="text-xs font-bold uppercase tracking-widest text-slate-400">{t('kontribusi.label_ingredient_story')}</label>
-                                        <button 
+                                        <button
                                             type="button"
                                             onClick={() => {
                                                 if (!data.ingredientName) {
@@ -946,30 +946,30 @@ export default function Kontribusi({ cities = [], spots = [], initialType = 'kot
             case 'kota':
                 if (kotaStep === 1) {
                     return (
-                    <motion.div key="kota" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6">
-                        <div className="grid sm:grid-cols-2 gap-6">
-                            <SearchableSelect 
-                                label={t('kontribusi.label_city_name')}
-                                value={data.cityName}
-                                placeholder={t('kontribusi.placeholder_city')}
-                                options={cities}
-                                icon="location_city"
-                                onChange={(val) => {
-                                    const city = cities.find(c => c.name.toLowerCase() === val.toLowerCase());
-                                    setData(prev => ({
-                                        ...prev,
-                                        cityName: city ? city.name : val,
-                                        province: city ? city.province : prev.province
-                                    }));
-                                }}
-                            />
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium">{t('kontribusi.label_province')}</label>
-                                <input value={data.province} onChange={e => setData('province', e.target.value)} required className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none focus:ring-2 focus:ring-primary transition-all" placeholder={t('kontribusi.placeholder_province')} />
+                        <motion.div key="kota" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6">
+                            <div className="grid sm:grid-cols-2 gap-6">
+                                <SearchableSelect
+                                    label={t('kontribusi.label_city_name')}
+                                    value={data.cityName}
+                                    placeholder={t('kontribusi.placeholder_city')}
+                                    options={cities}
+                                    icon="location_city"
+                                    onChange={(val) => {
+                                        const city = cities.find(c => c.name.toLowerCase() === val.toLowerCase());
+                                        setData(prev => ({
+                                            ...prev,
+                                            cityName: city ? city.name : val,
+                                            province: city ? city.province : prev.province
+                                        }));
+                                    }}
+                                />
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium">{t('kontribusi.label_province')}</label>
+                                    <input value={data.province} onChange={e => setData('province', e.target.value)} required className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 outline-none focus:ring-2 focus:ring-primary transition-all" placeholder={t('kontribusi.placeholder_province')} />
+                                </div>
                             </div>
-                        </div>
-                    </motion.div>
-                );
+                        </motion.div>
+                    );
 
                 } else if (kotaStep === 2) {
                     return (
@@ -1041,34 +1041,34 @@ export default function Kontribusi({ cities = [], spots = [], initialType = 'kot
                                 <AnimatePresence mode="wait">
                                     {renderFormFields()}
                                 </AnimatePresence>
-                                
-                                 {/* Unified Contact Section - Removed as it is now auto-filled */}
+
+                                {/* Unified Contact Section - Removed as it is now auto-filled */}
 
                                 {/* Submit Section */}
                                 {!(selectedType === 'kota' && kotaStep === 2) && (
                                     <div className="mt-12">
                                         <motion.button
-                                        whileHover={{ scale: 1.01 }}
-                                        whileTap={{ scale: 0.99 }}
-                                        disabled={processing}
-                                        type="submit"
-                                        className={`w-full py-5 rounded-2xl font-black text-lg flex items-center justify-center gap-3 shadow-xl transition-all ${processing ? 'bg-slate-300 cursor-not-allowed' : 'bg-primary hover:bg-primary/90 text-white shadow-primary/20'}`}
-                                    >
-                                        <span className="material-symbols-outlined">{processing ? 'sync' : (selectedType === 'kota' && kotaStep === 1 ? 'arrow_forward' : 'send')}</span>
-                                        {processing ? t('auth.processing') : (selectedType === 'kota' && kotaStep === 1 ? 'Selanjutnya' : t('kontribusi.submit_button'))}
-                                    </motion.button>
-                                    
-                                    {(selectedType === 'kota' && kotaStep === 3) && (
-                                        <p className="text-center text-xs text-slate-500 mt-6">
-                                            Mengirimkan form ini akan mendaftarkan data <strong>Kota</strong> dan <strong>{kotaSubCategory === 'budaya' ? 'Seni & Budaya' : 'Wisata & Kuliner'}</strong> secara bersamaan.
-                                        </p>
-                                    )}
-                                    {!(selectedType === 'kota' && kotaStep === 3) && (
-                                        <p className="text-center text-xs text-slate-500 mt-6">
-                                            {t('kontribusi.terms_text')}
-                                        </p>
-                                    )}
-                                </div>
+                                            whileHover={{ scale: 1.01 }}
+                                            whileTap={{ scale: 0.99 }}
+                                            disabled={processing}
+                                            type="submit"
+                                            className={`w-full py-5 rounded-2xl font-black text-lg flex items-center justify-center gap-3 shadow-xl transition-all ${processing ? 'bg-slate-300 cursor-not-allowed' : 'bg-primary hover:bg-primary/90 text-white shadow-primary/20'}`}
+                                        >
+                                            <span className="material-symbols-outlined">{processing ? 'sync' : (selectedType === 'kota' && kotaStep === 1 ? 'arrow_forward' : 'send')}</span>
+                                            {processing ? t('auth.processing') : (selectedType === 'kota' && kotaStep === 1 ? 'Selanjutnya' : t('kontribusi.submit_button'))}
+                                        </motion.button>
+
+                                        {(selectedType === 'kota' && kotaStep === 3) && (
+                                            <p className="text-center text-xs text-slate-500 mt-6">
+                                                Mengirimkan form ini akan mendaftarkan data <strong>Kota</strong> dan <strong>{kotaSubCategory === 'budaya' ? 'Seni & Budaya' : 'Wisata & Kuliner'}</strong> secara bersamaan.
+                                            </p>
+                                        )}
+                                        {!(selectedType === 'kota' && kotaStep === 3) && (
+                                            <p className="text-center text-xs text-slate-500 mt-6">
+                                                {t('kontribusi.terms_text')}
+                                            </p>
+                                        )}
+                                    </div>
                                 )}
                             </div>
                         </form>

@@ -29,7 +29,7 @@ export default function Budaya({ landmarks, budayaData }) {
 
     const dynamicPreviewLocations = useMemo(() => {
         const locations = [];
-        
+
         // Add hardcoded landmarks if they have coordinates
         if (landmarks) {
             landmarks.forEach(l => {
@@ -64,7 +64,7 @@ export default function Budaya({ landmarks, budayaData }) {
 
     useEffect(() => {
         if (dynamicPreviewLocations.length <= 1) return;
-        
+
         const interval = setInterval(() => {
             setPreviewIndex((prev) => (prev + 1) % dynamicPreviewLocations.length);
         }, 5000);
@@ -85,7 +85,7 @@ export default function Budaya({ landmarks, budayaData }) {
 
     const renderFolkloreCard = (item, type) => {
         if (!item) return null;
-        
+
         const href = `/kisah-rakyat/${item.id || item.slug}`;
         const title = loc(item, 'artName', lang) || item.artName || 'Untitled';
         const desc = loc(item, 'shortDesc', lang) || loc(item, 'description', lang) || item.shortDesc || item.description || '';
@@ -175,7 +175,7 @@ export default function Budaya({ landmarks, budayaData }) {
                                 </motion.span>
 
                                 <motion.h1 variants={fadeIn} className="text-5xl sm:text-6xl lg:text-7xl font-black text-slate-900 dark:text-white leading-[1.05] tracking-tight text-center max-w-4xl mx-auto">
-                                    {t('budaya.hero_title')}{' '}<span className="text-primary italic">{t('budaya.hero_subtitle')}</span>
+                                    {t('budaya.hero_title')}{' '}<span className="text-primary ">{t('budaya.hero_subtitle')}</span>
                                 </motion.h1>
 
                                 <motion.p variants={fadeIn} className="text-base sm:text-lg text-slate-600 dark:text-slate-300 font-medium leading-relaxed max-w-2xl text-center mx-auto">
@@ -203,7 +203,7 @@ export default function Budaya({ landmarks, budayaData }) {
                 </section>
 
                 {/* ── Category Filter Tabs (Sticky Wrapper) ── */}
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.6, duration: 0.6 }}
@@ -215,11 +215,10 @@ export default function Budaya({ landmarks, budayaData }) {
                                 <button
                                     key={tab.id}
                                     onClick={() => handleTabClick(tab.id)}
-                                    className={`flex items-center justify-center px-5 py-2 whitespace-nowrap transition-all rounded-xl ${
-                                        activeTab === tab.id
+                                    className={`flex items-center justify-center px-5 py-2 whitespace-nowrap transition-all rounded-xl ${activeTab === tab.id
                                             ? 'bg-primary text-white shadow-lg shadow-primary/25'
                                             : 'text-slate-500 hover:text-primary hover:bg-primary/5'
-                                    }`}
+                                        }`}
                                 >
                                     <span className={`material-symbols-outlined mr-2 text-xl ${activeTab === tab.id ? 'text-white' : ''}`}>{tab.icon}</span>
                                     <p className="text-sm font-bold">{tab.label}</p>
@@ -398,9 +397,9 @@ export default function Budaya({ landmarks, budayaData }) {
                                 </div>
                                 <div className="flex-1 w-full h-80 bg-slate-900 rounded-3xl border border-slate-700 flex flex-col items-center justify-center relative overflow-hidden group">
                                     <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20"></div>
-                                    
+
                                     {/* Scanning Lines */}
-                                    <motion.div 
+                                    <motion.div
                                         animate={{ top: ['0%', '100%', '0%'] }}
                                         transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
                                         className="absolute left-0 right-0 h-[1px] bg-primary/40 z-0 pointer-events-none"
@@ -412,7 +411,7 @@ export default function Budaya({ landmarks, budayaData }) {
                                             <div className="absolute inset-0 w-24 h-24 border-2 border-primary/20 rounded-full mx-auto animate-ping"></div>
                                             {/* Inner Ring */}
                                             <div className="absolute inset-0 w-24 h-24 border border-primary/40 rounded-full mx-auto animate-pulse"></div>
-                                            
+
                                             <div className="w-24 h-24 bg-primary/20 rounded-full flex items-center justify-center relative shadow-[0_0_30px_rgba(var(--color-primary),0.3)]">
                                                 <span className="material-symbols-outlined text-primary text-5xl">my_location</span>
                                             </div>
@@ -444,7 +443,7 @@ export default function Budaya({ landmarks, budayaData }) {
                                     {/* Connectivity Indicators */}
                                     <div className="absolute bottom-6 right-8 flex gap-2">
                                         {[0, 1, 2].map((i) => (
-                                            <motion.div 
+                                            <motion.div
                                                 key={i}
                                                 animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
                                                 transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.2 }}
