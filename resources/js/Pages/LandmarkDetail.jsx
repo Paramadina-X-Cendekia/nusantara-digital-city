@@ -197,7 +197,7 @@ export default function LandmarkDetail({ landmark }) {
                                                         {landmark.contributor_badge || 'Nusantara Pioneer'}
                                                     </span>
                                                 </div>
-                                                <p className="text-[10px] text-slate-400 font-medium italic">Telah berkontribusi mendigitalisasi warisan ini pada {landmark.created_at ? new Date(landmark.created_at).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }) : 'Maret 2024'}.</p>
+                                                <p className="text-[10px] text-slate-400 font-medium ">Telah berkontribusi mendigitalisasi warisan ini pada {landmark.created_at ? new Date(landmark.created_at).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }) : 'Maret 2024'}.</p>
                                             </div>
                                         </div>
                                     )}
@@ -351,7 +351,7 @@ export default function LandmarkDetail({ landmark }) {
                             <div className="p-8 space-y-6">
                                 <div className="bg-primary/5 rounded-2xl p-6 border border-primary/10">
                                     <p className="text-sm font-bold text-primary uppercase tracking-widest mb-2">{t('landmark_detail.archive_summary')}</p>
-                                    <p className="text-slate-700 dark:text-slate-300 leading-relaxed italic">
+                                    <p className="text-slate-700 dark:text-slate-300 leading-relaxed ">
                                         "{t('landmark_detail.archive_desc', { name: landmark.name })}"
                                     </p>
                                 </div>

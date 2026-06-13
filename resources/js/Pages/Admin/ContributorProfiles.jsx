@@ -64,7 +64,7 @@ export default function ContributorProfiles({ auth, profiles = [] }) {
                                     </tr>
                                 )) : (
                                     <tr>
-                                        <td colSpan="5" className="px-8 py-20 text-center text-slate-400 italic font-bold">
+                                        <td colSpan="5" className="px-8 py-20 text-center text-slate-400  font-bold">
                                             {t('dashboard.no_profiles')}
                                         </td>
                                     </tr>

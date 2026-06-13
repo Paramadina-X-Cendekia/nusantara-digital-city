@@ -37,7 +37,7 @@ export default function Navbar() {
             }
         };
         document.addEventListener('mousedown', handleClickOutside);
-        
+
         return () => {
             window.removeEventListener('scroll', handleScroll);
             document.removeEventListener('mousedown', handleClickOutside);
@@ -54,49 +54,47 @@ export default function Navbar() {
                 initial={{ y: -100 }}
                 animate={{ y: 0 }}
                 transition={{ duration: 0.5 }}
-                className={`${isHeroPage ? 'fixed' : 'sticky'} top-0 z-[100] w-full transition-all duration-300 ${
-                    isScrolled || !isHeroPage
+                className={`${isHeroPage ? 'fixed' : 'sticky'} top-0 z-[100] w-full transition-all duration-300 ${isScrolled || !isHeroPage
                         ? 'border-b border-slate-200/40 dark:border-white/5 bg-slate-50/80 dark:bg-background-dark/80 backdrop-blur-xl shadow-xl shadow-slate-200/20 dark:shadow-black/40'
                         : 'bg-transparent border-transparent'
-                }`}
+                    }`}
             >
                 <div className="container mx-auto px-4 lg:px-10">
                     <div className="flex h-16 items-center justify-between">
                         <Link href="/" className="flex items-center gap-3 group">
                             <img src="/sinusa.png" alt="Sinergi Nusa Logo" className="w-12 h-12 md:w-14 md:h-14 object-contain transition-transform group-hover:rotate-12" />
-                            <h2 className={`text-base md:text-lg font-black tracking-tighter italic uppercase transition-colors ${isTransparent ? (theme === 'dark' ? 'text-white' : 'text-slate-900') : 'text-slate-900 dark:text-slate-100'}`}>Sinergi <span className="text-primary tracking-normal">Nusa</span></h2>
+                            <h2 className={`text-base md:text-lg font-black tracking-tighter  uppercase transition-colors ${isTransparent ? (theme === 'dark' ? 'text-white' : 'text-slate-900') : 'text-slate-900 dark:text-slate-100'}`}>Sinergi <span className="text-primary tracking-normal">Nusa</span></h2>
                         </Link>
 
                         <nav className="hidden md:flex items-center gap-8">
                             {navLinks.map((link) => {
                                 let isActive = currentUrl === link.href;
-                                
+
                                 if (link.href === '/budaya') {
-                                    isActive = currentUrl.startsWith('/budaya') || 
-                                               currentUrl.startsWith('/eksplorasi-seni') || 
-                                               currentUrl.startsWith('/kisah-rakyat') || 
-                                               currentUrl.startsWith('/situs-bersejarah') || 
-                                               currentUrl.startsWith('/peta-warisan') ||
-                                               currentUrl.startsWith('/kontribusi-seni');
+                                    isActive = currentUrl.startsWith('/budaya') ||
+                                        currentUrl.startsWith('/eksplorasi-seni') ||
+                                        currentUrl.startsWith('/kisah-rakyat') ||
+                                        currentUrl.startsWith('/situs-bersejarah') ||
+                                        currentUrl.startsWith('/peta-warisan') ||
+                                        currentUrl.startsWith('/kontribusi-seni');
                                 } else if (link.href === '/wisata') {
-                                    isActive = currentUrl.startsWith('/wisata') || 
-                                               currentUrl.startsWith('/peta-wisata') || 
-                                               currentUrl.startsWith('/daftar-wisata') ||
-                                               currentUrl.startsWith('/eksplorasi-kuliner') ||
-                                               currentUrl.startsWith('/daftarkan-warung');
+                                    isActive = currentUrl.startsWith('/wisata') ||
+                                        currentUrl.startsWith('/peta-wisata') ||
+                                        currentUrl.startsWith('/daftar-wisata') ||
+                                        currentUrl.startsWith('/eksplorasi-kuliner') ||
+                                        currentUrl.startsWith('/daftarkan-warung');
                                 }
 
                                 return (
-                                    <Link 
-                                        key={link.href} 
-                                        href={link.href} 
-                                        className={`text-sm font-bold transition-colors ${
-                                            isActive 
-                                                ? 'text-primary' 
-                                                : isTransparent 
+                                    <Link
+                                        key={link.href}
+                                        href={link.href}
+                                        className={`text-sm font-bold transition-colors ${isActive
+                                                ? 'text-primary'
+                                                : isTransparent
                                                     ? (theme === 'dark' ? 'text-white/90 hover:text-white' : 'text-slate-700 hover:text-primary')
                                                     : 'text-slate-600 dark:text-slate-300 hover:text-primary'
-                                        }`}
+                                            }`}
                                     >
                                         {link.label}
                                     </Link>
@@ -110,11 +108,10 @@ export default function Navbar() {
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                                 onClick={toggleLang}
-                                className={`flex items-center gap-1.5 p-1.5 px-2 md:px-3 rounded-xl transition-all shadow-sm ${
-                                    isTransparent
+                                className={`flex items-center gap-1.5 p-1.5 px-2 md:px-3 rounded-xl transition-all shadow-sm ${isTransparent
                                         ? (theme === 'dark' ? 'bg-white/10 text-white border border-white/20 hover:bg-white/20' : 'bg-slate-900/5 text-slate-800 border border-slate-900/10 hover:bg-slate-900/10') + ' backdrop-blur-md'
                                         : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200/50 dark:border-slate-700 hover:border-primary/50'
-                                }`}
+                                    }`}
                             >
                                 <span className="material-symbols-outlined text-[18px] md:text-[20px] text-primary">translate</span>
                                 <span className="text-[10px] md:text-xs font-black uppercase tracking-widest">{lang}</span>
@@ -124,11 +121,10 @@ export default function Navbar() {
                                 {auth.user ? (
                                     <motion.div
                                         whileHover={{ scale: 1.05 }}
-                                        className={`flex items-center gap-3 cursor-pointer p-1 pl-3 rounded-full border transition-all ${
-                                            isTransparent
+                                        className={`flex items-center gap-3 cursor-pointer p-1 pl-3 rounded-full border transition-all ${isTransparent
                                                 ? 'bg-white/10 border-white/20 hover:bg-white/20 backdrop-blur-md'
                                                 : 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700'
-                                        }`}
+                                            }`}
                                         onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                                     >
                                         <div className="hidden sm:block text-right">
@@ -178,7 +174,7 @@ export default function Navbar() {
                                                 <span className="material-symbols-outlined text-xl">add_box</span>
                                                 {t('nav.new_contribution')}
                                             </Link>
-                                            <button 
+                                            <button
                                                 onClick={handleLogout}
                                                 className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                                             >
@@ -205,9 +201,8 @@ export default function Navbar() {
                         <Link
                             key={link.href}
                             href={link.href}
-                            className={`flex flex-col items-center gap-0.5 min-w-[70px] transition-all ${
-                                usePage().url === link.href ? 'text-primary' : 'text-slate-400 dark:text-slate-500'
-                            }`}
+                            className={`flex flex-col items-center gap-0.5 min-w-[70px] transition-all ${usePage().url === link.href ? 'text-primary' : 'text-slate-400 dark:text-slate-500'
+                                }`}
                         >
                             <span className={`material-symbols-outlined text-[26px] ${usePage().url === link.href ? '!fill-1' : 'fill-0'}`} style={{ fontVariationSettings: usePage().url === link.href ? "'FILL' 1" : "'FILL' 0" }}>
                                 {link.icon}
@@ -215,13 +210,12 @@ export default function Navbar() {
                             <span className="text-[9px] font-bold tracking-tight uppercase">{link.label}</span>
                         </Link>
                     ))}
-                    
+
                     {auth.user ? (
                         <button
                             onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                            className={`flex flex-col items-center gap-0.5 min-w-[70px] transition-colors ${
-                                isUserMenuOpen ? 'text-primary' : 'text-slate-400 dark:text-slate-500'
-                            }`}
+                            className={`flex flex-col items-center gap-0.5 min-w-[70px] transition-colors ${isUserMenuOpen ? 'text-primary' : 'text-slate-400 dark:text-slate-500'
+                                }`}
                         >
                             <ImageWithFallback src={auth.user.avatar} alt={auth.user.name} className={`size-6 rounded-full border ${isUserMenuOpen ? 'border-primary' : 'border-slate-200 dark:border-slate-700'}`} fallbackIcon="person" />
                             <span className="text-[9px] font-bold tracking-tight uppercase">{t('nav.me')}</span>
@@ -229,9 +223,8 @@ export default function Navbar() {
                     ) : (
                         <Link
                             href="/login"
-                            className={`flex flex-col items-center gap-0.5 min-w-[70px] transition-colors ${
-                                usePage().url === '/login' ? 'text-primary' : 'text-slate-400 dark:text-slate-500'
-                            }`}
+                            className={`flex flex-col items-center gap-0.5 min-w-[70px] transition-colors ${usePage().url === '/login' ? 'text-primary' : 'text-slate-400 dark:text-slate-500'
+                                }`}
                         >
                             <span className="material-symbols-outlined text-[26px]">account_circle</span>
                             <span className="text-[9px] font-bold tracking-tight uppercase">{t('nav.login')}</span>

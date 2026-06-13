@@ -206,7 +206,7 @@ function HeroScrambleWord({ words }) {
     return (
         <span
             ref={containerRef}
-            className="text-primary italic inline-flex flex-wrap justify-center items-center w-full overflow-visible"
+            className="text-primary  inline-flex flex-wrap justify-center items-center w-full overflow-visible"
             style={{ minHeight: "1.2em", paddingBottom: "0.15em" }}
         />
     );
@@ -744,7 +744,7 @@ export default function Home({ leaderboard = [] }) {
                             </div>
                             <h2 className="text-5xl md:text-8xl font-black tracking-tighter text-slate-900 dark:text-slate-100 uppercase leading-[0.85]">
                                 {t("home.pillar_title")} <br />
-                                <span className="text-primary italic">
+                                <span className="text-primary">
                                     {t("home.pillar_subtitle")}
                                 </span>{" "}
                                 <br />
@@ -769,7 +769,7 @@ export default function Home({ leaderboard = [] }) {
                                             <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
                                             Pilar 0{idx + 1}
                                         </div>
-                                        <h3 className="text-xl md:text-2xl font-black text-slate-900 dark:text-slate-100 italic uppercase tracking-tight leading-tight mb-4 group-hover:text-primary transition-colors">
+                                        <h3 className="text-xl md:text-2xl font-black text-slate-900 dark:text-slate-100 uppercase tracking-tight leading-tight mb-4 group-hover:text-primary transition-colors">
                                             {role.title}
                                         </h3>
                                         <p className="text-slate-500 dark:text-slate-400 text-sm md:text-base leading-relaxed font-medium max-w-[260px] md:max-w-[320px]">
@@ -778,7 +778,7 @@ export default function Home({ leaderboard = [] }) {
                                     </div>
 
                                     <div className="flex items-center justify-between">
-                                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 group-hover:text-primary transition-colors italic">
+                                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 group-hover:text-primary transition-colors ">
                                             Digital Ecosystem
                                         </span>
                                         <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all duration-500 group-hover:scale-110 shadow-lg shadow-primary/5 group-hover:shadow-primary/20">
@@ -807,7 +807,7 @@ export default function Home({ leaderboard = [] }) {
                                     Step by Step
                                 </motion.div>
 
-                                <h2 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-slate-100 italic leading-tight text-left">
+                                <h2 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-slate-100  leading-tight text-left">
                                     {t("home.how_title")}{" "}
                                     <span className="text-primary">
                                         {t("home.how_subtitle")}
@@ -877,7 +877,7 @@ export default function Home({ leaderboard = [] }) {
                                         <div className="text-[10px] font-black text-primary mb-2 uppercase tracking-widest">
                                             Langkah 0{idx + 1}
                                         </div>
-                                        <h3 className="text-2xl font-black text-slate-900 dark:text-slate-100 mb-4 italic uppercase">
+                                        <h3 className="text-2xl font-black text-slate-900 dark:text-slate-100 mb-4  uppercase">
                                             {step.title}
                                         </h3>
                                         <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed font-medium">
@@ -902,7 +902,7 @@ export default function Home({ leaderboard = [] }) {
                             >
                                 Core Values
                             </motion.div>
-                            <h2 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-slate-100 italic">
+                            <h2 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-slate-100 ">
                                 {t("home.why_title")}{" "}
                                 <span className="text-primary">
                                     {t("home.why_subtitle")}
@@ -958,7 +958,7 @@ export default function Home({ leaderboard = [] }) {
                                             {item.icon}
                                         </span>
                                     </div>
-                                    <h3 className="text-xl font-black text-slate-900 dark:text-slate-100 mb-4 uppercase italic tracking-tight">
+                                    <h3 className="text-xl font-black text-slate-900 dark:text-slate-100 mb-4 uppercase  tracking-tight">
                                         {item.title}
                                     </h3>
                                     <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed font-medium">
@@ -982,7 +982,7 @@ export default function Home({ leaderboard = [] }) {
                                     Cutting Edge
                                 </div>
 
-                                <h2 className="text-4xl md:text-7xl font-black italic leading-none uppercase text-slate-900 dark:text-white">
+                                <h2 className="text-4xl md:text-7xl font-black  leading-none uppercase text-slate-900 dark:text-white">
                                     {t("home.feat_title")} <br />
                                     <span className="text-primary">
                                         {t("home.feat_subtitle")}
@@ -1057,7 +1057,7 @@ export default function Home({ leaderboard = [] }) {
                                         </div>
                                         <div>
                                             <h3
-                                                className={`text-xl font-black mb-2 italic uppercase transition-colors ${activeFeature === feat.id
+                                                className={`text-xl font-black mb-2  uppercase transition-colors ${activeFeature === feat.id
                                                     ? "text-primary"
                                                     : "text-slate-800 dark:text-white"
                                                     }`}
@@ -1371,7 +1371,7 @@ export default function Home({ leaderboard = [] }) {
                                         <p className="text-[10px] font-black text-white uppercase tracking-[0.2em] opacity-80">
                                             System Status
                                         </p>
-                                        <p className="text-xl font-black text-white italic">
+                                        <p className="text-xl font-black text-white ">
                                             FULLY SYNCED
                                         </p>
                                     </div>
@@ -1393,7 +1393,7 @@ export default function Home({ leaderboard = [] }) {
                             >
                                 Rewards & Recognition
                             </motion.div>
-                            <h2 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-slate-100 italic">
+                            <h2 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-slate-100 ">
                                 {t("home.badge_title")}{" "}
                                 <span className="text-primary">
                                     {t("home.badge_subtitle")}
@@ -1488,7 +1488,7 @@ export default function Home({ leaderboard = [] }) {
                                                 <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-widest">
                                                     {badge.level}
                                                 </div>
-                                                <h3 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-slate-100 uppercase italic leading-tight">
+                                                <h3 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-slate-100 uppercase  leading-tight">
                                                     {badge.title}
                                                 </h3>
                                                 <p className="text-slate-500 dark:text-slate-400 text-sm md:text-base font-medium leading-relaxed">
@@ -1624,7 +1624,7 @@ export default function Home({ leaderboard = [] }) {
                                                 <tr>
                                                     <td
                                                         colSpan="4"
-                                                        className="px-8 py-12 text-center text-slate-400 font-medium italic"
+                                                        className="px-8 py-12 text-center text-slate-400 font-medium "
                                                     >
                                                         Belum ada kontributor di
                                                         papan peringkat.
@@ -1652,7 +1652,7 @@ export default function Home({ leaderboard = [] }) {
                             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-widest w-fit mx-auto">
                                 Q & A
                             </div>
-                            <h2 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-slate-100 italic">
+                            <h2 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-slate-100 ">
                                 {t("home.faq_title")}{" "}
                                 <span className="text-primary">
                                     {t("home.faq_subtitle")}
@@ -1682,7 +1682,7 @@ export default function Home({ leaderboard = [] }) {
                                         }
                                         className="w-full px-6 py-5 text-left flex items-center justify-between gap-4 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                                     >
-                                        <span className="font-bold text-lg text-slate-900 dark:text-slate-100 italic uppercase tracking-tight">
+                                        <span className="font-bold text-lg text-slate-900 dark:text-slate-100  uppercase tracking-tight">
                                             {faq.q}
                                         </span>
                                         <span

@@ -39,7 +39,7 @@ export default function DetailKisah({ story }) {
                 <section className="relative overflow-hidden h-80 md:h-[500px]">
                     <ImageWithFallback className="absolute inset-0 w-full h-full object-cover" alt={story.title} src={story.img} fallbackIcon="menu_book" />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent"></div>
-                    
+
                     <div className="absolute bottom-0 left-0 right-0 p-8 md:p-16 z-10">
                         <div className="container mx-auto">
                             <motion.div initial="hidden" animate="visible" variants={stagger}>
@@ -66,11 +66,10 @@ export default function DetailKisah({ story }) {
                                 key={tab.id}
                                 whileTap={{ scale: 0.95 }}
                                 onClick={() => setActiveTab(tab.id)}
-                                className={`flex items-center gap-2 px-8 py-4 rounded-2xl text-sm font-bold transition-all duration-300 ${
-                                    activeTab === tab.id
+                                className={`flex items-center gap-2 px-8 py-4 rounded-2xl text-sm font-bold transition-all duration-300 ${activeTab === tab.id
                                         ? 'bg-primary text-white shadow-xl shadow-primary/30'
                                         : 'bg-white dark:bg-surface-dark text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:border-primary/50 hover:text-primary'
-                                }`}
+                                    }`}
                             >
                                 <span className="material-symbols-outlined text-2xl">{tab.icon}</span>
                                 {tab.label}
@@ -123,7 +122,7 @@ export default function DetailKisah({ story }) {
                                                         {story.contributor_badge || 'Nusantara Pioneer'}
                                                     </span>
                                                 </div>
-                                                <p className="text-[10px] text-slate-400 font-medium italic">Telah berkontribusi mendigitalisasi kisah ini pada {story.created_at ? new Date(story.created_at).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }) : 'Maret 2024'}.</p>
+                                                <p className="text-[10px] text-slate-400 font-medium ">Telah berkontribusi mendigitalisasi kisah ini pada {story.created_at ? new Date(story.created_at).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }) : 'Maret 2024'}.</p>
                                             </div>
                                         </div>
                                     )}
@@ -133,7 +132,7 @@ export default function DetailKisah({ story }) {
                                         <h3 className="font-black text-primary text-xl mb-4 flex items-center gap-2">
                                             <span className="material-symbols-outlined">eco</span> {t('kisah.moral_value')}
                                         </h3>
-                                        <p className="text-slate-700 dark:text-slate-300 italic font-medium">
+                                        <p className="text-slate-700 dark:text-slate-300  font-medium">
                                             "<AITranslate text={story.moral} />"
                                         </p>
                                     </div>

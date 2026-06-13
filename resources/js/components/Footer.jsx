@@ -11,7 +11,7 @@ export default function Footer() {
                     <div className="col-span-1 md:col-span-1 space-y-6">
                         <div className="flex items-center gap-3">
                             <img src="/sinusa.png" alt="Sinergi Nusa" className="w-12 h-12 object-contain" />
-                            <h2 className="text-lg font-black italic tracking-tighter text-slate-900 dark:text-slate-100 uppercase">Sinergi <span className="text-primary">Nusa</span></h2>
+                            <h2 className="text-lg font-black  tracking-tighter text-slate-900 dark:text-slate-100 uppercase">Sinergi <span className="text-primary">Nusa</span></h2>
                         </div>
                         <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
                             {t('footer.description')}

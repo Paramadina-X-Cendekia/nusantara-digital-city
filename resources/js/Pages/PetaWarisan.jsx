@@ -207,9 +207,9 @@ function LeafletMap({ sites, activeSite, setActiveSite, t, lang }) {
 
     const customIcon = (site, isActive) => {
         let iconName = getRegionalIcon(site.location);
-        const isBatik = site.category?.toLowerCase() === 'batik' || 
-                        site.name?.toLowerCase().includes('batik') ||
-                        site.desc?.toLowerCase().includes('batik');
+        const isBatik = site.category?.toLowerCase() === 'batik' ||
+            site.name?.toLowerCase().includes('batik') ||
+            site.desc?.toLowerCase().includes('batik');
         if (isBatik) {
             iconName = 'location_on';
         }
@@ -548,7 +548,7 @@ export default function PetaWarisan({ dynamicSites = [] }) {
                                 </motion.div>
 
                                 <motion.h1 variants={fadeIn} className="text-5xl sm:text-6xl lg:text-7xl font-black text-slate-900 dark:text-white leading-[1.05] tracking-tight text-center max-w-4xl mx-auto">
-                                    {t('peta_warisan.hero_title')}{' '}<span className="text-primary italic">{t('peta_warisan.hero_subtitle')}</span>
+                                    {t('peta_warisan.hero_title')}{' '}<span className="text-primary ">{t('peta_warisan.hero_subtitle')}</span>
                                 </motion.h1>
 
                                 <motion.p variants={fadeIn} className="text-base sm:text-lg text-slate-600 dark:text-slate-300 font-medium leading-relaxed max-w-2xl text-center mx-auto">
@@ -670,8 +670,8 @@ export default function PetaWarisan({ dynamicSites = [] }) {
                                 whileHover={{ y: -6 }}
                                 onClick={() => { setActiveSite(site.id); window.scrollTo({ top: 500, behavior: 'smooth' }); }}
                                 className={`text-left p-5 rounded-2xl border transition-all group ${activeSite === site.id
-                                        ? 'border-primary bg-primary/5 dark:bg-primary/10 shadow-lg shadow-primary/10'
-                                        : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-surface-dark hover:shadow-xl'
+                                    ? 'border-primary bg-primary/5 dark:bg-primary/10 shadow-lg shadow-primary/10'
+                                    : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-surface-dark hover:shadow-xl'
                                     }`}
                             >
                                 <div className="flex items-start gap-4">
