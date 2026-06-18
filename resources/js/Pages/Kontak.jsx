@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { useLanguage } from '../lib/LanguageContext';
+import { usePage } from '@inertiajs/react';
 
 const fadeIn = {
     hidden: { opacity: 0, y: 30 },
@@ -15,6 +16,7 @@ const stagger = {
 
 export default function Kontak() {
     const { t } = useLanguage();
+    const { flash } = usePage().props;
     const { data, setData, post, processing, errors, reset, recentlySuccessful } = useForm({
         name: '', 
         email: '', 
@@ -24,7 +26,7 @@ export default function Kontak() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        post(route('kontak.submit'), {
+        post('/kontak', {
             onSuccess: () => reset(),
         });
     };
@@ -106,15 +108,29 @@ export default function Kontak() {
                                 </div>
 
                                 <AnimatePresence>
-                                    {recentlySuccessful && (
+                                    {(recentlySuccessful || flash?.success) && (
                                         <motion.div 
+                                            key="success"
                                             initial={{ opacity: 0, height: 0 }}
                                             animate={{ opacity: 1, height: 'auto' }}
                                             exit={{ opacity: 0, height: 0 }}
-                                            className="bg-green-500/10 border border-green-500/20 text-green-500 p-4 rounded-xl text-sm font-bold flex items-center gap-2"
+                                            className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 p-4 rounded-xl text-sm font-bold flex items-center gap-2 mb-4"
                                         >
                                             <span className="material-symbols-outlined text-sm">check_circle</span>
                                             {t('kontak.sent_success')}
+                                        </motion.div>
+                                    )}
+
+                                    {flash?.error && (
+                                        <motion.div 
+                                            key="error"
+                                            initial={{ opacity: 0, height: 0 }}
+                                            animate={{ opacity: 1, height: 'auto' }}
+                                            exit={{ opacity: 0, height: 0 }}
+                                            className="bg-rose-500/10 border border-rose-500/20 text-rose-500 p-4 rounded-xl text-sm font-bold flex items-center gap-2 mb-4"
+                                        >
+                                            <span className="material-symbols-outlined text-sm">error</span>
+                                            {flash.error}
                                         </motion.div>
                                     )}
                                 </AnimatePresence>

@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Mail\ContactMail;
+use App\Mail\ContactAutoReplyMail;
 use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
+use App\Models\ContactMessage;
 
 class ContactController extends Controller
 {
@@ -23,17 +24,18 @@ class ContactController extends Controller
     public function submit(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
+            'name'    => 'required|string|max:255',
+            'email'   => 'required|email|max:255',
             'subject' => 'required|string|max:255',
             'message' => 'required|string',
         ]);
 
         try {
-            // Configuration for the receiver. Ideally this should be in .env.
-            $adminEmail = config('mail.from.address', 'admin@nusantara.digital');
-            
-            Mail::to($adminEmail)->send(new ContactMail($validated));
+            // 1. Simpan pesan ke database
+            ContactMessage::create($validated);
+
+            // 2. Kirim auto-reply ke email user
+            Mail::to($validated['email'])->send(new ContactAutoReplyMail($validated));
 
             return back()->with('success', true);
         } catch (\Exception $e) {
