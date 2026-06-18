@@ -147,9 +147,10 @@ export default function Navbar() {
                                         <motion.button
                                             whileHover={{ scale: 1.05 }}
                                             whileTap={{ scale: 0.95 }}
-                                            className="sm:hidden flex items-center justify-center rounded-full size-9 bg-primary text-white shadow-md shadow-primary/20 transition-colors hover:bg-primary/90"
+                                            className="sm:hidden flex items-center justify-center rounded-full size-12 bg-primary text-white shadow-md shadow-primary/20 transition-colors hover:bg-primary/90"
+                                            aria-label={t('nav.login')}
                                         >
-                                            <span className="material-symbols-outlined text-xl">login</span>
+                                            <span className="material-symbols-outlined text-xl" aria-hidden="true">login</span>
                                         </motion.button>
                                     </Link>
                                 )}

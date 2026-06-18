@@ -102,7 +102,7 @@ function HeroScrambleWord({ words }) {
         let destroyed = false;
 
         async function init() {
-            const { animate, stagger } = await import("https://esm.sh/animejs");
+            const { animate, stagger } = await import("animejs");
             if (destroyed) return;
 
             const container = containerRef.current;
@@ -760,13 +760,13 @@ export default function Home({ leaderboard = [] }) {
                             {PILARS.map((role, idx) => (
                                 <div
                                     key={idx}
-                                    className="min-w-[300px] md:min-w-[380px] h-[380px] md:h-[420px] group relative p-8 rounded-[3rem] border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30  transition-all duration-500 hover:shadow-2xl hover:shadow-primary/5 hover:-translate-y-2 cursor-pointer flex flex-col justify-between overflow-hidden"
+                                    className="min-w-[300px] md:min-w-[380px] h-[380px] md:h-[420px] group relative p-8 rounded-[3rem] border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30  transition-all duration-500 hover:shadow-2xl hover:shadow-primary/5 hover:-translate-y-2 cursor-default flex flex-col justify-between overflow-hidden"
                                 >
                                     <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-3xl group-hover:bg-primary/10 transition-colors"></div>
 
                                     <div>
                                         <div className="text-[10px] font-black text-primary mb-6 uppercase tracking-[0.3em] flex items-center gap-2">
-                                            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+                                            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" aria-hidden="true"></span>
                                             Pilar 0{idx + 1}
                                         </div>
                                         <h3 className="text-xl md:text-2xl font-black text-slate-900 dark:text-slate-100 uppercase tracking-tight leading-tight mb-4 group-hover:text-primary transition-colors">
@@ -782,7 +782,7 @@ export default function Home({ leaderboard = [] }) {
                                             Digital Ecosystem
                                         </span>
                                         <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all duration-500 group-hover:scale-110 shadow-lg shadow-primary/5 group-hover:shadow-primary/20">
-                                            <span className="material-symbols-outlined text-2xl transition-transform duration-500 group-hover:rotate-[360deg]">
+                                            <span className="material-symbols-outlined text-2xl transition-transform duration-500 group-hover:rotate-[360deg]" aria-hidden="true">
                                                 {role.icon}
                                             </span>
                                         </div>
@@ -1002,6 +1002,8 @@ export default function Home({ leaderboard = [] }) {
                                 whileInView="visible"
                                 viewport={{ once: true }}
                                 variants={staggerContainer}
+                                role="tablist"
+                                aria-label="Platform Features"
                                 className="lg:col-span-5 space-y-4 md:space-y-6"
                             >
                                 {[
@@ -1037,9 +1039,20 @@ export default function Home({ leaderboard = [] }) {
                                     <motion.div
                                         key={feat.id}
                                         variants={fadeIn}
+                                        role="tab"
+                                        aria-selected={activeFeature === feat.id}
+                                        aria-controls={`feature-panel-${feat.id}`}
+                                        id={`feature-tab-${feat.id}`}
+                                        tabIndex={0}
                                         onClick={() =>
                                             setActiveFeature(feat.id)
                                         }
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Enter" || e.key === " ") {
+                                                e.preventDefault();
+                                                setActiveFeature(feat.id);
+                                            }
+                                        }}
                                         className={`feat-item flex gap-4 md:gap-6 p-5 md:p-6 rounded-[2rem] border transition-all duration-300 cursor-pointer group ${activeFeature === feat.id
                                             ? "bg-primary/5 dark:bg-white/15 border-primary shadow-2xl shadow-primary/20 scale-[1.02] md:scale-105"
                                             : "bg-white dark:bg-white/5 border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/10"
@@ -1051,7 +1064,7 @@ export default function Home({ leaderboard = [] }) {
                                                 : "bg-slate-100 dark:bg-white/10 text-slate-500 dark:text-white"
                                                 }`}
                                         >
-                                            <span className="material-symbols-outlined text-2xl">
+                                            <span className="material-symbols-outlined text-2xl" aria-hidden="true">
                                                 {feat.icon}
                                             </span>
                                         </div>
@@ -1077,6 +1090,10 @@ export default function Home({ leaderboard = [] }) {
                                 <AnimatePresence mode="wait">
                                     <motion.div
                                         key={activeFeature}
+                                        role="tabpanel"
+                                        id={`feature-panel-${activeFeature}`}
+                                        aria-labelledby={`feature-tab-${activeFeature}`}
+                                        tabIndex={0}
                                         initial={{
                                             opacity: 0,
                                             scale: 0.9,
@@ -1680,13 +1697,16 @@ export default function Home({ leaderboard = [] }) {
                                                     : index,
                                             )
                                         }
+                                        aria-expanded={openFaq === index}
+                                        aria-controls={`faq-answer-${index}`}
                                         className="w-full px-6 py-5 text-left flex items-center justify-between gap-4 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                                     >
-                                        <span className="font-bold text-lg text-slate-900 dark:text-slate-100  uppercase tracking-tight">
+                                        <span id={`faq-question-${index}`} className="font-bold text-lg text-slate-900 dark:text-slate-100  uppercase tracking-tight">
                                             {faq.q}
                                         </span>
                                         <span
                                             className={`material-symbols-outlined text-primary transition-transform duration-300 ${openFaq === index ? "rotate-180" : ""}`}
+                                            aria-hidden="true"
                                         >
                                             expand_more
                                         </span>
@@ -1694,6 +1714,9 @@ export default function Home({ leaderboard = [] }) {
                                     <AnimatePresence>
                                         {openFaq === index && (
                                             <motion.div
+                                                id={`faq-answer-${index}`}
+                                                role="region"
+                                                aria-labelledby={`faq-question-${index}`}
                                                 initial={{
                                                     height: 0,
                                                     opacity: 0,
