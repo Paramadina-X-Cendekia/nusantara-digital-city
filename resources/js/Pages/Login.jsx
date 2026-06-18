@@ -38,7 +38,7 @@ export default function Login() {
                             <div className="space-y-1.5">
                                 <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Email Address</label>
                                 <div className="relative group">
-                                    <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors text-xl">mail</span>
+                                    <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors text-xl" aria-hidden="true">mail</span>
                                     <input
                                         type="email"
                                         value={data.email}
@@ -49,47 +49,48 @@ export default function Login() {
                                     />
                                 </div>
                                 {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
-                            </div>
+                             </div>
 
-                            <div className="space-y-1.5">
-                                <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Password</label>
-                                <div className="relative group">
-                                    <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors text-xl">lock</span>
-                                    <input
-                                        type={showPassword ? "text" : "password"}
-                                        value={data.password}
-                                        onChange={e => setData('password', e.target.value)}
-                                        className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl py-3 pl-11 pr-10 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-900 dark:text-white"
-                                        placeholder="••••••••"
-                                        required
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 focus:outline-none flex items-center"
-                                    >
-                                        <span className="material-symbols-outlined text-xl">
-                                            {showPassword ? 'visibility_off' : 'visibility'}
-                                        </span>
-                                    </button>
-                                </div>
-                                {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
-                            </div>
+                             <div className="space-y-1.5">
+                                 <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Password</label>
+                                 <div className="relative group">
+                                     <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors text-xl" aria-hidden="true">lock</span>
+                                     <input
+                                         type={showPassword ? "text" : "password"}
+                                         value={data.password}
+                                         onChange={e => setData('password', e.target.value)}
+                                         className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl py-3 pl-11 pr-12 text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-900 dark:text-white"
+                                         placeholder="••••••••"
+                                         required
+                                     />
+                                     <button
+                                         type="button"
+                                         onClick={() => setShowPassword(!showPassword)}
+                                         aria-label={showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'}
+                                         className="absolute right-0 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 focus:outline-none w-12 h-12 flex items-center justify-center rounded-xl"
+                                     >
+                                         <span className="material-symbols-outlined text-xl" aria-hidden="true">
+                                             {showPassword ? 'visibility_off' : 'visibility'}
+                                         </span>
+                                     </button>
+                                 </div>
+                                 {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
+                             </div>
 
-                            <motion.button
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                                type="submit"
-                                disabled={processing}
-                                className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2 group"
-                            >
-                                {processing ? 'Memproses...' : (
-                                    <>
-                                        Masuk Sekarang
-                                        <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                                    </>
-                                )}
-                            </motion.button>
+                             <motion.button
+                                 whileHover={{ scale: 1.02 }}
+                                 whileTap={{ scale: 0.98 }}
+                                 type="submit"
+                                 disabled={processing}
+                                 className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2 group"
+                             >
+                                 {processing ? 'Memproses...' : (
+                                     <>
+                                         Masuk Sekarang
+                                         <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform" aria-hidden="true">arrow_forward</span>
+                                     </>
+                                 )}
+                             </motion.button>
 
                             <div className="text-center pt-4 border-t border-slate-100 dark:border-slate-800">
                                 <p className="text-xs text-slate-500">

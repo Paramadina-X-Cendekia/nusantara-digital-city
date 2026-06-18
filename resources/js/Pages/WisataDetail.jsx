@@ -135,6 +135,7 @@ export default function WisataDetail({ slug, initialDestination }) {
                                 href={`https://www.google.com/maps/dir/?api=1&destination=${destination.lat},${destination.lng}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
+                                aria-label={`Dapatkan rute perjalanan ke ${destination.name}`}
                                 className="block w-full text-center bg-slate-900 dark:bg-white text-white py-2.5 rounded-xl text-[10px] font-black uppercase hover:bg-slate-800 dark:hover:bg-white/90 transition-all shadow-xl shadow-slate-900/10 dark:shadow-primary/20"
                             >
                                 Get Directions
@@ -178,6 +179,7 @@ export default function WisataDetail({ slug, initialDestination }) {
                             alt={destination.name}
                             className="w-full h-full object-cover"
                             fallbackIcon="landscape"
+                            loading="eager"
                         />
                         <div className="absolute inset-0 bg-gradient-to-b from-slate-900/40 via-transparent to-slate-900/90"></div>
                     </motion.div>

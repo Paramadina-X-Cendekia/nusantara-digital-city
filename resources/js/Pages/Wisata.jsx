@@ -81,6 +81,18 @@ export default function Wisata({ dynamicDestinations = [] }) {
             document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === "Escape") {
+                setIsPdfModalOpen(false);
+            }
+        };
+        if (isPdfModalOpen) {
+            window.addEventListener("keydown", handleKeyDown);
+        }
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, [isPdfModalOpen]);
+
     const handleTabClick = (id) => {
         setActiveTab(id);
         const element = document.getElementById(id);
@@ -172,84 +184,84 @@ export default function Wisata({ dynamicDestinations = [] }) {
                                     {t("wisata.hero_desc")}
                                 </motion.p>
 
-                                {/* Search & Filter Bar */}
-                                <motion.div
-                                    variants={fadeIn}
-                                    className="flex flex-col sm:flex-row gap-4 pt-6 bg-slate-200/80 dark:bg-white/10 backdrop-blur-xl p-3 rounded-2xl border border-slate-300 dark:border-white/20 shadow-2xl w-full max-w-3xl mx-auto"
-                                >
-                                    <div className="flex-1 flex items-center bg-white dark:bg-slate-900/50 rounded-xl px-4 py-2 border border-slate-300 dark:border-slate-700/50">
-                                        <span className="material-symbols-outlined text-slate-500 dark:text-slate-400 mr-2">
-                                            search
-                                        </span>
-                                        <input
-                                            className="bg-transparent border-none focus:ring-0 focus:outline-none text-slate-900 dark:text-white placeholder:text-slate-500 w-full text-sm"
-                                            placeholder={t(
-                                                "wisata.search_placeholder",
-                                            )}
-                                            type="text"
-                                            value={searchQuery}
-                                            onChange={(e) =>
-                                                setSearchQuery(e.target.value)
-                                            }
-                                        />
-                                    </div>
-                                    <div className="flex items-center bg-white dark:bg-slate-900/50 rounded-xl px-4 py-2 border border-slate-300 dark:border-slate-700/50">
-                                        <span className="material-symbols-outlined text-slate-500 dark:text-slate-400 mr-2">
-                                            filter_list
-                                        </span>
-                                        <select
-                                            className="bg-transparent border-none focus:ring-0 focus:outline-none text-slate-900 dark:text-white text-sm cursor-pointer"
-                                            value={selectedCategory}
-                                            onChange={(e) =>
-                                                setSelectedCategory(
-                                                    e.target.value,
-                                                )
-                                            }
-                                        >
-                                            <option
-                                                value="all"
-                                                className="bg-white dark:bg-slate-900"
-                                            >
-                                                {t("wisata.all_categories")}
-                                            </option>
-                                            <option
-                                                value="alam"
-                                                className="bg-white dark:bg-slate-900"
-                                            >
-                                                {t("wisata.nature")}
-                                            </option>
-                                            <option
-                                                value="pantai"
-                                                className="bg-white dark:bg-slate-900"
-                                            >
-                                                {t("wisata.beach")}
-                                            </option>
-                                            <option
-                                                value="gunung"
-                                                className="bg-white dark:bg-slate-900"
-                                            >
-                                                {t("wisata.mountain")}
-                                            </option>
-                                            <option
-                                                value="kota"
-                                                className="bg-white dark:bg-slate-900"
-                                            >
-                                                {t("wisata.city")}
-                                            </option>
-                                        </select>
-                                    </div>
-                                    <motion.button
-                                        whileHover={{ scale: 1.05 }}
-                                        whileTap={{ scale: 0.95 }}
-                                        onClick={handleExplore}
-                                        className="bg-primary text-white px-6 py-2.5 rounded-xl font-bold hover:bg-primary/90 transition-all flex items-center justify-center gap-2 shrink-0"
-                                    >
-                                        {t("nav.explore")}{" "}
-                                        <span className="material-symbols-outlined text-sm">
-                                            arrow_forward
-                                        </span>
-                                    </motion.button>
-                                </motion.div>
+                                 {/* Search & Filter Bar */}
+                                 <motion.div
+                                     variants={fadeIn}
+                                     className="flex flex-col sm:flex-row gap-4 pt-6 bg-slate-200/80 dark:bg-white/10 backdrop-blur-xl p-3 rounded-2xl border border-slate-300 dark:border-white/20 shadow-2xl w-full max-w-3xl mx-auto"
+                                 >
+                                     <div className="flex-1 flex items-center bg-white dark:bg-slate-900/50 rounded-xl px-4 py-2 border border-slate-300 dark:border-slate-700/50">
+                                         <span className="material-symbols-outlined text-slate-500 dark:text-slate-400 mr-2" aria-hidden="true">
+                                             search
+                                         </span>
+                                         <input
+                                             className="bg-transparent border-none focus:ring-0 focus:outline-none text-slate-900 dark:text-white placeholder:text-slate-500 w-full text-sm"
+                                             placeholder={t(
+                                                 "wisata.search_placeholder",
+                                             )}
+                                             type="text"
+                                             value={searchQuery}
+                                             onChange={(e) =>
+                                                 setSearchQuery(e.target.value)
+                                             }
+                                         />
+                                     </div>
+                                     <div className="flex items-center bg-white dark:bg-slate-900/50 rounded-xl px-4 py-2 border border-slate-300 dark:border-slate-700/50">
+                                         <span className="material-symbols-outlined text-slate-500 dark:text-slate-400 mr-2" aria-hidden="true">
+                                             filter_list
+                                         </span>
+                                         <select
+                                             className="bg-transparent border-none focus:ring-0 focus:outline-none text-slate-900 dark:text-white text-sm cursor-pointer"
+                                             value={selectedCategory}
+                                             onChange={(e) =>
+                                                 setSelectedCategory(
+                                                     e.target.value,
+                                                 )
+                                             }
+                                         >
+                                             <option
+                                                 value="all"
+                                                 className="bg-white dark:bg-slate-900"
+                                             >
+                                                 {t("wisata.all_categories")}
+                                             </option>
+                                             <option
+                                                 value="alam"
+                                                 className="bg-white dark:bg-slate-900"
+                                             >
+                                                 {t("wisata.nature")}
+                                             </option>
+                                             <option
+                                                 value="pantai"
+                                                 className="bg-white dark:bg-slate-900"
+                                             >
+                                                 {t("wisata.beach")}
+                                             </option>
+                                             <option
+                                                 value="gunung"
+                                                 className="bg-white dark:bg-slate-900"
+                                             >
+                                                 {t("wisata.mountain")}
+                                             </option>
+                                             <option
+                                                 value="kota"
+                                                 className="bg-white dark:bg-slate-900"
+                                             >
+                                                 {t("wisata.city")}
+                                             </option>
+                                         </select>
+                                     </div>
+                                     <motion.button
+                                         whileHover={{ scale: 1.05 }}
+                                         whileTap={{ scale: 0.95 }}
+                                         onClick={handleExplore}
+                                         className="bg-primary text-white px-6 py-2.5 rounded-xl font-bold hover:bg-primary/90 transition-all flex items-center justify-center gap-2 shrink-0"
+                                     >
+                                         {t("nav.explore")}{" "}
+                                         <span className="material-symbols-outlined text-sm" aria-hidden="true">
+                                             arrow_forward
+                                         </span>
+                                     </motion.button>
+                                 </motion.div>
                             </motion.div>
                         </div>
                     </div>
@@ -269,11 +281,14 @@ export default function Wisata({ dynamicDestinations = [] }) {
                             transition={{ delay: 0.3 }}
                             className="flex flex-row items-center justify-between gap-4 py-2"
                         >
-                            <div className="flex flex-row overflow-x-auto flex-nowrap no-scrollbar scroll-smooth gap-2">
+                            <div className="flex flex-row overflow-x-auto flex-nowrap no-scrollbar scroll-smooth gap-2" role="tablist" aria-label="Kategori Wisata">
                                 {TABS.map((tab) => (
                                     <button
                                         key={tab.id}
                                         onClick={() => handleTabClick(tab.id)}
+                                        role="tab"
+                                        aria-selected={activeTab === tab.id}
+                                        aria-controls={tab.id}
                                         className={`flex items-center justify-center px-5 py-2 whitespace-nowrap transition-all rounded-xl ${activeTab === tab.id
                                                 ? "bg-primary text-white shadow-lg shadow-primary/25"
                                                 : "text-slate-500 hover:text-primary hover:bg-primary/5"
@@ -281,6 +296,7 @@ export default function Wisata({ dynamicDestinations = [] }) {
                                     >
                                         <span
                                             className={`material-symbols-outlined mr-2 text-xl ${activeTab === tab.id ? "text-white" : ""}`}
+                                            aria-hidden="true"
                                         >
                                             {tab.icon}
                                         </span>
@@ -321,7 +337,7 @@ export default function Wisata({ dynamicDestinations = [] }) {
                                 className="hidden md:flex items-center gap-2 text-primary font-bold cursor-pointer hover:underline"
                             >
                                 {t("wisata.view_all")}{" "}
-                                <span className="material-symbols-outlined text-sm">
+                                <span className="material-symbols-outlined text-sm" aria-hidden="true">
                                     arrow_forward
                                 </span>
                             </Link>
@@ -352,7 +368,7 @@ export default function Wisata({ dynamicDestinations = [] }) {
                                         </div>
                                         <div className="p-8">
                                             <div className="flex items-center gap-2 text-primary text-xs font-bold mb-3">
-                                                <span className="material-symbols-outlined text-base">
+                                                <span className="material-symbols-outlined text-base" aria-hidden="true">
                                                     location_on
                                                 </span>
                                                 {dest.location}
@@ -375,7 +391,7 @@ export default function Wisata({ dynamicDestinations = [] }) {
                                             </p>
                                             <div className="flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-6">
                                                 <div className="flex items-center gap-1.5 text-slate-400">
-                                                    <span className="material-symbols-outlined text-sm">
+                                                    <span className="material-symbols-outlined text-sm" aria-hidden="true">
                                                         category
                                                     </span>
                                                     <span className="text-[10px] font-bold uppercase tracking-widest">
@@ -384,6 +400,7 @@ export default function Wisata({ dynamicDestinations = [] }) {
                                                 </div>
                                                 <Link
                                                     href={`/wisata/${dest.slug}`}
+                                                    aria-label={`Lihat detail destinasi ${loc(dest, "name", lang) || dest.name}`}
                                                 >
                                                     <motion.button
                                                         whileHover={{
@@ -392,9 +409,10 @@ export default function Wisata({ dynamicDestinations = [] }) {
                                                         whileTap={{
                                                             scale: 0.9,
                                                         }}
-                                                        className="size-11 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-all cursor-pointer"
+                                                        tabIndex={-1}
+                                                        className="size-12 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-all cursor-pointer"
                                                     >
-                                                        <span className="material-symbols-outlined">
+                                                        <span className="material-symbols-outlined" aria-hidden="true">
                                                             arrow_forward
                                                         </span>
                                                     </motion.button>
@@ -746,17 +764,20 @@ export default function Wisata({ dynamicDestinations = [] }) {
                                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                                 animate={{ opacity: 1, scale: 1, y: 0 }}
                                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                                role="dialog"
+                                aria-modal="true"
+                                aria-labelledby="pdf-modal-title"
                                 className="relative bg-white dark:bg-surface-dark w-full max-w-lg rounded-[2.5rem] overflow-hidden shadow-2xl p-8 text-center"
                             >
                                 <div className="size-20 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-6">
-                                    <span className="material-symbols-outlined text-4xl text-primary">
+                                    <span className="material-symbols-outlined text-4xl text-primary" aria-hidden="true">
                                         {isDownloading
                                             ? "sync"
                                             : "picture_as_pdf"}
                                     </span>
                                 </div>
 
-                                <h3 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-2">
+                                <h3 id="pdf-modal-title" className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight mb-2">
                                     {isDownloading
                                         ? "Generating Your Guide..."
                                         : "Nusantara Digital Travel Kit"}
@@ -788,7 +809,7 @@ export default function Wisata({ dynamicDestinations = [] }) {
                                                 whileTap={{ scale: 0.98 }}
                                                 className="w-full bg-primary text-white py-4 rounded-xl font-bold shadow-lg shadow-primary/30 flex items-center justify-center gap-2 cursor-pointer"
                                             >
-                                                <span className="material-symbols-outlined">
+                                                <span className="material-symbols-outlined" aria-hidden="true">
                                                     download
                                                 </span>{" "}
                                                 Download PDF Sekarang

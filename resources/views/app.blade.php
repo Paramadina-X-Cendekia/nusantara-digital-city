@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <title inertia>{{ config('app.name', 'Sinergi Nusa') }}</title>
+        <meta name="description" content="Sinergi Nusa - Platform Pelestarian Budaya dan Pariwisata Nusantara. Jelajahi cerita rakyat, situs bersejarah, peta wisata kuliner, dan seni tradisional Indonesia secara digital dan interaktif.">
 
         <!-- Fonts & Icons (Optimized and Combined) -->
         <link rel="preconnect" href="https://fonts.googleapis.com">

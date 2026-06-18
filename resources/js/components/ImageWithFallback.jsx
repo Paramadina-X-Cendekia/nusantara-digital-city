@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-const ImageWithFallback = ({ src, alt, className, fallbackIcon = 'image' }) => {
+const ImageWithFallback = ({ src, alt, className, fallbackIcon = 'image', loading = 'lazy', decoding = 'async' }) => {
     const [error, setError] = useState(false);
 
     if (error || !src) {
@@ -17,6 +17,8 @@ const ImageWithFallback = ({ src, alt, className, fallbackIcon = 'image' }) => {
             src={src}
             alt={alt}
             className={className}
+            loading={loading}
+            decoding={decoding}
             onError={() => setError(true)}
         />
     );

@@ -37,7 +37,7 @@ export default function DetailKisah({ story }) {
             <main className="flex-grow">
                 {/* ── Hero ── */}
                 <section className="relative overflow-hidden h-80 md:h-[500px]">
-                    <ImageWithFallback className="absolute inset-0 w-full h-full object-cover" alt={story.title} src={story.img} fallbackIcon="menu_book" />
+                    <ImageWithFallback className="absolute inset-0 w-full h-full object-cover" alt={story.title} src={story.img} fallbackIcon="menu_book" loading="eager" />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent"></div>
 
                     <div className="absolute bottom-0 left-0 right-0 p-8 md:p-16 z-10">

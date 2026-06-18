@@ -486,7 +486,7 @@ function DetailSeni({ art }) {
                 {/* ── Hero ── */}
                 <section className="relative overflow-hidden">
                     <div className="h-72 md:h-96 w-full relative">
-                        <ImageWithFallback className="w-full h-full object-cover" alt={art.title} src={art.img} fallbackIcon="palette" />
+                        <ImageWithFallback className="w-full h-full object-cover" alt={art.title} src={art.img} fallbackIcon="palette" loading="eager" />
                         <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/60 to-transparent"></div>
                         <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 z-10">
                             <div className="container mx-auto">

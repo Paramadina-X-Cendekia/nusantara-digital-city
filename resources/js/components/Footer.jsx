@@ -17,11 +17,11 @@ export default function Footer() {
                             {t('footer.description')}
                         </p>
                         <div className="flex gap-4">
-                            <a className="size-10 rounded-full bg-slate-100 dark:bg-slate-900 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:bg-primary hover:text-white transition-colors" href="#">
-                                <span className="material-symbols-outlined text-xl">public</span>
+                            <a className="size-12 rounded-full bg-slate-100 dark:bg-slate-900 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:bg-primary hover:text-white transition-colors" href="#" aria-label="Website Resmi Sinergi Nusa">
+                                <span className="material-symbols-outlined text-xl" aria-hidden="true">public</span>
                             </a>
-                            <a className="size-10 rounded-full bg-slate-100 dark:bg-slate-900 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:bg-primary hover:text-white transition-colors" href="#">
-                                <span className="material-symbols-outlined text-xl">alternate_email</span>
+                            <a className="size-12 rounded-full bg-slate-100 dark:bg-slate-900 flex items-center justify-center text-slate-600 dark:text-slate-400 hover:bg-primary hover:text-white transition-colors" href="#" aria-label="Kirim Email ke Sinergi Nusa">
+                                <span className="material-symbols-outlined text-xl" aria-hidden="true">alternate_email</span>
                             </a>
                         </div>
                     </div>
