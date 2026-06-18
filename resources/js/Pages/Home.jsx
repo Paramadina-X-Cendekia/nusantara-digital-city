@@ -102,7 +102,7 @@ function HeroScrambleWord({ words }) {
         let destroyed = false;
 
         async function init() {
-            const { animate, stagger } = await import("https://esm.sh/animejs");
+            const { animate, stagger } = await import("animejs");
             if (destroyed) return;
 
             const container = containerRef.current;

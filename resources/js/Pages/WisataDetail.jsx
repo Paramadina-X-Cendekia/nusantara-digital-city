@@ -7,6 +7,7 @@ import { useLanguage } from "../lib/LanguageContext";
 import { loc } from "../lib/localize";
 import { getBaseDestinations } from "../data/destinations";
 import ImageWithFallback from "../components/ImageWithFallback";
+import 'leaflet/dist/leaflet.css';
 
 const fadeIn = {
     hidden: { opacity: 0, y: 30 },

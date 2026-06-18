@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
+import 'leaflet/dist/leaflet.css';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { useLanguage } from '../lib/LanguageContext';
@@ -416,7 +417,6 @@ export default function PetaWisata({ dynamicDestinations = [] }) {
     return (
         <div className="relative flex min-h-screen flex-col bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-300 transition-colors duration-300 antialiased">
             <Head title={`Peta Wisata | Sinergi Nusa`} />
-            <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
             <style>{`
                 .custom-marker { background: none !important; border: none !important; }
                 .leaflet-container { font-family: 'Bricolage Grotesque', sans-serif !important; }

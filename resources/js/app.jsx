@@ -1,6 +1,5 @@
 import './bootstrap';
 import '../css/app.css';
-import 'leaflet/dist/leaflet.css';
 // import 'lenis/dist/lenis.css';
 
 import { createRoot } from 'react-dom/client';
