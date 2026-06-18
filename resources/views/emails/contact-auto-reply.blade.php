@@ -40,10 +40,10 @@
         </div>
 
         <div class="body">
-            <p class="greeting">Halo, {{ $contactData['name'] }}! 👋</p>
+            <p class="greeting">Halo Kak {{ $contactData['name'] }}, 👋</p>
             <p class="text">
-                Terima kasih telah menghubungi kami melalui halaman Kontak Nusantara Digital City. 
-                Kami telah menerima pesan Anda dan tim kami sedang meninjau pertanyaan atau saran yang Anda sampaikan.
+                Terima kasih banyak sudah menghubungi kami melalui halaman Kontak Nusantara Digital City. 
+                Pesan kamu sudah masuk ke sistem kami dan sedang dalam antrean untuk dibaca oleh tim terkait.
             </p>
 
             <span class="badge">📋 Ringkasan Pesan Anda</span>

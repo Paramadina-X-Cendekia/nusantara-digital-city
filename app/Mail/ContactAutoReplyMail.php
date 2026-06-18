@@ -20,7 +20,7 @@ class ContactAutoReplyMail extends Mailable
     public function build()
     {
         return $this
-            ->subject('Terima kasih atas pesan Anda – Nusantara Digital City')
+            ->subject('Pesan kamu sudah kami terima! (' . substr(md5(time()), 0, 6) . ')')
             ->view('emails.contact-auto-reply');
     }
 }

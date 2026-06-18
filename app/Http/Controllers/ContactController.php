@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Mail\ContactAutoReplyMail;
+use App\Mail\ContactMail;
 use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 use App\Models\ContactMessage;
@@ -24,18 +25,29 @@ class ContactController extends Controller
     public function submit(Request $request)
     {
         $validated = $request->validate([
-            'name'    => 'required|string|max:255',
-            'email'   => 'required|email|max:255',
             'subject' => 'required|string|max:255',
             'message' => 'required|string',
         ]);
 
+        $user = auth()->user();
+
+        if (!$user) {
+            return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu untuk mengirim pesan.');
+        }
+
+        $data = [
+            'name' => $user->name,
+            'email' => $user->email,
+            'subject' => $validated['subject'],
+            'message' => $validated['message'],
+        ];
+
         try {
             // 1. Simpan pesan ke database
-            ContactMessage::create($validated);
+            ContactMessage::create($data);
 
-            // 2. Kirim auto-reply ke email user
-            Mail::to($validated['email'])->send(new ContactAutoReplyMail($validated));
+            // 2. Kirim auto-reply ke email user yang mengirim pesan
+            Mail::to($data['email'])->send(new ContactAutoReplyMail($data));
 
             return back()->with('success', true);
         } catch (\Exception $e) {

@@ -74,8 +74,8 @@ Route::get('/wisata', [\App\Http\Controllers\PublicWisataController::class, 'ind
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\SenaChatController;
 
-Route::get('/kontak', [ContactController::class, 'index'])->name('kontak');
-Route::post('/kontak', [ContactController::class, 'submit'])->name('kontak.submit');
+Route::get('/kontak', [ContactController::class, 'index'])->name('kontak')->middleware('auth');
+Route::post('/kontak', [ContactController::class, 'submit'])->name('kontak.submit')->middleware('auth');
 
 Route::post('/ask-sena', [SenaChatController::class, 'chat'])->name('sena.chat');
 Route::post('/translate', [\App\Http\Controllers\TranslateController::class, 'translate'])->name('api.translate');
