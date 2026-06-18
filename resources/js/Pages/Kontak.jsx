@@ -18,8 +18,6 @@ export default function Kontak() {
     const { t } = useLanguage();
     const { flash } = usePage().props;
     const { data, setData, post, processing, errors, reset, recentlySuccessful } = useForm({
-        name: '', 
-        email: '', 
         subject: '', 
         message: '' 
     });
@@ -68,26 +66,7 @@ export default function Kontak() {
                             </motion.div>
 
                             <motion.form variants={fadeIn} onSubmit={handleSubmit} className="space-y-6 bg-white dark:bg-slate-900/50 p-6 md:p-8 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-                                <div className="grid sm:grid-cols-2 gap-6">
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-medium text-slate-900 dark:text-slate-200">{t('kontak.full_name')}</label>
-                                        <input
-                                            name="name" value={data.name} onChange={e => setData('name', e.target.value)}
-                                            className={`w-full bg-slate-50 dark:bg-slate-900 border ${errors.name ? 'border-red-500' : 'border-slate-200 dark:border-slate-800'} rounded-xl p-4 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-500`}
-                                            placeholder={t('kontak.placeholder_name')} type="text"
-                                        />
-                                        {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-medium text-slate-900 dark:text-slate-200">{t('kontak.email_address')}</label>
-                                        <input
-                                            name="email" value={data.email} onChange={e => setData('email', e.target.value)}
-                                            className={`w-full bg-slate-50 dark:bg-slate-900 border ${errors.email ? 'border-red-500' : 'border-slate-200 dark:border-slate-800'} rounded-xl p-4 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-500`}
-                                            placeholder={t('kontak.placeholder_email')} type="email"
-                                        />
-                                        {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
-                                    </div>
-                                </div>
+
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium text-slate-900 dark:text-slate-200">{t('kontak.subject')}</label>
                                     <input
