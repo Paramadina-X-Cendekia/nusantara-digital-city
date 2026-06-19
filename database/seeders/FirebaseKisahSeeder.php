@@ -41,20 +41,6 @@ class FirebaseKisahSeeder extends Seeder
                 'videoLink' => 'https://www.youtube.com/embed/dQw4w9WgXcQ',
                 'status' => 'approved'
             ],
-            'lutung-kasarung' => [
-                'artName' => 'Lutung Kasarung',
-                'artCategory' => 'cerita',
-                'artSubCategory' => 'Cerita Rakyat',
-                'origin' => 'Jawa Barat',
-                'province' => 'Jawa Barat',
-                'description' => 'Lutung Kasarung menceritakan tentang Purbasari yang diusir dari istana oleh kakaknya, Purbararang. Di hutan, ia bertemu dengan seekor lutung (kera hitam) bernama Lutung Kasarung. Lutung tersebut sebenarnya adalah dewa bernama Sanghyang Guruminda yang sedang turun ke bumi. Berkat bantuan Lutung Kasarung, Purbasari berhasil kembali ke istana dan menjadi ratu yang bijaksana.',
-                'shortDesc' => 'Kisah cinta tulus antara Purbasari dan seekor kera jelmaan dewa.',
-                'imageUrl' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuCOk7eFXM8Z7djeW87pg0CemNhUYyqvVOTbTru4odSwbuliignpFMApDGhfNKlW6kKyQlCbzJ3ohIoFaRnWWDgvQfazHGAkAjHoSKngL3-wQdr1HcITBwNXh6s5QVGFLqfPkQo7SDDW_mY-6RcScGnPl4Ewr-Vg_6va3QV-h4tnOTTygXWWbXsrbtnnmk6_AzN-1zBFS-khioMRQ3qfwSeVgNhYKSFkLW9kkjlvFAKSOrwFbzI-SYHp13KInW70cdrV_8nUtZOKZ2BQ',
-                'moral' => 'Kebaikan hati akan mengalahkan kejahatan, dan jangan menilai seseorang hanya dari fisiknya.',
-                'characters' => 'Purbasari, Purbararang, Lutung Kasarung (Sanghyang Guruminda)',
-                'videoLink' => 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-                'status' => 'approved'
-            ],
             'nyi-roro-kidul' => [
                 'artName' => 'Legenda Nyi Roro Kidul',
                 'artCategory' => 'cerita',
