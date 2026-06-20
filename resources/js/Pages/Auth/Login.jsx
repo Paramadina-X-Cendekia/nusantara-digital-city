@@ -1,12 +1,39 @@
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Head, useForm, Link } from '@inertiajs/react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '@/lib/LanguageContext';
 import ImageWithFallback from '../../components/ImageWithFallback';
 
-export default function Login() {
+const defaultDummyImages = [
+    "https://images.unsplash.com/photo-1555899434-94d1368aa7af?q=80&w=2070&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?q=80&w=2070&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1582555172866-f73bb12a2ab3?q=80&w=2070&auto=format&fit=crop",
+];
+
+// Props contributorImages dikirim dari LoginController (query DB contribution yang approved)
+export default function Login({ contributorImages = [] }) {
     const { t } = useLanguage();
     const [showPassword, setShowPassword] = useState(false);
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+    // Gabungkan gambar default + gambar dari DB contributor
+    // Jika DB kosong, tampilkan gambar default + gambar dummy Unsplash
+    const slides = useMemo(() => {
+        const base = ['/images/auth/login_visual.jpg'];
+        return contributorImages.length > 0 
+            ? [...base, ...contributorImages] 
+            : [...base, ...defaultDummyImages];
+    }, [contributorImages]);
+
+    // Auto-advance setiap 5 detik
+    useEffect(() => {
+        if (slides.length <= 1) return; // tidak perlu slide jika hanya 1 gambar
+        const interval = setInterval(() => {
+            setCurrentImageIndex((prev) => (prev + 1) % slides.length);
+        }, 5000);
+        return () => clearInterval(interval);
+    }, [slides]);
+
     const { data, setData, post, processing, errors } = useForm({
         email: '',
         password: '',
@@ -111,16 +138,28 @@ export default function Login() {
                 </motion.div>
             </div>
 
-            {/* Right Side: Visual Content */}
+            {/* Right Side: Visual Slideshow */}
             <div className="hidden lg:block lg:w-1/2 relative bg-primary overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/60 mix-blend-multiply z-10" />
-                <ImageWithFallback
-                    src="/images/auth/login_visual.jpg"
-                    alt="Sinergi Nusa Visual"
-                    className="absolute inset-0 w-full h-full object-cover grayscale-[20%] hover:grayscale-0 transition-all duration-700 hover:scale-105"
-                    fallbackIcon="login"
-                />
 
+                {/* Crossfade: gambar baru fade-in DI ATAS gambar lama → tidak pernah ada celah */}
+                <AnimatePresence>
+                    <motion.div
+                        key={currentImageIndex}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 1.2, ease: 'easeInOut' }}
+                        className="absolute inset-0 z-0"
+                    >
+                        <ImageWithFallback
+                            src={slides[currentImageIndex]}
+                            alt="Sinergi Nusa Visual"
+                            className="absolute inset-0 w-full h-full object-cover"
+                            fallbackIcon="login"
+                        />
+                    </motion.div>
+                </AnimatePresence>
                 {/* Floating Card Info */}
                 <motion.div
                     initial={{ opacity: 0, y: 40 }}
