@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Contribution;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
@@ -14,7 +15,26 @@ class RegisterController extends Controller
 {
     public function create()
     {
-        return Inertia::render('Auth/Register');
+        // Ambil gambar dari kontribusi yang sudah disetujui (approved) di database
+        $contributorImages = Contribution::where('status', 'approved')
+            ->get()
+            ->map(function ($c) {
+                // Ambil URL gambar yang tersedia dari setiap kontribusi
+                return $c->data['imageUrl']
+                    ?? $c->data['mainImageUrl']
+                    ?? $c->data['ingredientImageUrl']
+                    ?? null;
+            })
+            ->filter()     // Buang yang null
+            ->unique()     // Hindari gambar duplikat
+            ->shuffle()    // Acak urutan agar selalu segar
+            ->take(10)     // Ambil maksimal 10 gambar
+            ->values()
+            ->toArray();
+
+        return Inertia::render('Auth/Register', [
+            'contributorImages' => $contributorImages,
+        ]);
     }
 
     public function store(Request $request)
