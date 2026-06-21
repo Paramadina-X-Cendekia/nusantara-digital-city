@@ -20,8 +20,8 @@ export default function Login({ contributorImages = [] }) {
     // Jika DB kosong, tampilkan gambar default + gambar dummy Unsplash
     const slides = useMemo(() => {
         const base = ['/images/auth/login_visual.jpg'];
-        return contributorImages.length > 0 
-            ? [...base, ...contributorImages] 
+        return contributorImages.length > 0
+            ? [...base, ...contributorImages]
             : [...base, ...defaultDummyImages];
     }, [contributorImages]);
 
@@ -34,6 +34,17 @@ export default function Login({ contributorImages = [] }) {
         return () => clearInterval(interval);
     }, [slides]);
 
+    // Reset body padding dan set background agar tidak ada warna biru bocor saat di-scroll di mobile
+    useEffect(() => {
+        document.body.style.paddingBottom = '0px';
+        document.body.classList.add('!bg-white', 'dark:!bg-slate-950');
+
+        return () => {
+            document.body.style.paddingBottom = '';
+            document.body.classList.remove('!bg-white', 'dark:!bg-slate-950');
+        };
+    }, []);
+
     const { data, setData, post, processing, errors } = useForm({
         email: '',
         password: '',
@@ -45,57 +56,49 @@ export default function Login({ contributorImages = [] }) {
     };
 
     return (
-        <div className="min-h-screen bg-white dark:bg-slate-950 font-display text-slate-900 dark:text-slate-100 antialiased flex overflow-hidden">
+        <div className="min-h-screen lg:h-screen lg:max-h-screen bg-white dark:bg-slate-950 font-display text-slate-900 dark:text-slate-100 antialiased flex overflow-visible lg:overflow-hidden">
             <Head title={`${t('nav.login')} | Sinergi Nusa`} />
 
             {/* Left Side: Form */}
-            <div className="w-full lg:w-1/2 flex flex-col justify-center px-6 md:px-12 lg:px-20 py-12 relative z-10 bg-white dark:bg-slate-950 overflow-y-auto">
+            <div className="w-full lg:w-1/2 flex flex-col justify-center px-6 md:px-12 lg:px-20 py-6 lg:py-8 relative z-10 bg-white dark:bg-slate-950 lg:h-full lg:overflow-y-auto custom-scrollbar">
                 <motion.div
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    className="max-w-md w-full mx-auto space-y-10"
+                    className="max-w-md w-full mx-auto space-y-6 lg:space-y-8"
                 >
-                    <Link
-                        href="/"
-                        className="inline-flex items-center gap-2 text-slate-500 hover:text-primary transition-colors font-bold group"
-                    >
-                        <span className="material-symbols-outlined transition-transform group-hover:-translate-x-1">arrow_back</span>
-                        <span>{t('auth.back_to_home')}</span>
-                    </Link>
-
-                    <div className="space-y-4">
+                    <div className="space-y-3 lg:space-y-4">
                         <div className="flex items-center gap-3">
-                            <img src="/sinusa.png" alt="Logo" className="h-20 w-auto" />
-                            <h2 className="text-xl font-black  tracking-tighter text-slate-900 dark:text-white">Sinergi <span className="text-primary">Nusa</span></h2>
+                            <img src="/sinusa.png" alt="Logo" className="h-12 lg:h-16 w-auto" />
+                            <h2 className="text-lg lg:text-xl font-black tracking-tighter text-slate-900 dark:text-white">Sinergi <span className="text-primary">Nusa</span></h2>
                         </div>
-                        <div className="space-y-2">
-                            <h1 className="text-4xl font-black tracking-tight leading-tight">{t('auth.login_welcome').split(' ')[0]} <span className="text-primary ">{t('auth.login_welcome').split(' ').slice(1).join(' ')}</span></h1>
-                            <p className="text-slate-500 dark:text-slate-400 text-lg">{t('auth.login_subtitle')}</p>
+                        <div className="space-y-1 lg:space-y-2">
+                            <h1 className="text-2xl lg:text-3xl font-black tracking-tight leading-tight">{t('auth.login_welcome').split(' ')[0]} <span className="text-primary ">{t('auth.login_welcome').split(' ').slice(1).join(' ')}</span></h1>
+                            <p className="text-slate-500 dark:text-slate-400 text-sm lg:text-base">{t('auth.login_subtitle')}</p>
                         </div>
                     </div>
 
-                    <form onSubmit={submit} className="space-y-6">
-                        <div className="space-y-2">
-                            <label className="text-sm font-bold uppercase tracking-wider text-slate-400">{t('auth.email_label')}</label>
+                    <form onSubmit={submit} className="space-y-4 lg:space-y-5">
+                        <div className="space-y-1.5 lg:space-y-2">
+                            <label className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('auth.email_label')}</label>
                             <input
                                 type="email"
                                 value={data.email}
                                 onChange={e => setData('email', e.target.value)}
-                                className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                                className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl py-3 px-4 outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all text-sm"
                                 placeholder={t('auth.placeholder_email')}
                                 required
                             />
                             {errors.email && <p className="text-red-500 text-xs mt-1 font-medium">{errors.email}</p>}
                         </div>
 
-                        <div className="space-y-2">
-                            <label className="text-sm font-bold uppercase tracking-wider text-slate-400">{t('auth.password_label')}</label>
+                        <div className="space-y-1.5 lg:space-y-2">
+                            <label className="text-xs font-bold uppercase tracking-wider text-slate-400">{t('auth.password_label')}</label>
                             <div className="relative">
                                 <input
                                     type={showPassword ? "text" : "password"}
                                     value={data.password}
                                     onChange={e => setData('password', e.target.value)}
-                                    className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 pr-12 outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                                    className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl py-3 px-4 pr-12 outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all text-sm"
                                     placeholder="••••••••"
                                     required
                                 />
@@ -104,7 +107,7 @@ export default function Login({ contributorImages = [] }) {
                                     onClick={() => setShowPassword(!showPassword)}
                                     className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 focus:outline-none flex items-center"
                                 >
-                                    <span className="material-symbols-outlined">
+                                    <span className="material-symbols-outlined text-xl">
                                         {showPassword ? 'visibility_off' : 'visibility'}
                                     </span>
                                 </button>
@@ -114,23 +117,23 @@ export default function Login({ contributorImages = [] }) {
                         <button
                             disabled={processing}
                             type="submit"
-                            className="w-full py-4 bg-primary hover:bg-primary/90 text-white rounded-2xl font-black text-lg shadow-xl shadow-primary/20 transition-all flex items-center justify-center gap-2"
+                            className="w-full py-3 lg:py-3.5 bg-primary hover:bg-primary/90 text-white rounded-2xl font-black text-base lg:text-lg shadow-xl shadow-primary/20 transition-all flex items-center justify-center gap-2 mt-2"
                         >
                             {processing ? (
                                 <>
-                                    <span className="animate-spin material-symbols-outlined">progress_activity</span>
+                                    <span className="animate-spin material-symbols-outlined text-lg">progress_activity</span>
                                     <span>{t('auth.processing')}</span>
                                 </>
                             ) : (
                                 <>
                                     <span>{t('auth.login_button')}</span>
-                                    <span className="material-symbols-outlined">login</span>
+                                    <span className="material-symbols-outlined text-lg">login</span>
                                 </>
                             )}
                         </button>
                     </form>
 
-                    <div className="pt-4 border-t border-slate-100 dark:border-slate-800 text-center">
+                    <div className="pt-3 lg:pt-4 border-t border-slate-100 dark:border-slate-800 text-center text-sm">
                         <p className="text-slate-500">
                             {t('auth.no_account')} <Link href="/register" className="text-primary font-bold hover:underline">{t('auth.register_now')}</Link>
                         </p>

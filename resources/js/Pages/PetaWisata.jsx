@@ -374,6 +374,19 @@ export default function PetaWisata({ dynamicDestinations = [] }) {
         return () => clearInterval(interval);
     }, [isSimulating, simulationIndex]);
 
+    // Scroll to details popup on mobile/tablet when a site is selected
+    useEffect(() => {
+        if (activeSite && typeof window !== 'undefined' && window.innerWidth < 1024) {
+            const timer = setTimeout(() => {
+                const element = document.getElementById('detail-popup');
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            }, 200);
+            return () => clearTimeout(timer);
+        }
+    }, [activeSite]);
+
     const selected = destinations.find((s) => s.id === activeSite);
     const filtered = activeFilter === 'semua' ? destinations : destinations.filter((d) => d.category === activeFilter);
 
@@ -753,6 +766,7 @@ export default function PetaWisata({ dynamicDestinations = [] }) {
                             <AnimatePresence>
                                 {selected && (
                                     <motion.div
+                                        id="detail-popup"
                                         initial={{ opacity: 0, y: 20, scale: 0.95 }}
                                         animate={{ opacity: 1, y: 0, scale: 1 }}
                                         exit={{ opacity: 0, y: 20, scale: 0.95 }}
