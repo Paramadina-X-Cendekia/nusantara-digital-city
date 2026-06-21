@@ -1,9 +1,9 @@
-import React, { useState, useRef, Suspense, useEffect, useMemo } from 'react';
+import React, { useState, useRef, Suspense, useEffect, useMemo, useCallback } from 'react';
 import AITranslate from '../components/AITranslate';
 import { Head, Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, useTexture } from '@react-three/drei';
+import { OrbitControls, useTexture, useGLTF, ContactShadows } from '@react-three/drei';
 import * as THREE from 'three';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -25,77 +25,67 @@ class ThreeErrorHandler extends React.Component {
     }
 }
 
-// Auto 3D Viewer for Batik (Turns 2D image into 3D T-Shirt)
-function BatikCloth({ imgUrl, gender }) {
-    const meshRef = useRef();
-    const texture = useTexture(imgUrl || 'https://images.unsplash.com/photo-1544787210-28240ac9ac0a?q=80&w=800');
-    texture.wrapS = THREE.RepeatWrapping;
-    texture.wrapT = THREE.RepeatWrapping;
-    texture.repeat.set(0.5, 0.5);
+// Auto 3D Viewer for Batik (Loads a realistic 3D T-shirt model and maps batik pattern onto it)
+function BatikCloth({ imgUrl }) {
+    const groupRef = useRef();
+    const { nodes } = useGLTF('/images/tshirt.glb');
+    
+    // Robust local texture state with initial cream color texture for immediate render
+    const [texture, setTexture] = useState(() => {
+        const canvas = document.createElement('canvas');
+        canvas.width = 16;
+        canvas.height = 16;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#e8e5da'; // elegant cream
+        ctx.fillRect(0, 0, 16, 16);
+        const tex = new THREE.CanvasTexture(canvas);
+        tex.wrapS = THREE.RepeatWrapping;
+        tex.wrapT = THREE.RepeatWrapping;
+        return tex;
+    });
 
-    // Create Men's Shirt (Kemeja Pria) Shape
-    const priaShape = useMemo(() => {
-        const shape = new THREE.Shape();
-        shape.moveTo(-0.8, 2.5);
-        shape.lineTo(-0.5, 2.2);
-        shape.lineTo(0.5, 2.2);
-        shape.lineTo(0.8, 2.5);
-        shape.lineTo(1.8, 2.3);
-        shape.lineTo(2.8, 1.6);
-        shape.lineTo(3.2, 0.4);
-        shape.lineTo(2.4, 0.0);
-        shape.lineTo(1.8, 0.6);
-        shape.lineTo(1.8, -3.0);
-        shape.lineTo(-1.8, -3.0);
-        shape.lineTo(-1.8, 0.6);
-        shape.lineTo(-2.4, 0.0);
-        shape.lineTo(-3.2, 0.4);
-        shape.lineTo(-2.8, 1.6);
-        shape.lineTo(-1.8, 2.3);
-        shape.closePath();
-        return shape;
-    }, []);
+    useEffect(() => {
+        if (!imgUrl) return;
+        const loader = new THREE.TextureLoader();
+        loader.crossOrigin = 'anonymous';
+        
+        loader.load(
+            imgUrl,
+            (tex) => {
+                tex.wrapS = THREE.RepeatWrapping;
+                tex.wrapT = THREE.RepeatWrapping;
+                // Perfect repeat scale for realistic batik proportion on the model
+                tex.repeat.set(1.0, 1.0);
+                setTexture(tex);
+            },
+            undefined,
+            (err) => {
+                console.warn("Failed to load texture via CORS, falling back to local pattern.");
+                // Create a beautiful default procedural pattern canvas (maroon woven fabric)
+                const canvas = document.createElement('canvas');
+                canvas.width = 256;
+                canvas.height = 256;
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = '#a32a2a'; // elegant maroon
+                ctx.fillRect(0, 0, 256, 256);
+                
+                // Draw some elegant stripes representing a fabric weave
+                ctx.fillStyle = '#8f2020';
+                for (let i = 0; i < 256; i += 16) {
+                    ctx.fillRect(i, 0, 8, 256);
+                    ctx.fillRect(0, i, 256, 8);
+                }
+                
+                const tex = new THREE.CanvasTexture(canvas);
+                tex.wrapS = THREE.RepeatWrapping;
+                tex.wrapT = THREE.RepeatWrapping;
+                tex.repeat.set(1.0, 1.0);
+                setTexture(tex);
+            }
+        );
+    }, [imgUrl]);
 
-    // Create Women's Dress/Blouse (Pakaian Wanita) Shape
-    const wanitaShape = useMemo(() => {
-        const shape = new THREE.Shape();
-        shape.moveTo(-1.0, 2.4);
-        shape.bezierCurveTo(-0.5, 1.8, 0.5, 1.8, 1.0, 2.4);
-        shape.lineTo(1.6, 2.2);
-        shape.lineTo(2.4, 1.4);
-        shape.lineTo(2.0, 0.8);
-        shape.lineTo(1.4, 1.1);
-        shape.bezierCurveTo(0.9, -0.2, 0.7, -1.5, 2.2, -3.2);
-        shape.lineTo(-2.2, -3.2);
-        shape.bezierCurveTo(-0.7, -1.5, -0.9, -0.2, -1.4, 1.1);
-        shape.lineTo(-2.0, 0.8);
-        shape.lineTo(-2.4, 1.4);
-        shape.lineTo(-1.6, 2.2);
-        shape.closePath();
-        return shape;
-    }, []);
-
-    const currentShape = gender === 'wanita' ? wanitaShape : priaShape;
-
-    // Use smooth, thin extrude settings for a fabric-like appearance
-    const extrudeSettings = useMemo(() => ({
-        steps: 1,
-        depth: 0.15, // Thinner fabric slab
-        bevelEnabled: true,
-        bevelThickness: 0.08,
-        bevelSize: 0.08,
-        bevelOffset: 0,
-        bevelSegments: 5 // Smoother rounded edges
-    }), []);
-
-    // Keep the geometry clean and flat (removes Minecraft-like triangulation artifacts)
-    const geometry = useMemo(() => {
-        const geom = new THREE.ExtrudeGeometry(currentShape, extrudeSettings);
-        geom.computeVertexNormals();
-        return geom;
-    }, [currentShape, extrudeSettings]);
-
-    // Create a highly realistic, smooth vertical fabric fold bump map
+    // Create custom fabric fold texture using a dynamic gray-scale gradient canvas
     const wrinkleTexture = useMemo(() => {
         const canvas = document.createElement('canvas');
         canvas.width = 512;
@@ -107,24 +97,33 @@ function BatikCloth({ imgUrl, gender }) {
         ctx.fillRect(0, 0, 512, 512);
 
         // Draw soft, smooth, vertical drapery folds
-        const numFolds = 4;
+        const numFolds = 5;
         for (let i = 0; i < numFolds; i++) {
-            const x = (i / numFolds) * 512 + 64;
-            const width = 120;
+            const x = (i / numFolds) * 512 + 48;
+            const width = 100;
 
             const grad = ctx.createLinearGradient(x - width / 2, 0, x + width / 2, 0);
             grad.addColorStop(0, '#808080');
-            grad.addColorStop(0.35, '#606060'); // soft shadow crease
-            grad.addColorStop(0.5, '#989898');  // soft highlight
-            grad.addColorStop(0.65, '#9d9d9d'); // soft highlight
+            grad.addColorStop(0.35, '#5d5d5d'); // soft shadow crease
+            grad.addColorStop(0.5, '#9a9a9a');  // soft highlight
+            grad.addColorStop(0.65, '#9f9f9f'); // soft highlight
             grad.addColorStop(1, '#808080');
 
             ctx.fillStyle = grad;
             ctx.fillRect(x - width / 2, 0, width, 512);
         }
 
+        // Add a very fine cotton weave fabric texture bump
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.04)';
+        for (let y = 0; y < 512; y += 4) {
+            ctx.fillRect(0, y, 512, 1);
+        }
+        for (let x = 0; x < 512; x += 4) {
+            ctx.fillRect(x, 0, 1, 512);
+        }
+
         // Smoothly blur the canvas to create soft, natural lighting gradients
-        ctx.filter = 'blur(20px)';
+        ctx.filter = 'blur(12px)';
         ctx.drawImage(canvas, 0, 0);
 
         const tex = new THREE.CanvasTexture(canvas);
@@ -133,63 +132,59 @@ function BatikCloth({ imgUrl, gender }) {
         return tex;
     }, []);
 
+    // Fabric Material with custom roughness, metalness, and bumpMap mapping
+    const fabricMaterial = useMemo(() => {
+        return new THREE.MeshStandardMaterial({
+            map: texture,
+            bumpMap: wrinkleTexture,
+            bumpScale: 0.04,
+            roughness: 0.85,
+            metalness: 0.05,
+            side: THREE.DoubleSide
+        });
+    }, [texture, wrinkleTexture]);
+
+    // Gentle rotate animation
     useFrame(({ clock }) => {
-        if (meshRef.current) {
-            meshRef.current.rotation.y = Math.sin(clock.getElapsedTime() * 0.5) * 0.2;
+        if (groupRef.current) {
+            groupRef.current.rotation.y = Math.sin(clock.getElapsedTime() * 0.4) * 0.2;
         }
     });
 
+    // Elegant proportions aligned mathematically so the bottom of the shirt sits perfectly on shadow floor
+    const scale = [10.2, 10.2, 10.2];
+    const positionY = 1.45;
+
     return (
-        <mesh ref={meshRef} position={[0, 0, 0]} geometry={geometry}>
-            <meshStandardMaterial
-                map={texture}
-                bumpMap={wrinkleTexture}
-                bumpScale={0.06} // Subtle scale for clean, elegant shadows
-                roughness={0.8}
-                metalness={0.05}
-            />
-        </mesh>
+        <group ref={groupRef} position={[0, positionY, 0]} scale={scale}>
+            {nodes.tshirt && (
+                <mesh 
+                    geometry={nodes.tshirt.geometry} 
+                    material={fabricMaterial} 
+                    castShadow 
+                    receiveShadow 
+                />
+            )}
+        </group>
     );
 }
 
-function Auto3DViewer({ imgUrl, t }) {
-    const [gender, setGender] = useState('pria');
+useGLTF.preload('/images/tshirt.glb');
 
+function Auto3DViewer({ imgUrl, t }) {
     return (
         <div className="w-full h-full relative cursor-move">
-            {/* Gender Switcher Buttons */}
-            <div className="absolute top-4 left-4 z-30 flex items-center gap-2">
-                <button
-                    onClick={() => setGender('pria')}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-md ${gender === 'pria'
-                            ? 'bg-primary text-white shadow-primary/20'
-                            : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700'
-                        }`}
-                >
-                    <span className="material-symbols-outlined text-sm">man</span>
-                    Pria
-                </button>
-                <button
-                    onClick={() => setGender('wanita')}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-md ${gender === 'wanita'
-                            ? 'bg-primary text-white shadow-primary/20'
-                            : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700'
-                        }`}
-                >
-                    <span className="material-symbols-outlined text-sm">woman</span>
-                    Wanita
-                </button>
-            </div>
-
             <ThreeErrorHandler fallback={<div className="w-full h-full flex items-center justify-center bg-slate-100 dark:bg-slate-900 text-slate-500 text-xs ">Gagal memuat viewer 3D</div>}>
-                <Canvas camera={{ position: [0, 0, 8], fov: 50 }}>
+                <Canvas camera={{ position: [0, 0.6, 7.5], fov: 45 }}>
                     <ambientLight intensity={0.5} />
-                    <directionalLight position={[10, 10, 10]} intensity={1.5} castShadow />
-                    <directionalLight position={[-10, -10, -10]} intensity={0.5} />
+                    <directionalLight position={[10, 10, 10]} intensity={1.3} />
+                    <directionalLight position={[-10, 10, -10]} intensity={0.5} />
+                    <directionalLight position={[0, -5, 5]} intensity={0.3} />
                     <Suspense fallback={null}>
-                        <BatikCloth imgUrl={imgUrl} gender={gender} />
+                        <BatikCloth imgUrl={imgUrl} />
                     </Suspense>
-                    <OrbitControls enableZoom={true} enablePan={false} autoRotate autoRotateSpeed={1.5} />
+                    <ContactShadows position={[0, -2.1, 0]} opacity={0.6} scale={8} blur={1.8} far={3.5} />
+                    <OrbitControls target={[0, 0.6, 0]} enableZoom={true} enablePan={false} minDistance={4} maxDistance={10} autoRotate autoRotateSpeed={1.2} />
                 </Canvas>
             </ThreeErrorHandler>
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-slate-900/60 backdrop-blur-md px-4 py-2 rounded-full text-white text-xs font-medium flex items-center gap-2 pointer-events-none">
@@ -323,7 +318,12 @@ function DetailSeni({ art }) {
     }
 
     // Filter tabs based on asset capabilities
-    const tabs = (TAB_MAP(t) || []).filter((tab) => {
+    const tabs = (TAB_MAP(t) || []).map((tab) => {
+        if (tab.id === 'ar' && (art.category?.toLowerCase() === 'batik' || art.artSubCategory?.toLowerCase() === 'batik')) {
+            return { ...tab, label: t('art_detail.explore_3d'), icon: '3d_rotation' };
+        }
+        return tab;
+    }).filter((tab) => {
         if (tab.id === 'audio' && !art.hasAudio) return false;
         if (tab.id === 'ar' && !art.hasAR) return false;
         if (tab.id === 'video' && !art.videoUrl) return false;
@@ -599,7 +599,7 @@ function DetailSeni({ art }) {
                 </section>
 
                 {/* ── Interactive Tabs ── */}
-                <section className="container mx-auto px-4 lg:px-10 pb-12">
+                <section className="container mx-auto px-4 lg:px-10 pt-12 pb-12">
                     <div className="flex flex-wrap gap-3 mb-8 justify-center">
                         {tabs.map((tab) => (
                             <motion.button
