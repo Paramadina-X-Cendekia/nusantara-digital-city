@@ -17,19 +17,9 @@ const stagger = {
 
 export default function SitusBersejarah({ sites }) {
     const { t } = useLanguage();
-    const [activeCategory, setActiveCategory] = useState('semua');
-
-    const categories = useMemo(() => {
-        const cats = new Set(sites.map(s => s.category));
-        return ['semua', ...Array.from(cats)];
-    }, [sites]);
-
-    const filtered = activeCategory === 'semua'
-        ? sites
-        : sites.filter(s => s.category === activeCategory);
 
     return (
-        <div className="relative flex min-h-screen flex-col bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-300 transition-colors duration-300 antialiased">
+        <div className="relative flex min-h-screen flex-col bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased transition-colors duration-300">
             <Head title={`Situs Bersejarah | Sinergi Nusa`} />
             <Navbar />
 
@@ -52,44 +42,18 @@ export default function SitusBersejarah({ sites }) {
                         </motion.p>
                     </motion.div>
                 </section>
-
-                {/* ── Category Filter (Sticky Wrapper) ── */}
-                <div className="sticky top-16 z-40 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 transition-all duration-300">
-                    <div className="container mx-auto px-4 lg:px-10 py-3">
-                        <div className="flex flex-row overflow-x-auto flex-nowrap no-scrollbar scroll-smooth gap-3 justify-start md:justify-center">
-                            {categories.map((cat) => (
-                                <motion.button
-                                    key={cat}
-                                    whileTap={{ scale: 0.95 }}
-                                    onClick={() => setActiveCategory(cat)}
-                                    className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 whitespace-nowrap ${
-                                        activeCategory === cat
-                                            ? 'bg-primary text-white shadow-lg shadow-primary/30'
-                                            : 'bg-white dark:bg-surface-dark text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:border-primary/50 hover:text-primary'
-                                    }`}
-                                >
-                                    <span className="material-symbols-outlined text-xl">
-                                        {cat === 'semua' ? 'apps' : 'account_balance'}
-                                    </span>
-                                    {cat === 'semua' ? t('kisah.all') : cat}
-                                </motion.button>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-
+ 
                 {/* ── Sites Grid ── */}
                 <section className="container mx-auto px-4 lg:px-10 py-12 min-h-[400px]">
                     <AnimatePresence mode="popLayout">
                         <motion.div
-                            key={activeCategory}
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.3 }}
                             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
                         >
-                            {filtered.map((item) => (
+                            {sites.map((item) => (
                                 <Link key={item.slug} href={`/budaya/landmark/${item.slug}`}>
                                     <motion.div
                                         variants={fadeIn}
@@ -120,9 +84,9 @@ export default function SitusBersejarah({ sites }) {
                             ))}
                         </motion.div>
                     </AnimatePresence>
-
+ 
                     <AnimatePresence>
-                        {filtered.length === 0 && (
+                        {sites.length === 0 && (
                             <motion.div
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}

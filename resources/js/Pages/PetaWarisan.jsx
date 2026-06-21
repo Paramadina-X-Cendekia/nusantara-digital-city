@@ -439,6 +439,18 @@ export default function PetaWarisan({ dynamicSites = [] }) {
     const [activeSite, setActiveSite] = useState(null);
     const [isGeocoding, setIsGeocoding] = useState(false);
 
+    // Scroll to detail panel when a site becomes active (e.g. marker click)
+    useEffect(() => {
+        if (activeSite) {
+            setTimeout(() => {
+                const element = document.getElementById('detail-situs-warisan');
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 100);
+        }
+    }, [activeSite]);
+
     // Re-sync base sites when language changes
     useEffect(() => {
         setAllSites(prev => {
@@ -615,11 +627,12 @@ export default function PetaWarisan({ dynamicSites = [] }) {
                 <AnimatePresence>
                     {selected && (
                         <motion.section
+                            id="detail-situs-warisan"
                             initial={{ opacity: 0, y: 40 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: 40 }}
                             transition={{ duration: 0.4, ease: 'easeOut' }}
-                            className="container mx-auto px-4 lg:px-10 pb-8"
+                            className="container mx-auto px-4 lg:px-10 pb-8 scroll-mt-24"
                         >
                             <div className="bg-white dark:bg-surface-dark rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden">
                                 <div className="grid grid-cols-1 md:grid-cols-2">
@@ -668,7 +681,7 @@ export default function PetaWarisan({ dynamicSites = [] }) {
                                 key={site.id}
                                 variants={fadeIn}
                                 whileHover={{ y: -6 }}
-                                onClick={() => { setActiveSite(site.id); window.scrollTo({ top: 500, behavior: 'smooth' }); }}
+                                onClick={() => setActiveSite(site.id)}
                                 className={`text-left p-5 rounded-2xl border transition-all group ${activeSite === site.id
                                     ? 'border-primary bg-primary/5 dark:bg-primary/10 shadow-lg shadow-primary/10'
                                     : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-surface-dark hover:shadow-xl'
