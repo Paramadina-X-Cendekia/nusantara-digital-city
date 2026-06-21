@@ -265,6 +265,7 @@ function DetailSeni({ art }) {
     const barsContainerRef = useRef(null);
     const [previewIndex, setPreviewIndex] = useState(0);
     const [selectedInstrument, setSelectedInstrument] = useState(null);
+    const [activeHotspot, setActiveHotspot] = useState(null);
 
     const getArtFacts = () => {
         if (art.fakta_menarik) {
@@ -626,26 +627,38 @@ function DetailSeni({ art }) {
                                         <ImageWithFallback className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src={art.img} alt={art.title} fallbackIcon="palette" />
                                         <div className="absolute inset-0 bg-black/10"></div>
 
-                                        {(art.hotspots || []).map((hs, i) => (
-                                            <div
-                                                key={i}
-                                                className="absolute z-20 group/hs cursor-pointer group"
-                                                style={{ left: `${hs.x}%`, top: `${hs.y}%` }}
-                                            >
-                                                {/* Pulse Animation */}
-                                                <div className="absolute inset-0 size-8 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/40 animate-ping"></div>
-                                                <div className="relative size-8 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary border-4 border-white dark:border-slate-800 shadow-xl flex items-center justify-center text-white transition-transform hover:scale-125">
-                                                    <span className="material-symbols-outlined text-sm font-bold">priority_high</span>
-                                                </div>
+                                        {(art.hotspots || []).map((hs, i) => {
+                                            const isActive = activeHotspot === i;
+                                            return (
+                                                <div
+                                                    key={i}
+                                                    className="absolute z-20 group/hs cursor-pointer group"
+                                                    style={{ left: `${hs.x}%`, top: `${hs.y}%` }}
+                                                    onClick={() => setActiveHotspot(isActive ? null : i)}
+                                                >
+                                                    {/* Pulse Animation */}
+                                                    <div className={`absolute inset-0 size-8 -translate-x-1/2 -translate-y-1/2 rounded-full ${isActive ? 'bg-amber-500/60 scale-125' : 'bg-primary/40'} animate-ping`}></div>
+                                                    <div className={`relative size-8 -translate-x-1/2 -translate-y-1/2 rounded-full border-4 shadow-xl flex items-center justify-center text-white transition-all duration-300 hover:scale-125 ${
+                                                        isActive 
+                                                            ? 'bg-amber-500 border-amber-200 dark:border-amber-900 scale-110' 
+                                                            : 'bg-primary border-white dark:border-slate-800'
+                                                    }`}>
+                                                        <span className="material-symbols-outlined text-sm font-bold">priority_high</span>
+                                                    </div>
 
-                                                {/* Tooltip Content */}
-                                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 w-64 p-4 bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-100 dark:border-slate-700 opacity-0 group-hover/hs:opacity-100 pointer-events-none transition-all duration-300 translate-y-2 group-hover/hs:translate-y-0 z-30">
-                                                    <h4 className="font-black text-slate-900 dark:text-white text-sm mb-1">{hs.title}</h4>
-                                                    <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed font-medium">{hs.desc}</p>
-                                                    <div className="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-white dark:border-t-slate-800"></div>
+                                                    {/* Tooltip Content */}
+                                                    <div className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-4 w-64 p-4 bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-100 dark:border-slate-700 transition-all duration-300 z-30 ${
+                                                        isActive 
+                                                            ? 'opacity-100 translate-y-0 pointer-events-auto scale-100' 
+                                                            : 'opacity-0 translate-y-2 pointer-events-none group-hover/hs:opacity-100 group-hover/hs:translate-y-0 group-hover/hs:pointer-events-auto'
+                                                    }`}>
+                                                        <h4 className="font-black text-slate-900 dark:text-white text-sm mb-1">{hs.title}</h4>
+                                                        <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed font-medium">{hs.desc}</p>
+                                                        <div className="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-white dark:border-t-slate-800"></div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        ))}
+                                            );
+                                        })}
 
                                         <div className="absolute bottom-6 left-6 text-white z-10">
                                             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="flex items-center gap-2 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full text-[10px] font-bold tracking-widest uppercase">
@@ -666,17 +679,34 @@ function DetailSeni({ art }) {
                                         </div>
 
                                         <div className="space-y-6">
-                                            {(art.hotspots || []).map((hs, i) => (
-                                                <div key={i} className="flex gap-4 group/item">
-                                                    <div className="size-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0 font-black text-sm group-hover/item:bg-primary group-hover/item:text-white transition-colors">
-                                                        {i + 1}
+                                            {(art.hotspots || []).map((hs, i) => {
+                                                const isActive = activeHotspot === i;
+                                                return (
+                                                    <div 
+                                                        key={i} 
+                                                        className={`flex gap-4 group/item cursor-pointer p-3 rounded-xl transition-all duration-350 ${
+                                                            isActive 
+                                                                ? 'bg-primary/10 border-l-4 border-primary pl-2 shadow-sm' 
+                                                                : 'hover:bg-slate-100/80 dark:hover:bg-slate-800/50'
+                                                        }`}
+                                                        onClick={() => setActiveHotspot(isActive ? null : i)}
+                                                    >
+                                                        <div className={`size-10 rounded-xl flex items-center justify-center shrink-0 font-black text-sm transition-colors ${
+                                                            isActive 
+                                                                ? 'bg-primary text-white scale-105' 
+                                                                : 'bg-primary/10 text-primary group-hover/item:bg-primary group-hover/item:text-white'
+                                                        }`}>
+                                                            {i + 1}
+                                                        </div>
+                                                        <div>
+                                                            <h4 className={`font-bold text-sm mb-1 transition-colors ${
+                                                                isActive ? 'text-primary dark:text-primary-light' : 'text-slate-900 dark:text-white'
+                                                            }`}>{hs.title}</h4>
+                                                            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">{hs.desc}</p>
+                                                        </div>
                                                     </div>
-                                                    <div>
-                                                        <h4 className="font-bold text-slate-900 dark:text-white text-sm mb-1">{hs.title}</h4>
-                                                        <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">{hs.desc}</p>
-                                                    </div>
-                                                </div>
-                                            ))}
+                                                );
+                                            })}
                                         </div>
 
                                         <div className="mt-12 p-5 rounded-2xl bg-primary/5 border border-primary/10">
