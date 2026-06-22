@@ -543,7 +543,7 @@ export default function PetaWarisan({ dynamicSites = [] }) {
                     {/* Background */}
                     <div
                         className="absolute inset-0 bg-cover bg-center"
-                        style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1524069290683-0457abfe42c3?w=1600&q=80")' }}
+                        style={{ backgroundImage: 'url("/images/warisan/eksplorasi-warisan-anak.webp")' }}
                     />
                     {/* Shadow overlay */}
                     <div className="absolute inset-0 bg-background-light/60 dark:bg-background-dark/70" />

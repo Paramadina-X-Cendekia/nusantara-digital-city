@@ -79,7 +79,7 @@ export default function EksplorasiSeni({ artworks: initialArtworks }) {
                     {/* Background */}
                     <div
                         className="absolute inset-0 bg-cover bg-center"
-                        style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuDDuSfqiJRkxODrddf-6RuvSwa01DTHoOUXdRKz2IR0jmKl3N8-UEPriuFB8PXZrIcLuDTsdqF1lYffYUP92PwhvcC8MnPKxJDMsS2QUtab1HMvnBSSy9AVXBCm8CYoTzRWfnPZd1Knj9tbbOnEKiMFndx9rZsXZzKufNUznJMvFwKnEAKzlawa4AljZQVO8K4EeS3i2pbCMSadufRenMCeah9onXIrmig6iiv3zhUVhq37UShohWH8StvAr58umrth1NQiUVOjaYhI")' }}
+                        style={{ backgroundImage: 'url("/images/seni/reog-ponorogo.webp")' }}
                     />
                     {/* Shadow overlay */}
                     <div className="absolute inset-0 bg-background-light/60 dark:bg-background-dark/70" />
