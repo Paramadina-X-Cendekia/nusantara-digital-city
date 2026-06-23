@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/Navbar';
@@ -15,15 +15,52 @@ const stagger = {
     visible: { opacity: 1, transition: { staggerChildren: 0.12 } }
 };
 
+/**
+ * Batik Parang + Kawung (royal/classical theme)
+ * Diagonal S-curves with Kawung circles and songket diamond accents.
+ * Different motif from the homepage (which uses combined Kawung+Mendung+Parang+Skyline).
+ */
+const getParangPattern = (dark) => {
+    const stroke = dark ? 'rgba(212,166,74,0.20)' : 'rgba(160,120,60,0.18)';
+    const stroke2 = dark ? 'rgba(184,115,51,0.15)' : 'rgba(140,100,50,0.13)';
+    const kawung = dark ? 'rgba(212,166,74,0.15)' : 'rgba(160,120,60,0.13)';
+    const fill = dark ? 'rgba(212,166,74,0.22)' : 'rgba(160,120,60,0.18)';
+    const dot = dark ? 'rgba(212,166,74,0.28)' : 'rgba(160,120,60,0.22)';
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100">`
+        + `<path d="M-5,50 C20,15 30,15 50,50 C70,85 80,85 105,50" fill="none" stroke="${stroke}" stroke-width="3" stroke-linecap="round"/>`
+        + `<path d="M-5,58 C20,23 30,23 50,58 C70,93 80,93 105,58" fill="none" stroke="${stroke2}" stroke-width="2" stroke-linecap="round"/>`
+        + `<path d="M45,0 C60,20 60,30 50,50 C40,70 40,80 55,100" fill="none" stroke="${stroke2}" stroke-width="2" stroke-linecap="round"/>`
+        + `<path d="M53,0 C68,20 68,30 58,50 C48,70 48,80 63,100" fill="none" stroke="${stroke2}" stroke-width="2" stroke-linecap="round"/>`
+        + `<ellipse cx="50" cy="50" rx="10" ry="6" fill="none" stroke="${kawung}" stroke-width="1.2"/>`
+        + `<ellipse cx="50" cy="50" rx="6" ry="10" fill="none" stroke="${kawung}" stroke-width="1.2"/>`
+        + `<path d="M50,46 L54,50 L50,54 L46,50 Z" fill="${fill}"/>`
+        + `<circle cx="50" cy="50" r="1.5" fill="${dot}"/>`
+        + `<path d="M25,25 L28,22 L31,25 L28,28 Z" fill="${fill}" opacity="0.7"/>`
+        + `<path d="M75,75 L78,72 L81,75 L78,78 Z" fill="${fill}" opacity="0.7"/>`
+        + `</svg>`;
+    return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+};
+
 export default function SitusBersejarah({ sites }) {
     const { t } = useLanguage();
+    const [isDark, setIsDark] = useState(false);
+
+    useEffect(() => {
+        const check = () => setIsDark(document.documentElement.classList.contains('dark'));
+        check();
+        const mo = new MutationObserver(check);
+        mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+        return () => mo.disconnect();
+    }, []);
 
     return (
         <div className="relative flex min-h-screen flex-col bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased transition-colors duration-300">
             <Head title={`Situs Bersejarah | Sinergi Nusa`} />
             <Navbar />
 
-            <main className="flex-grow">
+            <main className="relative flex-grow">
+                {/* Batik Parang + Kawung pattern overlay — inside main only, not Footer */}
+                <div className="absolute inset-0 pointer-events-none z-0" style={{ backgroundImage: getParangPattern(isDark), backgroundRepeat: 'repeat', backgroundAttachment: 'fixed' }} />
                 {/* ── Hero ── */}
                 <section className="relative py-20 overflow-hidden">
                     <div className="absolute inset-0 bg-primary/5 dark:bg-primary/10 -z-10"></div>

@@ -27,10 +27,40 @@ const fadeIn = {
     visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
 };
 
+/**
+ * Batik Megamendung (Cirebon) — layered cloud waves
+ * Used as a subtle full-page background pattern.
+ * Different motif from the homepage (which uses Kawung + Parang + Skyline).
+ */
+const getMegamendungPattern = (dark) => {
+    const c1 = dark ? 'rgba(90,160,220,0.20)' : 'rgba(40,90,150,0.18)';
+    const c2 = dark ? 'rgba(70,140,200,0.16)' : 'rgba(50,100,160,0.14)';
+    const c3 = dark ? 'rgba(50,120,180,0.13)' : 'rgba(60,110,170,0.11)';
+    const c4 = dark ? 'rgba(30,100,160,0.10)' : 'rgba(70,120,180,0.08)';
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="280" height="200">`
+        + `<path d="M0,65 C20,48 40,48 60,65 C80,82 100,82 120,65 C140,48 160,48 180,65 C200,82 220,82 240,65 C260,48 280,48 280,65" fill="none" stroke="${c1}" stroke-width="2.5" stroke-linecap="round"/>`
+        + `<path d="M0,80 C20,63 40,63 60,80 C80,97 100,97 120,80 C140,63 160,63 180,80 C200,97 220,97 240,80 C260,63 280,63 280,80" fill="none" stroke="${c2}" stroke-width="2" stroke-linecap="round"/>`
+        + `<path d="M0,95 C20,78 40,78 60,95 C80,112 100,112 120,95 C140,78 160,78 180,95 C200,112 220,112 240,95 C260,78 280,78 280,95" fill="none" stroke="${c3}" stroke-width="1.5" stroke-linecap="round"/>`
+        + `<path d="M0,110 C20,93 40,93 60,110 C80,127 100,127 120,110 C140,93 160,93 180,110 C200,127 220,127 240,110 C260,93 280,93 280,110" fill="none" stroke="${c4}" stroke-width="1" stroke-linecap="round"/>`
+        + `<path d="M-140,160 C-120,143 -100,143 -80,160 C-60,177 -40,177 -20,160 C0,143 20,143 40,160 C60,177 80,177 100,160 C120,143 140,143 160,160 C180,177 200,177 220,160 C240,143 260,143 280,160" fill="none" stroke="${c2}" stroke-width="1.5" stroke-linecap="round"/>`
+        + `<path d="M-140,175 C-120,158 -100,158 -80,175 C-60,192 -40,192 -20,175 C0,158 20,158 40,175 C60,192 80,192 100,175 C120,158 140,158 160,175 C180,192 200,192 220,175 C240,158 260,158 280,175" fill="none" stroke="${c4}" stroke-width="1" stroke-linecap="round"/>`
+        + `</svg>`;
+    return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+};
+
 export default function DaftarWisata({ dynamicDestinations = [] }) {
     const { t, lang } = useLanguage();
     const [search, setSearch] = useState('');
     const [filter, setFilter] = useState('semua');
+    const [isDark, setIsDark] = useState(false);
+
+    useEffect(() => {
+        const check = () => setIsDark(document.documentElement.classList.contains('dark'));
+        check();
+        const mo = new MutationObserver(check);
+        mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+        return () => mo.disconnect();
+    }, []);
     
     // Dynamic data from shared database — reactive to language changes
     const [destinations, setDestinations] = useState(() => {
@@ -57,11 +87,13 @@ export default function DaftarWisata({ dynamicDestinations = [] }) {
     });
 
     return (
-        <div className="flex min-h-screen flex-col bg-background-light dark:bg-background-dark transition-colors duration-300 antialiased font-display">
+        <div className="relative flex min-h-screen flex-col bg-background-light dark:bg-background-dark transition-colors duration-300 antialiased font-display">
             <Head title={`${t('wisata.daftar_title')} | Sinergi Nusa`} />
             <Navbar />
 
-            <main className="flex-grow pt-24 pb-16">
+            <main className="relative flex-grow pt-24 pb-16">
+                {/* Batik Megamendung pattern overlay — inside main only, not Footer */}
+                <div className="absolute inset-0 pointer-events-none z-0" style={{ backgroundImage: getMegamendungPattern(isDark), backgroundRepeat: 'repeat', backgroundAttachment: 'fixed' }} />
                 {/* Filters & Search (Sticky Wrapper) */}
                 <div className="sticky top-16 z-40 py-4 mb-12 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 transition-all duration-300">
                     <div className="container mx-auto px-4 lg:px-10">
