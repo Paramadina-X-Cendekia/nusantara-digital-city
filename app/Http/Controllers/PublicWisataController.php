@@ -89,12 +89,33 @@ class PublicWisataController extends Controller
 
         if ($snapshot->exists()) {
             $data = $snapshot->getValue();
-            $contributorInfo = $this->getContributorInfo(
-                $data['contributor_id'] ?? null,
-                $data['contributor'] ?? null,
-                $data['contributor_profession'] ?? null,
-                $data['contributor_badge'] ?? null
-            );
+            
+            $contributors = [];
+            if (isset($data['contributors']) && is_array($data['contributors'])) {
+                foreach ($data['contributors'] as $c) {
+                    $cInfo = $this->getContributorInfo(
+                        $c['id'] ?? null,
+                        $c['name'] ?? null,
+                        $c['profession'] ?? null,
+                        $c['badge'] ?? null
+                    );
+                    $contributors[] = array_merge($cInfo, [
+                        'id' => $c['id'] ?? null,
+                        'created_at' => $c['added_at'] ?? $c['created_at'] ?? null,
+                    ]);
+                }
+            } else {
+                $contributorInfo = $this->getContributorInfo(
+                    $data['contributor_id'] ?? null,
+                    $data['contributor'] ?? null,
+                    $data['contributor_profession'] ?? null,
+                    $data['contributor_badge'] ?? null
+                );
+                $contributors[] = array_merge($contributorInfo, [
+                    'id' => $data['contributor_id'] ?? null,
+                    'created_at' => $data['created_at'] ?? null,
+                ]);
+            }
 
             // Map Firebase data to destination structure
             $destination = [
@@ -109,13 +130,14 @@ class PublicWisataController extends Controller
                 'lat' => $data['lat'] ?? null,
                 'lng' => $data['lng'] ?? null,
                 'query' => ($data['tourismName'] ?? ($data['shopName'] ?? '')) . ' ' . ($data['city'] ?? ''),
-                'contributor' => $contributorInfo['name'],
-                'contributor_id' => $data['contributor_id'] ?? null,
-                'contributor_profession' => $contributorInfo['profession'],
-                'contributor_badge' => $contributorInfo['badge'],
-                'contributor_badge_icon' => $contributorInfo['badge_icon'] ?? ($data['contributor_badge_icon'] ?? null),
-                'contributor_badge_color' => $contributorInfo['badge_color'] ?? ($data['contributor_badge_color'] ?? null),
-                'created_at' => $data['created_at'] ?? null,
+                'contributors' => $contributors,
+                'contributor' => $contributors[0]['name'] ?? null,
+                'contributor_id' => $contributors[0]['id'] ?? null,
+                'contributor_profession' => $contributors[0]['profession'] ?? null,
+                'contributor_badge' => $contributors[0]['badge'] ?? null,
+                'contributor_badge_icon' => $contributors[0]['badge_icon'] ?? null,
+                'contributor_badge_color' => $contributors[0]['badge_color'] ?? null,
+                'created_at' => $contributors[0]['created_at'] ?? null,
             ];
         } else {
             // Fallback for base destinations (static data)
@@ -216,6 +238,19 @@ class PublicWisataController extends Controller
             foreach ($snapshot->getValue() as $id => $data) {
                 $status = $data['status'] ?? 'approved';
                 if (in_array($status, ['approved', 'Kontribusi', 'UNESCO', 'Warisan Nasional'])) {
+                    $contributors = $data['contributors'] ?? [];
+                    if (empty($contributors) && isset($data['contributor'])) {
+                        $contributors[] = [
+                            'id' => $data['contributor_id'] ?? null,
+                            'name' => $data['contributor'],
+                            'profession' => $data['contributor_profession'] ?? '-',
+                            'badge' => $data['contributor_badge'] ?? null,
+                            'badge_icon' => $data['contributor_badge_icon'] ?? null,
+                            'badge_color' => $data['contributor_badge_color'] ?? null,
+                            'added_at' => $data['created_at'] ?? null,
+                        ];
+                    }
+
                     $destinations[] = [
                         'id' => $id,
                         'name' => $data['tourismName'] ?? ($data['shopName'] ?? 'Untitled'),
@@ -228,6 +263,7 @@ class PublicWisataController extends Controller
                         'lat' => isset($data['lat']) ? (float)$data['lat'] : null,
                         'lng' => isset($data['lng']) ? (float)$data['lng'] : null,
                         'query' => ($data['tourismName'] ?? ($data['shopName'] ?? '')) . ' ' . ($data['city'] ?? ''),
+                        'contributors' => $contributors,
                     ];
                 }
             }

@@ -648,6 +648,23 @@ export default function PetaWarisan({ dynamicSites = [] }) {
                                         </div>
                                         <h2 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-slate-100 mb-4">{selected.name}</h2>
                                         <p className="text-slate-600 dark:text-slate-400 leading-relaxed mb-6">{loc(selected, 'desc', lang) || selected.desc}</p>
+                                        
+                                        {selected.contributors && selected.contributors.length > 0 && (
+                                            <div className="mb-6 pt-4 border-t border-slate-100 dark:border-slate-800">
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-450 mb-2">Kontributor ({selected.contributors.length})</p>
+                                                <div className="flex flex-wrap gap-2">
+                                                     {selected.contributors.map((c, idx) => (
+                                                         <div key={idx} className="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200/50 dark:border-slate-750 px-2.5 py-1.5 rounded-xl" title={`${c.name} (${c.profession || '-'})`}>
+                                                             <div className="size-5 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-[9px] shrink-0">
+                                                                 {c.name ? c.name.charAt(0).toUpperCase() : 'U'}
+                                                             </div>
+                                                             <span className="text-[10px] font-bold text-slate-600 dark:text-slate-300">{c.name}</span>
+                                                         </div>
+                                                     ))}
+                                                </div>
+                                            </div>
+                                        )}
+
                                         <div className="flex flex-wrap gap-3 mb-6">
                                             <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 text-xs font-bold text-primary border border-primary/20">
                                                 <span className="material-symbols-outlined text-sm">history</span> {selected.year}

@@ -19,8 +19,6 @@ export default function AdminDashboard({ auth, allContributions = [], pendingCou
     const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
     const [rejectionNote, setRejectionNote] = useState('');
     const [targetId, setTargetId] = useState(null);
-    const [adminRating, setAdminRating] = useState(0);
-    const [isDuplicate, setIsDuplicate] = useState(false);
 
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [deleteTargetId, setDeleteTargetId] = useState(null);
@@ -32,8 +30,6 @@ export default function AdminDashboard({ auth, allContributions = [], pendingCou
                 setIsRejectModalOpen(false);
                 setRejectionNote('');
                 setIsModalOpen(false);
-                setAdminRating(0);
-                setIsDuplicate(false);
             }
         });
     };
@@ -235,7 +231,6 @@ export default function AdminDashboard({ auth, allContributions = [], pendingCou
                                                 <div className="flex items-center gap-3">
                                                     <div className="flex flex-col gap-1">
                                                         <span className="text-[10px] font-bold text-slate-400 ">{t('dashboard.processed')}</span>
-                                                        {c.admin_rating > 0 && <span className="text-[9px] text-orange-400 flex items-center gap-0.5 font-bold"><span className="material-symbols-outlined text-[12px]">star</span> {c.admin_rating}</span>}
                                                     </div>
                                                     <button
                                                         onClick={() => confirmDelete(c.id)}
@@ -317,35 +312,9 @@ export default function AdminDashboard({ auth, allContributions = [], pendingCou
                 {/* Moderation Controls injected into DetailModal context or displayed after */}
                 {selectedContribution?.status === 'pending' && (
                     <div className="mt-8 pt-8 border-t border-slate-100 dark:border-slate-800 space-y-6">
-                        <div className="flex flex-wrap items-center justify-between gap-4">
-                            <div className="space-y-2">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">{t('modal.rating_label')}</label>
-                                <div className="flex items-center gap-1">
-                                    {[1, 2, 3, 4, 5].map((star) => (
-                                        <button
-                                            key={star}
-                                            onClick={() => setAdminRating(star)}
-                                            className={`size-10 rounded-xl flex items-center justify-center transition-all ${adminRating >= star ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/20' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}
-                                        >
-                                            <span className="material-symbols-outlined text-lg">star</span>
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <div className="space-y-1 text-right">
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{t('modal.duplicate_label')}</p>
-                                    <label className="relative inline-flex items-center cursor-pointer">
-                                        <input type="checkbox" checked={isDuplicate} onChange={(e) => setIsDuplicate(e.target.checked)} className="sr-only peer" />
-                                        <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
                         <div className="flex items-center gap-3 pt-4">
                             <button
-                                onClick={() => handleAction(selectedContribution.id, 'approve', { admin_rating: adminRating, is_duplicate: isDuplicate })}
+                                onClick={() => handleAction(selectedContribution.id, 'approve')}
                                 className="flex-1 py-4 bg-emerald-500 text-white rounded-2xl font-black  shadow-xl shadow-emerald-500/20 hover:bg-emerald-600 transition-all flex items-center justify-center gap-3"
                             >
                                 <span className="material-symbols-outlined text-lg">verified</span>

@@ -22,8 +22,8 @@ class ModerationController extends Controller
         
         $contribution->update([
             'status' => 'approved',
-            'admin_rating' => $request->input('admin_rating', 0),
-            'is_duplicate' => $request->boolean('is_duplicate', false),
+            'admin_rating' => 0,
+            'is_duplicate' => false,
         ]);
 
         // Sync to Firebase for public visibility
@@ -54,7 +54,6 @@ class ModerationController extends Controller
                 $query->where('status', 'rejected');
             }
         ])
-        ->withAvg('contributions as average_rating', 'admin_rating')
         ->whereHas('contributions')
         ->get();
 
@@ -143,20 +142,107 @@ class ModerationController extends Controller
         return back()->with('success', 'Kontribusi berhasil dihapus sepenuhnya!');
     }
 
+    protected function saveOrMergeFirebase($node, $data, $user, $nameField, $keyValue = null)
+    {
+        $newName = $data[$nameField] ?? '';
+        $existingKey = null;
+        $existingData = null;
+
+        if ($keyValue !== null) {
+            // Direct lookup for specific slug/key, like in seni_budaya
+            $snapshot = $this->database->getReference($node . '/' . $keyValue)->getSnapshot();
+            if ($snapshot->exists()) {
+                $existingKey = $keyValue;
+                $existingData = $snapshot->getValue();
+            }
+        } else {
+            // Scan node for matching name/title
+            $snapshot = $this->database->getReference($node)->getSnapshot();
+            if ($snapshot->hasChildren()) {
+                foreach ($snapshot->getValue() as $key => $val) {
+                    $existingName = $val[$nameField] ?? ($node === 'cities' ? ($val['cityName'] ?? '') : ($val['shopName'] ?? ($val['title'] ?? '')));
+                    if (!empty($newName) && strcasecmp($existingName, $newName) === 0) {
+                        $existingKey = $key;
+                        $existingData = $val;
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Construct new contributor entry
+        $contributorEntry = [
+            'id' => $user->id,
+            'name' => $user->name,
+            'profession' => $user->profession ?? '-',
+            'badge' => $user->badge,
+            'badge_icon' => $user->badge_info['icon'] ?? null,
+            'badge_color' => $user->badge_info['color'] ?? null,
+            'added_at' => now()->toDateTimeString()
+        ];
+
+        if ($existingKey !== null) {
+            // Merge: Add to contributors list
+            $contributors = $existingData['contributors'] ?? [];
+            if (empty($contributors)) {
+                // Fallback: convert old single contributor fields if they exist
+                if (isset($existingData['contributor'])) {
+                    $contributors[] = [
+                        'id' => $existingData['contributor_id'] ?? null,
+                        'name' => $existingData['contributor'],
+                        'profession' => $existingData['contributor_profession'] ?? '-',
+                        'badge' => $existingData['contributor_badge'] ?? null,
+                        'badge_icon' => $existingData['contributor_badge_icon'] ?? null,
+                        'badge_color' => $existingData['contributor_badge_color'] ?? null,
+                        'added_at' => $existingData['created_at'] ?? null,
+                    ];
+                }
+            }
+
+            // Add new contributor if not already in list
+            $alreadyExists = false;
+            foreach ($contributors as $c) {
+                if (isset($c['id']) && $c['id'] == $user->id) {
+                    $alreadyExists = true;
+                    break;
+                }
+            }
+            if (!$alreadyExists) {
+                $contributors[] = $contributorEntry;
+            }
+
+            $existingData['contributors'] = $contributors;
+            
+            // Save merged data back to Firebase
+            $this->database->getReference($node . '/' . $existingKey)->set($existingData);
+            return $existingKey;
+        } else {
+            // Insert new: set up initial contributors array
+            $data['contributors'] = [$contributorEntry];
+            // Also set fallback single contributor for backward compatibility
+            $data['contributor'] = $user->name;
+            $data['contributor_id'] = $user->id;
+            $data['contributor_profession'] = $user->profession ?? '-';
+            $data['contributor_badge'] = $user->badge;
+            $data['contributor_badge_icon'] = $user->badge_info['icon'] ?? null;
+            $data['contributor_badge_color'] = $user->badge_info['color'] ?? null;
+            $data['created_at'] = now()->toDateTimeString();
+
+            if ($keyValue !== null) {
+                $this->database->getReference($node . '/' . $keyValue)->set($data);
+                return $keyValue;
+            } else {
+                $ref = $this->database->getReference($node)->push($data);
+                return $ref->getKey();
+            }
+        }
+    }
+
     protected function syncToFirebase($contribution)
     {
         $type = $contribution->type;
         $data = $contribution->data;
-
-        // Add metadata to the data
         $user = $contribution->user;
-        $data['contributor'] = $user->name;
-        $data['contributor_id'] = $user->id;
-        $data['contributor_profession'] = $user->profession ?? '-';
-        $data['contributor_badge'] = $user->badge;
-        $data['contributor_badge_icon'] = $user->badge_info['icon'];
-        $data['contributor_badge_color'] = $user->badge_info['color'];
-        $data['created_at'] = now()->toDateTimeString();
 
         // Clean up culinary data if features are disabled
         if (str_contains($type, 'kuliner')) {
@@ -194,7 +280,7 @@ class ModerationController extends Controller
 
         $firebaseKeys = [];
 
-        // Handle composite types: split and push to both nodes
+        // Handle composite types: split and push/merge to both nodes
         if ($type === 'kota_budaya' || $type === 'kota_kuliner') {
             $kotaData = [
                 'name' => $data['cityName'] ?? '',
@@ -205,21 +291,20 @@ class ModerationController extends Controller
                 'lng' => $data['lng'] ?? null,
                 'website' => $data['website'] ?? null,
                 'mainImageUrl' => $data['mainImageUrl'] ?? null,
-                'contributor' => $data['contributor'],
-                'created_at' => $data['created_at'],
             ];
-            // Push logic for city
-            $cityRef = $this->database->getReference('cities')->push($kotaData);
-            $firebaseKeys['cities'] = $cityRef->getKey();
+            
+            // Save or merge city data
+            $cityKey = $this->saveOrMergeFirebase('cities', $kotaData, $user, 'name');
+            $firebaseKeys['cities'] = $cityKey;
 
-            // Push specific sub-category data
+            // Push/merge specific sub-category data
             if ($type === 'kota_budaya') {
                 if (isset($data['era'])) $data['year'] = $data['era'];
-                $this->database->getReference('seni_budaya/' . $slug)->set($data);
-                $firebaseKeys['seni_budaya'] = $slug;
+                $budayaKey = $this->saveOrMergeFirebase('seni_budaya', $data, $user, 'artName', $slug);
+                $firebaseKeys['seni_budaya'] = $budayaKey;
             } else {
-                $wisataRef = $this->database->getReference('wisata_kuliner')->push($data);
-                $firebaseKeys['wisata_kuliner'] = $wisataRef->getKey();
+                $wisataKey = $this->saveOrMergeFirebase('wisata_kuliner', $data, $user, 'shopName');
+                $firebaseKeys['wisata_kuliner'] = $wisataKey;
             }
             
             $contribution->update([
@@ -237,6 +322,14 @@ class ModerationController extends Controller
         ];
 
         $node = $nodes[$type] ?? 'misc';
+        
+        $nameFields = [
+            'kota' => 'cityName',
+            'budaya' => 'artName',
+            'wisata' => 'tourismName',
+            'kuliner' => 'shopName',
+        ];
+        $nameField = $nameFields[$type] ?? 'name';
 
         // Map era to year for compatibility with existing frontend
         if ($type === 'budaya' && isset($data['era'])) {
@@ -244,11 +337,11 @@ class ModerationController extends Controller
         }
 
         if ($type === 'budaya') {
-            $this->database->getReference('seni_budaya/' . $slug)->set($data);
-            $firebaseKeys['seni_budaya'] = $slug;
+            $budayaKey = $this->saveOrMergeFirebase('seni_budaya', $data, $user, 'artName', $slug);
+            $firebaseKeys['seni_budaya'] = $budayaKey;
         } else {
-            $ref = $this->database->getReference($node)->push($data);
-            $firebaseKeys[$node] = $ref->getKey();
+            $key = $this->saveOrMergeFirebase($node, $data, $user, $nameField);
+            $firebaseKeys[$node] = $key;
         }
 
         $contribution->update([

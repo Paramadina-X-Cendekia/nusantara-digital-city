@@ -25,7 +25,6 @@ export default function ContributorProfiles({ auth, profiles = [] }) {
                                     <th className="px-8 py-4 text-center">{t('dashboard.profiles_table_total')}</th>
                                     <th className="px-8 py-4 text-center">{t('dashboard.profiles_table_approved')}</th>
                                     <th className="px-8 py-4 text-center">{t('dashboard.profiles_table_rejected')}</th>
-                                    <th className="px-8 py-4 text-center">{t('dashboard.profiles_table_avg_rating')}</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -55,12 +54,7 @@ export default function ContributorProfiles({ auth, profiles = [] }) {
                                                 {profile.rejected_contributions}
                                             </span>
                                         </td>
-                                        <td className="px-8 py-5 text-center">
-                                            <div className="flex items-center justify-center gap-1">
-                                                <span className="material-symbols-outlined text-orange-400 text-sm">star</span>
-                                                <span className="font-bold text-sm">{profile.average_rating ? Number(profile.average_rating).toFixed(1) : '0.0'}</span>
-                                            </div>
-                                        </td>
+
                                     </tr>
                                 )) : (
                                     <tr>

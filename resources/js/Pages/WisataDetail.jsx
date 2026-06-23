@@ -109,24 +109,25 @@ export default function WisataDetail({ slug, initialDestination }) {
                     autoPanPadding={[150, 150]}
                     keepInView={true}
                 >
-                    <div className="w-64 sm:w-72 overflow-hidden rounded-xl bg-white dark:bg-slate-900 shadow-2xl">
-                        <div className="h-32 relative">
-                            <img
+                    <div className="w-64 sm:w-72 overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-2xl border border-slate-100 dark:border-slate-800">
+                        <div className="h-36 relative">
+                            <ImageWithFallback
                                 src={destination.img || destination.defaultImg}
                                 alt={destination.name}
                                 className="w-full h-full object-cover"
+                                fallbackIcon="landscape"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                            <span className="absolute bottom-2 left-3 text-white font-black text-xs uppercase tracking-widest">
+                            <div className="absolute inset-0 bg-gradient-to-t from-slate-900/70 to-transparent"></div>
+                            <span className="absolute bottom-3 left-4 text-white font-black text-[10px] uppercase tracking-widest bg-primary/80 backdrop-blur-md px-2.5 py-1 rounded-md">
                                 {t(`wisata.${CATEGORY_MAP[destination.category?.toLowerCase()] || destination.category}`)}
                             </span>
                         </div>
-                        <div className="p-4">
-                            <h4 className="font-black text-slate-900 dark:text-white leading-tight mb-1">
+                        <div className="p-5">
+                            <h4 className="font-black text-base text-slate-900 dark:text-white leading-snug mb-1.5">
                                 {destination.name}
                             </h4>
-                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-3 flex items-center gap-1">
-                                <span className="material-symbols-outlined text-xs">
+                            <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider mb-4 flex items-center gap-1">
+                                <span className="material-symbols-outlined text-xs text-primary">
                                     location_on
                                 </span>
                                 {destination.location}
@@ -135,10 +136,10 @@ export default function WisataDetail({ slug, initialDestination }) {
                                 href={`https://www.google.com/maps/dir/?api=1&destination=${destination.lat},${destination.lng}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                aria-label={`Dapatkan rute perjalanan ke ${destination.name}`}
-                                className="block w-full text-center bg-slate-900 dark:bg-white text-white py-2.5 rounded-xl text-[10px] font-black uppercase hover:bg-slate-800 dark:hover:bg-white/90 transition-all shadow-xl shadow-slate-900/10 dark:shadow-primary/20"
+                                aria-label={lang === 'id' ? `Dapatkan rute perjalanan ke ${destination.name}` : `Get directions to ${destination.name}`}
+                                className="block w-full text-center bg-primary hover:bg-primary/95 text-white dark:text-white py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg shadow-primary/20 hover:shadow-primary/30"
                             >
-                                Get Directions
+                                {lang === 'id' ? 'Dapatkan Rute' : 'Get Directions'}
                             </a>
                         </div>
                     </div>
@@ -165,7 +166,7 @@ export default function WisataDetail({ slug, initialDestination }) {
             <Head title={`${destination.name} | Sinergi Nusa`} />
             <Navbar />
 
-            <main className="flex-grow pt-16">
+            <main className="flex-grow">
                 {/* ── Hero Section ── */}
                 <div className="relative h-[60vh] md:h-[70vh] w-full overflow-hidden">
                     <motion.div
@@ -300,19 +301,23 @@ export default function WisataDetail({ slug, initialDestination }) {
                                         </div>
                                     )}
 
-                                    <div className="absolute bottom-6 left-6 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl max-w-sm overflow-hidden">
-                                        <h4 className="font-bold text-slate-900 dark:text-white mb-2">
-                                            Real-time Location Services
+                                    <div className="absolute bottom-4 left-4 right-4 sm:right-auto sm:bottom-6 sm:left-6 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl sm:max-w-sm overflow-hidden z-20 transition-all duration-300">
+                                        <h4 className="font-black text-slate-900 dark:text-white mb-1.5 flex items-center gap-2 text-xs sm:text-sm uppercase tracking-tight">
+                                            <span className="relative flex h-2 w-2">
+                                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                                            </span>
+                                            {lang === 'id' ? 'Layanan Lokasi Real-time' : 'Real-time Location Services'}
                                         </h4>
-                                        <p className="text-xs text-slate-500 mb-4 font-mono">
-                                            Precision: High | Sync: Live
+                                        <p className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 mb-4 font-mono">
+                                            {lang === 'id' ? 'Akurasi: Tinggi | Sinkronisasi: Aktif' : 'Precision: High | Sync: Live'}
                                         </p>
                                         <Link
                                             href="/peta-wisata"
-                                            className="text-primary text-sm font-black hover:underline flex items-center gap-2"
+                                            className="inline-flex items-center gap-1.5 text-primary text-xs font-black hover:underline uppercase tracking-wider"
                                         >
-                                            Open Full Interactive Map{" "}
-                                            <span className="material-symbols-outlined text-sm font-bold">
+                                            {lang === 'id' ? 'Buka Peta Interaktif Lengkap' : 'Open Full Interactive Map'}{" "}
+                                            <span className="material-symbols-outlined text-xs sm:text-sm font-bold">
                                                 arrow_outward
                                             </span>
                                         </Link>
@@ -324,7 +329,58 @@ export default function WisataDetail({ slug, initialDestination }) {
                         {/* Sidebar */}
                         <div className="space-y-8">
                             {/* Contributor Card */}
-                            {destination.contributor && (
+                            {destination.contributors && destination.contributors.length > 0 ? (
+                                <div className="bg-white dark:bg-surface-dark rounded-3xl p-8 border border-slate-200 dark:border-slate-800 shadow-xl space-y-6">
+                                    <h3 className="font-black text-slate-900 dark:text-white text-xl mb-2 uppercase tracking-tight">
+                                        Kontributor ({destination.contributors.length})
+                                    </h3>
+                                    <div className="divide-y divide-slate-100 dark:divide-slate-850">
+                                        {destination.contributors.map((c, idx) => (
+                                            <div key={idx} className={`flex flex-col py-4 ${idx === 0 ? 'pt-0' : ''} ${idx === destination.contributors.length - 1 ? 'pb-0' : ''}`}>
+                                                <div className="flex items-center gap-4">
+                                                    <div className="size-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0 relative overflow-hidden">
+                                                        <span className="material-symbols-outlined text-2xl font-bold">
+                                                            person
+                                                        </span>
+                                                        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent"></div>
+                                                    </div>
+                                                    <div className="flex flex-col min-w-0">
+                                                        <p className="font-black text-slate-900 dark:text-white uppercase tracking-tight leading-tight mb-1 truncate text-sm">
+                                                            {c.name}
+                                                        </p>
+                                                        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider truncate">
+                                                            {c.profession || "-"}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div className="mt-3 flex items-center gap-2">
+                                                    <span
+                                                        className="material-symbols-outlined text-xs font-bold"
+                                                        style={{ color: c.badge_color || "#F59E0B" }}
+                                                    >
+                                                        {c.badge_icon || "explore"}
+                                                    </span>
+                                                    <span
+                                                        className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 bg-slate-50 dark:bg-slate-850 rounded-md border border-slate-100 dark:border-slate-800"
+                                                        style={{ color: c.badge_color || "#F59E0B" }}
+                                                    >
+                                                        {c.badge || "Perintis Sinergi"}
+                                                    </span>
+                                                    <span className="text-[9px] text-slate-400 font-medium ml-auto">
+                                                        {c.created_at
+                                                            ? new Date(c.created_at).toLocaleDateString("id-ID", {
+                                                                year: "numeric",
+                                                                month: "short",
+                                                                day: "numeric",
+                                                            })
+                                                            : "Maret 2024"}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            ) : destination.contributor && (
                                 <div className="bg-white dark:bg-surface-dark rounded-3xl p-8 border border-slate-200 dark:border-slate-800 shadow-xl">
                                     <h3 className="font-black text-slate-900 dark:text-white text-xl mb-6 uppercase tracking-tight">
                                         Kontributor

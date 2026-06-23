@@ -325,19 +325,40 @@ class SeniController extends Controller
 
                 $art = array_merge($art, $firebaseData);
 
-                // Fetch current badge info
-                $contributorInfo = $this->getContributorInfo(
-                    $firebaseData['contributor_id'] ?? null,
-                    $firebaseData['contributor'] ?? null,
-                    $firebaseData['contributor_profession'] ?? null,
-                    $firebaseData['contributor_badge'] ?? null
-                );
+                $contributors = [];
+                if (isset($firebaseData['contributors']) && is_array($firebaseData['contributors'])) {
+                    foreach ($firebaseData['contributors'] as $c) {
+                        $cInfo = $this->getContributorInfo(
+                            $c['id'] ?? null,
+                            $c['name'] ?? null,
+                            $c['profession'] ?? null,
+                            $c['badge'] ?? null
+                        );
+                        $contributors[] = array_merge($cInfo, [
+                            'id' => $c['id'] ?? null,
+                            'created_at' => $c['added_at'] ?? $c['created_at'] ?? null,
+                        ]);
+                    }
+                } else {
+                    $contributorInfo = $this->getContributorInfo(
+                        $firebaseData['contributor_id'] ?? null,
+                        $firebaseData['contributor'] ?? null,
+                        $firebaseData['contributor_profession'] ?? null,
+                        $firebaseData['contributor_badge'] ?? null
+                    );
+                    $contributors[] = array_merge($contributorInfo, [
+                        'id' => $firebaseData['contributor_id'] ?? null,
+                        'created_at' => $firebaseData['created_at'] ?? null,
+                    ]);
+                }
 
-                $art['contributor'] = $contributorInfo['name'];
-                $art['contributor_profession'] = $contributorInfo['profession'];
-                $art['contributor_badge'] = $contributorInfo['badge'];
-                $art['contributor_badge_icon'] = $contributorInfo['badge_icon'] ?? ($firebaseData['contributor_badge_icon'] ?? null);
-                $art['contributor_badge_color'] = $contributorInfo['badge_color'] ?? ($firebaseData['contributor_badge_color'] ?? null);
+                $art['contributors'] = $contributors;
+                $art['contributor'] = $contributors[0]['name'] ?? null;
+                $art['contributor_profession'] = $contributors[0]['profession'] ?? null;
+                $art['contributor_badge'] = $contributors[0]['badge'] ?? null;
+                $art['contributor_badge_icon'] = $contributors[0]['badge_icon'] ?? null;
+                $art['contributor_badge_color'] = $contributors[0]['badge_color'] ?? null;
+                $art['created_at'] = $contributors[0]['created_at'] ?? null;
             }
         } catch (\Exception $e) {
             // Firebase not configured — use local data silently

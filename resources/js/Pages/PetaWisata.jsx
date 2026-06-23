@@ -794,6 +794,22 @@ export default function PetaWisata({ dynamicDestinations = [] }) {
                                             <h4 className="text-base font-black text-white uppercase tracking-tight leading-tight">{selected.name}</h4>
                                             <p className="text-slate-350 text-xs leading-relaxed line-clamp-3 font-medium">{selected.desc}</p>
                                             
+                                            {selected.contributors && selected.contributors.length > 0 && (
+                                                <div className="pt-3 border-t border-slate-800/60">
+                                                    <p className="text-[8px] font-black uppercase tracking-widest text-slate-500 mb-2">Kontributor ({selected.contributors.length})</p>
+                                                    <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto custom-scrollbar">
+                                                        {selected.contributors.map((c, idx) => (
+                                                            <div key={idx} className="flex items-center gap-1.5 bg-slate-900/80 border border-slate-800/80 px-2 py-1 rounded-xl" title={`${c.name} (${c.profession || '-'})`}>
+                                                                <div className="size-5 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-[9px] shrink-0">
+                                                                    {c.name ? c.name.charAt(0).toUpperCase() : 'U'}
+                                                                </div>
+                                                                <span className="text-[9px] font-bold text-slate-300 truncate max-w-[80px]">{c.name}</span>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+
                                             <div className="pt-4 border-t border-slate-800/80 flex items-center justify-between gap-3">
                                                 <div className="text-[9px] font-mono text-slate-500 leading-normal">
                                                     LAT: {selected.lat ? selected.lat.toFixed(4) : '-'}<br/>

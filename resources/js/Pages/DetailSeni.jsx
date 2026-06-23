@@ -552,7 +552,45 @@ function DetailSeni({ art }) {
                         </motion.div>
                         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeIn}>
                             {/* Contributor Card */}
-                            {art.contributor && (
+                            {art.contributors && art.contributors.length > 0 ? (
+                                <div className="bg-white dark:bg-surface-dark rounded-2xl border border-slate-200 dark:border-slate-800 p-6 mb-6 space-y-4">
+                                    <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100 mb-2 flex items-center gap-2 uppercase tracking-tight">
+                                        Kontributor ({art.contributors.length})
+                                    </h3>
+                                    <div className="divide-y divide-slate-105 dark:divide-slate-800">
+                                        {art.contributors.map((c, idx) => (
+                                            <div key={idx} className={`flex flex-col py-3.5 ${idx === 0 ? 'pt-0' : ''} ${idx === art.contributors.length - 1 ? 'pb-0' : ''}`}>
+                                                <div className="flex items-center gap-3">
+                                                    <div className="size-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0 relative overflow-hidden">
+                                                        <span className="material-symbols-outlined text-xl">person</span>
+                                                    </div>
+                                                    <div className="flex flex-col min-w-0">
+                                                        <p className="font-black text-slate-900 dark:text-white text-xs uppercase tracking-tight leading-tight mb-0.5 truncate">{c.name}</p>
+                                                        <p className="text-[9px] text-slate-500 font-bold uppercase tracking-wider truncate">{c.profession || '-'}</p>
+                                                    </div>
+                                                </div>
+                                                <div className="mt-2.5 flex items-center gap-2">
+                                                    <span className="material-symbols-outlined text-xs font-bold" style={{ color: c.badge_color || '#F59E0B' }}>
+                                                        {c.badge_icon || 'explore'}
+                                                    </span>
+                                                    <span className="text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 bg-slate-50 dark:bg-slate-800 rounded border border-slate-100 dark:border-slate-700" style={{ color: c.badge_color || '#F59E0B' }}>
+                                                        {c.badge || 'Nusantara Pioneer'}
+                                                    </span>
+                                                    <span className="text-[9px] text-slate-400 font-medium ml-auto">
+                                                        {c.created_at
+                                                            ? new Date(c.created_at).toLocaleDateString("id-ID", {
+                                                                year: "numeric",
+                                                                month: "short",
+                                                                day: "numeric",
+                                                            })
+                                                            : "Maret 2024"}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            ) : art.contributor && (
                                 <div className="bg-white dark:bg-surface-dark rounded-2xl border border-slate-200 dark:border-slate-800 p-6 mb-6">
                                     <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100 mb-4 flex items-center gap-2 uppercase tracking-tight">
                                         Kontributor

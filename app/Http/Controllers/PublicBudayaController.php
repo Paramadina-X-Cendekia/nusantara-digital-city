@@ -147,12 +147,32 @@ class PublicBudayaController extends Controller
         if ($snapshot->exists()) {
             $data = $snapshot->getValue();
             if (isset($data['artCategory']) && $data['artCategory'] === 'sejarah') {
-                $contributorInfo = $this->getContributorInfo(
-                    $data['contributor_id'] ?? null,
-                    $data['contributor'] ?? null,
-                    $data['contributor_profession'] ?? null,
-                    $data['contributor_badge'] ?? null
-                );
+                $contributors = [];
+                if (isset($data['contributors']) && is_array($data['contributors'])) {
+                    foreach ($data['contributors'] as $c) {
+                        $cInfo = $this->getContributorInfo(
+                            $c['id'] ?? null,
+                            $c['name'] ?? null,
+                            $c['profession'] ?? null,
+                            $c['badge'] ?? null
+                        );
+                        $contributors[] = array_merge($cInfo, [
+                            'id' => $c['id'] ?? null,
+                            'created_at' => $c['added_at'] ?? $c['created_at'] ?? null,
+                        ]);
+                    }
+                } else {
+                    $contributorInfo = $this->getContributorInfo(
+                        $data['contributor_id'] ?? null,
+                        $data['contributor'] ?? null,
+                        $data['contributor_profession'] ?? null,
+                        $data['contributor_badge'] ?? null
+                    );
+                    $contributors[] = array_merge($contributorInfo, [
+                        'id' => $data['contributor_id'] ?? null,
+                        'created_at' => $data['created_at'] ?? null,
+                    ]);
+                }
 
                 $landmark = [
                     'name' => $data['artName'] ?? 'Untitled',
@@ -169,13 +189,14 @@ class PublicBudayaController extends Controller
                     'lat' => $data['lat'] ?? null,
                     'lng' => $data['lng'] ?? null,
                     'archiveUrl' => $data['archiveUrl'] ?? null,
-                    'contributor' => $contributorInfo['name'],
-                    'contributor_id' => $data['contributor_id'] ?? null,
-                    'contributor_profession' => $contributorInfo['profession'],
-                    'contributor_badge' => $contributorInfo['badge'],
-                    'contributor_badge_icon' => $contributorInfo['badge_icon'] ?? ($data['contributor_badge_icon'] ?? null),
-                    'contributor_badge_color' => $contributorInfo['badge_color'] ?? ($data['contributor_badge_color'] ?? null),
-                    'created_at' => $data['created_at'] ?? null,
+                    'contributors' => $contributors,
+                    'contributor' => $contributors[0]['name'] ?? null,
+                    'contributor_id' => $contributors[0]['id'] ?? null,
+                    'contributor_profession' => $contributors[0]['profession'] ?? null,
+                    'contributor_badge' => $contributors[0]['badge'] ?? null,
+                    'contributor_badge_icon' => $contributors[0]['badge_icon'] ?? null,
+                    'contributor_badge_color' => $contributors[0]['badge_color'] ?? null,
+                    'created_at' => $contributors[0]['created_at'] ?? null,
                 ];
             }
         }
@@ -206,6 +227,19 @@ class PublicBudayaController extends Controller
             foreach ($budayaSnapshot->getValue() as $id => $data) {
                 $status = $data['status'] ?? 'approved';
                 if (in_array($status, ['approved', 'Kontribusi', 'UNESCO', 'Warisan Nasional'])) {
+                    $contributors = $data['contributors'] ?? [];
+                    if (empty($contributors) && isset($data['contributor'])) {
+                        $contributors[] = [
+                            'id' => $data['contributor_id'] ?? null,
+                            'name' => $data['contributor'],
+                            'profession' => $data['contributor_profession'] ?? '-',
+                            'badge' => $data['contributor_badge'] ?? null,
+                            'badge_icon' => $data['contributor_badge_icon'] ?? null,
+                            'badge_color' => $data['contributor_badge_color'] ?? null,
+                            'added_at' => $data['created_at'] ?? null,
+                        ];
+                    }
+
                     $mapSites[] = [
                         'id' => $id,
                         'name' => $data['artName'] ?? 'Untitled',
@@ -218,7 +252,8 @@ class PublicBudayaController extends Controller
                         'lng' => isset($data['lng']) ? (float)$data['lng'] : null,
                         'img' => $data['mainImageUrl'] ?? ($data['imageUrl'] ?? ''),
                         'year' => $data['year'] ?? $data['era'] ?? 'Tradisional',
-                        'status' => 'Verified'
+                        'status' => 'Verified',
+                        'contributors' => $contributors,
                     ];
                 }
             }

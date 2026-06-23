@@ -175,7 +175,58 @@ export default function LandmarkDetail({ landmark }) {
 
                                 <div className="space-y-8">
                                     {/* Contributor Card */}
-                                    {landmark.contributor && (
+                                    {landmark.contributors && landmark.contributors.length > 0 ? (
+                                        <div className="bg-white dark:bg-surface-dark rounded-3xl p-8 border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
+                                            <h3 className="font-black text-slate-900 dark:text-slate-100 text-xl mb-2 uppercase tracking-tight">
+                                                Kontributor ({landmark.contributors.length})
+                                            </h3>
+                                            <div className="divide-y divide-slate-100 dark:divide-slate-850">
+                                                {landmark.contributors.map((c, idx) => (
+                                                    <div key={idx} className={`flex flex-col py-4 ${idx === 0 ? 'pt-0' : ''} ${idx === landmark.contributors.length - 1 ? 'pb-0' : ''}`}>
+                                                        <div className="flex items-center gap-4">
+                                                            <div className="size-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0 relative overflow-hidden">
+                                                                <span className="material-symbols-outlined text-2xl font-bold">
+                                                                    person
+                                                                </span>
+                                                                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent"></div>
+                                                            </div>
+                                                            <div className="flex flex-col min-w-0">
+                                                                <p className="font-black text-slate-900 dark:text-white uppercase tracking-tight leading-tight mb-1 truncate text-sm">
+                                                                    {c.name}
+                                                                </p>
+                                                                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider truncate">
+                                                                    {c.profession || "-"}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <div className="mt-3 flex items-center gap-2">
+                                                            <span
+                                                                className="material-symbols-outlined text-xs font-bold"
+                                                                style={{ color: c.badge_color || "#F59E0B" }}
+                                                            >
+                                                                {c.badge_icon || "explore"}
+                                                            </span>
+                                                            <span
+                                                                className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 bg-slate-50 dark:bg-slate-850 rounded-md border border-slate-100 dark:border-slate-800"
+                                                                style={{ color: c.badge_color || "#F59E0B" }}
+                                                            >
+                                                                {c.badge || "Perintis Sinergi"}
+                                                            </span>
+                                                            <span className="text-[9px] text-slate-400 font-medium ml-auto">
+                                                                {c.created_at
+                                                                    ? new Date(c.created_at).toLocaleDateString("id-ID", {
+                                                                        year: "numeric",
+                                                                        month: "short",
+                                                                        day: "numeric",
+                                                                    })
+                                                                    : "Maret 2024"}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ) : landmark.contributor && (
                                         <div className="bg-white dark:bg-surface-dark rounded-3xl p-8 border border-slate-200 dark:border-slate-800 shadow-sm">
                                             <h3 className="font-black text-slate-900 dark:text-slate-100 text-xl mb-6 uppercase tracking-tight">Kontributor</h3>
                                             <div className="flex items-center gap-4">
