@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/Navbar';
@@ -15,21 +15,62 @@ const stagger = {
     visible: { opacity: 1, transition: { staggerChildren: 0.12 } }
 };
 
+/**
+ * Batik Parang + Kawung (royal/classical theme)
+ * Diagonal S-curves with Kawung circles and songket diamond accents.
+ * Different motif from the homepage (which uses combined Kawung+Mendung+Parang+Skyline).
+ */
+const getParangPattern = (dark) => {
+    const stroke = dark ? 'rgba(212,166,74,0.45)' : 'rgba(160,120,60,0.40)';
+    const stroke2 = dark ? 'rgba(184,115,51,0.35)' : 'rgba(140,100,50,0.30)';
+    const kawung = dark ? 'rgba(212,166,74,0.35)' : 'rgba(160,120,60,0.30)';
+    const fill = dark ? 'rgba(212,166,74,0.45)' : 'rgba(160,120,60,0.40)';
+    const dot = dark ? 'rgba(212,166,74,0.55)' : 'rgba(160,120,60,0.48)';
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100">`
+        + `<path d="M-5,50 C20,15 30,15 50,50 C70,85 80,85 105,50" fill="none" stroke="${stroke}" stroke-width="3" stroke-linecap="round"/>`
+        + `<path d="M-5,58 C20,23 30,23 50,58 C70,93 80,93 105,58" fill="none" stroke="${stroke2}" stroke-width="2" stroke-linecap="round"/>`
+        + `<path d="M45,0 C60,20 60,30 50,50 C40,70 40,80 55,100" fill="none" stroke="${stroke2}" stroke-width="2" stroke-linecap="round"/>`
+        + `<path d="M53,0 C68,20 68,30 58,50 C48,70 48,80 63,100" fill="none" stroke="${stroke2}" stroke-width="2" stroke-linecap="round"/>`
+        + `<ellipse cx="50" cy="50" rx="10" ry="6" fill="none" stroke="${kawung}" stroke-width="1.2"/>`
+        + `<ellipse cx="50" cy="50" rx="6" ry="10" fill="none" stroke="${kawung}" stroke-width="1.2"/>`
+        + `<path d="M50,46 L54,50 L50,54 L46,50 Z" fill="${fill}"/>`
+        + `<circle cx="50" cy="50" r="1.5" fill="${dot}"/>`
+        + `<path d="M25,25 L28,22 L31,25 L28,28 Z" fill="${fill}" opacity="0.7"/>`
+        + `<path d="M75,75 L78,72 L81,75 L78,78 Z" fill="${fill}" opacity="0.7"/>`
+        + `</svg>`;
+    return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+};
+
 export default function SitusBersejarah({ sites }) {
     const { t } = useLanguage();
+    const [isDark, setIsDark] = useState(false);
+
+    useEffect(() => {
+        const check = () => setIsDark(document.documentElement.classList.contains('dark'));
+        check();
+        const mo = new MutationObserver(check);
+        mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+        return () => mo.disconnect();
+    }, []);
 
     return (
-        <div className="relative flex min-h-screen flex-col bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased transition-colors duration-300">
+        <div className="flex min-h-screen flex-col bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased transition-colors duration-300">
             <Head title={`Situs Bersejarah | Sinergi Nusa`} />
             <Navbar />
 
             <main className="flex-grow">
-                {/* ── Hero ── */}
-                <section className="relative py-20 overflow-hidden">
-                    <div className="absolute inset-0 bg-primary/5 dark:bg-primary/10 -z-10"></div>
-                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/20 via-transparent to-transparent opacity-50 -z-10"></div>
+                {/* ── Hero Section (with Parang/Kawung pattern + parallax) ── */}
+                <section className="relative min-h-[50vh] flex items-center justify-center overflow-hidden">
+                    {/* Batik Parang + Kawung pattern — parallax fixed */}
+                    <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: getParangPattern(isDark), backgroundRepeat: 'repeat', backgroundAttachment: 'fixed' }} />
+                    {/* Primary tint overlay */}
+                    <div className="absolute inset-0 bg-primary/5 dark:bg-primary/10"></div>
+                    {/* Radial glow */}
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/20 via-transparent to-transparent opacity-50"></div>
+                    {/* Bottom gradient — blends hero into content section */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-background-light from-5% via-background-light/60 to-transparent dark:from-background-dark dark:from-5% dark:via-background-dark/60 dark:to-transparent"></div>
 
-                    <motion.div initial="hidden" animate="visible" variants={stagger} className="container mx-auto px-4 lg:px-10 text-center">
+                    <motion.div initial="hidden" animate="visible" variants={stagger} className="relative z-10 container mx-auto px-4 lg:px-10 text-center py-24">
                         <motion.div variants={fadeIn} className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider mb-6">
                             <span className="material-symbols-outlined text-sm">account_balance</span>
                             {t('budaya.hero_badge')}
@@ -42,66 +83,68 @@ export default function SitusBersejarah({ sites }) {
                         </motion.p>
                     </motion.div>
                 </section>
- 
-                {/* ── Sites Grid ── */}
-                <section className="container mx-auto px-4 lg:px-10 py-12 min-h-[400px]">
-                    <AnimatePresence mode="popLayout">
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.3 }}
-                            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-                        >
-                            {sites.map((item) => (
-                                <Link key={item.slug} href={`/budaya/landmark/${item.slug}`}>
-                                    <motion.div
-                                        variants={fadeIn}
-                                        whileHover={{ y: -8 }}
-                                        className="group bg-white dark:bg-surface-dark rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all border border-slate-200 dark:border-slate-800 cursor-pointer h-full"
-                                    >
-                                        <div className="h-56 overflow-hidden relative">
-                                            <ImageWithFallback className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={item.name} src={item.img} fallbackIcon="account_balance" />
-                                            <div className="absolute top-4 left-4 bg-primary/90 backdrop-blur-md text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
-                                                {item.category}
-                                            </div>
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
-                                                <span className="text-white text-sm font-bold flex items-center gap-1">
-                                                    <span className="material-symbols-outlined text-lg">public</span> Pelajari Selengkapnya
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div className="p-6">
-                                            <div className="flex items-center gap-2 text-primary text-xs font-bold mb-2">
-                                                <span className="material-symbols-outlined text-base">location_on</span>
-                                                {item.location}
-                                            </div>
-                                            <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-2 group-hover:text-primary transition-colors">{item.name}</h3>
-                                            <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed line-clamp-3">{item.desc}</p>
-                                        </div>
-                                    </motion.div>
-                                </Link>
-                            ))}
-                        </motion.div>
-                    </AnimatePresence>
- 
-                    <AnimatePresence>
-                        {sites.length === 0 && (
+
+                {/* ── Content Section (solid clean background) ── */}
+                <section className="bg-background-light dark:bg-background-dark py-16">
+                    <div className="container mx-auto px-4 lg:px-10 min-h-[400px]">
+                        <AnimatePresence mode="popLayout">
                             <motion.div
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
-                                className="text-center py-16"
+                                transition={{ duration: 0.3 }}
+                                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
                             >
-                                <span className="material-symbols-outlined text-slate-400 text-6xl mb-4">search_off</span>
-                                <p className="text-slate-500 font-medium">Belum ada data untuk kategori ini.</p>
+                                {sites.map((item) => (
+                                    <Link key={item.slug} href={`/budaya/landmark/${item.slug}`}>
+                                        <motion.div
+                                            variants={fadeIn}
+                                            whileHover={{ y: -8 }}
+                                            className="group bg-white dark:bg-surface-dark rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all border border-slate-200 dark:border-slate-800 cursor-pointer h-full"
+                                        >
+                                            <div className="h-56 overflow-hidden relative">
+                                                <ImageWithFallback className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={item.name} src={item.img} fallbackIcon="account_balance" />
+                                                <div className="absolute top-4 left-4 bg-primary/90 backdrop-blur-md text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                                                    {item.category}
+                                                </div>
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
+                                                    <span className="text-white text-sm font-bold flex items-center gap-1">
+                                                        <span className="material-symbols-outlined text-lg">public</span> Pelajari Selengkapnya
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div className="p-6">
+                                                <div className="flex items-center gap-2 text-primary text-xs font-bold mb-2">
+                                                    <span className="material-symbols-outlined text-base">location_on</span>
+                                                    {item.location}
+                                                </div>
+                                                <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-2 group-hover:text-primary transition-colors">{item.name}</h3>
+                                                <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed line-clamp-3">{item.desc}</p>
+                                            </div>
+                                        </motion.div>
+                                    </Link>
+                                ))}
                             </motion.div>
-                        )}
-                    </AnimatePresence>
+                        </AnimatePresence>
+
+                        <AnimatePresence>
+                            {sites.length === 0 && (
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    className="text-center py-16"
+                                >
+                                    <span className="material-symbols-outlined text-slate-400 text-6xl mb-4">search_off</span>
+                                    <p className="text-slate-500 font-medium">Belum ada data untuk kategori ini.</p>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </div>
                 </section>
 
                 {/* ── Back CTA ── */}
-                <section className="py-20 px-4">
+                <section className="py-20 px-4 bg-background-light dark:bg-background-dark">
                     <div className="container mx-auto max-w-4xl text-center">
                         <Link href="/budaya">
                             <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="px-8 py-4 bg-primary text-white rounded-xl font-bold shadow-xl hover:bg-primary/90 transition-colors flex items-center gap-2 mx-auto">

@@ -216,7 +216,7 @@ export default function EksplorasiKuliner({ contributedDishes = [], contributedI
                     {/* Background */}
                     <div
                         className="absolute inset-0 bg-cover bg-center"
-                        style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=1600&q=80")' }}
+                        style={{ backgroundImage: 'url("/images/kuliner/eksplorasi-kuliner.webp")' }}
                     />
                     {/* Shadow overlay */}
                     <div className="absolute inset-0 bg-background-light/60 dark:bg-background-dark/70" />
