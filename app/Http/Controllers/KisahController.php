@@ -100,7 +100,6 @@ class KisahController extends Controller
                 $contributorInfo = $this->getContributorInfo(
                     $data['contributor_id'] ?? null,
                     $data['contributor'] ?? null,
-                    $data['contributor_profession'] ?? null,
                     $data['contributor_badge'] ?? null
                 );
 
@@ -117,7 +116,6 @@ class KisahController extends Controller
                     'videoUrl' => $data['videoLink'] ?? ($data['videoUrl'] ?? ''),
                     'contributor' => $contributorInfo['name'],
                     'contributor_id' => $data['contributor_id'] ?? null,
-                    'contributor_profession' => $contributorInfo['profession'],
                     'contributor_badge' => $contributorInfo['badge'],
                     'contributor_badge_icon' => $contributorInfo['badge_icon'] ?? ($data['contributor_badge_icon'] ?? null),
                     'contributor_badge_color' => $contributorInfo['badge_color'] ?? ($data['contributor_badge_color'] ?? null),

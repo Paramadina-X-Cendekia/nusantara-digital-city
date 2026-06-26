@@ -9,12 +9,11 @@ abstract class Controller
         return \Kreait\Laravel\Firebase\Facades\Firebase::project('app')->database();
     }
 
-    protected function getContributorInfo($contributorId, $fallbackName = null, $fallbackProfession = null, $fallbackBadge = null)
+    protected function getContributorInfo($contributorId, $fallbackName = null, $fallbackBadge = null)
     {
         if (!$contributorId) {
             return [
                 'name' => $fallbackName,
-                'profession' => $fallbackProfession,
                 'badge' => $fallbackBadge,
                 'badge_icon' => null,
                 'badge_color' => null,
@@ -28,7 +27,6 @@ abstract class Controller
         if (!$user) {
             return [
                 'name' => $fallbackName,
-                'profession' => $fallbackProfession,
                 'badge' => $fallbackBadge,
                 'badge_icon' => null,
                 'badge_color' => null,
@@ -39,7 +37,6 @@ abstract class Controller
 
         return [
             'name' => $user->name,
-            'profession' => $user->profession,
             'badge' => $badgeInfo['title'],
             'badge_icon' => $badgeInfo['icon'],
             'badge_color' => $badgeInfo['color'],

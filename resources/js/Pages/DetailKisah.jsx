@@ -110,7 +110,6 @@ export default function DetailKisah({ story }) {
                                                 </div>
                                                 <div className="flex flex-col">
                                                     <p className="font-black text-slate-900 dark:text-white uppercase tracking-tight leading-tight mb-1">{story.contributor}</p>
-                                                    <p className="text-xs text-slate-500 font-bold uppercase tracking-wider">{story.contributor_profession || '-'}</p>
                                                 </div>
                                             </div>
                                             <div className="mt-6 pt-6 border-t border-slate-100 dark:border-slate-800">

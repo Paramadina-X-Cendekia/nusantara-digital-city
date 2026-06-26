@@ -654,7 +654,7 @@ export default function PetaWarisan({ dynamicSites = [] }) {
                                                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-450 mb-2">Kontributor ({selected.contributors.length})</p>
                                                 <div className="flex flex-wrap gap-2">
                                                      {selected.contributors.map((c, idx) => (
-                                                         <div key={idx} className="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200/50 dark:border-slate-750 px-2.5 py-1.5 rounded-xl" title={`${c.name} (${c.profession || '-'})`}>
+                                                         <div key={idx} className="flex items-center gap-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200/50 dark:border-slate-750 px-2.5 py-1.5 rounded-xl" title={c.name}>
                                                              <div className="size-5 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-[9px] shrink-0">
                                                                  {c.name ? c.name.charAt(0).toUpperCase() : 'U'}
                                                              </div>

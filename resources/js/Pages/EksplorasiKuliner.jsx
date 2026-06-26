@@ -623,9 +623,6 @@ export default function EksplorasiKuliner({ contributedDishes = [], contributedI
                                                                     <span className="material-symbols-outlined text-[12px]">{selectedDish.contributor_badge_icon || 'stars'}</span>
                                                                     {selectedDish.contributor_badge || 'Nusantara Pioneer'}
                                                                 </span>
-                                                                <span className="text-[9px] font-black uppercase tracking-widest px-2.5 py-1 bg-white dark:bg-slate-800 rounded-lg border border-slate-100 dark:border-slate-700 text-slate-500 shadow-sm">
-                                                                    {selectedDish.contributor_profession || 'Digital Explorer'}
-                                                                </span>
                                                             </div>
                                                         </div>
                                                     )}

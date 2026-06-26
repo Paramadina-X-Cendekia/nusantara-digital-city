@@ -34,10 +34,9 @@ class ProfileController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'profession' => 'nullable|string|max:100',
         ]);
 
-        $request->user()->update($request->only('name', 'profession'));
+        $request->user()->update($request->only('name'));
 
         return back()->with('success', 'Profil berhasil diperbarui');
     }

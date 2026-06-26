@@ -799,7 +799,7 @@ export default function PetaWisata({ dynamicDestinations = [] }) {
                                                     <p className="text-[8px] font-black uppercase tracking-widest text-slate-500 mb-2">Kontributor ({selected.contributors.length})</p>
                                                     <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto custom-scrollbar">
                                                         {selected.contributors.map((c, idx) => (
-                                                            <div key={idx} className="flex items-center gap-1.5 bg-slate-900/80 border border-slate-800/80 px-2 py-1 rounded-xl" title={`${c.name} (${c.profession || '-'})`}>
+                                                            <div key={idx} className="flex items-center gap-1.5 bg-slate-900/80 border border-slate-800/80 px-2 py-1 rounded-xl" title={c.name}>
                                                                 <div className="size-5 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-[9px] shrink-0">
                                                                     {c.name ? c.name.charAt(0).toUpperCase() : 'U'}
                                                                 </div>

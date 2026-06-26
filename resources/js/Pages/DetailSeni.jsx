@@ -566,7 +566,6 @@ function DetailSeni({ art }) {
                                                     </div>
                                                     <div className="flex flex-col min-w-0">
                                                         <p className="font-black text-slate-900 dark:text-white text-xs uppercase tracking-tight leading-tight mb-0.5 truncate">{c.name}</p>
-                                                        <p className="text-[9px] text-slate-500 font-bold uppercase tracking-wider truncate">{c.profession || '-'}</p>
                                                     </div>
                                                 </div>
                                                 <div className="mt-2.5 flex items-center gap-2">
@@ -601,7 +600,6 @@ function DetailSeni({ art }) {
                                         </div>
                                         <div className="flex flex-col">
                                             <p className="font-black text-slate-900 dark:text-white text-xs uppercase tracking-tight leading-tight mb-0.5">{art.contributor}</p>
-                                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">{art.contributor_profession || '-'}</p>
                                         </div>
                                     </div>
                                     <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800">

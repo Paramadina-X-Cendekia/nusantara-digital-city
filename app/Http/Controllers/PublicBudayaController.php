@@ -153,7 +153,6 @@ class PublicBudayaController extends Controller
                         $cInfo = $this->getContributorInfo(
                             $c['id'] ?? null,
                             $c['name'] ?? null,
-                            $c['profession'] ?? null,
                             $c['badge'] ?? null
                         );
                         $contributors[] = array_merge($cInfo, [
@@ -165,7 +164,6 @@ class PublicBudayaController extends Controller
                     $contributorInfo = $this->getContributorInfo(
                         $data['contributor_id'] ?? null,
                         $data['contributor'] ?? null,
-                        $data['contributor_profession'] ?? null,
                         $data['contributor_badge'] ?? null
                     );
                     $contributors[] = array_merge($contributorInfo, [
@@ -192,7 +190,6 @@ class PublicBudayaController extends Controller
                     'contributors' => $contributors,
                     'contributor' => $contributors[0]['name'] ?? null,
                     'contributor_id' => $contributors[0]['id'] ?? null,
-                    'contributor_profession' => $contributors[0]['profession'] ?? null,
                     'contributor_badge' => $contributors[0]['badge'] ?? null,
                     'contributor_badge_icon' => $contributors[0]['badge_icon'] ?? null,
                     'contributor_badge_color' => $contributors[0]['badge_color'] ?? null,
@@ -232,7 +229,6 @@ class PublicBudayaController extends Controller
                         $contributors[] = [
                             'id' => $data['contributor_id'] ?? null,
                             'name' => $data['contributor'],
-                            'profession' => $data['contributor_profession'] ?? '-',
                             'badge' => $data['contributor_badge'] ?? null,
                             'badge_icon' => $data['contributor_badge_icon'] ?? null,
                             'badge_color' => $data['contributor_badge_color'] ?? null,

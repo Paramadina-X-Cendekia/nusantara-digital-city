@@ -331,7 +331,6 @@ class SeniController extends Controller
                         $cInfo = $this->getContributorInfo(
                             $c['id'] ?? null,
                             $c['name'] ?? null,
-                            $c['profession'] ?? null,
                             $c['badge'] ?? null
                         );
                         $contributors[] = array_merge($cInfo, [
@@ -343,7 +342,6 @@ class SeniController extends Controller
                     $contributorInfo = $this->getContributorInfo(
                         $firebaseData['contributor_id'] ?? null,
                         $firebaseData['contributor'] ?? null,
-                        $firebaseData['contributor_profession'] ?? null,
                         $firebaseData['contributor_badge'] ?? null
                     );
                     $contributors[] = array_merge($contributorInfo, [
@@ -354,7 +352,6 @@ class SeniController extends Controller
 
                 $art['contributors'] = $contributors;
                 $art['contributor'] = $contributors[0]['name'] ?? null;
-                $art['contributor_profession'] = $contributors[0]['profession'] ?? null;
                 $art['contributor_badge'] = $contributors[0]['badge'] ?? null;
                 $art['contributor_badge_icon'] = $contributors[0]['badge_icon'] ?? null;
                 $art['contributor_badge_color'] = $contributors[0]['badge_color'] ?? null;

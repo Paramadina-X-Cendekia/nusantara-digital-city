@@ -174,7 +174,6 @@ class ModerationController extends Controller
         $contributorEntry = [
             'id' => $user->id,
             'name' => $user->name,
-            'profession' => $user->profession ?? '-',
             'badge' => $user->badge,
             'badge_icon' => $user->badge_info['icon'] ?? null,
             'badge_color' => $user->badge_info['color'] ?? null,
@@ -190,7 +189,6 @@ class ModerationController extends Controller
                     $contributors[] = [
                         'id' => $existingData['contributor_id'] ?? null,
                         'name' => $existingData['contributor'],
-                        'profession' => $existingData['contributor_profession'] ?? '-',
                         'badge' => $existingData['contributor_badge'] ?? null,
                         'badge_icon' => $existingData['contributor_badge_icon'] ?? null,
                         'badge_color' => $existingData['contributor_badge_color'] ?? null,
@@ -222,7 +220,6 @@ class ModerationController extends Controller
             // Also set fallback single contributor for backward compatibility
             $data['contributor'] = $user->name;
             $data['contributor_id'] = $user->id;
-            $data['contributor_profession'] = $user->profession ?? '-';
             $data['contributor_badge'] = $user->badge;
             $data['contributor_badge_icon'] = $user->badge_info['icon'] ?? null;
             $data['contributor_badge_color'] = $user->badge_info['color'] ?? null;

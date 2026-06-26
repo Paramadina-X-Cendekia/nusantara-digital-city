@@ -12,16 +12,14 @@ export default function Profil({ user, contributions, stats, badge }) {
 
     const { data, setData, patch, processing, errors, reset } = useForm({
         name: user.name || '',
-        profession: user.profession || '',
     });
 
     // Keep form in sync with user prop if it changes externally
     useEffect(() => {
         setData({
             name: user.name || '',
-            profession: user.profession || '',
         });
-    }, [user.name, user.profession]);
+    }, [user.name]);
 
     const handleUpdate = (e) => {
         e.preventDefault();
@@ -91,12 +89,7 @@ export default function Profil({ user, contributions, stats, badge }) {
                                 <div>
                                     <h1 className="text-3xl md:text-4xl font-black tracking-tight">{user.name}</h1>
                                     <p className="text-slate-500 dark:text-slate-400 font-medium">{user.email}</p>
-                                    {user.profession && (
-                                        <p className="text-primary font-bold text-sm flex items-center gap-1 mt-1">
-                                            <span className="material-symbols-outlined text-sm">work</span>
-                                            {user.profession}
-                                        </p>
-                                    )}
+
                                 </div>
                                 <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
                                     <div className="px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-widest">
@@ -268,17 +261,7 @@ export default function Profil({ user, contributions, stats, badge }) {
                                     {errors.name && <p className="text-rose-500 text-[10px] font-bold mt-1 ml-1 uppercase">{errors.name}</p>}
                                 </div>
 
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Profesi / Keahlian</label>
-                                    <input
-                                        type="text"
-                                        value={data.profession}
-                                        onChange={e => setData('profession', e.target.value)}
-                                        className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-5 py-4 outline-none focus:ring-2 focus:ring-primary/50 transition-all font-bold"
-                                        placeholder="Contoh: Digital Historian, Pelajar, dll"
-                                    />
-                                    {errors.profession && <p className="text-rose-500 text-[10px] font-bold mt-1 ml-1 uppercase">{errors.profession}</p>}
-                                </div>
+
 
                                 <div className="flex gap-4 pt-4">
                                     <button

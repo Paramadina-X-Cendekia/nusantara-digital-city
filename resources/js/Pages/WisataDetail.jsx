@@ -348,9 +348,6 @@ export default function WisataDetail({ slug, initialDestination }) {
                                                         <p className="font-black text-slate-900 dark:text-white uppercase tracking-tight leading-tight mb-1 truncate text-sm">
                                                             {c.name}
                                                         </p>
-                                                        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider truncate">
-                                                            {c.profession || "-"}
-                                                        </p>
                                                     </div>
                                                 </div>
                                                 <div className="mt-3 flex items-center gap-2">
@@ -395,10 +392,6 @@ export default function WisataDetail({ slug, initialDestination }) {
                                         <div className="flex flex-col">
                                             <p className="font-black text-slate-900 dark:text-white uppercase tracking-tight leading-tight mb-1">
                                                 {destination.contributor}
-                                            </p>
-                                            <p className="text-xs text-slate-500 font-bold uppercase tracking-wider">
-                                                {destination.contributor_profession ||
-                                                    "-"}
                                             </p>
                                         </div>
                                     </div>

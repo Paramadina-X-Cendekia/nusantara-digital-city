@@ -456,8 +456,6 @@ export const translations = {
             join_network: 'GABUNG KE JARINGAN',
             placeholder_name: 'Contoh: Budi Santoso',
             placeholder_email: 'nama@email.com',
-            profession_label: 'Profesi / Pekerjaan',
-            placeholder_profession: 'Contoh: Mahasiswa, Peneliti, Wisatawan',
             auth_footer_hint: 'Gunakan akun admin atau kontributor yang telah didaftarkan.',
         },
         kontribusi: {
@@ -673,7 +671,6 @@ export const translations = {
             history_empty: 'Belum ada riwayat kontribusi.',
             member_since: 'Anggota sejak',
             edit_profile: 'Edit Profil',
-            profession_label: 'Profesi',
         },
     },
     en: {
@@ -1124,8 +1121,6 @@ export const translations = {
             join_network: 'JOIN THE NETWORK',
             placeholder_name: 'Example: John Doe',
             placeholder_email: 'name@email.com',
-            profession_label: 'Profession / Job',
-            placeholder_profession: 'Example: Student, Researcher, Tourist',
             auth_footer_hint: 'Use registered admin or contributor account.',
         },
         kontribusi: {
@@ -1332,7 +1327,6 @@ export const translations = {
             history_empty: 'No contribution history yet.',
             member_since: 'Member since',
             edit_profile: 'Edit Profile',
-            profession_label: 'Profession',
         },
     }
 };
